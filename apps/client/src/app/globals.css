@@ -241,3 +241,7 @@ body {
     @apply bg-background text-foreground;
     }
 }
+
+.cl-secure-by-clerk {
+  display: none !important;
+}

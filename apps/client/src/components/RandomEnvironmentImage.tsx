@@ -1,6 +1,6 @@
+'use client';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import fallbackBg from '@/assets/background.avif';
 
 interface RandomEnvironmentImageProps {
     query?: string;
@@ -22,17 +22,19 @@ const RandomEnvironmentImage = ({
     children,
 }: RandomEnvironmentImageProps) => {
     const [imageUrl, setImageUrl] = useState('');
-    const fallbackImage = fallbackBg;
+    const fallbackImage = '/assets/background.avif';
 
     useEffect(() => {
         const fetchImage = async () => {
             try {
                 const apiKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
-                
+
                 // Nếu không có API key, sử dụng fallback image ngay
                 if (!apiKey) {
-                    console.log('No Unsplash API key found, using fallback image');
-                    setImageUrl(fallbackImage.src);
+                    console.log(
+                        'No Unsplash API key found, using fallback image',
+                    );
+                    setImageUrl(fallbackImage);
                     return;
                 }
 
@@ -61,22 +63,22 @@ const RandomEnvironmentImage = ({
                 if (image?.urls?.full) {
                     setImageUrl(image.urls.full);
                 } else {
-                    setImageUrl(fallbackImage.src);
+                    setImageUrl(fallbackImage);
                 }
             } catch (err) {
                 console.error('Error fetching Unsplash image:', err);
-                setImageUrl(fallbackImage.src);
+                setImageUrl(fallbackImage);
             }
         };
 
         fetchImage();
-    }, [query, fallbackImage.src]);
+    }, [query, fallbackImage]);
 
     return (
         <div
             className={`h-[110vh] bg-cover bg-center bg-fixed ${className}`}
             style={{
-                backgroundImage: `url(${imageUrl || fallbackImage.src})`,
+                backgroundImage: `url(${imageUrl || fallbackImage})`,
             }}
         >
             {!imageUrl && (

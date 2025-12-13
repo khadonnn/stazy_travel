@@ -20,28 +20,41 @@ export const metadata: Metadata = {
 import Navbar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import ChatWidget from '@/components/chat/ChatWidget';
+import { ClerkProvider } from '@clerk/nextjs';
+import { viVN } from '@clerk/localizations';
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-      <html lang='en'>
-          <body
-              className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-          >
-              <Navbar />
-              <Providers>{children}</Providers>
-              <Footer />
-              <div className='fixed bottom-4 right-4 z-9999'>
-                  {/*
-                    Lưu ý: Bạn có thể cần bọc ChatBox trong một component nhỏ hơn (ví dụ: ChatToggle)
-                    để ban đầu chỉ hiển thị một biểu tượng, sau đó mở rộng ra ChatBox khi click.
-                  */}
-                  <ChatWidget />
-              </div>
-          </body>
-      </html>
-  );
+    return (
+        <ClerkProvider
+            localization={viVN}
+            appearance={{
+                layout: {
+                    unsafe_disableDevelopmentModeWarnings: true,
+                },
+            }}
+            signInUrl='/sign-in'
+            signUpUrl='/sign-up'
+        >
+            <html lang='en'>
+                <body
+                    className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                >
+                    <Navbar />
+                    <Providers>{children}</Providers>
+                    <Footer />
+                    <div className='fixed bottom-4 right-4 z-9999'>
+                        {/*
+                      Lưu ý: Bạn có thể cần bọc ChatBox trong một component nhỏ hơn (ví dụ: ChatToggle)
+                      để ban đầu chỉ hiển thị một biểu tượng, sau đó mở rộng ra ChatBox khi click.
+                    */}
+                        <ChatWidget />
+                    </div>
+                </body>
+            </html>
+        </ClerkProvider>
+    );
 }

@@ -41,7 +41,7 @@ const GuestsInput = ({
             <PopoverTrigger asChild>
                 <div className={`flex relative ${className}`}>
                     <div
-                        className={`flex-1 z-10 flex items-center focus:outline-none -ml-3 ${
+                        className={`flex-1 z-10 flex items-center focus:outline-none ml-4 mb-1 ${
                             isOpen ? 'cus-hero-field-focused' : ''
                         }`}
                     >
@@ -52,7 +52,7 @@ const GuestsInput = ({
                             <div className='text-neutral-300 dark:text-neutral-400'>
                                 <UserPlus className='w-5 h-5 lg:w-7 lg:h-7' />
                             </div>
-                            <div className='flex-grow'>
+                            <div className='grow'>
                                 <span className='block xl:text-lg font-semibold'>
                                     {totalGuests || 0} khách
                                 </span>

@@ -10,6 +10,8 @@
         "check-types": "tsc --noEmit"
     },
     "dependencies": {
+        "@clerk/localizations": "^3.30.1",
+        "@clerk/nextjs": "^6.36.2",
         "@hookform/resolvers": "^5.2.2",
         "@radix-ui/react-avatar": "^1.1.10",
         "@radix-ui/react-dialog": "^1.1.15",
@@ -34,7 +36,7 @@
         "lodash": "^4.17.21",
         "lucide-react": "^0.541.0",
         "motion": "^12.23.12",
-        "next": "16.0.5",
+        "next": "16.0.8",
         "react": "19.2.0",
         "react-day-picker": "^9.11.3",
         "react-dom": "19.2.0",

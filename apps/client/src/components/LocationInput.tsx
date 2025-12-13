@@ -108,14 +108,14 @@ const LocationInput = ({
                     ref={containerRef}
                 >
                     <div
-                        className={`flex z-10 flex-1 relative [ nc-hero-field-padding ] flex-shrink-0 items-center space-x-3 cursor-pointer focus:outline-none text-left ${
+                        className={`flex z-10 flex-1 relative [ nc-hero-field-padding ] shrink-0 items-center space-x-3 cursor-pointer focus:outline-none text-left ${
                             isOpen ? 'cus-hero-field-focused' : ''
                         }`}
                     >
                         <div className='text-neutral-300 dark:text-neutral-400 ml-3'>
                             <MapPin className='w-5 h-5 lg:w-7 lg:h-7 ' />
                         </div>
-                        <div className='flex-grow'>
+                        <div className='grow'>
                             <input
                                 className='block w-full bg-transparent border-none focus:ring-0 p-0 focus:outline-none focus:placeholder-neutral-300 xl:text-lg font-semibold placeholder-neutral-800 dark:placeholder-neutral-200 truncate'
                                 placeholder={placeHolder}

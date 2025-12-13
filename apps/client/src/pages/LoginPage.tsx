@@ -56,7 +56,11 @@ export default function LoginPage() {
                 <CardContent>
                     {/* Social Login */}
                     <div className='flex flex-col gap-4 mb-6'>
-                        <Button variant='outline' className='w-full' disabled={isLoggingIn}>
+                        <Button
+                            variant='outline'
+                            className='w-full'
+                            disabled={isLoggingIn}
+                        >
                             <GoogleIcon className='w-5 h-5 mr-2' />
                             Google
                         </Button>
@@ -145,7 +149,7 @@ export default function LoginPage() {
                     <div className='text-center text-sm mt-4'>
                         Chưa có tài khoản?{' '}
                         <Link
-                            href='/register' // Thay thế to bằng href
+                            href='/sign-up'
                             className='text-green-600 underline underline-offset-4'
                         >
                             Đăng ký
