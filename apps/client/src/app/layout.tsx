@@ -44,7 +44,9 @@ export default function RootLayout({
                     className={`${geistSans.variable} ${geistMono.variable} antialiased`}
                 >
                     <Navbar />
-                    <Providers>{children}</Providers>
+                    <div className='mt-20'>
+                        <Providers>{children}</Providers>
+                    </div>
                     <Footer />
                     <div className='fixed bottom-4 right-4 z-9999'>
                         {/*

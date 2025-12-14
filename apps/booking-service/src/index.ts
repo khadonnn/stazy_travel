@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
-
+import { clerkClient, clerkPlugin, getAuth } from '@clerk/fastify';
 const fastify = Fastify({ logger: true });
+fastify.register(clerkPlugin);
 
 fastify.get('/health', async (request, reply) => {
     return reply.status(200).send({
@@ -8,6 +9,16 @@ fastify.get('/health', async (request, reply) => {
         uptime: process.uptime(),
         timeStamp: Date.now(),
     });
+});
+fastify.get('/test', async (request, reply) => {
+    const { userId } = getAuth(request);
+    if (!userId) {
+        return reply.status(401).send({ error: 'you are not logged in' });
+    }
+    console.log('userId', userId);
+    return reply
+        .status(200)
+        .send({ message: `booking service accessed by user ${userId}` });
 });
 const start = async () => {
     try {

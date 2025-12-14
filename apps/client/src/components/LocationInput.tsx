@@ -1,3 +1,4 @@
+'use client';
 import { Clock, MapPin } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import ClearDataButton from './ClearDataButton';
