@@ -16,10 +16,6 @@ export default function HomePage() {
                 <div className='relative overflow-hidden rounded-3xl'>
                     {/* Background image */}
                     <div className='aspect-video relative w-full'>
-                        {/* LƯU Ý: Trong Next.js, bạn nên sử dụng component <Image /> từ next/image
-                           để tối ưu hóa hiệu suất hình ảnh. 
-                           Nếu bạn không muốn thay đổi ngay, hãy dùng thẻ <img> thông thường.
-                        */}
                         <Image
                             src={'/assets/bg.jpg'} // Đảm bảo URL ảnh chính xác nếu bg là module import
                             alt='hero'

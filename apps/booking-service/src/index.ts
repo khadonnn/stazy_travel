@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import { clerkClient, clerkPlugin, getAuth } from '@clerk/fastify';
+import { shouldBeUser } from './middleware/authMiddleware.js';
 const fastify = Fastify({ logger: true });
 fastify.register(clerkPlugin);
 
@@ -10,16 +11,13 @@ fastify.get('/health', async (request, reply) => {
         timeStamp: Date.now(),
     });
 });
-fastify.get('/test', async (request, reply) => {
-    const { userId } = getAuth(request);
-    if (!userId) {
-        return reply.status(401).send({ error: 'you are not logged in' });
-    }
-    console.log('userId', userId);
-    return reply
-        .status(200)
-        .send({ message: `booking service accessed by user ${userId}` });
+fastify.get('/test', { preHandler: shouldBeUser }, (request, reply) => {
+    return reply.send({
+        message: 'Booking service is authenticated!',
+        userId: request.userId,
+    });
 });
+
 const start = async () => {
     try {
         await fastify.listen({ port: 8001 });

@@ -1,6 +1,6 @@
 {
     "heroSection": {
-        "title": "Hotel Luxe",
+        "title": "Stazy Booking - Quản Lý Khách Sạn Hiện Đại",
         "description": "Nền tảng quản lý khách sạn hiện đại, mang đến trải nghiệm tuyệt vời cho cả khách hàng và nhà quản lý"
     },
     "mission": {
@@ -34,18 +34,18 @@
         ]
     },
     "team": {
-        "title": "Đội Ngũ Của Chúng Tôi - IE104.E32.CN2.CNTT",
-        "subtitle": "Những con người tài năng và đam mê tạo nên Hotel Luxe",
+        "title": "Đội Ngũ Của Chúng Tôi ",
+        "subtitle": "Những con người tài năng và đam mê tạo nên Stazy Booking",
         "members": [
             {
                 "id": 1,
-                "name": "Ngô Đăng Tân",
-                "role": "MSSV: 24210173",
+                "name": "Nguyễn Đình Đông Kha",
+                "role": "MSSV: 24210137",
                 "description": "Chuyên gia trong lĩnh vực khách sạn với hơn 15 năm kinh nghiệm quản lý và phát triển thương hiệu.",
-                "avatar": "/tan.jpg",
-                "email": "tan.ngo@hotelluxe.com",
-                "phone": "+84 901 234 567",
-                "linkedin": "linkedin.com/in/ngodangtanh",
+                "avatar": "/kha.png",
+                "email": "kha.nguyen@stazy.com",
+                "phone": "+84 903 456 789",
+                "linkedin": "linkedin.com/in/nguyendinhdongkha",
                 "github": "",
                 "skills": [
                     "Leadership",
@@ -55,14 +55,14 @@
             },
             {
                 "id": 2,
-                "name": "Trần Việt Hoàng",
-                "role": "MSSV: 24210127",
+                "name": "Nguyễn Đình Đông Kha",
+                "role": "MSSV: 24210137",
                 "description": "Kỹ sư phần mềm senior với chuyên môn về hệ thống quản lý khách sạn và công nghệ số.",
-                "avatar": "/hoang.jpg",
-                "email": "hoang.tran@hotelluxe.com",
-                "phone": "+84 902 345 678",
-                "linkedin": "",
-                "github": "github.com/tranviethoang",
+                "avatar": "/kha.png",
+                "email": "kha.nguyen@stazy.com",
+                "phone": "+84 903 456 789",
+                "linkedin": "linkedin.com/in/nguyendinhdongkha",
+                "github": "",
                 "skills": [
                     "Full-stack Development",
                     "Backend Development",
@@ -75,7 +75,7 @@
                 "role": "MSSV: 24210137",
                 "description": "Chuyên gia vận hành với kinh nghiệm sâu rộng trong việc tối ưu hóa quy trình và dịch vụ khách hàng.",
                 "avatar": "/kha.png",
-                "email": "kha.nguyen@hotelluxe.com",
+                "email": "kha.nguyen@stazy.com",
                 "phone": "+84 903 456 789",
                 "linkedin": "linkedin.com/in/nguyendinhdongkha",
                 "github": "",
@@ -87,13 +87,13 @@
             },
             {
                 "id": 4,
-                "name": "Phạm Mỹ Linh",
-                "role": "MSSV: 24210043",
+                "name": "Nguyễn Đình Đông Kha",
+                "role": "MSSV: 24210137",
                 "description": "Chuyên gia marketing số với niềm đam mê tạo ra những chiến dịch sáng tạo và hiệu quả.",
-                "avatar": "/linh.jpg",
-                "email": "linh.pham@hotelluxe.com",
-                "phone": "+84 904 567 890",
-                "linkedin": "linkedin.com/in/phammylinh",
+                "avatar": "/kha.png",
+                "email": "kha.nguyen@stazy.com",
+                "phone": "+84 903 456 789",
+                "linkedin": "linkedin.com/in/nguyendinhdongkha",
                 "github": "",
                 "skills": [
                     "Backend Developer",
@@ -103,13 +103,13 @@
             },
             {
                 "id": 5,
-                "name": "Nguyễn Như Uyên",
-                "role": "MSSV: 24210187",
+                "name": "Nguyễn Đình Đông Kha",
+                "role": "MSSV: 24210137",
                 "description": "Chuyên gia trải nghiệm khách hàng với sứ mệnh mang lại sự hài lòng tuyệt đối cho mọi khách hàng.",
-                "avatar": "/uyen.jpg",
-                "email": "uyen.nguyen@hotelluxe.com",
-                "phone": "+84 905 678 901",
-                "linkedin": "linkedin.com/in/nguyennhuuyen",
+                "avatar": "/kha.png",
+                "email": "kha.nguyen@stazy.com",
+                "phone": "+84 903 456 789",
+                "linkedin": "linkedin.com/in/nguyendinhdongkha",
                 "github": "",
                 "skills": [
                     "Backend Developer",

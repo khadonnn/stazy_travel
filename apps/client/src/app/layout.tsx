@@ -44,6 +44,22 @@ export default function RootLayout({
                     className={`${geistSans.variable} ${geistMono.variable} antialiased`}
                 >
                     <Navbar />
+                    <div className=' inset-0 -z-10 '>
+                        {/* Gradient */}
+                        <div className='absolute inset-0 ' />
+
+                        {/* Wave */}
+                        <div
+                            className="
+                                absolute top-0 left-0 w-full h-[2000px] mt-20
+                                bg-[url('/assets/svg/line2.svg')]
+                                bg-no-repeat
+                                bg-top
+                                bg-size-[100%_100%]
+                                opacity-70
+                            "
+                        />
+                    </div>
                     <div className='mt-20'>
                         <Providers>{children}</Providers>
                     </div>

@@ -36,6 +36,16 @@ export interface User {
     createdAt?: string;
     updatedAt?: string;
     profile_pic?: string; // cho tương thích backend
+    posts?: Post[]; // Mảng bài viết của người dùng
+}
+export interface Post {
+    id: string | number;
+    title: string;
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+    authorId: number | string; // ID của người dùng tạo bài viết
+    author?: User; // Thông tin người dùng tạo bài viết
 }
 
 // Payloads

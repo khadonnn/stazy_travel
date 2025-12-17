@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { clerkClient, clerkMiddleware, getAuth } from '@clerk/express';
 import cors from 'cors';
+import { shouldBeUser } from './middleware/authMiddleware.js';
 const PORT = process.env.PORT || 8000;
 
 const app = express();
@@ -23,15 +24,8 @@ app.use('/health', (req: Request, res: Response) => {
         timeStamp: Date.now(),
     });
 });
-
-app.get('/test', (req: Request, res: Response) => {
-    const auth = getAuth(req);
-    const userId = auth.userId;
-    if (!userId) {
-        return res.status(401).send({ message: 'You are not logged in' });
-    }
-    console.log(auth);
-    res.send({ message: 'Product service is working!' });
+app.get('/test', shouldBeUser, (req, res) => {
+    res.json({ message: 'Product service authenticated', userId: req.userId });
 });
 app.listen(PORT, () => {
     console.log(`Product service is running on port ${PORT}`);
