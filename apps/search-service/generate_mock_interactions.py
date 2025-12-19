@@ -1,93 +1,113 @@
-# generate_mock_interactions.py
 import json
 import random
 import numpy as np
 from datetime import datetime, timedelta
 
-# 1. Load stays (giả sử bạn có file stays.json)
-with open("stays.json", "r", encoding="utf-8") as f:
-    stays = json.load(f)
+# 1. Khai báo danh sách ID tiện nghi (Lấy từ file amenities.ts của bạn)
+# Chúng ta chỉ cần các ID để giả lập sở thích user
+ALL_AMENITY_IDS = [
+    "wifi",
+    "air-conditioning",
+    "bathroom",
+    "hot-water",
+    "tv",
+    "fridge",
+    "kitchen",
+    "double-bed",
+    "extra-bed",
+    "family-room",
+    "breakfast",
+    "mountain-view",
+    "beach-view",
+    "sea-view",
+    "river-view",
+    "city-view",
+    "garden-view",
+    "laundry",
+    "pool",
+    "gym",
+    "spa",
+    "garden",
+    "parking",
+    "motorbike-parking",
+    "airport-shuttle",
+    "reception-24h",
+    "cctv",
+    "fire-safety",
+    "baby-cot",
+    "pet-friendly",
+    "workspace",
+]
 
-# 2. Chuẩn bị: tính "score" cho mỗi stay — dùng để sampling
+# 2. Load stays (File __homeStay.json của bạn)
+try:
+    with open("__homeStay.json", "r", encoding="utf-8") as f:
+        stays = json.load(f)
+except FileNotFoundError:
+    print("Lỗi: Không tìm thấy file __homeStay.json")
+    exit()
+
+# 3. Tính score giả lập cho mỗi stay
 for stay in stays:
-    # Đơn giản: kết hợp popularity + rating
-    popularity = (
-        stay.get("viewCount", 100) * 0.3
-        + stay.get("likeCount", 0) * 1.0
-        + stay.get("bookingCount", 0) * 2.0
-    )
-    rating = stay.get("reviewStart", 5.0)
-    stay["__score"] = max(0.1, popularity * (rating / 10.0))  # tránh 0
+    popularity = stay.get("viewCount", 100) * 0.3 + stay.get("commentCount", 0) * 0.5
+    rating = stay.get("reviewStart", 4.0)
+    stay["__score"] = max(0.1, popularity * (rating / 5.0))
 
-stay_ids = [s["id"] for s in stays]
-stay_scores = [s["__score"] for s in stays]
-stay_amenities = {s["id"]: set(s.get("amenities", [])) for s in stays}
-
-# 3. Tạo 80 user giả (phù hợp prototype)
+# 4. Tạo 80 user giả
 users = []
 for i in range(1, 81):
-    # Mỗi user có "sở thích": chọn ngẫu nhiên 2–4 tiện nghi yêu thích
-    all_amenities = list(set(a for s in stays for a in s.get("amenities", [])))
-    preferred = random.sample(all_amenities, k=random.randint(2, 4))
+    # FIX LỖI TẠI ĐÂY: Lấy mẫu từ danh sách ALL_AMENITY_IDS chúng ta vừa định nghĩa
+    preferred = random.sample(ALL_AMENITY_IDS, k=random.randint(2, 5))
 
     users.append(
         {
             "id": f"u{i}",
             "preferred_amenities": preferred,
-            "avg_budget": random.choice(
-                [500_000, 1_000_000, 2_000_000, 3_000_000, 5_000_000]
-            ),
+            "avg_budget": random.choice([500000, 1000000, 2000000, 5000000]),
         }
     )
 
-# 4. Sinh hành vi
+# 5. Sinh hành vi
 interactions = []
-
 for user in users:
-    n_actions = random.randint(5, 30)  # mỗi user 5–30 hành vi
-
+    n_actions = random.randint(5, 20)
     for _ in range(n_actions):
-        # Chọn stay: ưu tiên stay có amenities phù hợp + điểm cao
+        # Tính trọng số chọn khách sạn dựa trên sở thích
         weights = []
         for stay in stays:
-            # Bonus nếu có tiện nghi user thích
-            match_bonus = len(
-                set(stay.get("amenities", [])) & set(user["preferred_amenities"])
-            )
-            price_ok = 0.5 if stay.get("price", 0) <= user["avg_budget"] * 1.5 else 0.1
-            w = stay["__score"] * (1 + match_bonus * 0.3) * price_ok
+            # Ở đây giả sử stay chưa có trường amenities trong JSON,
+            # chúng ta tính dựa trên title hoặc mặc định
+            w = stay["__score"]
+            if stay.get("price", 0) <= user["avg_budget"] * 1.5:
+                w *= 1.5
             weights.append(w)
 
-        # Sampling có trọng số
-        stay = random.choices(stays, weights=weights, k=1)[0]
+        stay_choice = random.choices(stays, weights=weights, k=1)[0]
 
-        # Quyết định hành vi: view → (có thể) like → (có thể) book
-        action = "view"
-        weight = 0.2
+        # Quyết định hành động
+        rand_val = random.random()
+        if rand_val < 0.7:
+            action, weight = "view", 0.2
+        elif rand_val < 0.9:
+            action, weight = "like", 0.7
+        else:
+            action, weight = "book", 1.0
 
-        if random.random() < 0.4:  # 40% view → like
-            action = "like"
-            weight = 0.8
-            if random.random() < 0.2:  # 20% like → book
-                action = "book"
-                weight = 1.0
-
-        # Thời gian ngẫu nhiên trong 30 ngày qua
         days_ago = random.randint(0, 30)
-        time = datetime.now() - timedelta(days=days_ago, hours=random.randint(0, 23))
+        timestamp = datetime.now() - timedelta(days=days_ago)
 
         interactions.append(
             {
                 "userId": user["id"],
-                "stayId": stay["id"],
+                "stayId": stay_choice["id"],
                 "action": action,
                 "weight": weight,
-                "timestamp": time.isoformat(),
+                "timestamp": timestamp.isoformat(),
             }
         )
 
-# 5. Lưu
+# 6. Lưu file
 with open("mock_interactions.json", "w", encoding="utf-8") as f:
     json.dump(interactions, f, ensure_ascii=False, indent=2)
 
-print(f"✅ Đã tạo {len(interactions)} hành vi cho {len(users)} user.")
+print(f"✅ Đã tạo {len(interactions)} hành vi thành công!")

@@ -1,0 +1,11 @@
+# Chặn môi trường ảo của Python
+.venv/
+__pycache__/
+*.pyc
+
+# Chặn file log và cache của AI
+.cache/
+.huggingface/
+
+# Chặn file chứa biến môi trường nhạy cảm
+.env

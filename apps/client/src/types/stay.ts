@@ -1,5 +1,5 @@
 export interface AuthorType {
-    id: string | number;
+    id: string;
     firstName: string;
     lastName: string;
     displayName: string;
@@ -23,7 +23,7 @@ export type TwMainColor =
     | 'gray';
 
 export interface StayCategory {
-    id: string | number;
+    id: number;
     name: string;
     href: string;
     color?: TwMainColor;
@@ -34,7 +34,7 @@ export interface StayCategory {
 
 //  post
 export interface PostCategory {
-    id: string | number;
+    id: number;
     name: string;
     href: string;
     color?: TwMainColor; // Để hiển thị màu badge

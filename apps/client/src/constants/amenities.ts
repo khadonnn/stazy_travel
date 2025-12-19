@@ -1,47 +1,47 @@
 import {
-    // Tiện nghi cũ
     Wifi,
-    Bed,
-    Bath,
-    Car,
-    Tv,
-    Coffee,
-    Dumbbell,
-    Utensils,
-    BriefcaseMedical,
-    Baby,
-    ShowerHead,
     AirVent,
-    Umbrella,
+    ShowerHead,
+    Bath,
+    Tv,
+    WashingMachine,
     Luggage,
-    Key,
+    HeartHandshake,
+    Bed,
+    Sun,
+    Tent,
+    Building2,
     Martini,
+    Key,
+    CookingPot,
+    Refrigerator,
+    Microwave,
+    Coffee,
+    Utensils,
+    Wine,
+    Waves,
+    Dumbbell,
+    Umbrella,
+    Gamepad2,
     Dice6,
-
-    // Tiện nghi mới và đã được sử dụng trong danh sách
-    Sun, // Dùng cho 'balcony'
-    Wine, // Dùng cho 'on-site-restaurant', 'bar'
-    Waves, // Dùng cho View biển/Hồ bơi
-    Mountain, // Dùng cho View núi
-    Trees, // Dùng cho BBQ/Sân vườn
-    CookingPot, // Dùng cho 'kitchen'
-    Refrigerator, // Dùng cho 'fridge'
-    Microwave, // Dùng cho 'microwave'
-    WashingMachine, // Dùng cho 'laundry'
-    Dog, // Dùng cho 'pet-friendly'
-    Users, // Dùng cho 'family-room', 'meeting-room'
-    Building2, // Dùng cho 'high-floor-view', 'city-view'
-    HeartHandshake, // Dùng cho 'housekeeping'
-    Camera, // Dùng cho 'cctv'
-    Phone, // Dùng cho 'printer'
-    Laptop, // Dùng cho 'workspace'
-    Medal, // Dùng cho 'award-winning'
-    Star, // Dùng cho 'top-rated'
-    Sparkles, // Dùng cho 'fire-extinguisher', 'trending'
-    Gamepad2, // Dùng cho 'game-console'
-    Music, // Dùng cho 'music-system'
-    Bike, // Dùng cho 'motorbike-rental', 'bike-rental'
-    // Lưu ý: Các icon không dùng (như ParkingMeter) có thể bỏ đi để clean code
+    Music,
+    Trees,
+    Baby,
+    Users,
+    Dog,
+    Car,
+    Bike,
+    Plane,
+    Mountain,
+    Building,
+    Camera,
+    ShieldCheck,
+    BriefcaseMedical,
+    Laptop,
+    Phone,
+    Star,
+    Medal,
+    Sparkles,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -49,10 +49,18 @@ export interface Amenity {
     id: string;
     name: string;
     icon: LucideIcon;
-    category: string;
+    category:
+        | 'basic'
+        | 'comfort'
+        | 'food'
+        | 'relax'
+        | 'family'
+        | 'transport'
+        | 'view'
+        | 'safety'
+        | 'business'
+        | 'award';
 }
-
-// (import giữ nguyên — bạn đã có đủ icon rồi!)
 
 export const Amenities_demos: Amenity[] = [
     // ======== TIỆN NGHI CƠ BẢN (basic) ========
@@ -64,7 +72,7 @@ export const Amenities_demos: Amenity[] = [
         category: 'basic',
     },
     {
-        id: 'private-bathroom',
+        id: 'bathroom',
         name: 'Phòng tắm riêng',
         icon: ShowerHead,
         category: 'basic',
@@ -87,13 +95,10 @@ export const Amenities_demos: Amenity[] = [
 
     // ======== GIƯỜNG & PHÒNG (comfort) ========
     { id: 'double-bed', name: 'Giường đôi', icon: Bed, category: 'comfort' },
+    { id: 'single-bed', name: 'Giường đơn', icon: Bed, category: 'comfort' },
     { id: 'extra-bed', name: 'Giường phụ', icon: Bed, category: 'comfort' },
-    {
-        id: 'balcony',
-        name: 'Ban công / Sân thượng',
-        icon: Sun,
-        category: 'comfort',
-    },
+    { id: 'balcony', name: 'Ban công', icon: Sun, category: 'comfort' },
+    { id: 'terrace', name: 'Sân thượng', icon: Tent, category: 'comfort' },
     {
         id: 'high-floor-view',
         name: 'Tầng cao, view đẹp',
@@ -106,12 +111,7 @@ export const Amenities_demos: Amenity[] = [
         icon: Martini,
         category: 'comfort',
     },
-    {
-        id: 'concierge',
-        name: 'Dịch vụ hỗ trợ đặc biệt',
-        icon: Key,
-        category: 'comfort',
-    },
+    { id: 'concierge', name: 'Dịch vụ hỗ trợ', icon: Key, category: 'comfort' },
 
     // ======== BẾP & ĂN UỐNG (food) ========
     {
@@ -123,7 +123,7 @@ export const Amenities_demos: Amenity[] = [
     { id: 'fridge', name: 'Tủ lạnh', icon: Refrigerator, category: 'food' },
     { id: 'microwave', name: 'Lò vi sóng', icon: Microwave, category: 'food' },
     {
-        id: 'coffee-machine',
+        id: 'coffee-maker',
         name: 'Máy pha cà phê',
         icon: Coffee,
         category: 'food',
@@ -149,24 +149,21 @@ export const Amenities_demos: Amenity[] = [
     },
     { id: 'bar', name: 'Quầy bar', icon: Wine, category: 'food' },
 
-    // ======== GIẢI TRÍ & THỂ THAO (relax) ========
+    // ======== GIẢI TRÍ & SỨC KHỎE (relax) ========
     { id: 'pool', name: 'Hồ bơi', icon: Waves, category: 'relax' },
     { id: 'gym', name: 'Phòng gym', icon: Dumbbell, category: 'relax' },
-    {
-        id: 'spa-sauna',
-        name: 'Spa / Sauna',
-        icon: Umbrella,
-        category: 'relax',
-    },
+    { id: 'spa', name: 'Spa / Sauna', icon: Umbrella, category: 'relax' },
+    { id: 'bbq', name: 'Sân vườn / BBQ', icon: Trees, category: 'relax' },
+    { id: 'garden', name: 'Sân vườn', icon: Trees, category: 'relax' },
     {
         id: 'game-console',
         name: 'Máy chơi game',
         icon: Gamepad2,
         category: 'relax',
     },
-    { id: 'board-games', name: 'Board game', icon: Dice6, category: 'relax' },
+    { id: 'boardgames', name: 'Board game', icon: Dice6, category: 'relax' },
     {
-        id: 'music-system',
+        id: 'sound-system',
         name: 'Hệ thống âm thanh',
         icon: Music,
         category: 'relax',
@@ -177,7 +174,7 @@ export const Amenities_demos: Amenity[] = [
     { id: 'high-chair', name: 'Ghế ăn cho bé', icon: Baby, category: 'family' },
     {
         id: 'family-room',
-        name: 'Phòng cho gia đình',
+        name: 'Phòng gia đình',
         icon: Users,
         category: 'family',
     },
@@ -188,55 +185,11 @@ export const Amenities_demos: Amenity[] = [
         category: 'family',
     },
 
-    // ======== NGOẠI TRỜI & CẢNH QUAN (outdoor) ✅ MỞ RỘNG VIEW ========
+    // ======== DI CHUYỂN (transport) ========
+    { id: 'parking', name: 'Bãi đậu xe', icon: Car, category: 'transport' },
     {
-        id: 'free-parking',
-        name: 'Bãi đậu xe miễn phí',
-        icon: Car,
-        category: 'outdoor',
-    },
-    {
-        id: 'bbq-grill',
-        name: 'Sân vườn / BBQ',
-        icon: Trees,
-        category: 'outdoor',
-    },
-    {
-        id: 'mountain-view',
-        name: 'View núi',
-        icon: Mountain,
-        category: 'outdoor',
-    },
-    {
-        id: 'beach-access',
-        name: 'Lối ra biển',
-        icon: Waves,
-        category: 'outdoor',
-    },
-    {
-        id: 'private-beach',
-        name: 'Bãi biển riêng',
-        icon: Waves,
-        category: 'outdoor',
-    },
-    { id: 'river-view', name: 'View sông', icon: Waves, category: 'outdoor' },
-    {
-        id: 'city-view',
-        name: 'View thành phố',
-        icon: Building2,
-        category: 'outdoor',
-    },
-    {
-        id: 'scenic-view',
-        name: 'View cảnh đẹp (ruộng, đồi...)',
-        icon: Mountain,
-        category: 'outdoor',
-    },
-
-    // ======== DI CHUYỂN & DỊCH VỤ (transport) — ✅ THÊM MỚI ========
-    {
-        id: 'motorbike-rental',
-        name: 'Thuê xe máy',
+        id: 'motorbike-parking',
+        name: 'Chỗ để xe máy',
         icon: Bike,
         category: 'transport',
     },
@@ -247,31 +200,57 @@ export const Amenities_demos: Amenity[] = [
         category: 'transport',
     },
     {
+        id: 'motorbike-rental',
+        name: 'Thuê xe máy',
+        icon: Bike,
+        category: 'transport',
+    },
+    {
         id: 'airport-shuttle',
         name: 'Xe đưa đón sân bay',
-        icon: Car,
+        icon: Plane,
         category: 'transport',
     },
     {
         id: 'shuttle-service',
-        name: 'Dịch vụ đưa đón (cảng, bến...)',
+        name: 'Dịch vụ đưa đón',
         icon: Car,
         category: 'transport',
     },
 
-    // ======== AN TOÀN & Y TẾ (safety) ========
+    // ======== TẦM NHÌN & CẢNH QUAN (view) ========
+    { id: 'mountain-view', name: 'View núi', icon: Mountain, category: 'view' },
+    { id: 'beach-view', name: 'View biển', icon: Waves, category: 'view' },
+    { id: 'sea-view', name: 'Hướng biển', icon: Waves, category: 'view' },
+    { id: 'river-view', name: 'View sông', icon: Waves, category: 'view' },
+    { id: 'lake-view', name: 'View hồ', icon: Waves, category: 'view' },
     {
-        id: 'first-aid',
-        name: 'Hộp y tế cơ bản',
-        icon: BriefcaseMedical,
+        id: 'city-view',
+        name: 'View thành phố',
+        icon: Building,
+        category: 'view',
+    },
+    { id: 'garden-view', name: 'View sân vườn', icon: Trees, category: 'view' },
+    {
+        id: 'scenic-view',
+        name: 'View cảnh đẹp',
+        icon: Mountain,
+        category: 'view',
+    },
+
+    // ======== AN TOÀN (safety) ========
+    { id: 'cctv', name: 'Camera an ninh', icon: Camera, category: 'safety' },
+    { id: 'reception-24h', name: 'Lễ tân 24/7', icon: Key, category: 'safety' },
+    {
+        id: 'fire-safety',
+        name: 'An toàn PCCC',
+        icon: ShieldCheck,
         category: 'safety',
     },
-    { id: 'cctv', name: 'Camera an ninh', icon: Camera, category: 'safety' },
-    { id: '24h-reception', name: 'Lễ tân 24/7', icon: Key, category: 'safety' },
     {
-        id: 'fire-extinguisher',
-        name: 'Bình chữa cháy',
-        icon: Sparkles,
+        id: 'first-aid',
+        name: 'Sơ cứu cơ bản',
+        icon: BriefcaseMedical,
         category: 'safety',
     },
 
@@ -290,7 +269,7 @@ export const Amenities_demos: Amenity[] = [
         category: 'business',
     },
 
-    // ======== DANH HIỆU & ĐÁNH GIÁ (award) ========
+    // ======== DANH HIỆU (award) ========
     {
         id: 'award-winning',
         name: 'Giải thưởng chất lượng',
@@ -300,7 +279,7 @@ export const Amenities_demos: Amenity[] = [
     { id: 'top-rated', name: 'Đánh giá cao', icon: Star, category: 'award' },
     {
         id: 'trending',
-        name: 'Được đặt nhiều nhất',
+        name: 'Xu hướng đặt phòng',
         icon: Sparkles,
         category: 'award',
     },

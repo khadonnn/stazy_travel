@@ -118,7 +118,14 @@ export default function StayPage() {
         setFilteredData(data);
         setCurrentPage(1);
     }, []);
-
+const handlePageChange = useCallback(
+    (page: number) => {
+        //  Bảo vệ: không bao giờ set page ngoài [1, totalPages]
+        const safePage = Math.max(1, Math.min(page, totalPages));
+        setCurrentPage(safePage);
+    },
+    [totalPages], // ← ✅ Rất quan trọng: khi totalPages thay đổi, callback được tạo lại
+);
     // ------------------- RENDER -------------------
 
     return (

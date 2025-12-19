@@ -5,6 +5,7 @@ import { ExplorePlace } from '@/components/ExplorePlace';
 import StayListing from '@/components/StayListings';
 import StaySearchForm from '@/components/StaySearchForm';
 import Image from 'next/image';
+import { Sparkles } from 'lucide-react';
 
 export default function HomePage() {
     // THAY THẾ useNavigate
@@ -39,11 +40,12 @@ export default function HomePage() {
 
                         <button
                             // SỬ DỤNG router.push() thay cho navigate()
-                            onClick={() => router.push('/hotels')}
+                            onClick={() => router.push('/search-service')}
                             type='button'
                             className='mt-10 sm:mt-20 sm:text-lg relative inline-flex items-center justify-center px-6 py-3 font-medium rounded-full bg-primary text-white hover:bg-primary/80 focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 ease-in-out'
                         >
-                            Bắt đầu khám phá
+                            Bắt đầu khám phá{' '}
+                            <Sparkles size={20} className='ml-2' />
                         </button>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { useSwipeable } from 'react-swipeable';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -23,6 +23,7 @@ const variants = (x = 400, opacity = 0) => ({
 
 export interface GallerySliderProps {
     className?: string;
+    featuredImage?: string;
     galleryImgs: string[];
     ratioClass?: string;
     uniqueID: string;
@@ -35,6 +36,7 @@ export interface GallerySliderProps {
 
 export default function GallerySlider({
     className = '',
+    featuredImage,
     galleryImgs,
     ratioClass = 'aspect-[4/3]',
     imageClass = '',
@@ -48,7 +50,14 @@ export default function GallerySlider({
     const [index, setIndex] = useState(0);
     const [direction, setDirection] = useState(0);
 
-    const images = galleryImgs;
+    const images = useMemo(() => {
+        const allImages = [...galleryImgs];
+        if (featuredImage) {
+            // Thêm featuredImage vào đầu mảng
+            allImages.unshift(featuredImage);
+        }
+        return allImages.length > 0 ? allImages : ['/placeholder-hotel.jpg'];
+    }, [featuredImage, galleryImgs]);
 
     function changePhotoId(newVal: number) {
         if (newVal > index) {

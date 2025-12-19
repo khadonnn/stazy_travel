@@ -5,6 +5,8 @@
 //     password: string;
 // }
 
+import { PostDataType } from '@/types/stay';
+
 // // Dữ liệu login
 // export interface LoginPayload {
 //     email: string;
@@ -22,7 +24,7 @@
 
 // Kiểu dữ liệu User mới
 export interface User {
-    id: number;
+    id: string;
     name: string;
     email: string;
     password: string; // chỉ để mockup
@@ -36,17 +38,9 @@ export interface User {
     createdAt?: string;
     updatedAt?: string;
     profile_pic?: string; // cho tương thích backend
-    posts?: Post[]; // Mảng bài viết của người dùng
+    posts?: PostDataType[]; // Mảng bài viết của người dùng
 }
-export interface Post {
-    id: string | number;
-    title: string;
-    content: string;
-    createdAt: string;
-    updatedAt: string;
-    authorId: number | string; // ID của người dùng tạo bài viết
-    author?: User; // Thông tin người dùng tạo bài viết
-}
+
 
 // Payloads
 export interface LoginPayload {

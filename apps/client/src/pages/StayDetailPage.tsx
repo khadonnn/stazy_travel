@@ -53,6 +53,12 @@ import { motion } from 'framer-motion';
 // Import Mock Data và Mapper
 import MockData from '@/data/jsons/__homeStay.json';
 import { mapStay, StayApiResponse } from '@/lib/mappers/listings';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 // =============================================================
 // Hàm lấy dữ liệu Mock Data ban đầu (Synchronous)
@@ -311,7 +317,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
                             className='w-full h-full object-cover rounded-md sm:rounded-xl'
                             loading='lazy'
                         />
-                        <div className='absolute inset-0 bg-black bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity' />
+                        <div className='absolute inset-0 bg-black bg-opacity-20 opacity-0 hover:opacity-20 transition-opacity' />
                     </div>
 
                     {/* Right side: inner 2x2 grid of thumbnails, fills the same height as left */}
@@ -334,7 +340,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
                                         className='w-full h-full object-cover rounded-md sm:rounded-xl'
                                         loading='lazy'
                                     />
-                                    <div className='absolute inset-0 bg-black bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity' />
+                                    <div className='absolute inset-0 bg-black bg-opacity-20 opacity-0 hover:opacity-20 transition-opacity' />
                                 </div>
                             ))}
                     </div>
@@ -460,35 +466,53 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
         );
     };
 
+    // Thêm logic này vào trong component StayDetailPageClient trước khi render
+    // Lọc danh sách tiện nghi thực tế của khách sạn từ danh sách demo có chứa Icon
+    const currentStayAmenities = useMemo(() => {
+        if (!stayData?.amenities || !Array.isArray(stayData.amenities))
+            return [];
+
+        return stayData.amenities
+            .map((id) => Amenities_demos.find((item) => item.id === id))
+            .filter((item): item is (typeof Amenities_demos)[0] => !!item);
+    }, [stayData?.amenities]);
+
     const renderSection3 = () => {
         return (
             <div className='listingSection__wrap'>
                 <div>
                     <h2 className='text-2xl font-semibold'>Tiện nghi</h2>
                     <p className='mt-2 text-neutral-500 dark:text-neutral-400'>
-                        Các tiện ích và dịch vụ được cung cấp
+                        Các tiện ích và dịch vụ được cung cấp tại chỗ ở này
                     </p>
                 </div>
                 <Separator className='my-4' />
-                <div className='grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 dark:text-neutral-300'>
-                    {Amenities_demos.filter((_, i) => i < 12).map((item) => {
+
+                {/* Hiển thị 12 tiện nghi đầu tiên của khách sạn này */}
+                <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 text-sm text-neutral-700 dark:text-neutral-300'>
+                    {currentStayAmenities.slice(0, 12).map((item) => {
                         const Icon = item.icon;
                         return (
                             <div
-                                key={item.name}
+                                key={item.id}
                                 className='flex items-center space-x-3'
                             >
-                                <Icon className='w-6 h-6 text-neutral-700' />{' '}
+                                <Icon className='w-6 h-6 text-neutral-600' />
                                 <span>{item.name}</span>
                             </div>
                         );
                     })}
                 </div>
 
-                <Separator className='my-6' />
-                <Button variant='outline' onClick={openModalAmenities}>
-                    Xem thêm 20 tiện nghi
-                </Button>
+                {currentStayAmenities.length > 12 && (
+                    <>
+                        <Separator className='my-6' />
+                        <Button variant='outline' onClick={openModalAmenities}>
+                            Xem thêm {currentStayAmenities.length - 12} tiện
+                            nghi
+                        </Button>
+                    </>
+                )}
                 {renderModalAmenities()}
             </div>
         );
@@ -502,20 +526,22 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
             >
                 <DialogContent className='max-h-[90vh] overflow-y-auto max-w-4xl'>
                     <DialogHeader>
-                        <DialogTitle>Tiện nghi</DialogTitle>
+                        <DialogTitle>Tiện nghi có sẵn</DialogTitle>
                         <DialogDescription>
-                            Tất cả các tiện nghi có sẵn tại nơi lưu trú này.
+                            Danh sách đầy đủ các tiện nghi tại {title}
                         </DialogDescription>
                     </DialogHeader>
-                    <div className='py-4 space-y-3 max-h-[70vh] overflow-y-auto'>
-                        {Amenities_demos.slice(0, 12).map((item) => {
+
+                    {/* Chia theo category nếu muốn chuyên nghiệp hơn, hoặc render list phẳng */}
+                    <div className='py-4 grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                        {currentStayAmenities.map((item) => {
                             const Icon = item.icon;
                             return (
                                 <div
-                                    key={item.name}
-                                    className='flex items-center py-2.5 space-x-5'
+                                    key={item.id}
+                                    className='flex items-center py-2.5 space-x-5 border-b border-neutral-100 dark:border-neutral-800'
                                 >
-                                    <Icon className='w-8 h-8 text-neutral-600' />
+                                    <Icon className='w-7 h-7 text-neutral-600' />
                                     <span className='text-base'>
                                         {item.name}
                                     </span>
@@ -807,13 +833,30 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
                     </div>
 
                     {/* Lưu vào store + chuyển sang trang giỏ hàng */}
-                    <Button
-                        className='w-full'
-                        onClick={handleAddToCart}
-                        disabled={isDisabled}
-                    >
-                        Đặt phòng ngay
-                    </Button>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className='w-full inline-block'>
+                                    <Button
+                                        className='w-full'
+                                        onClick={handleAddToCart}
+                                        disabled={isDisabled}
+                                    >
+                                        Đặt phòng ngay
+                                    </Button>
+                                </span>
+                            </TooltipTrigger>
+
+                            {isDisabled && (
+                                <TooltipContent
+                                    side='top'
+                                    className='bg-yellow-500 text-white'
+                                >
+                                    <p>Vui lòng chọn ngày đặt phòng</p>
+                                </TooltipContent>
+                            )}
+                        </Tooltip>
+                    </TooltipProvider>
                 </CardContent>
             </Card>
         );
@@ -839,7 +882,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
             {/* MAIN CONTENT */}
             <main className='relative z-10 mt-11 flex flex-col lg:flex-row'>
                 {/* CONTENT */}
-                <div className='w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10'>
+                <div className='w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10 '>
                     {renderSection1()}
                     {renderSection2()}
                     {renderSection3()}

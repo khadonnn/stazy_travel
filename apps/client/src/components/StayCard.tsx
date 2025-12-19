@@ -18,6 +18,7 @@ export interface StayCardProps {
 
 function StayCard({ size = 'default', className = '', data }: StayCardProps) {
     const {
+        featuredImage,
         galleryImgs,
         category,
         address,
@@ -43,6 +44,7 @@ function StayCard({ size = 'default', className = '', data }: StayCardProps) {
             <GallerySlider
                 uniqueID={`StayCard_${id}`}
                 ratioClass='aspect-[4/3]'
+                featuredImage={featuredImage || ''}
                 galleryImgs={galleryImgs || []}
                 // Sử dụng href được tạo từ ID để đảm bảo tính đúng đắn trong Next.js
                 href={`/hotels/${id}`}

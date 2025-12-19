@@ -1,0 +1,8 @@
+{
+    "name": "search-service",
+    "version": "0.1.0",
+    "scripts": {
+        "dev": "uv run uvicorn main:app --reload --port 8008",
+        "start": "uv run uvicorn main:app --port 8008"
+    }
+}

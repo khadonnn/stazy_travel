@@ -165,7 +165,7 @@ export default function PaginationCus({
 
                 <PaginationItem>
                     <PaginationNext
-                        href='#'
+                        href=''
                         onClick={(e) => {
                             e.preventDefault();
                             if (currentPage < totalPages)

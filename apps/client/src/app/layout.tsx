@@ -22,7 +22,7 @@ import Footer from '@/components/Footer';
 import ChatWidget from '@/components/chat/ChatWidget';
 import { ClerkProvider } from '@clerk/nextjs';
 import { viVN } from '@clerk/localizations';
-
+import BackgroundWave from '@/components/BackgroundWave';
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -44,23 +44,14 @@ export default function RootLayout({
                     className={`${geistSans.variable} ${geistMono.variable} antialiased`}
                 >
                     <Navbar />
-                    <div className=' inset-0 -z-10 '>
+                    <div className=' '>
                         {/* Gradient */}
                         <div className='absolute inset-0 ' />
 
                         {/* Wave */}
-                        <div
-                            className="
-                                absolute top-0 left-0 w-full h-[2000px] mt-20
-                                bg-[url('/assets/svg/line2.svg')]
-                                bg-no-repeat
-                                bg-top
-                                bg-size-[100%_100%]
-                                opacity-70
-                            "
-                        />
+                        <BackgroundWave />
                     </div>
-                    <div className='mt-20'>
+                    <div className='mt-10'>
                         <Providers>{children}</Providers>
                     </div>
                     <Footer />
