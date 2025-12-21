@@ -11,13 +11,116 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  
 }
-
-model Product {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  price       Float
+model User {
+  id          String    @id @default(uuid()) 
+  
+  // Thông tin đăng nhập & Cơ bản
+  email       String    @unique
+  password    String    
+  name        String    
+  nickname    String?
+  phone       String?
+  gender      String?
+  dob         DateTime? 
+  address     String?
+  
+  avatar      String?   
+  bgImage  String?   
+  
+  jobName     String?  
+  desc         String?   @db.Text
+  
+  role        Role      @default(USER) // Enum: USER, AUTHOR, ADMIN
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  // Quan hệ: Một User có thể đăng nhiều Hotel
+  posts      Hotel[]
+
+  @@map("users")
+}
+
+// --- ENUM ROLE ---
+enum Role {
+  USER
+  AUTHOR
+  ADMIN
+}
+model Hotel {
+  id                 Int      @id @default(autoincrement())
+  
+  // -- Relations --
+  authorId           String
+author            User     @relation(fields: [authorId], references: [id])
+  
+  listingCategoryId  Int
+  category           Category @relation(fields: [listingCategoryId], references: [id])
+
+  // -- Info --
+  date               DateTime @default(now()) // Đổi sang DateTime để dễ query time range
+  href               String
+  title              String
+  featuredImage      String
+  
+  // -- Arrays (Postgres Only) --
+  galleryImgs        String[] 
+  amenities          String[]
+
+  description        String   @db.Text
+  price              Decimal  @db.Decimal(12, 2)
+  address            String
+  
+  // -- Ratings & Stats --
+  reviewStart        Float    @default(0)
+  reviewCount        Int      @default(0)
+  viewCount          Int      @default(0)
+  commentCount       Int      @default(0)
+  
+  like               Boolean  @default(false)
+  isAds              Boolean  @default(false)
+  
+  // -- Room Info --
+  maxGuests          Int
+  bedrooms           Int
+  bathrooms          Int
+  
+  // -- Sale Off Logic --
+  saleOff            String?  // Text hiển thị: "-5% hôm nay"
+  saleOffPercent     Int      @default(0) // Số để Query/Sort: 5 (Đây là cột quan trọng mới thêm)
+
+  // -- Map --
+  // Dùng Json là gọn nhất. Nếu sau này cần tính khoảng cách bán kính (PostGIS), 
+  // bạn nên tách thành lat (Float) và lng (Float).
+  map                Json     
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("hotels")
+}
+
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  href      String
+  
+  // TwMainColor thường là một chuỗi class name (vd: "red", "blue") hoặc mã màu
+  color     String?  
+  
+  // Chứa tên icon (vd: "HiOutlineHome") hoặc đường dẫn SVG
+  icon      String?  
+  
+  // Field này thường là tính toán (computed), nhưng nếu bạn muốn lưu cứng:
+  count     Int      @default(0)
+  
+  // Đường dẫn ảnh thumbnail
+  thumbnail String?
+
+  // Quan hệ ngược lại với Hotel (đã có trong schema trước của bạn)
+  hotels    Hotel[]
+
+  @@map("categories")
 }

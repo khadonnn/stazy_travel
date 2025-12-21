@@ -19,3 +19,5 @@ pip install "fastapi[standard]"
 uv run generate_data.py
 uv run process_data.py (vector hoá)
 uv run generate_mock_interactions.py (giả lập)
+
+uv run python generate_users.py
