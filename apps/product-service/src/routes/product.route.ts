@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createHotel } from '../controllers/product.controller';
+import { createHotel, getHotels, getRelatedHotels } from '../controllers/product.controller';
 
 const router: Router = Router();
 
@@ -14,6 +14,8 @@ router.get('/test', (req, res) => {
 
 // // --- PROTECTED ROUTES (Host/Author) ---
 router.post('/', createHotel);
+router.get("/", getHotels)
+router.get("/:id/related",getRelatedHotels)
 // router.put('/:id', requireAuth, requireAuthor, HotelController.updateHotel); // Chỉ tác giả mới được sửa
 // router.delete('/:id', requireAuth, requireAuthor, HotelController.deleteHotel);
 export default router;

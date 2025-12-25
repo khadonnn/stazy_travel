@@ -37,7 +37,7 @@ model User {
   updatedAt   DateTime  @updatedAt
 
   // Quan hệ: Một User có thể đăng nhiều Hotel
-  posts      Hotel[]
+  hotels      Hotel[]
 
   @@map("users")
 }
@@ -55,12 +55,12 @@ model Hotel {
   authorId           String
 author            User     @relation(fields: [authorId], references: [id])
   
-  listingCategoryId  Int
-  category           Category @relation(fields: [listingCategoryId], references: [id])
+  categoryId  Int
+  category           Category @relation(fields: [categoryId], references: [id])
 
   // -- Info --
   date               DateTime @default(now()) // Đổi sang DateTime để dễ query time range
-  href               String
+  slug               String
   title              String
   featuredImage      String
   

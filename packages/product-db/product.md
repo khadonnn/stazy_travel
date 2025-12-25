@@ -29,8 +29,12 @@ pnpm prisma init --datasource-provider postgresql --output ../generated/prisma
               "@repo/typescript-config": "workspace:*"
 
 
+## Xoa folder migrations > reset
+> npx prisma migrate reset --force
 ## reset
 >pnpm --filter @repo/product-db exec prisma migrate reset --force
-
+## reset tạo lại database mới
+> npx prisma migrate dev --name <name>
 ## studio local (packages/product-db)
 > pnpm prisma studios
+

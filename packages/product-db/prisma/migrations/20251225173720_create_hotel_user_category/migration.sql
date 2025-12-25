@@ -27,9 +27,9 @@ CREATE TABLE "users" (
 CREATE TABLE "hotels" (
     "id" SERIAL NOT NULL,
     "authorId" TEXT NOT NULL,
-    "listingCategoryId" INTEGER NOT NULL,
+    "categoryId" INTEGER NOT NULL,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "href" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "featuredImage" TEXT NOT NULL,
     "galleryImgs" TEXT[],
@@ -59,7 +59,7 @@ CREATE TABLE "hotels" (
 CREATE TABLE "categories" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "href" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
     "color" TEXT,
     "icon" TEXT,
     "count" INTEGER NOT NULL DEFAULT 0,
@@ -71,8 +71,11 @@ CREATE TABLE "categories" (
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "categories_slug_key" ON "categories"("slug");
+
 -- AddForeignKey
 ALTER TABLE "hotels" ADD CONSTRAINT "hotels_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "hotels" ADD CONSTRAINT "hotels_listingCategoryId_fkey" FOREIGN KEY ("listingCategoryId") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "hotels" ADD CONSTRAINT "hotels_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

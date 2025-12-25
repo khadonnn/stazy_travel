@@ -20,7 +20,7 @@ export const getCategories = async (req: Request, res: Response) => {
         const formattedCategories = categories.map((cat) => ({
             id: cat.id,
             name: cat.name,
-            href: cat.href,
+            slug: cat.slug,
             color: cat.color,
             icon: cat.icon,
             count: cat._count.hotels, // Trả về số lượng bài viết để hiển thị (ví dụ: Hotel (12))
@@ -37,19 +37,19 @@ export const getCategories = async (req: Request, res: Response) => {
 // 2. TẠO CATEGORY MỚI (Admin)
 export const createCategory = async (req: Request, res: Response) => {
     try {
-        const { name, href, color, icon } = req.body;
+        const { name, slug, color, icon } = req.body;
 
         // Validation cơ bản
-        if (!name || !href) {
+        if (!name || !slug) {
             return res
                 .status(400)
-                .json({ message: 'Name and Href are required!' });
+                .json({ message: 'Name and Slug are required!' });
         }
 
         const category = await prisma.category.create({
             data: {
                 name,
-                href, // Ví dụ: "/archive-stay/hotel"
+                slug, // Ví dụ: "/archive-stay/hotel"
                 color, // Ví dụ: "blue"
                 icon, // Ví dụ: "🏨"
             },
@@ -64,14 +64,14 @@ export const createCategory = async (req: Request, res: Response) => {
 // 3. CẬP NHẬT CATEGORY (Admin)
 export const updateCategory = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { name, href, color, icon } = req.body;
+    const { name, slug, color, icon } = req.body;
 
     try {
         const category = await prisma.category.update({
             where: { id: Number(id) },
             data: {
                 name,
-                href,
+                slug,
                 color,
                 icon,
             },
@@ -92,7 +92,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
     try {
         // Kiểm tra xem có Hotel nào đang dùng category này không?
         const countHotels = await prisma.hotel.count({
-            where: { listingCategoryId: Number(id) },
+            where: { categoryId: Number(id) },
         });
 
         if (countHotels > 0) {

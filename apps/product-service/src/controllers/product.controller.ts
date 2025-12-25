@@ -37,7 +37,7 @@ export const getHotels = async (req: Request, res: Response) => {
                 : undefined,
 
             // 2. Filter theo Category (dựa vào quan hệ bảng Category)
-            listingCategoryId: category ? Number(category) : undefined,
+            categoryId: category ? Number(category) : undefined,
 
             // 3. Filter theo khoảng giá (Decimal)
             price: {
@@ -158,7 +158,7 @@ export const createHotel = async (req: Request, res: Response) => {
                 description: data.description,
                 price: data.price,
                 address: data.address,
-                href: data.href, // Hoặc href nếu bạn chưa đổi
+                slug: data.slug, // Hoặc href nếu bạn chưa đổi
                 
                 // --- NHÓM ẢNH ---
                 featuredImage: data.featuredImage,
@@ -174,7 +174,7 @@ export const createHotel = async (req: Request, res: Response) => {
                 map: data.map,
 
                 // --- NHÓM QUAN HỆ ---
-                listingCategoryId: data.listingCategoryId,
+                categoryId: data.categoryId,
                 authorId: data.authorId,
 
                 // ===============================================
@@ -253,4 +253,82 @@ export const deleteHotel = async (req: Request, res: Response) => {
 export const getCategories = async (req: Request, res: Response) => {
     const categories = await prisma.category.findMany();
     res.status(200).json(categories);
+};
+
+// 7. GET RELATED HOTELS (Dựa trên cùng category, ngoại trừ chính nó)
+export const getRelatedHotels = async (req: Request, res: Response) => {
+    try {
+        // 1. Lấy tham số từ Request
+        const currentHotelId = parseInt(req.params.id!); // ID khách sạn đang xem
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 4; // Mặc định hiện 4 cái
+        const skip = (page - 1) * limit;
+
+        if (!currentHotelId) {
+            return res.status(400).json({ message: "Thiếu Hotel ID" });
+        }
+
+        // 2. Tìm khách sạn hiện tại để biết nó thuộc Category nào
+        const currentHotel = await prisma.hotel.findUnique({
+            where: { id: currentHotelId },
+            select: { categoryId: true } // Chỉ cần lấy CategoryId
+        });
+
+        if (!currentHotel) {
+            return res.status(404).json({ message: "Không tìm thấy khách sạn" });
+        }
+
+        const categoryId = currentHotel.categoryId;
+
+        // 3. Query tìm các khách sạn liên quan
+        // Điều kiện: Cùng Category VÀ ID khác ID hiện tại
+        const whereCondition = {
+            categoryId: categoryId,
+            id: { not: currentHotelId }, // Loại trừ chính nó ($ne trong mongo)
+            // isAds: false // (Tùy chọn) Nếu muốn lọc quảng cáo
+        };
+
+        // Thực hiện 2 lệnh song song: Lấy data và Đếm tổng (để phân trang)
+        const [hotels, totalCount] = await Promise.all([
+            prisma.hotel.findMany({
+                where: whereCondition,
+                take: limit,
+                skip: skip,
+                orderBy: {
+                    viewCount: 'desc', // Ưu tiên hiện cái nào nhiều view (hoặc reviewStart)
+                },
+                // Chọn các trường cần thiết để hiển thị Card (không cần lấy hết description dài dòng)
+                select: {
+                    id: true,
+                    title: true,
+                    slug: true,     // Dùng slug để click
+                    price: true,
+                    address: true,
+                    featuredImage: true,
+                    reviewStart: true,
+                    reviewCount: true,
+                    saleOff: true,
+                }
+            }),
+            prisma.hotel.count({ where: whereCondition }),
+        ]);
+
+        // 4. Trả về kết quả
+        return res.status(200).json({
+            data: hotels,
+            pagination: {
+                total: totalCount,
+                page: page,
+                totalPages: Math.ceil(totalCount / limit),
+                limit: limit
+            }
+        });
+
+    } catch (error: any) {
+        console.log("Get related hotels error:", error);
+        return res.status(500).json({ 
+            message: "Lỗi server", 
+            error: error.message 
+        });
+    }
 };
