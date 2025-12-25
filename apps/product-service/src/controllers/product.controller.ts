@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma, Prisma } from '@repo/product-db'; // Giả sử db chung
-import { producer } from '../utils/kafka';
+// import { producer } from '../utils/kafka';
 
 // 1. GET HOTELS (Lọc nâng cao: Giá, Search, Category, Bedroom, Sort)
 export const getHotels = async (req: Request, res: Response) => {
@@ -142,42 +142,67 @@ export const getHotel = async (req: Request, res: Response) => {
 // 3. CREATE HOTEL (Dành cho Host)
 export const createHotel = async (req: Request, res: Response) => {
     try {
-        // req.user.id đến từ middleware auth
-        // const authorId = req.user?.id;
-        const authorId = 2; // Giả sử lấy từ token decoded
+        const data = req.body;
 
-        const data = req.body; // Cần validate kỹ hơn bằng Zod/Joi
-
-        // Validation cơ bản (Thay thế đoạn check color/images cũ)
-        if (!data.title || !data.price || !data.address) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
-
-        // Xử lý saleOffPercent từ chuỗi "-5%..." nếu frontend gửi string
+        // Xử lý logic SaleOff (chuyển "-10%..." thành số)
         let salePercent = 0;
-        if (data.saleOff) {
+        if (data.saleOff && typeof data.saleOff === 'string') {
             const match = data.saleOff.match(/(\d+)%/);
             if (match) salePercent = parseInt(match[1], 10);
         }
 
         const hotel = await prisma.hotel.create({
             data: {
-                ...data,
-                authorId: Number(authorId), // Link với user đang login
-                saleOffPercent: salePercent,
-                // map: data.map // Đảm bảo frontend gửi đúng Json {lat, lng}
+                // --- NHÓM CƠ BẢN ---
+                title: data.title,
+                description: data.description,
+                price: data.price,
+                address: data.address,
+                href: data.href, // Hoặc href nếu bạn chưa đổi
+                
+                // --- NHÓM ẢNH ---
+                featuredImage: data.featuredImage,
+                galleryImgs: data.galleryImgs,
+
+                // --- NHÓM TIỆN ÍCH ---
+                amenities: data.amenities,
+                maxGuests: data.maxGuests,
+                bedrooms: data.bedrooms,
+                bathrooms: data.bathrooms,
+                
+                // --- NHÓM MAP ---
+                map: data.map,
+
+                // --- NHÓM QUAN HỆ ---
+                listingCategoryId: data.listingCategoryId,
+                authorId: data.authorId,
+
+                // ===============================================
+                // --- SỬA Ở ĐÂY: CHO PHÉP NHẬP DỮ LIỆU FAKE ---
+                // ===============================================
+                
+                // 1. Nếu data gửi lên có thì lấy, không thì mặc định 0
+                reviewCount: data.reviewCount || 0,
+                viewCount: data.viewCount || 0,
+                reviewStart: data.reviewStart || 0, // Lưu ý chính tả: Start hay Star?
+                commentCount: data.commentCount || 0,
+                
+                // 2. Boolean
+                like: data.like !== undefined ? data.like : false,
+                isAds: data.isAds !== undefined ? data.isAds : false,
+
+                // 3. Chuỗi SaleOff (Text hiển thị)
+                // Lúc nãy mình quên dòng này nên nó bị NULL
+                saleOff: data.saleOff, 
+                saleOffPercent: salePercent, // Số % để tính toán
             },
         });
 
-        // Gửi Kafka event (nếu cần sync với Search Service hoặc Analytics)
-        producer.send('hotel.created', {
-            value: { id: hotel.id, title: hotel.title },
-        });
-
         res.status(201).json(hotel);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Create failed' });
+
+    } catch (error: any) {
+        console.log("Error:", error);
+        res.status(500).json({ message: 'Create failed', error: error.message });
     }
 };
 
@@ -217,7 +242,7 @@ export const deleteHotel = async (req: Request, res: Response) => {
             where: { id: Number(id) },
         });
 
-        producer.send('hotel.deleted', { value: Number(id) });
+        // producer.send('hotel.deleted', { value: Number(id) });
         return res.status(200).json(deletedHotel);
     } catch (error) {
         return res.status(400).json({ message: 'Cannot delete hotel' });

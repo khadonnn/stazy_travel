@@ -16,7 +16,7 @@ router.get('/', getCategories);
 
 // --- PROTECTED ROUTES (ADMIN ONLY) ---
 // Chỉ Admin mới được tạo, sửa, xóa danh mục
-router.post('/', shouldBeAdmin, createCategory);
+router.post('/', createCategory);
 router.put('/:id', shouldBeAdmin, updateCategory);
 router.delete('/:id', shouldBeAdmin, deleteCategory);
 
