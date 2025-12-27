@@ -209,28 +209,42 @@ export const createHotel = async (req: Request, res: Response) => {
 // 4. UPDATE HOTEL
 export const updateHotel = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const data = req.body;
+    let data = req.body;
 
-    // Logic kiểm tra quyền sở hữu nên nằm ở middleware hoặc check tại đây
-    // const existingHotel = await prisma.hotel.findUnique({ where: { id }});
-    // if (existingHotel.authorId !== req.user.id) return 403;
+    // 🔥 Loại bỏ các field không được phép update
+    const { id: _id, date: _date, ...safeData } = data; // dùng destructuring để loại bỏ
 
-    // Tự động tính lại salePercent nếu user sửa saleOff string
-    if (data.saleOff !== undefined) {
-        let salePercent = 0;
-        if (data.saleOff) {
-            const match = data.saleOff.match(/(\d+)%/);
-            if (match) salePercent = parseInt(match[1], 10);
+    // Nếu bạn CẦN update `date`, hãy chuẩn hóa nó → ISO
+    if (data.date) {
+        // Chuyển "Dec 19, 2024" → Date → ISO string
+        const dateObj = new Date(data.date);
+        if (isNaN(dateObj.getTime())) {
+            return res.status(400).json({ error: 'Invalid date format' });
         }
-        data.saleOffPercent = salePercent;
+        safeData.date = dateObj.toISOString(); // hoặc dateObj.toISOString().split('T')[0] nếu chỉ cần ngày
     }
 
-    const updatedHotel = await prisma.hotel.update({
-        where: { id: Number(id) },
-        data,
-    });
+    // Tự động tính lại salePercent
+    if (safeData.saleOff !== undefined) {
+        let salePercent = 0;
+        if (safeData.saleOff) {
+            const match = safeData.saleOff.match(/(\d+)%/);
+            if (match) salePercent = parseInt(match[1], 10);
+        }
+        safeData.saleOffPercent = salePercent;
+    }
 
-    return res.status(200).json(updatedHotel);
+    try {
+        const updatedHotel = await prisma.hotel.update({
+            where: { id: Number(id) },
+            data: safeData, // ✅ chỉ truyền safeData
+        });
+
+        return res.status(200).json(updatedHotel);
+    } catch (error) {
+        console.error('[Update Hotel Error]', error);
+        return res.status(500).json({ message: 'Update failed', error: (error as Error).message });
+    }
 };
 
 // 5. DELETE HOTEL

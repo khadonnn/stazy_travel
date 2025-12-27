@@ -43,7 +43,7 @@ export type TwMainColor =
 export interface StayCategory {
     id: number;
     name: string;
-    href: string;
+    slug: string;
     color?: TwMainColor;
     icon?: string;
     count?: number;

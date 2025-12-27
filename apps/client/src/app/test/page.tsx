@@ -4,7 +4,7 @@ const TestPage = async () => {
     const { getToken } = await auth();
     const token = await getToken();
 
-    console.log(token);
+    console.log("token", token);
 
     const resProduct = await fetch('http://localhost:8000/test', {
         headers: {

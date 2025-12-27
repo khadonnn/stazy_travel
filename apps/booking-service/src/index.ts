@@ -1,6 +1,8 @@
 import Fastify from 'fastify';
 import { clerkClient, clerkPlugin, getAuth } from '@clerk/fastify';
 import { shouldBeUser } from './middleware/authMiddleware.js';
+import { connectBookingDB } from '@repo/booking-db';
+import { bookingRoute } from './routes/booking.js';
 const fastify = Fastify({ logger: true });
 fastify.register(clerkPlugin);
 
@@ -17,13 +19,15 @@ fastify.get('/test', { preHandler: shouldBeUser }, (request, reply) => {
         userId: request.userId,
     });
 });
+fastify.register(bookingRoute)
 
 const start = async () => {
     try {
+        await connectBookingDB();
         await fastify.listen({ port: 8001 });
         fastify.log.info(`Order service listening on port 8001`);
     } catch (err) {
-        fastify.log.error(err);
+        console.log(err)
         process.exit(1);
     }
 };
