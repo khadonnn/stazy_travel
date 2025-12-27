@@ -87,12 +87,14 @@ for user in users:
         # Quyết định hành động
         rand_val = random.random()
         if rand_val < 0.7:
-            action, weight = "view", 0.2
+            # 70% là xem -> Điểm thấp nhất (1.0)
+            action, weight = "VIEW", 1.0
         elif rand_val < 0.9:
-            action, weight = "like", 0.7
+            # 20% là thích -> Điểm trung bình (3.0)
+            action, weight = "LIKE", 3.0
         else:
-            action, weight = "book", 1.0
-
+            # 10% là đặt -> Điểm cao nhất (5.0)
+            action, weight = "BOOK", 5.0
         days_ago = random.randint(0, 30)
         timestamp = datetime.now() - timedelta(days=days_ago)
 

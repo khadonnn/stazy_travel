@@ -18,7 +18,7 @@ model User {
   
   // Thông tin đăng nhập & Cơ bản
   email       String    @unique
-  password    String    
+  password    String?    
   name        String    
   nickname    String?
   phone       String?
@@ -38,7 +38,8 @@ model User {
 
   // Quan hệ: Một User có thể đăng nhiều Hotel
   hotels      Hotel[]
-
+  interactions Interaction[]
+recommendation Recommendation?
   @@map("users")
 }
 
@@ -98,6 +99,7 @@ author            User     @relation(fields: [authorId], references: [id])
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
+interactions Interaction[]
   @@map("hotels")
 }
 
@@ -123,4 +125,38 @@ model Category {
   hotels    Hotel[]
 
   @@map("categories")
+}
+
+// 1. Bảng lưu hành vi người dùng (Input cho AI)
+model Interaction {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  hotelId   Int
+  hotel     Hotel    @relation(fields: [hotelId], references: [id])
+  
+  // Hành động: VIEW (1 điểm), LIKE (3 điểm), BOOK (5 điểm)
+  action    String   
+  weight    Float    // Điểm số quy đổi từ hành động
+  
+  createdAt DateTime @default(now())
+
+  @@map("interactions")
+}
+
+// 2. Bảng lưu kết quả gợi ý (Output của AI)
+// Để Frontend chỉ việc query bảng này là ra list gợi ý
+model Recommendation {
+  id        Int      @id @default(autoincrement())
+  userId    String 
+  
+  
+  // List các hotel ID được gợi ý (lưu dạng mảng số nguyên)
+  hotelIds  Int[]    
+  
+  user     User     @relation(fields: [userId], references: [id])
+  updatedAt DateTime @updatedAt
+  @@unique([userId]) // Mỗi user chỉ có 1 dòng gợi ý mới nhất
+  @@map("recommendations")
 }

@@ -23,11 +23,13 @@ import ChatWidget from '@/components/chat/ChatWidget';
 import { ClerkProvider } from '@clerk/nextjs';
 import { viVN } from '@clerk/localizations';
 import BackgroundWave from '@/components/BackgroundWave';
-export default function RootLayout({
+import { syncUserToDB } from "@/lib/clerk-sync";
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    await syncUserToDB();
     return (
         <ClerkProvider
             localization={viVN}

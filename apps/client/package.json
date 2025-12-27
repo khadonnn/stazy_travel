@@ -45,7 +45,8 @@
         "react-swipeable": "^7.0.2",
         "tailwind-merge": "^3.3.1",
         "zod": "^4.1.13",
-        "zustand": "^5.0.8"
+        "zustand": "^5.0.8",
+        "@repo/product-db": "workspace:*"
     },
     "devDependencies": {
         "@repo/eslint-config": "workspace:*",

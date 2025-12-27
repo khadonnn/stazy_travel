@@ -1,6 +1,6 @@
 'use client';
 import { Clock, MapPin } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useId } from 'react';
 import ClearDataButton from './ClearDataButton';
 import {
     Popover,
@@ -25,6 +25,7 @@ const LocationInput = ({
 }: LocationInputProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+     const popoverId = useId().replace(/:/g, '-');
 
     const [value, setValue] = useState('');
     const [isOpen, setIsOpen] = useState(autoFocus);
@@ -107,6 +108,8 @@ const LocationInput = ({
                 <div
                     className={`relative flex ${className}`}
                     ref={containerRef}
+                     suppressHydrationWarning={true}
+                     aria-controls={`location-popover-${popoverId}`}
                 >
                     <div
                         className={`flex z-10 flex-1 relative [ nc-hero-field-padding ] shrink-0 items-center space-x-3 cursor-pointer focus:outline-none text-left ${
@@ -154,6 +157,7 @@ const LocationInput = ({
             <PopoverContent
                 className='w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 p-4 sm:p-6 rounded-3xl shadow-xl border-0 max-h-96 overflow-y-auto'
                 align='start'
+                 id={`location-popover-${popoverId}`}
             >
                 {value ? renderSearchValue() : renderRecentSearches()}
             </PopoverContent>

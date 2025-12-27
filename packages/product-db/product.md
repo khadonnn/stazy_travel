@@ -38,3 +38,5 @@ pnpm prisma init --datasource-provider postgresql --output ../generated/prisma
 ## studio local (packages/product-db)
 > pnpm prisma studios
 
+npx prisma migrate dev
+pnpm --filter @repo/product-db exec prisma migrate dev --name add_recommendation_relation
