@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { shouldBeUser } from "../middleware/authMiddleware";
+import { shouldBeAdmin, shouldBeUser } from "../middleware/authMiddleware";
 import { Booking } from "@repo/booking-db";
 
 // Định nghĩa kiểu dữ liệu Body gửi lên để TS hiểu
@@ -129,7 +129,7 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
   // 3. API ADMIN (Xem tất cả)
   fastify.get(
     "/bookings",
-    // { preHandler: shouldBeAdmin }, // Nhớ bật lại auth admin
+    { preHandler: shouldBeAdmin }, // Nhớ bật lại auth admin
     async (request, reply) => {
       const bookings = await Booking.find().sort({ createdAt: -1 });
       return reply.send(bookings);

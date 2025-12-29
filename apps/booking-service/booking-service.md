@@ -19,3 +19,8 @@
 > create "dev" : "tsx --env-file=.env --watch src/index.ts"
 > create .env
 > create tsconfig.json
+
+# role claims clerk sessions
+{
+  "role": "user"
+}

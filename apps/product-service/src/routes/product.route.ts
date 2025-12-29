@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { createHotel, getHotel, getHotels, getRelatedHotels, updateHotel } from '../controllers/product.controller';
+import { createHotel, getHotel, getHotels, getRelatedHotels, updateHotel,deleteHotel } from '../controllers/product.controller';
+import { shouldBeAdmin } from '../middleware/authMiddleware';
 
 const router: Router = Router();
 
@@ -17,7 +18,8 @@ router.post('/', createHotel);
 router.get("/", getHotels)
 router.get("/:id",getHotel)
 router.get("/:id/related",getRelatedHotels)
-router.put('/:id', updateHotel); 
+router.put('/:id',shouldBeAdmin, updateHotel); 
+router.delete('/:id', shouldBeAdmin, deleteHotel);
 // router.put('/:id', requireAuth, requireAuthor, HotelController.updateHotel); // Chỉ tác giả mới được sửa
 // router.delete('/:id', requireAuth, requireAuthor, HotelController.deleteHotel);
 export default router;

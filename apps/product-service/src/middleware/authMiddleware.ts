@@ -57,6 +57,7 @@ export const shouldBeHotelOwner = async (
     res: Response,
     next: NextFunction,
 ) => {
+    // 1. Lấy User ID từ Clerk Token
     const auth = getAuth(req);
     const clerkUserId = auth.userId;
 
@@ -70,49 +71,33 @@ export const shouldBeHotelOwner = async (
     }
 
     try {
-        // A. Lấy thông tin Hotel và Author của nó từ DB
+        // 2. Lấy thông tin Hotel (Chỉ cần lấy trường userId chủ sở hữu)
         const hotel = await prisma.hotel.findUnique({
             where: { id: hotelId },
-            include: { author: true }, // Include bảng User để check thông tin
+            select: { 
+                authorId: true 
+            } 
         });
 
         if (!hotel) {
             return res.status(404).json({ message: 'Hotel not found!' });
         }
 
-        // B. Kiểm tra Admin (Admin luôn có quyền sửa/xóa tất cả)
+        // 3. Check Admin (Quyền lực tối cao - cho qua luôn)
         const claims = auth.sessionClaims as CustomJwtSessionClaims;
-        if (claims.metadata?.role === 'admin') {
+        if (claims?.metadata?.role === 'admin') {
             return next();
         }
 
-        // C. Kiểm tra quyền sở hữu (Ownership)
-        // Trường hợp 1: Nếu trong bảng User bạn có lưu `clerkId`
-        // (Giả sử bảng User có trường clerkId lưu string của Clerk)
-        /* if (hotel.author.clerkId !== clerkUserId) {
-         return res.status(403).json({ message: "You are not the owner!" });
-       }
-    */
-
-        // Trường hợp 2: Nếu bạn chưa có trường clerkId, ta so sánh Email (nếu email đồng bộ)
-        // Hoặc nếu bạn dùng bảng User tạm thời, bạn phải tìm User trong DB ứng với clerkUserId này
-
-        // --> GIẢI PHÁP TỐT NHẤT: Tìm User trong DB đang giữ Clerk ID này
-        const currentUser = await prisma.user.findUnique({
-            where: {
-                // Lưu ý: Schema User của bạn CẦN có trường email hoặc clerkId map với Clerk
-                email: claims.email, // Hoặc clerkId: clerkUserId
-            },
-        });
-
-        if (!currentUser || hotel.authorId !== currentUser.id) {
-            return res
-                .status(403)
-                .json({ message: 'Forbidden: You do not own this hotel!' });
+        // 4. Check Owner (So sánh trực tiếp)
+        // Vì User ID trong DB = Clerk ID, nên so sánh chuỗi là xong.
+        if (hotel.authorId !== clerkUserId) {
+            return res.status(403).json({ message: 'Forbidden: You do not own this hotel!' });
         }
 
-        // Nếu khớp, cho phép đi tiếp
+        // 5. Nếu trùng khớp -> Cho qua
         return next();
+
     } catch (error) {
         console.error('Auth Middleware Error:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
