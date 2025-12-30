@@ -10,6 +10,7 @@ const EXCLUDED_PATHS = [
     '/admin',
     '/api-docs',
     '/hotels',
+    '/cart',
     // Thêm route bạn muốn ẩn wave vào đây
 ];
 

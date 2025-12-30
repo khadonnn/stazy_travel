@@ -1,9 +1,19 @@
 import AvatarCus from '@/shared/AvartarCus';
 import { Star } from 'lucide-react';
-import useAuthors from '@/data/jsons/__authors.json';
 import Link from 'next/link';
-import { AuthorType } from '@/types/stay';
-import authorsData from '@/data/jsons/__authors.json';
+// 1. Import file JSON do Python tạo ra
+import usersData from '@/data/jsons/__users.json';
+
+// 2. Định nghĩa kiểu dữ liệu khớp với output của Python
+interface UserType {
+    id: string | number;
+    name: string;
+    avatar: string;
+    role: string;
+    email: string;
+    // Các trường khác nếu cần (jobName, desc...)
+}
+
 interface CommentListingDataType {
     name: string;
     avatar?: string;
@@ -65,17 +75,23 @@ const CommentListing = ({
     );
 };
 
-// Hàm random n phần tử không trùng lặp từ mảng
+// Hàm random n phần tử không trùng lặp
 function getRandomElements<T>(arr: T[], n: number): T[] {
+    if (!arr || arr.length === 0) return [];
     if (arr.length <= n) return arr.slice(0, n);
+    
     const result: T[] = [];
     const used = new Set<number>();
-    while (result.length < n) {
+    
+    // Safety break để tránh vòng lặp vô hạn nếu có lỗi
+    let attempts = 0;
+    while (result.length < n && attempts < arr.length * 2) {
         const idx = Math.floor(Math.random() * arr.length);
         if (!used.has(idx)) {
             used.add(idx);
             result.push(arr[idx]!);
         }
+        attempts++;
     }
     return result;
 }
@@ -83,50 +99,46 @@ function getRandomElements<T>(arr: T[], n: number): T[] {
 const COMMENT_DATA = [
     {
         date: 'May 20, 2025',
-        comment:
-            'Vị trí tuyệt vời và nhân viên rất thân thiện. Giường rất thoải mái và phòng rất sạch sẽ. Tôi chắc chắn sẽ quay lại đây.',
+        comment: 'Vị trí tuyệt vời và nhân viên rất thân thiện. Giường rất thoải mái và phòng rất sạch sẽ. Tôi chắc chắn sẽ quay lại đây.',
         starPoint: 5,
     },
     {
         date: 'June 10, 2025',
-        comment:
-            'Khách sạn nằm ngay trung tâm, tiện đi lại. Tuy nhiên phòng hơi nhỏ hơn so với hình ảnh.',
+        comment: 'Khách sạn nằm ngay trung tâm, tiện đi lại. Tuy nhiên phòng hơi nhỏ hơn so với hình ảnh.',
         starPoint: 4,
     },
     {
         date: 'July 5, 2025',
-        comment:
-            'Giá cả hợp lý, dịch vụ ổn. Mình đi công tác ở đây khá thoải mái. Nhân viên lễ tân hỗ trợ nhanh.',
+        comment: 'Giá cả hợp lý, dịch vụ ổn. Mình đi công tác ở đây khá thoải mái. Nhân viên lễ tân hỗ trợ nhanh.',
         starPoint: 4,
     },
     {
         date: 'August 15, 2025',
-        comment:
-            'View đẹp, bữa sáng ngon miệng. Chỉ có điều wifi hơi chập chờn vào buổi tối.',
+        comment: 'View đẹp, bữa sáng ngon miệng. Chỉ có điều wifi hơi chập chờn vào buổi tối.',
         starPoint: 3,
     },
 ];
 
 const CommentList = () => {
-    // const { authors, loading } = useAuthors();
-    // // console.log("comment authors", authors);
+    // 3. Ép kiểu dữ liệu JSON sang UserType[]
+    const USERS: UserType[] = usersData as UserType[];
 
-    // if (loading) {
-    //     return <div>Đang tải bình luận...</div>;
-    // }
-
-    // Random 4 author từ 0-29 nếu đủ, nếu không thì lấy bấy nhiêu có thể
-    const AUTHORS: AuthorType[] = authorsData as AuthorType[];
-    const randomAuthors = getRandomElements(AUTHORS, 4);
+    // Lấy ngẫu nhiên 4 user từ danh sách (có thể là Author hoặc User thường đều được)
+    // Nếu bạn chỉ muốn lấy User thường, hãy filter: USERS.filter(u => u.role === 'USER')
+    const randomUsers = getRandomElements(USERS, 4);
 
     const DEMO_COMMENTS: CommentListingDataType[] = COMMENT_DATA.map(
-        (c, i) => ({
-            name: randomAuthors[i]?.displayName || `Khách ${i + 1}`,
-            avatar: randomAuthors[i]?.avatar,
-            date: c.date,
-            comment: c.comment,
-            starPoint: c.starPoint,
-        }),
+        (c, i) => {
+            const user = randomUsers[i];
+            return {
+                // Python output field là 'name', code cũ là 'displayName' nên cần sửa lại
+                name: user?.name || `Khách ẩn danh ${i + 1}`,
+                avatar: user?.avatar,
+                date: c.date,
+                comment: c.comment,
+                starPoint: c.starPoint,
+            };
+        }
     );
 
     return (

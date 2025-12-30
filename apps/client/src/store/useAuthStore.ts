@@ -119,7 +119,6 @@ export const useAuthStore = create<AuthState>()(
                     if (data.gender && data.gender !== '')
                         formData.append('gender', data.gender);
 
-                    // Laravel cần _method=PUT cho multipart form data
                     formData.append('_method', 'PUT');
 
                     // Debug: Log formData contents

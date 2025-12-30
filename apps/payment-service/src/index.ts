@@ -3,8 +3,15 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
 import { shouldBeUser } from './middleware/authMiddleware.js';
+import { ProductCode, VNPay, VnpLocale, ignoreLogger, dateFormat } from 'vnpay';
+
+
+import { cors } from "hono/cors";
+import paymentRoute from './routes/payment.js';
+
 const app = new Hono();
 app.use('*', clerkMiddleware());
+app.use("*", cors({ origin: ["http://localhost:3002"] }));
 app.get('/health', (c) => {
     return c.json({
         status: 'ok',
@@ -18,6 +25,7 @@ app.get('/test', shouldBeUser, (c) => {
         userId: c.get('userId'),
     });
 });
+app.route("/api", paymentRoute);
 const start = async () => {
     try {
         serve({

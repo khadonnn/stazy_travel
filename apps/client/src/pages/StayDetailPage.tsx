@@ -28,8 +28,7 @@ import {
 } from 'lucide-react';
 
 import Link from 'next/link';
-// Sửa đường dẫn imports (Giả định đường dẫn đúng)
-import { Amenities_demos } from '@/constants/amenities'; // Giả định constants/amenities
+import { Amenities_demos } from '@/constants/amenities';
 import FiveStar from '@/shared/FiveStar';
 import CommentListing from '@/components/Comments';
 import StartRating from '@/components/StarRating';
@@ -37,20 +36,19 @@ import LikeSaveBtns from '@/shared/LikeSaveBtn';
 import StayDatesRangeInput from '@/components/StayDatesRangeInput';
 import SectionDateRange from '@/components/SectionDaterange';
 import GuestsInput from '@/components/GuestsInput';
-import type { AuthorType, StayDataType } from '@/types/stay';
+import type { StayDataType, AuthorType } from '@/types/stay';
 import LocationMap from '@/components/LocationMap';
 import { useBookingStore } from '@/store/useBookingStore';
-import { calculatorPrice } from '@/lib/utils/calculatorPrice'; // Giả định lib/utils/calculatorPrice
-import { getRandomDescription } from '@/lib/utils/stayDes'; // Giả định lib/utils/stayDes
+import { calculatorPrice } from '@/lib/utils/calculatorPrice';
+import { getRandomDescription } from '@/lib/utils/stayDes';
 import ModalDetail from '@/components/ModelDetail';
 import CategoryBadge from '@/shared/CategoryBadge';
 import { useCartStore } from '@/store/useCartStore';
-import { formatPrice } from '@/lib/utils/formatPrice'; // Giả định lib/utils/formatPrice
-import { useAuthStore } from '@/store/useAuthStore';
-// import api from '@/lib/api/axios'; // Đã xóa API call vì dùng Mock Data
+import { formatPrice } from '@/lib/utils/formatPrice';
 import { motion } from 'framer-motion';
+// 🔥 1. Import hook useUser từ Clerk
+import { useUser } from '@clerk/nextjs';
 
-// Import Mock Data và Mapper
 import MockData from '@/data/jsons/__homeStay.json';
 import { mapStay, StayApiResponse } from '@/lib/mappers/listings';
 import {
@@ -94,7 +92,7 @@ const getInitialStayData = (id: string) => {
 
 interface StayDetailPageClientProps {
     params: {
-        id: number; // Nhận ID từ props
+        id: number;
     };
 }
 
@@ -104,15 +102,18 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    // 1. Tải Mock Data TỨC THỜI (Synchronous Load)
+    // 1. Tải Mock Data TỨC THỜI
     const initialData = useMemo(() => getInitialStayData(id.toString()), [id]);
 
     const modal = searchParams?.get('modal');
-    const { authUser } = useAuthStore();
+
+    // 🔥 2. Thay thế useAuthStore bằng useUser của Clerk
+    const { isSignedIn, isLoaded } = useUser();
+    
     const { date, guests, checkInDate, checkOutDate } = useBookingStore();
     const isDisabled = !checkInDate || !checkOutDate;
 
-    // ✅ Thay thế location.state bằng state cục bộ cho modal ảnh
+    // ✅ State cục bộ cho modal ảnh
     const [modalImageState, setModalImageState] = useState<{
         images: string[];
         startIndex: number;
@@ -132,11 +133,10 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
         amenities?: string;
     };
 
-    // 2. Khởi tạo state bằng Mock Data
+    // 2. Khởi tạo state
     const [stayData, setStayData] = useState<ExtendedStayDataType | null>(
         initialData.stayData,
     );
-    // ❌ Loại bỏ state loading/error ban đầu vì data đã được tải synchronous
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(
         initialData.stayData ? null : `Không tìm thấy khách sạn có ID: ${id}`,
@@ -146,35 +146,12 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     );
     const [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false);
 
-    // 3. CHÚ THÍCH (COMMENT) LẠI USEEFFECT ĐỂ DÀNH CHO VIỆC TẢI DỮ LIỆU BẤT ĐỒNG BỘ TRONG TƯƠNG LAI
-    /* useEffect(() => {
-        const fetchStay = async () => {
-            console.log('🏨 Đang cố gắng fetch từ API...');
-            setLoading(true);
-            setError(null);
-            try {
-                // Ví dụ API call trong tương lai:
-                // const res = await api.get(`/hotels/${id}`);
-                // setStayData(res.data.data);
-                // setAuthor(await fetchAuthor(res.data.data.authorId));
-            } catch (error) {
-                console.error('❌ Lỗi khi fetch stay:', error);
-                setError('Không thể tải thông tin khách sạn. Vui lòng thử lại sau.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (id && !initialData.stayData) { // Chỉ fetch nếu data mock không tồn tại
-             // fetchStay();
-        }
-    }, [id]);
-    */
     const imagesForModal = useMemo(() => {
         if (!modalImageState) return [];
         return modalImageState.images;
     }, [modalImageState]);
-    // ✅ Hàm mở modal ảnh — lưu vào state thay vì router state
+
+    // ✅ Hàm mở modal ảnh
     const handleOpenModalImageGallery = (startIndex: number) => {
         if (!stayData) return;
         const images = [
@@ -182,14 +159,12 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
             ...(stayData.galleryImgs || []),
         ].filter(Boolean);
         setModalImageState({ images, startIndex });
-        // Thêm ?modal=open vào URL
         const newUrl = `${pathname}?modal=open`;
         router.push(newUrl, { scroll: false });
     };
 
     const handleCloseModal = () => {
         setModalImageState(null);
-        // Xóa query param modal=open
         router.push(pathname || '/', { scroll: false });
     };
 
@@ -200,12 +175,11 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     if (loading) {
         return (
             <div className='flex items-center justify-center h-screen'>
-                {/* Không còn loading ban đầu, nhưng giữ lại UI loading nếu cần dùng lại state này */}
             </div>
         );
     }
 
-    // Nếu có lỗi hoặc không tìm thấy data sau khi tải
+    // Nếu có lỗi hoặc không tìm thấy data
     if (error || !stayData) {
         return (
             <div className='flex items-center justify-center h-screen'>
@@ -277,16 +251,20 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     const { nights, total } = calculatorPrice({ pricePerNight, date });
     const totalGuests = guests.adults + guests.children + guests.infants;
 
-    const navigateTo = (href: string) => {
-        router.push(href);
-    };
-
+    // 🔥 3. Cập nhật logic handleAddToCart dùng Clerk
     const handleAddToCart = () => {
-        if (!authUser) {
+        // Chờ Clerk load xong trạng thái
+        if (!isLoaded) return;
+
+        // Nếu chưa đăng nhập
+        if (!isSignedIn) {
             console.error('Vui lòng đăng nhập để đặt phòng.');
-            router.push('/login');
+            // Chuyển hướng sang trang sign-in của Clerk và quay lại trang này sau khi xong
+            const redirectUrl = encodeURIComponent(pathname || '/');
+            router.push(`/sign-in?redirect_url=${redirectUrl}`);
             return;
         }
+
         if (!stayData || isDisabled) return;
 
         addItem({
@@ -302,11 +280,8 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
         const thumbs = galleryImgs?.slice(0, 4) || [];
 
         return (
-            /* JSX */
             <header className='rounded-md sm:rounded-xl overflow-hidden relative mt-4'>
-                {/* Outer grid: 1 column on mobile, 2 columns on sm+ (left 2fr, right 1fr) */}
                 <div className='grid grid-cols-1 sm:grid-cols-[1fr_1fr] gap-2 h-[636px]'>
-                    {/* Left big image (fills full height) */}
                     <div
                         className='relative rounded-md overflow-hidden cursor-pointer h-full'
                         onClick={() => handleOpenModalImageGallery(0)}
@@ -320,7 +295,6 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
                         <div className='absolute inset-0 bg-black bg-opacity-20 opacity-0 hover:opacity-20 transition-opacity' />
                     </div>
 
-                    {/* Right side: inner 2x2 grid of thumbnails, fills the same height as left */}
                     <div className='grid grid-cols-2 grid-rows-2 gap-2 h-full'>
                         {thumbs
                             .slice(0, 4)
@@ -345,7 +319,6 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
                             ))}
                     </div>
 
-                    {/* Show all photos button - đặt ở trên left image (absolute) */}
                     <button
                         className='absolute left-3 bottom-3 z-10 hidden md:flex items-center px-4 py-2 rounded-xl bg-neutral-100 text-neutral-500 hover:bg-neutral-200'
                         onClick={() => handleOpenModalImageGallery(0)}
@@ -363,18 +336,15 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     const renderSection1 = () => {
         return (
             <div className='listingSection__wrap !space-y-6'>
-                {/* 1. Danh mục */}
                 <div className='flex justify-between items-center'>
                     <CategoryBadge category={category} />
                     <LikeSaveBtns />
                 </div>
 
-                {/* 2. Tiêu đề */}
                 <h2 className='text-2xl sm:text-3xl lg:text-4xl font-semibold'>
                     {title}
                 </h2>
 
-                {/* 3. Đánh giá & Địa điểm */}
                 <div className='flex items-center space-x-4'>
                     <StartRating
                         point={reviewStart}
@@ -387,7 +357,6 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
                     </div>
                 </div>
 
-                {/* 4. Người cho thuê */}
                 <div className='flex items-center'>
                     <Avatar className='h-10 w-10 '>
                         <AvatarImage
@@ -408,10 +377,8 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
                     </span>
                 </div>
 
-                {/* 5. Phân cách */}
                 <Separator className='my-4' />
 
-                {/* 6. Thông tin căn hộ */}
                 <div className='flex items-center justify-between xl:justify-start space-x-8 xl:space-x-12 text-sm text-neutral-700 dark:text-neutral-300'>
                     <div className='flex items-center space-x-2'>
                         <User className='w-5 h-5' />
@@ -466,8 +433,6 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
         );
     };
 
-    // Thêm logic này vào trong component StayDetailPageClient trước khi render
-    // Lọc danh sách tiện nghi thực tế của khách sạn từ danh sách demo có chứa Icon
     const currentStayAmenities = useMemo(() => {
         if (!stayData?.amenities || !Array.isArray(stayData.amenities))
             return [];
@@ -488,7 +453,6 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
                 </div>
                 <Separator className='my-4' />
 
-                {/* Hiển thị 12 tiện nghi đầu tiên của khách sạn này */}
                 <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 text-sm text-neutral-700 dark:text-neutral-300'>
                     {currentStayAmenities.slice(0, 12).map((item) => {
                         const Icon = item.icon;
@@ -532,7 +496,6 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
                         </DialogDescription>
                     </DialogHeader>
 
-                    {/* Chia theo category nếu muốn chuyên nghiệp hơn, hoặc render list phẳng */}
                     <div className='py-4 grid grid-cols-1 sm:grid-cols-2 gap-4'>
                         {currentStayAmenities.map((item) => {
                             const Icon = item.icon;
@@ -764,20 +727,25 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     };
 
     const renderSidebar = () => {
-        if (!stayData) return null; // Guard clause để tránh null
+        if (!stayData) return null;
 
-        const handleAddToCart = () => {
-            if (!authUser) {
+        const handleSidebarAddToCart = () => {
+            // Chờ Clerk load xong
+            if (!isLoaded) return;
+            
+            // Check auth
+            if (!isSignedIn) {
                 console.error('Vui lòng đăng nhập để đặt phòng.');
-                router.push('/login');
+                const redirectUrl = encodeURIComponent(pathname || '/');
+                router.push(`/sign-in?redirect_url=${redirectUrl}`);
                 return;
             }
             if (!stayData || isDisabled) return;
 
             addItem({
-                ...stayData, // toàn bộ thông tin từ StayDataType
-                nights, // số đêm chọn
-                totalGuests, // tổng khách
+                ...stayData,
+                nights,
+                totalGuests,
             });
             router.push('/cart');
         };
@@ -832,14 +800,13 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
                         </div>
                     </div>
 
-                    {/* Lưu vào store + chuyển sang trang giỏ hàng */}
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <span className='w-full inline-block'>
                                     <Button
                                         className='w-full'
-                                        onClick={handleAddToCart}
+                                        onClick={handleSidebarAddToCart}
                                         disabled={isDisabled}
                                     >
                                         Đặt phòng ngay
@@ -866,12 +833,11 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
 
     return (
         <div className='container py-11 lg:py-16 px-8'>
-            {/* HEADER IMAGES */}
             {renderHeaderImages()}
 
             {/* modal */}
             {modal === 'open' &&
-                imagesForModal.length > 0 && ( // Chỉ render nếu query modal=open VÀ có data
+                imagesForModal.length > 0 && ( 
                     <ModalDetail
                         images={imagesForModal}
                         startIndex={startIndexForModal}

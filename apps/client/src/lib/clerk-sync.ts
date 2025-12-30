@@ -43,8 +43,13 @@ export async function syncUserToDB() {
     });
 
     return user;
-  } catch (error) {
-    console.error("❌ Lỗi đồng bộ User:", error);
-    return null;
+} catch (error) {
+  const err = error as any;
+  const msg = `[CLERK SYNC] ${err.message || 'Unknown error'} (Code: ${err.code || 'N/A'})`;
+  console.log(msg);
+  if (err.meta) {
+    console.log('Meta:', JSON.stringify(err.meta));
   }
+  return null;
+}
 }

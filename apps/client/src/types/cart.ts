@@ -40,6 +40,8 @@ export const PaymentMethod = {
     CreditCard: 'credit_card',
     MOMO: 'momo',
     ZaloPay: 'zalopay',
+    VNPAY: 'vnpay',
+    STRIPE: 'stripe',
 } as const;
 
 export const paymentMethodEnum = z.enum(Object.values(PaymentMethod));

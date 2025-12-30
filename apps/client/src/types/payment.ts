@@ -17,7 +17,7 @@ export type PaymentFormInputs = {
     cardNumber: string;
     expirationDate: string;
     cvv: string;
-    paymentMethod: 'credit_card' | 'momo' | 'zalopay';
+    paymentMethod: 'credit_card' | 'momo' | 'zalopay' | 'vnpay' | 'stripe';
 };
 
 import type { User } from '@/types/profile';
@@ -35,7 +35,7 @@ export interface PaymentData {
     cardNumber: string;
     expirationDate: string;
     cvv: string;
-    paymentMethod: 'credit_card' | 'momo' | 'zalopay';
+    paymentMethod: 'credit_card' | 'momo' | 'zalopay' | 'vnpay' | 'stripe';
 }
 
 //  Tổng thể dữ liệu thanh toán để gửi API
