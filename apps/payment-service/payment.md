@@ -4,3 +4,5 @@ creat new
 
 > pnpm create hono@latest .
 > create tsconfig.json
+
+> them vao client: pnpm add --save @stripe/react-stripe-js@^5.0.0 @stripe/stripe-js@^8.0.0

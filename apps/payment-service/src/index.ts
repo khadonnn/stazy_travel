@@ -8,10 +8,15 @@ import { ProductCode, VNPay, VnpLocale, ignoreLogger, dateFormat } from 'vnpay';
 
 import { cors } from "hono/cors";
 import paymentRoute from './routes/payment.js';
+import sessionRoute from './routes/session.route.js';
+import webhookRoute from './routes/webhooks.route.js';
+import { consumer, producer } from './utils/kafka.js';
+import { runKafkaSubscriptions } from './utils/subscriptions.js';
 
 const app = new Hono();
 app.use('*', clerkMiddleware());
-app.use("*", cors({ origin: ["http://localhost:3002"] }));
+app.use("*", cors({ origin: ["http://localhost:3002"]
+ }));
 app.get('/health', (c) => {
     return c.json({
         status: 'ok',
@@ -25,8 +30,15 @@ app.get('/test', shouldBeUser, (c) => {
         userId: c.get('userId'),
     });
 });
-app.route("/api", paymentRoute);
+app.route("/vnpay", paymentRoute);
+
+app.route("/sessions", sessionRoute)
+app.route("/webhooks", webhookRoute)
+
+
 const start = async () => {
+     Promise.all([await producer.connect(), await consumer.connect()]);
+     await runKafkaSubscriptions()
     try {
         serve({
             fetch: app.fetch,
@@ -38,5 +50,6 @@ const start = async () => {
         process.exit(1);
     }
 };
+
 
 start();

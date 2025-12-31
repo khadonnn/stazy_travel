@@ -13,6 +13,7 @@ import PaymentForm from '@/components/PaymentForm';
 import BookingForm from '@/components/BookingForm';
 import type { BookingFormInputs } from '@/types/cart';
 import { formatPrice } from '@/lib/utils/formatPrice';
+import StripePaymentForm from '@/components/StripePaymentForm';
 
 const steps = [
     { id: 1, title: 'Đặt phòng' },
@@ -135,7 +136,7 @@ const CartPage = () => {
                             ) : activeStep === 2 ? (
                                 <BookingForm setBookingForm={setBookingForm} />
                             ) : activeStep === 3 && bookingForm ? (
-                                <PaymentForm />
+                                <StripePaymentForm bookingInfo={bookingForm} />
                             ) : (
                                 <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm">
                                     Vui lòng hoàn thành thông tin khách hàng ở bước trước để thanh toán.
@@ -154,7 +155,7 @@ const CartPage = () => {
                             <div key={item.id} className='overflow-hidden space-y-4'>
                                 <div className='w-full h-48 overflow-hidden rounded-lg relative bg-gray-100'>
                                     <Image
-                                        src={item.galleryImgs?.[0] || '/placeholder.jpg'} // Fallback image chuẩn hơn
+                                        src={item.featuredImage || '/placeholder.jpg'} // Fallback image chuẩn hơn
                                         alt={item.title}
                                         fill
                                         sizes="(max-width: 768px) 100vw, 33vw"

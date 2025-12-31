@@ -9,12 +9,12 @@ export const createStripeProduct = async (item: StripeProductType) => {
       description: item.description,
       images: item.images, // 🔥 Quan trọng: Để hiển thị ảnh ở trang thanh toán và lấy lại sau này
       metadata: {          // 🔥 Quan trọng: Lưu thông tin tĩnh của Hotel
-        hotelId: item.metadata.hotelId,
-        slug: item.metadata.slug,
-        address: item.metadata.address,
+        hotelId: item.metadata?.hotelId || "",
+        slug: item.metadata?.slug || "",
+        address: item.metadata?.address || "",
       },
       default_price_data: {
-        currency: "usd", // Hoặc "vnd"
+        currency: "vnd", // Hoặc "vnd"
         unit_amount: item.price * 100, // Stripe tính theo cent/xu
       },
     });

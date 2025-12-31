@@ -1,67 +1,126 @@
-// packages/types/src/cart.ts
+import { z } from "zod";
 
-import { User } from "@repo/product-db";
-import z from "zod";
+// ==========================================
+// 1. CONSTANTS & ENUMS (Nguồn sự thật duy nhất)
+// ==========================================
+export const PAYMENT_METHODS = {
+  STRIPE: 'stripe',
+  VNPAY: 'vnpay',
+  MOMO: 'momo',
+  ZALOPAY: 'zalopay',
+  CREDIT_CARD: 'credit_card', // Thêm cái này cho khớp với code cũ của bạn
+} as const;
 
-// 1. Enum Phương thức thanh toán
-export type PaymentMethod = 'stripe' | 'vnpay' | 'momo' | 'zalopay';
-// 2. Schema Validate Form Thanh Toán (Zod)
+export type PaymentMethodType = typeof PAYMENT_METHODS[keyof typeof PAYMENT_METHODS];
+
+// ==========================================
+// 2. SCHEMAS (Validation)
+// ==========================================
+
+// A. Schema Form Thông tin khách hàng (Bước 2)
+export const bookingContactSchema = z.object({
+  name: z.string().min(1, "Vui lòng nhập họ tên"),
+  email: z.email("Email không hợp lệ"),
+  phone: z.string().min(9, "Số điện thoại không hợp lệ"),
+  address: z.string().min(1, "Vui lòng nhập địa chỉ"),
+  city: z.string().optional(),
+});
+
+export type BookingContactInputs = z.infer<typeof bookingContactSchema>;
+
+// B. Schema Form Thanh toán (Bước 3)
+const paymentMethodValues = Object.values(PAYMENT_METHODS) as [string, ...string[]];
+
 export const paymentFormSchema = z.object({
   cardHolder: z.string().min(1, "Vui lòng nhập tên chủ thẻ"),
   cardNumber: z
     .string()
-    .min(1, "Vui lòng nhập số thẻ")
-    .regex(/^[\d\s]+$/, "Số thẻ chỉ được chứa chữ số"), // Regex cơ bản
-  expirationDate: z.string().min(1, "Vui lòng nhập hạn sử dụng (MM/YY)"),
-  cvv: z.string().min(3, "CVV không hợp lệ").max(4, "CVV không hợp lệ"),
-  paymentMethod:  z.enum(['stripe', 'vnpay', 'momo', 'zalopay'] as const),
+    .min(13, "Số thẻ quá ngắn") // Thường thẻ từ 13-19 số
+    .max(19, "Số thẻ quá dài")
+    .regex(/^[\d\s]+$/, "Số thẻ chỉ được chứa chữ số"),
+  expirationDate: z
+    .string()
+    .regex(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/, "Định dạng MM/YY không hợp lệ"),
+  cvv: z.string().regex(/^\d{3,4}$/, "CVV phải là 3 hoặc 4 chữ số"),
+  paymentMethod: z.enum(paymentMethodValues),
 });
 
-// Type được infer từ Zod để dùng trong React Hook Form
 export type PaymentFormInputs = z.infer<typeof paymentFormSchema>;
 
-// 3. Định nghĩa Item trong giỏ hàng (CartItem) cho Booking
-// Thay vì size/color, booking cần số đêm (nights), ngày checkin/out (nếu lưu per item)
-export type CartItem = {
-  id: string | number;       // ID của phòng hoặc khách sạn
-  title: string;             // Tên khách sạn/phòng
-  image?: string;            // Ảnh thumbnail
-  price: number;             // Giá 1 đêm
-  nights: number;            // Số đêm lưu trú
-  // Các thông tin bổ sung nếu cần
-  hotelId?: string | number; 
+// ==========================================
+// 3. TYPES CHO CART & BOOKING
+// ==========================================
+
+// Định nghĩa lại User rút gọn dùng cho Booking (Tránh import từ DB)
+export type BookingUser = {
+  id?: string; // Có thể null nếu user chưa login (khách vãng lai)
+  email: string;
+  name: string;
+  phone: string;
   address?: string;
+  avatar?: string | null;
 };
 
-// 4. Type PaymentData lưu trong Store (giống PaymentFormInputs nhưng có thể mở rộng)
-export type PaymentData = PaymentFormInputs;
+// Item trong giỏ hàng (Chi tiết hơn cho Hotel)
+export type CartItem = {
+  id: number;                 // ID phòng/khách sạn
+  title: string;              // Tên khách sạn
+  slug?: string;              // Để tạo link quay lại trang chi tiết
+  price: number;              // Giá 1 đêm
+  address?: string;           // Địa chỉ khách sạn
+  
+  // Hình ảnh
+  featuredImage?: string;     // Ảnh đại diện
+  galleryImgs?: string[];     // Mảng ảnh (để hiển thị slider trong cart nếu cần)
 
-// 5. Type FullPaymentData gửi xuống API (Payload)
-// Dùng trong handlePaymentForm ở frontend
+  // Thông tin đặt phòng
+  nights: number;             // Số đêm
+  totalGuests: number;        // Tổng số khách (quan trọng để validate sức chứa)
+  
+  // Nếu bạn cho phép đặt nhiều phòng với ngày khác nhau trong 1 giỏ:
+  // checkIn?: Date | string;
+  // checkOut?: Date | string;
+};
+
+// ==========================================
+// 4. TYPES PAYLOAD API
+// ==========================================
+
 export type FullPaymentData = {
-  user: User | null;          // Thông tin người dùng
-  items: CartItem[];          // Danh sách phòng đặt
-  paymentData: PaymentFormInputs; // Thông tin thẻ/thanh toán
-  totalAmount: number;        // Tổng tiền
-  checkInDate: Date | string; // Ngày check-in toàn cục
-  checkOutDate: Date | string;// Ngày check-out toàn cục
-  currency: string;           // 'VND'
-  timestamp: string;          // Thời gian tạo đơn
+  // User đặt phòng (đã merge giữa thông tin Login và thông tin Form nhập)
+  user: BookingUser; 
+  
+  // Danh sách phòng
+  items: CartItem[]; 
+  
+  // Thông tin thẻ (chỉ gửi lên nếu server cần xử lý trực tiếp, thường Stripe xử lý ở client)
+  paymentData: PaymentFormInputs; 
+  
+  // Tổng quan đơn hàng
+  totalAmount: number;
+  currency: string;         // 'VND'
+  timestamp: string;
+  
+  // Nếu giỏ hàng chỉ cho phép 1 khoảng thời gian chung cho tất cả phòng:
+  checkInDate: Date | string; 
+  checkOutDate: Date | string;
 };
 
-// 6. (Optional) Type cho Store State nếu muốn strict typing ở package chung
+// ==========================================
+// 5. ZUSTAND STORE TYPES
+// ==========================================
+
 export type CartStoreState = {
   items: CartItem[];
-  paymentData: PaymentData;
-  user: User | null;
+  paymentData: PaymentFormInputs | null; // Có thể null nếu chưa nhập
+  // hasHydrated: boolean; // Nếu dùng persist
 };
 
 export type CartStoreActions = {
   addItem: (item: CartItem) => void;
-  removeItem: (id: string | number) => void;
+  removeItem: (id: number) => void; // ID number cho khớp với CartItem
   clearCart: () => void;
-  setPaymentData: (partialData: Partial<PaymentData>) => void;
-  clearPaymentData: () => void;
-  setUser: (user: User) => void;
-  clearUser: () => void;
+  setPaymentData: (data: PaymentFormInputs) => void;
+  // Các action tính toán (optional vì có thể tính trực tiếp trong component)
+  // getTotalPrice: () => number;
 };

@@ -12,7 +12,9 @@
         "@hono/node-server": "^1.19.6",
         "hono": "^4.10.7",
         "stripe": "^20.1.0",
-        "vnpay": "^2.4.4"
+        "vnpay": "^2.4.4",
+        "@repo/kafka": "workspace:*"
+
     },
     "devDependencies": {
         "@repo/types": "workspace:*",

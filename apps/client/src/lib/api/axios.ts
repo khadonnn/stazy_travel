@@ -1,54 +1,31 @@
 import axios from 'axios';
 
-// Đảm bảo bạn đã định nghĩa NEXT_PUBLIC_API_BASE_URL trong file .env.local
+// 1. Cấu hình Port cho đúng với Payment Service (8002) 
+// hoặc Gateway (8000) của bạn
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8002/api';
+
 const api = axios.create({
-    // SỬ DỤNG process.env trong Next.js
-    baseURL:
-        process.env.NEXT_PUBLIC_API_BASE_URL ||
-        'http://localhost:3003/api' ||
-        'http://localhost:3000/api',
-    withCredentials: true,
+    baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// Thêm interceptor cho request
-api.interceptors.request.use((config) => {
-    // Logic này sẽ chạy trong Client Component
-    if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('user-token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-    }
-    return config;
-});
+// 2. Không cần interceptor localStorage nữa vì Clerk quản lý Token trong bộ nhớ/cookie
+// Chúng ta sẽ truyền token vào header Authorization từ phía Component gọi API
 
-// Thêm interceptor cho response
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        // Đảm bảo code này chỉ chạy trên trình duyệt (client)
-        if (typeof window !== 'undefined' && error.response?.status === 401) {
-            localStorage.removeItem('user-token');
-
-            const currentPath = window.location.pathname;
-            const isAdminRoute = currentPath.startsWith('/admin');
-            const isProtectedRoute = ['/profile', '/my-bookings', '/cart'].some(
-                (route) => currentPath.startsWith(route),
-            );
-
-            // Dùng router.push() của next/navigation thì tốt hơn
-            // Nhưng window.location.href vẫn hoạt động để redirect cứng
-            if (!isAdminRoute && isProtectedRoute) {
-                // Tốt nhất là dùng hook useRouter().push('/login') trong component,
-                // nhưng nếu cần xử lý toàn cục, window.location.href là cách nhanh nhất.
-                window.location.href = '/login';
+        if (error.response?.status === 401) {
+            console.error("Phiên đăng nhập hết hạn hoặc không có quyền.");
+            // Với Clerk, bạn có thể redirect về trang sign-in của họ
+            if (typeof window !== 'undefined') {
+                window.location.href = '/sign-in';
             }
         }
         return Promise.reject(error);
-    },
+    }
 );
 
 export default api;

@@ -3,6 +3,8 @@ import { clerkClient, clerkPlugin, getAuth } from '@clerk/fastify';
 import { shouldBeUser } from './middleware/authMiddleware.js';
 import { connectBookingDB } from '@repo/booking-db';
 import { bookingRoute } from './routes/booking.js';
+import { consumer, producer } from './utils/kafka.js';
+import { runKafkaSubscriptions } from './utils/subscriptions.js';
 const fastify = Fastify({ logger: true });
 fastify.register(clerkPlugin);
 
@@ -21,14 +23,19 @@ fastify.get('/test', { preHandler: shouldBeUser }, (request, reply) => {
 });
 fastify.register(bookingRoute)
 
+
 const start = async () => {
-    try {
-        await connectBookingDB();
-        await fastify.listen({ port: 8001 });
-        fastify.log.info(`Order service listening on port 8001`);
-    } catch (err) {
-        console.log(err)
-        process.exit(1);
-    }
+  try {
+ await Promise.all([
+        connectBookingDB(),
+        producer.connect(),
+    ]);
+    await runKafkaSubscriptions();
+    await fastify.listen({ port: 8001 });
+    console.log("Order service is running on port 8001");
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
 };
 start();

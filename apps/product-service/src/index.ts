@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 8000;
 import productRouter from './routes/product.route.js';
 import categoryRouter from './routes/category.route.js';
 import userRouter from './routes/user.route.js';
+import { consumer, producer } from './utils/kafka.js';
 const app = express();
 app.use(clerkMiddleware());
 app.use(express.json());
@@ -40,6 +41,16 @@ app.use('/hotels', productRouter);
 app.use('/categories', categoryRouter);
 app.use("/users", userRouter);
 
-app.listen(PORT, () => {
-    console.log(`Product service is running on port ${PORT}`);
-});
+const start = async () => {
+  try {
+    Promise.all([await producer.connect(), await consumer.connect()]);
+    app.listen(8000, () => {
+      console.log("Product service is running on 8000");
+    });
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+};
+
+start()

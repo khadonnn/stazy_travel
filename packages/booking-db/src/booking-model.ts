@@ -49,6 +49,11 @@ const BookingSchema = new Schema(
     },
 
     //  Liên hệ (Sửa thành required)
+    payment: {
+      stripeSessionId: { type: String }, // Lưu session_id (cs_test_...) để đối soát
+      paymentIntentId: { type: String }, // Lưu mã giao dịch thực tế
+      status: { type: String, default: "UNPAID" } // UNPAID -> PAID
+    },
     contactDetails: {
       fullName: { type: String, required: true }, //  Bắt buộc
       email: { type: String, required: true },    //  Bắt buộc

@@ -20,6 +20,8 @@
     "dependencies": {
         "@clerk/fastify": "^2.6.9",
         "fastify": "^5.5.0",
-        "@repo/booking-db": "workspace:*"
+        "@repo/booking-db": "workspace:*",
+        "@repo/kafka": "workspace:*"
+
     }
 }

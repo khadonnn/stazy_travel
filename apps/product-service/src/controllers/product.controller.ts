@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { prisma, Prisma } from '@repo/product-db'; // Giả sử db chung
-// import { producer } from '../utils/kafka';
+import { producer } from '../utils/kafka';
+import { StripeProductType } from '@repo/types';
 
 // 1. GET HOTELS (Lọc nâng cao: Giá, Search, Category, Bedroom, Sort)
 export const getHotels = async (req: Request, res: Response) => {
@@ -198,6 +199,12 @@ export const createHotel = async (req: Request, res: Response) => {
             },
         });
 
+        const stripProduce: StripeProductType={
+            id: hotel.id.toString(),
+            name: hotel.title,
+            price: hotel.price.toNumber(),
+        };
+        producer.send('hotel.created', { value: stripProduce });
         res.status(201).json(hotel);
 
     } catch (error: any) {
@@ -256,7 +263,7 @@ export const deleteHotel = async (req: Request, res: Response) => {
             where: { id: Number(id) },
         });
 
-        // producer.send('hotel.deleted', { value: Number(id) });
+        producer.send('hotel.deleted', { value: Number(id) });
         return res.status(200).json(deletedHotel);
     } catch (error) {
         return res.status(400).json({ message: 'Cannot delete hotel' });
