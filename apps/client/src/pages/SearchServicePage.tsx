@@ -27,8 +27,8 @@ interface HotelStay {
     id: number;
     authorId: string;
     date: string;
-    href: string;
-    listingCategoryId: number;
+    slug: string;
+    categoryId: number;
     title: string;
     featuredImage: string;
     galleryImgs: string[];

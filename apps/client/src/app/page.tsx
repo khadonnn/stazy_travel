@@ -18,7 +18,7 @@ export default function HomePage() {
                     {/* Background image */}
                     <div className='aspect-video relative w-full'>
                         <Image
-                            src={'/assets/bg.jpg'} // Đảm bảo URL ảnh chính xác nếu bg là module import
+                            src={'/assets/bg2.jpg'} // Đảm bảo URL ảnh chính xác nếu bg là module import
                             alt='hero'
                             className='rounded-xl object-cover object-center w-full h-full'
                             fill
@@ -31,10 +31,14 @@ export default function HomePage() {
                             <span className='font-semibold text-neutral-900 sm:text-lg md:text-xl'>
                                 Trải nghiệm kỳ nghỉ tuyệt vời cùng Stazy
                             </span>
-                            <h2 className='text-4xl leading-[1.15] font-bold text-black md:text-5xl lg:text-6xl xl:text-7xl'>
+                            <h2 className='text-4xl leading-[1.15] font-bold text-black dark:text-white md:text-5xl lg:text-6xl xl:text-7xl'>
+                            <span className='relative inline-block px-3 py-1 rounded-xl bg-white/5 dark:bg-black/10 backdrop-blur-sm'>
                                 Vi vu mê say
-                                <br />
+                            </span>
+                            <br />
+                            <span className='relative inline-block px-3 py-1 rounded-xl bg-white/5 dark:bg-black/10 backdrop-blur-sm'>
                                 Chạm là đặt ngay
+                            </span>
                             </h2>
                         </div>
 
@@ -42,7 +46,7 @@ export default function HomePage() {
                             // SỬ DỤNG router.push() thay cho navigate()
                             onClick={() => router.push('/search-service')}
                             type='button'
-                            className='mt-10 sm:mt-20 sm:text-lg relative inline-flex items-center justify-center px-6 py-3 font-medium rounded-full bg-primary text-white hover:bg-primary/80 focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 ease-in-out'
+                            className='mt-10 sm:mt-20 sm:text-lg relative inline-flex items-center justify-center px-6 py-3 font-medium rounded-full bg-primary text-white hover:bg-primary/80 focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 ease-in-out cursor-pointer'
                         >
                             Bắt đầu khám phá{' '}
                             <Sparkles size={20} className='ml-2' />

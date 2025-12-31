@@ -51,6 +51,7 @@
     "devDependencies": {
         "@repo/eslint-config": "workspace:*",
         "@repo/typescript-config": "workspace:*",
+        "@repo/types": "workspace:*",
         "@tailwindcss/postcss": "^4",
         "@types/lodash": "^4.17.20",
         "@types/node": "^20",

@@ -79,6 +79,26 @@ export const useBookingStore = create<BookingState>()(
             storage: createJSONStorage(() => localStorage),
             // (Tùy chọn) Nếu Date bị lỗi khi load lại trang (do JSON biến Date thành string),
             // bạn có thể cần xử lý thêm onRehydrateStorage, nhưng cơ bản bookingDetails là quan trọng nhất ở đây.
+
+             onRehydrateStorage: () => (state) => {
+        if (!state) return;
+
+        // Convert string → Date sau khi tải từ localStorage
+        if (typeof state.date?.from === 'string') {
+          state.date.from = new Date(state.date.from);
+        }
+        if (typeof state.date?.to === 'string') {
+          state.date.to = new Date(state.date.to);
+        }
+
+        // Cũng convert các field riêng nếu có (dù bạn ko dùng trực tiếp chúng)
+        if (typeof state.checkInDate === 'string') {
+          state.checkInDate = new Date(state.checkInDate);
+        }
+        if (typeof state.checkOutDate === 'string') {
+          state.checkOutDate = new Date(state.checkOutDate);
+        }
+      },
         }
     )
 );
