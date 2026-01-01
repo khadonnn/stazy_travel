@@ -74,7 +74,10 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
         hotelName: mainItem.title,
         hotelSlug: mainItem.slug || "",
         hotelImage: mainItem.featuredImage || "",
+        hotelStars: String(mainItem.stars || 0),
         hotelAddress: mainItem.address || "Vietnam",
+        roomId: String(body.roomId || mainItem.id),
+        roomName: body.roomName || mainItem.name || "Standard Room",
       },
 
       return_url:

@@ -35,12 +35,13 @@ const StripePaymentForm = ({ bookingInfo }: StripePaymentFormProps) => {
   // Stripe sẽ tự gọi hàm này khi component mount để lấy secret
   const fetchClientSecret = useCallback(async () => {
     const token = await getToken();
-
+    const firstItem = items[0];
     // 1. Chuẩn bị dữ liệu FullPaymentData để gửi lên Backend
     const payload: FullPaymentData = {
       user: {
         id: user?.id, // Có thể undefined nếu là khách vãng lai
-        email: bookingInfo.email || user?.primaryEmailAddress?.emailAddress || "",
+        email:
+          bookingInfo.email || user?.primaryEmailAddress?.emailAddress || "",
         name: bookingInfo.name || user?.fullName || "",
         phone: bookingInfo.phone || "",
         address: `${bookingInfo.address}, ${bookingInfo.city || ""}`,
@@ -52,10 +53,20 @@ const StripePaymentForm = ({ bookingInfo }: StripePaymentFormProps) => {
         (sum, item) => sum + item.price * (item.nights || 1),
         0
       ),
-      checkInDate: checkInDate ? checkInDate.toString() : new Date().toISOString(),
-      checkOutDate: checkOutDate ? checkOutDate.toString() : new Date().toISOString(),
+      checkInDate: checkInDate
+        ? checkInDate.toString()
+        : new Date().toISOString(),
+      checkOutDate: checkOutDate
+        ? checkOutDate.toString()
+        : new Date().toISOString(),
       currency: "VND",
       timestamp: new Date().toISOString(),
+      hotelId: firstItem?.hotelId, // Lấy ID khách sạn (cần thêm vào CartItem)
+      hotelName: firstItem?.name, // Lấy Tên khách sạn (cần thêm vào CartItem)
+      hotelImage: firstItem?.featuredImage,
+      hotelStars: firstItem?.reviewStart,
+      roomId: firstItem?.id,
+      roomName: firstItem?.name,
     };
 
     // 2. Gọi API Backend
@@ -71,20 +82,23 @@ const StripePaymentForm = ({ bookingInfo }: StripePaymentFormProps) => {
       }
     );
     if (!res.ok) {
-    const errorData = await res.json();
-    console.error("Backend Error:", errorData);
-    // Throw lỗi để Stripe Provider biết mà dừng lại, hoặc return null
-    throw new Error(errorData.error || "Failed to create session");
-}
+      const errorData = await res.json();
+      console.error("Backend Error:", errorData);
+      // Throw lỗi để Stripe Provider biết mà dừng lại, hoặc return null
+      throw new Error(errorData.error || "Failed to create session");
+    }
 
     const data = await res.json();
-    
+
     // Trả về clientSecret string cho Provider
     return data.clientSecret;
   }, [items, bookingInfo, checkInDate, checkOutDate, getToken, user]);
 
   return (
-    <div id="checkout" className="w-full bg-white p-4 rounded-lg border shadow-sm">
+    <div
+      id="checkout"
+      className="w-full bg-white p-4 rounded-lg border shadow-sm"
+    >
       {/* Đây chính là Provider trong ví dụ của bạn.
          Đối với ui_mode: 'embedded', tên chuẩn là EmbeddedCheckoutProvider 
       */}

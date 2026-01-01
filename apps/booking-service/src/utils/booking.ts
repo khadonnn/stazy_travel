@@ -7,36 +7,50 @@ export const updateBookingStatusToPaid = async (
 ) => {
   console.log(`⚡ [Service] Bắt đầu xử lý Booking UUID: ${bookingId}`);
 
+  // 🔴 1. Lấy thông tin từ Metadata (Được gửi từ Payment Service sang)
+  // Lưu ý: Metadata của Stripe luôn trả về dạng string, cần ép kiểu nếu là số
+  const meta = paymentData.metadata || {};
+
+  const hotelName = meta.hotelName || "Stazy Hotel (From Stripe)";
+  const hotelImage = meta.hotelImage || ""; // Link ảnh khách sạn
+  const hotelStars = Number(meta.hotelStars) || 0; // Số sao
+  const hotelAddress = meta.hotelAddress || "Updating...";
+  const hotelId = Number(meta.hotelId) || 1;
+
   try {
     const result = await Booking.findOneAndUpdate(
-      { bookingId: bookingId }, // Điều kiện tìm
+      { bookingId: bookingId }, // Điều kiện tìm kiếm
       {
+        // A. Cập nhật nếu tìm thấy (Booking đã tồn tại)
         $set: {
           status: "CONFIRMED",
           "payment.status": "PAID",
           "payment.stripeSessionId": paymentData.stripeSessionId,
           updatedAt: new Date(),
         },
+
+        // B. Tạo mới nếu KHÔNG tìm thấy (Logic Recover Booking)
         $setOnInsert: {
-          // Dữ liệu tạo mới (Phải khớp với Schema Required)
           bookingId: bookingId,
           userId: paymentData.userId || "guest_user",
-          hotelId: 1, // Hardcode tạm nếu Kafka không gửi
-          totalPrice: paymentData.amount,
 
+          // Sử dụng ID thật lấy từ metadata
+          hotelId: hotelId,
+
+          totalPrice: paymentData.amount,
           checkIn: new Date(paymentData.checkInDate || Date.now()),
           checkOut: new Date(paymentData.checkOutDate || Date.now()),
           nights: 1,
 
-          // 👇 QUAN TRỌNG: Phải có cục này thì mới lưu được (như test-db.ts)
+          // 👇 QUAN TRỌNG: Lưu Snapshot với dữ liệu thật
           bookingSnapshot: {
             hotel: {
-              id: 1,
-              name: "Stazy Hotel (From Stripe)",
-              slug: "unknown-hotel",
-              address: "Updating...",
-              image: "",
-              stars: 5,
+              id: hotelId,
+              name: hotelName, // ✅ Tên khách sạn thật
+              slug: "recovered-booking",
+              address: hotelAddress, // ✅ Địa chỉ thật (nếu có gửi kèm)
+              image: hotelImage, // ✅ Ảnh thật
+              stars: hotelStars, // ✅ Số sao thật
             },
             room: {
               id: 1,
@@ -52,12 +66,14 @@ export const updateBookingStatusToPaid = async (
           },
         },
       },
-      { new: true, upsert: true } // Upsert = True
+      { new: true, upsert: true } // Upsert = True: Không thấy thì tạo mới
     );
 
     console.log(`✅ [Service] ĐÃ LƯU MONGODB THÀNH CÔNG!`);
     console.log(`   👉 MongoID: ${result._id}`);
     console.log(`   👉 Status: ${result.status}`);
+    console.log(`   👉 Hotel: ${result.bookingSnapshot?.hotel?.name}`); // Log ra để kiểm tra
+
     return result;
   } catch (error: any) {
     console.error("❌ [Service] Lỗi lưu MongoDB:", error.message);
@@ -70,5 +86,3 @@ export const updateBookingStatusToPaid = async (
     throw error;
   }
 };
-
-// Hàm createBooking giữ nguyên nếu bạn muốn

@@ -5,10 +5,20 @@ import { connectBookingDB } from "@repo/booking-db";
 import { bookingRoute } from "./routes/booking.js";
 import { producer, consumer } from "./utils/kafka.js"; // Import cả consumer để disconnect
 import { runKafkaSubscriptions } from "./utils/subscriptions.js";
-
+import cors from "@fastify/cors";
 const fastify = Fastify({ logger: true });
-
-// Đăng ký Plugins
+await fastify.register(cors, {
+  origin: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Authorization",
+    "Content-Type",
+    "Accept",
+    "Origin",
+    "X-Requested-With",
+  ],
+  credentials: true,
+});
 fastify.register(clerkPlugin);
 
 // Health Check
