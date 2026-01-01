@@ -1,64 +1,74 @@
-// services/booking.ts
-import { Booking } from "@repo/booking-db"; // Import Model vừa sửa
+import { Booking } from "@repo/booking-db";
 
+// Hàm xử lý Kafka: Update trạng thái thanh toán
 export const updateBookingStatusToPaid = async (
   bookingId: string,
   paymentData: any
 ) => {
-  console.log(`⚡ [Service] Xử lý Booking UUID: ${bookingId}`);
+  console.log(`⚡ [Service] Bắt đầu xử lý Booking UUID: ${bookingId}`);
 
   try {
     const result = await Booking.findOneAndUpdate(
-      { bookingId: bookingId }, // Tìm theo bookingId vừa thêm
+      { bookingId: bookingId }, // Điều kiện tìm
       {
         $set: {
           status: "CONFIRMED",
-          // Update nested object trong Mongoose phải dùng dấu chấm
           "payment.status": "PAID",
           "payment.stripeSessionId": paymentData.stripeSessionId,
           updatedAt: new Date(),
         },
         $setOnInsert: {
-          // Chỉ set khi tạo mới
-          bookingId: bookingId, // 🔥 QUAN TRỌNG: Lưu UUID vào
-          userId: paymentData.userId || "guest",
-          hotelId: 1, // Hardcode tạm hoặc lấy từ metadata
+          // Dữ liệu tạo mới (Phải khớp với Schema Required)
+          bookingId: bookingId,
+          userId: paymentData.userId || "guest_user",
+          hotelId: 1, // Hardcode tạm nếu Kafka không gửi
           totalPrice: paymentData.amount,
 
-          // Map đúng tên trường trong Schema: checkIn (không phải checkInDate)
           checkIn: new Date(paymentData.checkInDate || Date.now()),
           checkOut: new Date(paymentData.checkOutDate || Date.now()),
-          nights: 1, // Tính toán logic ngày sau
+          nights: 1,
 
-          // Map Contact (Bắt buộc required)
-          contactDetails: {
-            fullName: paymentData.customerName || "Guest User",
-            email: paymentData.customerEmail || "no-email@test.com",
-            phone: paymentData.customerPhone || "0000000000",
-          },
-
-          // Map Snapshot (Để tránh lỗi required)
+          // 👇 QUAN TRỌNG: Phải có cục này thì mới lưu được (như test-db.ts)
           bookingSnapshot: {
             hotel: {
               id: 1,
               name: "Stazy Hotel (From Stripe)",
-              slug: "stazy-hotel",
+              slug: "unknown-hotel",
+              address: "Updating...",
+              image: "",
+              stars: 5,
             },
             room: {
+              id: 1,
               name: "Standard Room",
               priceAtBooking: paymentData.amount,
             },
           },
+
+          contactDetails: {
+            fullName: paymentData.customerName || "Stripe Customer",
+            email: paymentData.customerEmail || "stripe@stazy.com",
+            phone: paymentData.customerPhone || "0000000000",
+          },
         },
       },
-      { new: true, upsert: true } // Upsert: True
+      { new: true, upsert: true } // Upsert = True
     );
 
-    console.log(`✅ Đã lưu thành công! MongoID: ${result._id}`);
+    console.log(`✅ [Service] ĐÃ LƯU MONGODB THÀNH CÔNG!`);
+    console.log(`   👉 MongoID: ${result._id}`);
+    console.log(`   👉 Status: ${result.status}`);
     return result;
-  } catch (error) {
-    console.error("❌ Lỗi Model Validate:", error);
-    // Log chi tiết lỗi để biết sai trường nào
+  } catch (error: any) {
+    console.error("❌ [Service] Lỗi lưu MongoDB:", error.message);
+    if (error.errors) {
+      console.error(
+        "🔍 Validation Errors:",
+        JSON.stringify(error.errors, null, 2)
+      );
+    }
     throw error;
   }
 };
+
+// Hàm createBooking giữ nguyên nếu bạn muốn

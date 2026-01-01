@@ -32,7 +32,6 @@ webhookRoute.post("/stripe", async (c) => {
   if (event.type === "checkout.session.completed") {
     console.log(`🔍 [4] Kiểm tra Metadata...`);
     console.log(`    - Booking ID: ${bookingId ? bookingId : "NULL ❌"}`);
-    console.log(`    - User ID: ${session.metadata?.userId}`);
 
     if (!bookingId) {
       console.error(
@@ -44,7 +43,7 @@ webhookRoute.post("/stripe", async (c) => {
     try {
       console.log(`🚀 [5] Đang chuẩn bị gửi tin nhắn sang Kafka...`);
 
-      // Payload gửi đi
+      // 🔥 CẬP NHẬT PAYLOAD: Lấy thêm thông tin Hotel & Customer từ Metadata
       const kafkaPayload = {
         bookingId: bookingId,
         userId: session.metadata?.userId || session.client_reference_id,
@@ -52,9 +51,26 @@ webhookRoute.post("/stripe", async (c) => {
         amount: session.amount_total,
         currency: session.currency,
         status: "PAID",
+
+        // Thông tin khách hàng (Ưu tiên lấy từ metadata nếu user nhập form)
         customerEmail: session.customer_details?.email,
+        customerName:
+          session.metadata?.customerName || session.customer_details?.name,
+        customerPhone:
+          session.metadata?.customerPhone || session.customer_details?.phone,
+
+        // Thông tin ngày giờ
         checkInDate: session.metadata?.checkInDate,
         checkOutDate: session.metadata?.checkOutDate,
+
+        // 👇 MỚI: Thông tin Snapshot Khách Sạn (Để lưu tên thật vào DB)
+        hotelInfo: {
+          id: session.metadata?.hotelId,
+          name: session.metadata?.hotelName,
+          slug: session.metadata?.hotelSlug,
+          image: session.metadata?.hotelImage,
+          address: session.metadata?.hotelAddress,
+        },
       };
 
       await producer.send("payment.successful", {

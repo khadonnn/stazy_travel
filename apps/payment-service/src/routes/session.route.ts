@@ -12,16 +12,24 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
     const { items, user, checkInDate, checkOutDate } = body;
     const userId = c.get("userId");
 
+    // 1. Kiểm tra mảng rỗng
     if (!items || items.length === 0) {
       return c.json({ error: "Giỏ hàng trống" }, 400);
     }
 
     const bookingId = uuidv4();
 
-    // 👇 QUAY LẠI CÁCH CŨ: Lấy trực tiếp dữ liệu từ Frontend gửi lên
-    // Không thèm check Database nữa
+    // 2. Lấy item đầu tiên
+    const mainItem = items[0];
+
+    // 🔥 FIX LỖI "mainItem is possibly undefined" TẠI ĐÂY
+    // Nếu không lấy được mainItem thì chặn luôn
+    if (!mainItem) {
+      return c.json({ error: "Dữ liệu phòng không hợp lệ" }, 400);
+    }
+
+    // 👇 Tạo lineItems cho Stripe (Logic cũ)
     const lineItems = items.map((item) => {
-      // Fallback ảnh nếu bị lỗi
       const imageUrl = item.featuredImage?.startsWith("http")
         ? item.featuredImage
         : "https://placehold.co/600x400";
@@ -30,7 +38,7 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
         price_data: {
           currency: "vnd",
           product_data: {
-            name: item.title, // Lấy tên Frontend gửi
+            name: item.title,
             description: `Check-in: ${new Date(checkInDate).toLocaleDateString("vi-VN")}`,
             images: [imageUrl],
             metadata: {
@@ -38,19 +46,21 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
               slug: item.slug || "",
             },
           },
-          unit_amount: item.price, // 🔥 Lấy GIÁ Frontend gửi (Test cho lẹ)
+          unit_amount: item.price,
         },
         quantity: item.nights || 1,
       };
     });
 
-    // Tạo Session
+    // 3. Tạo Session
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
       mode: "payment",
       line_items: lineItems,
       client_reference_id: userId,
       customer_email: user.email,
+
+      // 👇 Metadata mở rộng (Giờ mainItem đã an toàn để dùng)
       metadata: {
         bookingId: bookingId,
         userId: userId,
@@ -58,7 +68,15 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
         checkOutDate: String(checkOutDate),
         customerName: user.name,
         customerPhone: user.phone || "",
+
+        // Dữ liệu thật từ mainItem
+        hotelId: String(mainItem.id),
+        hotelName: mainItem.title,
+        hotelSlug: mainItem.slug || "",
+        hotelImage: mainItem.featuredImage || "",
+        hotelAddress: mainItem.address || "Vietnam",
       },
+
       return_url:
         "http://localhost:3002/return?session_id={CHECKOUT_SESSION_ID}",
     });
@@ -73,7 +91,7 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
   }
 });
 
-// Các route GET giữ nguyên không cần sửa
+// --- CÁC ROUTE GET GIỮ NGUYÊN ---
 sessionRoute.get("/:session_id", async (c) => {
   const { session_id } = c.req.param();
   try {
