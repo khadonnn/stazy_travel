@@ -1,41 +1,76 @@
-import Fastify from 'fastify';
-import { clerkClient, clerkPlugin, getAuth } from '@clerk/fastify';
-import { shouldBeUser } from './middleware/authMiddleware.js';
-import { connectBookingDB } from '@repo/booking-db';
-import { bookingRoute } from './routes/booking.js';
-import { consumer, producer } from './utils/kafka.js';
-import { runKafkaSubscriptions } from './utils/subscriptions.js';
+import Fastify from "fastify";
+import { clerkPlugin } from "@clerk/fastify";
+import { shouldBeUser } from "./middleware/authMiddleware.js";
+import { connectBookingDB } from "@repo/booking-db";
+import { bookingRoute } from "./routes/booking.js";
+import { producer, consumer } from "./utils/kafka.js"; // Import cả consumer để disconnect
+import { runKafkaSubscriptions } from "./utils/subscriptions.js";
+
 const fastify = Fastify({ logger: true });
+
+// Đăng ký Plugins
 fastify.register(clerkPlugin);
 
-fastify.get('/health', async (request, reply) => {
-    return reply.status(200).send({
-        status: 'ok',
-        uptime: process.uptime(),
-        timeStamp: Date.now(),
-    });
+// Health Check
+fastify.get("/health", async (request, reply) => {
+  return reply.status(200).send({
+    service: "Booking Service",
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: Date.now(),
+  });
 });
-fastify.get('/test', { preHandler: shouldBeUser }, (request, reply) => {
-    return reply.send({
-        message: 'Booking service is authenticated!',
-        userId: request.userId,
-    });
-});
-fastify.register(bookingRoute)
 
+// Test Auth
+fastify.get("/test", { preHandler: shouldBeUser }, (request, reply) => {
+  return reply.send({
+    message: "Booking service is authenticated!",
+    userId: request.userId,
+  });
+});
+
+// Đăng ký Routes
+fastify.register(bookingRoute);
 
 const start = async () => {
   try {
- await Promise.all([
-        connectBookingDB(),
-        producer.connect(),
-    ]);
+    // 1. Kết nối hạ tầng (DB & Kafka Producer)
+    await Promise.all([connectBookingDB(), producer.connect()]);
+    fastify.log.info("✅ Database & Kafka Producer connected");
+
+    // 2. Kích hoạt Consumer lắng nghe tin nhắn
     await runKafkaSubscriptions();
-    await fastify.listen({ port: 8001 });
-    console.log("Order service is running on port 8001");
+
+    // 3. Start Server
+    // Quan trọng: host '0.0.0.0' để chạy được trong Docker Container
+    const PORT = parseInt(process.env.PORT || "8001");
+    await fastify.listen({ port: PORT, host: "0.0.0.0" });
+
+    console.log(`🚀 Booking service is running on port ${PORT}`);
   } catch (err) {
-    console.log(err);
+    fastify.log.error(err);
     process.exit(1);
   }
 };
+
+// --- GRACEFUL SHUTDOWN (QUAN TRỌNG) ---
+// Xử lý khi bấm Ctrl+C hoặc Docker stop container
+const closeGracefully = async (signal: string) => {
+  console.log(`Received signal to terminate: ${signal}`);
+
+  // Tắt server không nhận request mới
+  await fastify.close();
+
+  // Ngắt kết nối Kafka & DB
+  await producer.disconnect();
+  await consumer.disconnect();
+  // await mongoose.disconnect(); // Nếu cần thiết
+
+  console.log("🛑 Service shut down gracefully");
+  process.exit(0);
+};
+
+process.on("SIGINT", () => closeGracefully("SIGINT"));
+process.on("SIGTERM", () => closeGracefully("SIGTERM"));
+
 start();

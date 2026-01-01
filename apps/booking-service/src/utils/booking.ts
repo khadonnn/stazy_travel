@@ -1,61 +1,64 @@
-import { Booking } from "@repo/booking-db"; 
-import { BookingSchemaType } from "@repo/booking-db"; 
-import { producer } from "./kafka";
+// services/booking.ts
+import { Booking } from "@repo/booking-db"; // Import Model vừa sửa
 
-// 1. Hàm tạo Booking mới (Giữ nguyên code của bạn)
-// Dùng khi User bấm nút "Đặt phòng" -> Tạo trạng thái PENDING
-export const createBooking = async (bookingData: Partial<BookingSchemaType>) => {
-  const newBooking = new Booking(bookingData);
+export const updateBookingStatusToPaid = async (
+  bookingId: string,
+  paymentData: any
+) => {
+  console.log(`⚡ [Service] Xử lý Booking UUID: ${bookingId}`);
 
   try {
-    const savedBooking = await newBooking.save();
-
-    await producer.send("booking.created", {
-      value: {
-        bookingId: savedBooking._id.toString(),
-        userId: savedBooking.userId,
-        email: savedBooking.contactDetails.email,
-        totalPrice: savedBooking.totalPrice,
-        hotelName: savedBooking.bookingSnapshot.hotel.name,
-        status: savedBooking.status,
-      },
-    });
-
-    return savedBooking;
-  } catch (error) {
-    console.error("Create Booking Service Error:", error);
-    throw error;
-  }
-};
-
-// 2. 🔥 HÀM MỚI CẦN THÊM: Cập nhật trạng thái sau khi thanh toán thành công
-// Dùng khi Kafka nhận được tin nhắn "payment.successful" từ Payment Service
-export const updateBookingStatusToPaid = async (bookingId: string, paymentMeta: { sessionId: string }) => {
-  try {
-    console.log(`🔄 Updating booking ${bookingId} to PAID...`);
-
-    const updatedBooking = await Booking.findByIdAndUpdate(
-      bookingId,
+    const result = await Booking.findOneAndUpdate(
+      { bookingId: bookingId }, // Tìm theo bookingId vừa thêm
       {
         $set: {
-          status: "CONFIRMED",       // Đổi trạng thái đơn hàng sang Đã xác nhận
-          "payment.status": "PAID",  // Đánh dấu đã trả tiền
-          "payment.stripeSessionId": paymentMeta.sessionId, // Lưu lại ID phiên thanh toán để tra soát
-        }
+          status: "CONFIRMED",
+          // Update nested object trong Mongoose phải dùng dấu chấm
+          "payment.status": "PAID",
+          "payment.stripeSessionId": paymentData.stripeSessionId,
+          updatedAt: new Date(),
+        },
+        $setOnInsert: {
+          // Chỉ set khi tạo mới
+          bookingId: bookingId, // 🔥 QUAN TRỌNG: Lưu UUID vào
+          userId: paymentData.userId || "guest",
+          hotelId: 1, // Hardcode tạm hoặc lấy từ metadata
+          totalPrice: paymentData.amount,
+
+          // Map đúng tên trường trong Schema: checkIn (không phải checkInDate)
+          checkIn: new Date(paymentData.checkInDate || Date.now()),
+          checkOut: new Date(paymentData.checkOutDate || Date.now()),
+          nights: 1, // Tính toán logic ngày sau
+
+          // Map Contact (Bắt buộc required)
+          contactDetails: {
+            fullName: paymentData.customerName || "Guest User",
+            email: paymentData.customerEmail || "no-email@test.com",
+            phone: paymentData.customerPhone || "0000000000",
+          },
+
+          // Map Snapshot (Để tránh lỗi required)
+          bookingSnapshot: {
+            hotel: {
+              id: 1,
+              name: "Stazy Hotel (From Stripe)",
+              slug: "stazy-hotel",
+            },
+            room: {
+              name: "Standard Room",
+              priceAtBooking: paymentData.amount,
+            },
+          },
+        },
       },
-      { new: true } // Option này để hàm trả về bản ghi MỚI sau khi update (để log ra xem)
+      { new: true, upsert: true } // Upsert: True
     );
 
-    if (!updatedBooking) {
-      console.error(`❌ Booking not found: ${bookingId}`);
-      return null;
-    }
-
-    console.log("✅ Booking updated successfully:", updatedBooking._id);
-    return updatedBooking;
-
+    console.log(`✅ Đã lưu thành công! MongoID: ${result._id}`);
+    return result;
   } catch (error) {
-    console.error("Update Booking Status Error:", error);
+    console.error("❌ Lỗi Model Validate:", error);
+    // Log chi tiết lỗi để biết sai trường nào
     throw error;
   }
 };

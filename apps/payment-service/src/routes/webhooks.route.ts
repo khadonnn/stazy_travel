@@ -2,74 +2,78 @@ import { Hono } from "hono";
 import Stripe from "stripe";
 import stripe from "../utils/stripe";
 import { producer } from "../utils/kafka";
-// import { producer } from "../utils/kafka";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 const webhookRoute = new Hono();
 
-// Health check cho route webhook
-webhookRoute.get("/", (c) => c.json({ status: "Stazy Webhook Active", timestamp: Date.now() }));
-
 webhookRoute.post("/stripe", async (c) => {
+  console.log("------------------------------------------------");
+  console.log("🔵 [1] Webhook: Có tín hiệu từ Stripe gửi tới!");
+
   const body = await c.req.text();
   const sig = c.req.header("stripe-signature");
 
   let event: Stripe.Event;
 
   try {
-    // 1. Xác thực sự kiện từ Stripe
     event = stripe.webhooks.constructEvent(body, sig!, webhookSecret);
+    console.log("🟢 [2] Webhook: Xác thực chữ ký thành công (Signature Valid)");
   } catch (error: any) {
-    console.error(`❌ Webhook Error: ${error.message}`);
+    console.error(`❌ [LỖI] Webhook Signature Error: ${error.message}`);
     return c.json({ error: "Invalid Signature" }, 400);
   }
 
-  // 2. Xử lý các sự kiện quan trọng cho Hotel
-  switch (event.type) {
-    case "checkout.session.completed": {
-      const session = event.data.object as Stripe.Checkout.Session;
+  // Lấy metadata
+  const session = event.data.object as Stripe.Checkout.Session;
+  const bookingId = session.metadata?.bookingId;
 
-      // Lấy thêm thông tin chi tiết về phòng/dịch vụ khách đã mua
-      const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+  console.log(`ℹ️  [3] Event Type: ${event.type}`);
 
-      // Gửi message sang Kafka để các service khác xử lý (Booking, Notification, Invoice)
+  if (event.type === "checkout.session.completed") {
+    console.log(`🔍 [4] Kiểm tra Metadata...`);
+    console.log(`    - Booking ID: ${bookingId ? bookingId : "NULL ❌"}`);
+    console.log(`    - User ID: ${session.metadata?.userId}`);
+
+    if (!bookingId) {
+      console.error(
+        "❌ [LỖI NGHIÊM TRỌNG] Không tìm thấy bookingId trong metadata. Dừng xử lý!"
+      );
+      return c.json({ received: true });
+    }
+
+    try {
+      console.log(`🚀 [5] Đang chuẩn bị gửi tin nhắn sang Kafka...`);
+
+      // Payload gửi đi
+      const kafkaPayload = {
+        bookingId: bookingId,
+        userId: session.metadata?.userId || session.client_reference_id,
+        stripeSessionId: session.id,
+        amount: session.amount_total,
+        currency: session.currency,
+        status: "PAID",
+        customerEmail: session.customer_details?.email,
+        checkInDate: session.metadata?.checkInDate,
+        checkOutDate: session.metadata?.checkOutDate,
+      };
+
       await producer.send("payment.successful", {
-        value: {
-          bookingId: session.metadata?.bookingId, // Quan trọng: ID đơn đặt phòng trong DB của bạn
-          userId: session.client_reference_id,
-          customerEmail: session.customer_details?.email,
-          totalAmount: session.amount_total,
-          currency: session.currency,
-          paymentStatus: session.payment_status,
-          // Mapping thông tin phòng từ Stripe
-          rooms: lineItems.data.map((item) => ({
-            description: item.description,
-            quantity: item.quantity,
-            amount: item.amount_total,
-          })),
-        },
+        value: kafkaPayload,
       });
-      
-      console.log(`✅ Booking ${session.metadata?.bookingId} paid successfully!`);
-      break;
-    }
 
-    case "checkout.session.expired": {
-      // Khách mở trang thanh toán nhưng không trả tiền và đóng lại
-      // Bạn có thể dùng sự kiện này để "giải phóng" phòng đang giữ tạm (unhold)
-      const session = event.data.object as Stripe.Checkout.Session;
-      await producer.send("payment.expired", {
-        value: { bookingId: session.metadata?.bookingId }
-      });
-      break;
+      console.log(`✅ [6] Đã gửi Kafka thành công! Topic: payment.successful`);
+      console.log(
+        `    - Payload gửi đi:`,
+        JSON.stringify(kafkaPayload, null, 2)
+      );
+    } catch (kafkaError) {
+      console.error("❌ [LỖI] Không gửi được Kafka:", kafkaError);
     }
-
-    default:
-      console.log(`Unhandled event type ${event.type}`);
+  } else {
+    console.log("⚠️ [SKIP] Event này không phải là checkout.session.completed");
   }
 
-  // Stripe yêu cầu trả về 200 nhanh nhất có thể
-  return c.json({ received: true }, 200);
+  return c.json({ received: true });
 });
 
 export default webhookRoute;

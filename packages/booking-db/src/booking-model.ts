@@ -2,10 +2,16 @@ import mongoose, { InferSchemaType, model } from "mongoose";
 const { Schema } = mongoose;
 
 // 1. Export Enum để dùng ở cả Controller (validate input)
-export const BookingStatus = ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"] as const;
+export const BookingStatus = [
+  "PENDING",
+  "CONFIRMED",
+  "CANCELLED",
+  "COMPLETED",
+] as const;
 
 const BookingSchema = new Schema(
   {
+    bookingId: { type: String, required: true, unique: true, index: true },
     userId: { type: String, required: true, index: true },
     hotelId: { type: Number, required: true },
 
@@ -17,13 +23,13 @@ const BookingSchema = new Schema(
         slug: { type: String, required: true },
         address: { type: String },
         image: { type: String },
-        stars: { type: Number }
+        stars: { type: Number },
       },
       room: {
         id: { type: Number },
         name: { type: String, required: true },
-        priceAtBooking: { type: Number, required: true }
-      }
+        priceAtBooking: { type: Number, required: true },
+      },
     },
 
     //  Thời gian
@@ -32,9 +38,9 @@ const BookingSchema = new Schema(
     nights: { type: Number, required: true },
 
     // 👥 Số lượng khách (Nên thêm cái này để khách sạn biết chuẩn bị khăn/gối)
-    guestCount: { 
-        adults: { type: Number, default: 1 },
-        children: { type: Number, default: 0 }
+    guestCount: {
+      adults: { type: Number, default: 1 },
+      children: { type: Number, default: 0 },
     },
 
     //  Giá cả
@@ -45,19 +51,19 @@ const BookingSchema = new Schema(
       type: String,
       enum: BookingStatus, //  Dùng biến const ở trên
       default: "PENDING",
-      required: true
+      required: true,
     },
 
     //  Liên hệ (Sửa thành required)
     payment: {
       stripeSessionId: { type: String }, // Lưu session_id (cs_test_...) để đối soát
       paymentIntentId: { type: String }, // Lưu mã giao dịch thực tế
-      status: { type: String, default: "UNPAID" } // UNPAID -> PAID
+      status: { type: String, default: "UNPAID" }, // UNPAID -> PAID
     },
     contactDetails: {
       fullName: { type: String, required: true }, //  Bắt buộc
-      email: { type: String, required: true },    //  Bắt buộc
-      phone: { type: String, required: true },    //  Bắt buộc
+      email: { type: String, required: true }, //  Bắt buộc
+      phone: { type: String, required: true }, //  Bắt buộc
     },
   },
   { timestamps: true }
@@ -67,4 +73,5 @@ const BookingSchema = new Schema(
 export type BookingSchemaType = InferSchemaType<typeof BookingSchema>;
 
 //  Singleton Pattern: Tránh lỗi "OverwriteModelError" khi hot-reload
-export const Booking = mongoose.models.Booking || model<BookingSchemaType>("Booking", BookingSchema);
+export const Booking =
+  mongoose.models.Booking || model<BookingSchemaType>("Booking", BookingSchema);

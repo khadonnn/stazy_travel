@@ -1,102 +1,87 @@
 import { Hono } from "hono";
 import stripe from "../utils/stripe";
 import { shouldBeUser } from "../middleware/authMiddleware";
-import type { FullPaymentData } from "@repo/types"; // Import type mới
+import type { FullPaymentData } from "@repo/types";
+import { v4 as uuidv4 } from "uuid";
 
 const sessionRoute = new Hono();
 
 sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
   try {
-    // 1. Ép kiểu body nhận về thành FullPaymentData
-    const body = await c.req.json() as FullPaymentData;
+    const body = (await c.req.json()) as FullPaymentData;
     const { items, user, checkInDate, checkOutDate } = body;
-    
-    // Lấy ID người dùng từ middleware auth (nếu cần reference)
     const userId = c.get("userId");
 
     if (!items || items.length === 0) {
       return c.json({ error: "Giỏ hàng trống" }, 400);
     }
 
-    // 2. Map Items sang định dạng Stripe Line Items
-    const lineItems = items.map((item: FullPaymentData["items"][number]) => {
-      // Đảm bảo ảnh là URL tuyệt đối (nếu không Stripe sẽ báo lỗi)
-      // Ví dụ: nếu item.featuredImage là "/img.jpg", bạn cần thêm domain vào trước.
-      // Tạm thời giả định item.featuredImage đã là URL đầy đủ hoặc bạn xử lý ở frontend.
-      const validImages = item.featuredImage ? [item.featuredImage] : [];
+    const bookingId = uuidv4();
+
+    // 👇 QUAY LẠI CÁCH CŨ: Lấy trực tiếp dữ liệu từ Frontend gửi lên
+    // Không thèm check Database nữa
+    const lineItems = items.map((item) => {
+      // Fallback ảnh nếu bị lỗi
+      const imageUrl = item.featuredImage?.startsWith("http")
+        ? item.featuredImage
+        : "https://placehold.co/600x400";
 
       return {
         price_data: {
-          currency: "vnd", // Đơn vị tiền tệ
+          currency: "vnd",
           product_data: {
-            name: item.title, // Tên khách sạn
-            description: `Đặt phòng tại ${item.address || 'Địa điểm du lịch'}`,
-            images: validImages,
+            name: item.title, // Lấy tên Frontend gửi
+            description: `Check-in: ${new Date(checkInDate).toLocaleDateString("vi-VN")}`,
+            images: [imageUrl],
             metadata: {
-              // 🔥 Quan trọng: Stripe metadata value BẮT BUỘC phải là String
-              hotelId: String(item.id), 
-              slug: item.slug || ""
-            }
+              hotelId: String(item.id),
+              slug: item.slug || "",
+            },
           },
-          unit_amount: item.price, // Giá tiền 1 đêm (VND)
+          unit_amount: item.price, // 🔥 Lấy GIÁ Frontend gửi (Test cho lẹ)
         },
-        quantity: item.nights || 1, // Số lượng = Số đêm
+        quantity: item.nights || 1,
       };
     });
 
-    // 3. Tạo Checkout Session
+    // Tạo Session
     const session = await stripe.checkout.sessions.create({
-      ui_mode: 'embedded', // Form nhúng
+      ui_mode: "embedded",
       mode: "payment",
       line_items: lineItems,
-      
-      // Gắn ID user vào session để đối soát sau này
-      client_reference_id: userId, 
-      
-      // Điền sẵn email khách hàng vào form thanh toán
-      customer_email: user.email, 
-
-      // 4. Lưu thông tin Booking vào Metadata của Session
-      // Webhook sẽ đọc cái này để tạo Booking trong Database khi thanh toán thành công
+      client_reference_id: userId,
+      customer_email: user.email,
       metadata: {
+        bookingId: bookingId,
         userId: userId,
         checkInDate: String(checkInDate),
         checkOutDate: String(checkOutDate),
         customerName: user.name,
-        customerPhone: user.phone,
-        customerAddress: user.address || "Chưa cung cấp",
-        // Lưu ý: Metadata của Stripe có giới hạn ký tự, cẩn thận nếu address quá dài
+        customerPhone: user.phone || "",
       },
-      
-      // Đường dẫn redirect khi thanh toán xong (được frontend xử lý với embedded)
-        return_url: "http://localhost:3002/return?session_id={CHECKOUT_SESSION_ID}",
-        success_url: "http://localhost:3002/return?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "http://localhost:3002/cart?status=cancel",
-
+      return_url:
+        "http://localhost:3002/return?session_id={CHECKOUT_SESSION_ID}",
     });
-    console.log("✅ Created Stripe Session:", session.id);
-    return c.json({ clientSecret: session.client_secret });
 
+    return c.json({
+      clientSecret: session.client_secret,
+      bookingId: bookingId,
+    });
   } catch (error: any) {
-    console.error("❌ Stripe Session Error:", error);
-    console.error("❌ STRIPE ERROR DETAILED:", JSON.stringify(error, null, 2));
-    return c.json({ error: error.message || "Lỗi tạo phiên thanh toán" }, 500);
+    console.error("❌ Create Session Error:", error.message);
+    return c.json({ error: error.message }, 500);
   }
 });
 
+// Các route GET giữ nguyên không cần sửa
 sessionRoute.get("/:session_id", async (c) => {
   const { session_id } = c.req.param();
   try {
-    const session = await stripe.checkout.sessions.retrieve(
-      session_id as string,
-      {
-        expand: ["line_items"],
-      }
-    );
-
+    const session = await stripe.checkout.sessions.retrieve(session_id);
     return c.json({
       status: session.status,
       paymentStatus: session.payment_status,
+      bookingId: session.metadata?.bookingId,
       customer_email: session.customer_details?.email,
     });
   } catch (error) {
@@ -106,46 +91,38 @@ sessionRoute.get("/:session_id", async (c) => {
 
 sessionRoute.get("/my-bookings", shouldBeUser, async (c) => {
   const userId = c.get("userId");
-
   try {
-    // 1. Tìm các checkout sessions của user này
-    // Lưu ý: Stripe search có thể mất vài giây để index metadata mới
     const sessions = await stripe.checkout.sessions.list({
       limit: 100,
+      expand: ["data.line_items"],
     });
-
-    // 2. Lọc các session đã thanh toán thành công và thuộc về userId này
     const userBookings = sessions.data.filter(
-      (session) => 
-        session.metadata?.userId === userId && 
-        session.payment_status === "paid"
+      (session) =>
+        session.metadata?.userId === userId && session.status === "complete"
     );
-
-    // 3. Format lại dữ liệu để trả về cho Frontend giống với interface cũ
-    const formattedData = await Promise.all(userBookings.map(async (session) => {
-      // Lấy chi tiết các món hàng (khách sạn) trong session đó
-      const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
-
+    const formattedData = userBookings.map((session) => {
+      const item = session.line_items?.data[0];
       return {
         id: session.id,
-        booking_number: session.id.slice(-8).toUpperCase(),
-        total_amount: session.amount_total,
-        status: session.status,
-        payment_status: session.payment_status,
+        bookingId: session.metadata?.bookingId,
+        amount: session.amount_total,
+        currency: session.currency,
+        status: session.payment_status,
         created_at: new Date(session.created * 1000).toISOString(),
-        check_in_date: session.metadata?.checkInDate,
-        check_out_date: session.metadata?.checkOutDate,
-        // Giả sử mỗi session đặt 1 khách sạn (line item đầu tiên)
         hotel: {
-          title: lineItems.data[0]?.description,
-          address: session.metadata?.customerAddress,
-        }
+          title: item?.description || "Phòng khách sạn",
+          quantity: item?.quantity,
+          price: item?.amount_total,
+          image: null,
+        },
+        checkIn: session.metadata?.checkInDate,
+        checkOut: session.metadata?.checkOutDate,
       };
-    }));
-
+    });
     return c.json({ success: true, data: formattedData });
   } catch (error: any) {
-    return c.json({ error: error.message }, 500);
+    return c.json({ error: "Lỗi lấy lịch sử" }, 500);
   }
 });
+
 export default sessionRoute;

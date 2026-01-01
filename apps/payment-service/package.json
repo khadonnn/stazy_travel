@@ -1,26 +1,27 @@
 {
-    "name": "payment-service",
-    "type": "module",
-    "scripts": {
-        "dev": "tsx --env-file=.env --watch src/index.ts",
-        "build": "tsc",
-        "start": "node dist/index.js",
-        "check-types": "tsc --noEmit"
-    },
-    "dependencies": {
-        "@hono/clerk-auth": "^3.0.3",
-        "@hono/node-server": "^1.19.6",
-        "hono": "^4.10.7",
-        "stripe": "^20.1.0",
-        "vnpay": "^2.4.4",
-        "@repo/kafka": "workspace:*"
-
-    },
-    "devDependencies": {
-        "@repo/types": "workspace:*",
-        "@repo/typescript-config": "workspace:*",
-        "@types/node": "^20.11.17",
-        "tsx": "^4.7.1",
-        "typescript": "^5.8.3"
-    }
+  "name": "payment-service",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx --env-file=.env --watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/clerk-auth": "^3.0.3",
+    "@hono/node-server": "^1.19.6",
+    "@repo/kafka": "workspace:*",
+    "hono": "^4.10.7",
+    "stripe": "^20.1.0",
+    "uuid": "^13.0.0",
+    "vnpay": "^2.4.4"
+  },
+  "devDependencies": {
+    "@repo/types": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/product-db": "workspace:*",
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
 }
