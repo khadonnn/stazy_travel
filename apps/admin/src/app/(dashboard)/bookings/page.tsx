@@ -1,6 +1,6 @@
-import { columns, Payment } from '@/app/(dashboard)/payments/columns';
-import { DataTable } from '@/app/(dashboard)/payments/data-table';
-import { PaymentsTableWrapper } from '@/app/(dashboard)/payments/PaymentsTableWrapper';
+import { columns, Payment } from '@/app/(dashboard)/bookings/columns';
+import { DataTable } from '@/app/(dashboard)/bookings/data-table';
+import { PaymentsTableWrapper } from '@/app/(dashboard)/bookings/PaymentsTableWrapper';
 
 const getData = async (): Promise<Payment[]> => {
     return [

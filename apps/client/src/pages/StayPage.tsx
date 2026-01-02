@@ -1,173 +1,169 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
-import { motion } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import StayCard from "@/components/StayCard";
 import { StayFilter } from "@/components/StayFilter";
 import PaginationCus from "@/components/PaginationCus";
-import { mapStay, type StayApiResponse } from "@/lib/mappers/listings";
-import type { StayDataType } from "@/types/stay";
-// import api from '@/lib/api/axios'; // Đã loại bỏ Axios khi dùng Mock Data
+import { HotelFrontend } from "@repo/types";
 
-// 1. IMPORT MOCK DATA TRỰC TIẾP
-import MockData from "@/data/jsons/__homeStay.json";
+// Định nghĩa kiểu dữ liệu trả về từ API
+interface HotelApiResponse {
+  data: HotelFrontend[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
 
+const API_URL =
+  process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL || "http://localhost:8000";
 const ITEMS_PER_PAGE = 8;
 
 export default function StayPage() {
+  // 1. Hook quản lý URL
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const [allStays, setAllStays] = useState<StayDataType[]>([]);
-  const [filteredData, setFilteredData] = useState<StayDataType[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  // 2. State lưu dữ liệu
+  const [stays, setStays] = useState<HotelFrontend[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // ------------------- LOGIC TẢI DỮ LIỆU MOCK -------------------
+  // 3. Lấy giá trị hiện tại từ URL (để truyền xuống Pagination/Filter)
+  const currentPage = Number(searchParams?.get("page")) || 1;
 
+  // ------------------- GỌI API KHI URL THAY ĐỔI -------------------
   useEffect(() => {
-    const loadMockStays = async () => {
+    const fetchStays = async () => {
       setLoading(true);
+      setError(null);
+
       try {
-        // Giả lập độ trễ mạng để thấy hiệu ứng loading
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // A. Lấy tham số từ URL
+        const params = new URLSearchParams(searchParams?.toString());
 
-        // ÉP KIỂU TRỰC TIẾP sang mảng StayApiResponse[]
-        // Lưu ý: Dữ liệu mock được giả định là mảng []
-        const rawStays: StayApiResponse[] =
-          MockData as unknown as StayApiResponse[];
+        const sortBy = params.get("sort_by");
+        const sortOrder = params.get("sort_order");
 
-        const stays: StayDataType[] = rawStays.map((item: StayApiResponse) =>
-          mapStay(item)
+        // B. Mapping: Chuyển đổi tham số Sort của Frontend -> Backend
+        let backendSortParam: string | undefined = undefined;
+
+        switch (sortBy) {
+          case "price":
+            backendSortParam = sortOrder === "asc" ? "price_asc" : "price_desc";
+            break;
+          case "saleOff":
+            backendSortParam =
+              sortOrder === "asc" ? "saleOff_asc" : "saleOff_desc";
+            break;
+          case "viewCount":
+            backendSortParam = "viewCount";
+            break;
+          case "reviewCount":
+            backendSortParam = "reviewCount";
+            break;
+          default:
+            backendSortParam = undefined;
+            break;
+        }
+
+        // C. Gọi API
+        const response = await axios.get<HotelApiResponse>(
+          `${API_URL}/hotels`,
+          {
+            params: {
+              page: currentPage,
+              limit: ITEMS_PER_PAGE,
+
+              // Tham số quan trọng: Sort đã chuẩn hóa
+              sort: backendSortParam,
+
+              // Các bộ lọc khác (Lấy trực tiếp từ URL)
+              search: params.get("search"),
+              category: params.get("category"),
+              price_min: params.get("price_min"),
+              price_max: params.get("price_max"),
+              bedrooms: params.get("bedrooms"),
+            },
+          }
         );
 
-        setAllStays(stays);
-        setFilteredData(stays);
+        // D. Cập nhật State
+        const { data, pagination } = response.data;
+        setStays(data);
+        setTotalPages(pagination.totalPages);
 
-        console.log(
-          "✅ Dữ liệu Mock đã được tải thành công:",
-          stays.length,
-          "mục"
-        );
-      } catch (error) {
-        console.error(
-          "❌ Lỗi khi tải hoặc xử lý Mock Data (có thể do cấu trúc file):",
-          error
-        );
-        // Đảm bảo không bị crash nếu mock data không tải được
-        setAllStays([]);
-        setFilteredData([]);
+        console.log(`✅ Fetched ${data.length} items. Page: ${currentPage}`);
+      } catch (err: any) {
+        console.error("❌ Error fetching hotels:", err);
+        setError("Không thể tải dữ liệu khách sạn.");
+        setStays([]);
       } finally {
         setLoading(false);
       }
     };
 
-    loadMockStays();
-  }, []);
+    fetchStays();
 
-  // ------------------- LOGIC LỌC, PHÂN TRANG VÀ INJECT ADS -------------------
+    // ⚠️ QUAN TRỌNG: Dependency là [searchParams]
+    // Bất cứ khi nào URL thay đổi (trang, lọc, sort), useEffect sẽ chạy lại
+  }, [searchParams, currentPage]);
 
-  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
-
-  const currentItems = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    return filteredData.slice(start, end);
-  }, [filteredData, currentPage]);
-
-  const injectAds = useCallback((items: StayDataType[]): StayDataType[] => {
-    const ads = items.filter((item) => item.isAds);
-    const normal = items.filter((item) => !item.isAds);
-    const result: StayDataType[] = [];
-    let adIndex = 0;
-
-    // 1. CHÈN AD ĐẦU TIÊN
-    if (adIndex < ads.length) {
-      // Thêm ! để khẳng định ads[adIndex] không phải undefined
-      result.push(ads[adIndex]!);
-      adIndex++;
-    }
-
-    // 2. CHÈN AD XEN KẼ
-    normal.forEach((item, idx) => {
-      result.push(item);
-      if ((idx + 1) % 5 === 0 && adIndex < ads.length) {
-        // Thêm ! để khẳng định ads[adIndex] không phải undefined
-        result.push(ads[adIndex]!);
-        adIndex++;
-      }
-    });
-
-    // 3. CHÈN AD CÒN LẠI
-    while (adIndex < ads.length) {
-      // Thêm ! để khẳng định ads[adIndex] không phải undefined
-      result.push(ads[adIndex]!);
-      adIndex++;
-    }
-
-    return result;
-  }, []);
-
-  const displayedItems = useMemo(
-    () => injectAds(currentItems),
-    [currentItems, injectAds]
-  );
-
-  // Hàm nhận dữ liệu đã được lọc/sắp xếp từ StayFilter
-  const handleFilterChange = useCallback((data: StayDataType[]) => {
-    setFilteredData(data);
-    setCurrentPage(1);
-  }, []);
+  // ------------------- XỬ LÝ CHUYỂN TRANG -------------------
   const handlePageChange = useCallback(
     (page: number) => {
-      //  Bảo vệ: không bao giờ set page ngoài [1, totalPages]
-      const safePage = Math.max(1, Math.min(page, totalPages));
-      setCurrentPage(safePage);
+      // Tạo params mới dựa trên params hiện tại (để giữ lại filter search/category...)
+      const params = new URLSearchParams(searchParams?.toString());
+      params.set("page", page.toString());
+
+      // Đẩy URL mới -> Trigger useEffect ở trên
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
     },
-    [totalPages] // ← ✅ Rất quan trọng: khi totalPages thay đổi, callback được tạo lại
+    [searchParams, pathname, router]
   );
+
+  // ------------------- XỬ LÝ FILTER -------------------
+  // Hàm này để trống vì Filter Component (StayFilter) đã tự xử lý việc push URL
+  const handleFilterChange = useCallback((_data: HotelFrontend[]) => {
+    // Không làm gì cả
+  }, []);
+
   // ------------------- RENDER -------------------
-
   return (
-    <div className="space-y-6 px-4 sm:px-6 md:px-12 sm:space-y-8 mx-auto w-full">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-semibold">
-          Danh sách khách sạn ({filteredData.length})
-        </h2>
-      </div>
-
-      {/* Truyền allStays (mock data đã tải) vào bộ lọc */}
-      <StayFilter data={allStays} onFilter={handleFilterChange} />
+    <div className="space-y-6 px-4 mx-auto w-full mt-20">
+      {/* Truyền stays vào chỉ để tính maxPrice nếu cần, ko dùng để filter client-side nữa */}
+      <StayFilter data={stays} onFilter={handleFilterChange} />
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <motion.div
-            className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full"
-            animate={{ rotate: 360 }}
-            transition={{
-              repeat: Infinity,
-              duration: 1,
-              ease: "linear",
-            }}
-          />
+        <div className="flex justify-center h-64 items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+        </div>
+      ) : error ? (
+        <div className="text-red-500 text-center p-4 bg-red-50 rounded-md border border-red-200">
+          {error}
         </div>
       ) : (
         <>
-          {/* Hiển thị thông báo nếu không có dữ liệu */}
-          {filteredData.length === 0 && (
-            <div className="text-center py-10 text-neutral-500">
-              Không tìm thấy kết quả phù hợp với bộ lọc.
+          {stays.length === 0 ? (
+            <div className="text-center text-gray-500 py-10">
+              Không tìm thấy khách sạn nào phù hợp.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {stays.map((stay) => (
+                <StayCard key={stay.id} data={stay as any} />
+              ))}
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 justify-center">
-            {displayedItems.map((stay) => (
-              <StayCard key={stay.id} data={stay} />
-            ))}
-          </div>
-
           {totalPages > 1 && (
-            <div className="flex justify-center mt-8">
+            <div className="mt-8 flex justify-center">
               <PaginationCus
                 currentPage={currentPage}
                 totalPages={totalPages}

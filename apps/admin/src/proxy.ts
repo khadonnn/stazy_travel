@@ -1,7 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/no-access', '/api/uploadthing(.*)']);
+const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/unauthorized(.*)', '/api/uploadthing(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
     if (isPublicRoute(req)) {
@@ -17,7 +17,7 @@ export default clerkMiddleware(async (auth, req) => {
     const role = (sessionClaims as any)?.metadata?.role;
 
     if (role !== 'admin') {
-        return NextResponse.redirect(new URL('/no-access', req.url));
+        return NextResponse.redirect(new URL('/unauthorized', req.url));
     }
 
     return NextResponse.next();

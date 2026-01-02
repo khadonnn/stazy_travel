@@ -1,5 +1,4 @@
-
-import { BookingSchemaType } from "@repo/booking-db"; 
+import { BookingSchemaType } from "@repo/booking-db";
 
 export type BookingType = BookingSchemaType & {
   _id: string;
@@ -7,10 +6,10 @@ export type BookingType = BookingSchemaType & {
 
 export type BookingChartType = {
   name: string;
-  
-  totalRevenue: number; 
-  
+  totalRevenue: number;
   totalBookings: number;
-  
   confirmedBookings: number;
+  month: string;
+  total: number;
+  successful: number;
 };

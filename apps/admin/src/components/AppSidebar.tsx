@@ -126,19 +126,19 @@ const AppSidebar = () => {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-                {/* Products */}
+                {/* Hotels */}
                 <SidebarGroup>
-                    <SidebarGroupLabel>Products</SidebarGroupLabel>
-                    <SidebarGroupAction title="Add Product">
-                        <Plus /> <span className="sr-only">Add Product</span>
+                    <SidebarGroupLabel>Hotels</SidebarGroupLabel>
+                    <SidebarGroupAction title="Add Hotel">
+                        <Plus /> <span className="sr-only">Add Hotel</span>
                     </SidebarGroupAction>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <Link href="/products">
+                                    <Link href="/hotels">
                                         <Shirt />
-                                        See all products
+                                        See all hotels
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -222,7 +222,7 @@ const AppSidebar = () => {
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <Link href="/users">
+                                    <Link href="/payments">
                                         <ShoppingBasket />
                                         See All Transactions
                                     </Link>

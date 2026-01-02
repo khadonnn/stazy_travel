@@ -1,19 +1,18 @@
-"use client"; // BẮT BUỘC vì nó là component UI tương tác và có thể chứa state/effect
+"use client";
 
 import GallerySlider from "./GallerySlider";
-// SỬ DỤNG LINK CỦA NEXT.JS
 import Link from "next/link";
 import StartRating from "@/components/StarRating";
 import BtnLikeIcon from "@/components/BtnLikeIcon";
 import SaleOffBadge from "@/components/SaleOffBadge";
 import Badge from "@/components/ui/BadgeCus";
 import { formatPrice } from "@/lib/utils/formatPrice";
-import { Hotel } from "@repo/product-db";
 import categories from "@/data/jsons/__category.json";
-import { StayDataType } from "@/types/stay";
+import { HotelFrontend } from "@repo/types";
+
 export interface StayCardProps {
   className?: string;
-  data?: StayDataType;
+  data?: HotelFrontend;
   size?: "default" | "small";
 }
 
@@ -25,9 +24,10 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
     address,
     title,
     bedrooms,
-    slug, // Lưu ý: Thuộc tính href này không cần thiết nếu bạn xây dựng URL trực tiếp từ ID
+    slug,
     like,
-    saleOff,
+    saleOff, // Trường cũ (String)
+    saleOffPercent, // ✅ Trường mới (Int) lấy từ API
     isAds,
     price,
     reviewStart,
@@ -35,12 +35,13 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
     id,
   } = data || {};
 
-  // Nếu data không tồn tại, trả về null hoặc một fallback UI
   if (!data) {
     return null;
   }
+
   const category = categories.find((cat) => cat.id === categoryId);
   const categoryName = category?.name || "Khác";
+
   const renderSliderGallery = () => (
     <div className="relative w-full">
       <GallerySlider
@@ -48,15 +49,22 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
         ratioClass="aspect-[4/3]"
         featuredImage={featuredImage || ""}
         galleryImgs={galleryImgs || []}
-        // Sử dụng href được tạo từ ID để đảm bảo tính đúng đắn trong Next.js
         href={`/hotels/${id}`}
         galleryClass={size === "default" ? undefined : ""}
         id={id}
       />
       <BtnLikeIcon isLiked={like} className="absolute right-3 top-3 z-[1]" />
-      {saleOff && (
+
+      {/* ✅ LOGIC HIỂN THỊ TAG GIẢM GIÁ ĐÃ SỬA */}
+      {/* Ưu tiên 1: Nếu có % giảm giá dạng số (từ Database) */}
+      {saleOffPercent && Number(saleOffPercent) > 0 ? (
+        <SaleOffBadge
+          className="absolute left-3 top-3"
+          desc={`-${saleOffPercent}% hôm nay`}
+        />
+      ) : saleOff ? (
         <SaleOffBadge className="absolute left-3 top-3" desc={saleOff} />
-      )}
+      ) : null}
     </div>
   );
 
@@ -128,7 +136,6 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
       data-nc-id="StayCard"
     >
       {renderSliderGallery()}
-      {/* SỬ DỤNG LINK CỦA NEXT.JS VÀ DÙNG href DỰA TRÊN ID */}
       <Link href={`/hotels/${id}`}>{renderContent()}</Link>
     </div>
   );

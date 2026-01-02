@@ -2,14 +2,15 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { debounce, filter } from 'lodash'; // Import các hàm cần thiết từ lodash
-import { columns, Product } from './columns'; // Import columns và type Payment
-import { DataTable } from '@/app/(dashboard)/payments/data-table';
+import { columns } from './columns'; // Import columns và type Payment
+import { DataTable } from '@/app/(dashboard)/bookings/data-table';
 import { Search } from 'lucide-react';
+import { HotelColumn } from '@repo/types';
 // Giả định bạn có component Input của riêng mình (ví dụ từ shadcn/ui)
 // import { Input } from '@/components/ui/input';
 
 interface ProductsTableWrapperProps {
-    initialData: Product[];
+    initialData: HotelColumn[];
 }
 
 export function ProductsTableWrapper({ initialData }: ProductsTableWrapperProps) {
@@ -43,8 +44,7 @@ export function ProductsTableWrapper({ initialData }: ProductsTableWrapperProps)
         // Kiểm tra fullName hoặc email có chứa chuỗi tìm kiếm không
         return filter(initialData, (item) => {
             return (
-                item.name.toLowerCase().includes(searchLower) ||
-                item.shortDescription.toLowerCase().includes(searchLower)
+                item.title.toLowerCase().includes(searchLower) || item.description.toLowerCase().includes(searchLower)
             );
         });
     }, [initialData, searchText]);

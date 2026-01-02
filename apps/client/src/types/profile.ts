@@ -5,7 +5,7 @@
 //     password: string;
 // }
 
-import { PostDataType } from '@/types/stay';
+import { PostDataType } from "@/types/stay";
 
 // // Dữ liệu login
 // export interface LoginPayload {
@@ -41,27 +41,27 @@ import { PostDataType } from '@/types/stay';
 //     posts?: PostDataType[]; // Mảng bài viết của người dùng
 // }
 
-type Gender = 'male' | 'female';
-type Role = 'USER' | 'AUTHOR' | 'ADMIN';
+type Gender = "male" | "female";
+type Role = "USER" | "AUTHOR" | "ADMIN";
 
 export interface User {
-    id: string;
-    email: string;
-    password?: string;
-    name: string;
-    nickname?: string;
-    phone: string;
-    gender?: Gender;
-    dob?: string; // hoặc Date nếu đã parse
-    address: string;
-    avatar?: string;
-    bgImage?: string;
-    jobName?: string;
-    desc?: string;
-    role?: Role;
-    createdAt?: string;
-    updatedAt?: string;
-    posts?: { id: number }[];
+  id: string;
+  email: string;
+  password?: string;
+  name: string;
+  nickname?: string;
+  phone: string;
+  gender?: Gender;
+  dob?: string; // hoặc Date nếu đã parse
+  address: string;
+  avatar?: string;
+  bgImage?: string;
+  jobName?: string;
+  desc?: string;
+  role?: Role;
+  createdAt?: string;
+  updatedAt?: string;
+  posts?: { id: number }[];
 }
 // Payloads
 export interface LoginPayload {
@@ -76,12 +76,12 @@ export interface SignupPayload {
 }
 
 export interface UpdateProfilePayload {
-    name?: string;
-    nickname?: string;
-    email?: string;
-    dob?: string;
-    phone?: string;
-    address?: string;
-    gender?: string;
-    profilePic?: File | string | null;
+  name?: string;
+  nickname?: string | null;
+  email?: string;
+  dob?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  gender?: string | null;
+  avatar?: File | string | null;
 }

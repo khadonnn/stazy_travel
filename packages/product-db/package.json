@@ -1,25 +1,29 @@
 {
-    "name": "@repo/product-db",
-    "version": "0.0.0",
-    "type": "module",
-    "scripts": {
-        "db:generate": "prisma generate",
-        "db:migrate": "prisma migrate dev --name create-hotel-user-category",
-        "db:deploy": "prisma migrate deploy",
-        "db:reset": "prisma migrate reset"
-    },
-    "devDependencies": {
-        "@types/pg": "^8.16.0",
-        "prisma": "^7.1.0",
-        "@repo/typescript-config": "workspace:*"
-    },
-    "dependencies": {
-        "@prisma/adapter-pg": "^7.1.0",
-        "@prisma/client": "^7.1.0",
-        "dotenv": "^17.2.3",
-        "pg": "^8.16.3"
-    },
-    "exports": {
-        ".": "./src/index.ts"
-    }
+  "name": "@repo/product-db",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev --name create-hotel-user-category",
+    "db:deploy": "prisma migrate deploy",
+    "db:reset": "prisma migrate reset"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/pg": "^8.16.0",
+    "dotenv": "^17.2.3",
+    "prisma": "^7.1.0",
+    "tsx": "^4.21.0"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.1.0",
+    "@prisma/client": "^7.1.0",
+    "pg": "^8.16.3"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  }
 }
