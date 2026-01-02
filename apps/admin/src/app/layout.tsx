@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import AppSidebar from '@/components/AppSidebar';
-import Navbar from '@/components/Navbar';
-import { ThemeProvider } from '@/components/theme-provider';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { cookies } from 'next/headers';
+import { viVN } from '@clerk/localizations';
 
+import { cookies } from 'next/headers';
+import { ClerkProvider } from '@clerk/nextjs';
 const geistSans = Geist({
     variable: '--font-geist-sans',
     subsets: ['latin'],
@@ -18,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: 'Dashboard | Shadcn UI',
-    description: 'Shadcn UI Dashboard ',
+    title: 'Dashboard | Stazy Hotel',
+    description: 'Stazy Hotel Dashboard ',
 };
 
 export default async function RootLayout({
@@ -27,22 +25,19 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const cookieStore = await cookies();
-    const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
-
     return (
-        <html lang="en" suppressHydrationWarning>
-            <body className={`${geistSans.variable} ${geistMono.variable} flex antialiased`}>
-                <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    <SidebarProvider defaultOpen={defaultOpen}>
-                        <AppSidebar />
-                        <main className="w-full">
-                            <Navbar />
-                            <div className="px-4"> {children}</div>
-                        </main>
-                    </SidebarProvider>
-                </ThemeProvider>
-            </body>
-        </html>
+        <ClerkProvider
+            localization={viVN}
+            appearance={{
+                layout: {
+                    unsafe_disableDevelopmentModeWarnings: true,
+                },
+            }}
+            signInUrl="/sign-in"
+        >
+            <html lang="en" suppressHydrationWarning>
+                <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+            </html>
+        </ClerkProvider>
     );
 }

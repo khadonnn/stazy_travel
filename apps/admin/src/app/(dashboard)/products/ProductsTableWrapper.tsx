@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { debounce, filter } from 'lodash'; // Import các hàm cần thiết từ lodash
 import { columns, Product } from './columns'; // Import columns và type Payment
-import { DataTable } from '@/app/payments/data-table';
+import { DataTable } from '@/app/(dashboard)/payments/data-table';
 import { Search } from 'lucide-react';
 // Giả định bạn có component Input của riêng mình (ví dụ từ shadcn/ui)
 // import { Input } from '@/components/ui/input';

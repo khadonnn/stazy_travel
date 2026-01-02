@@ -1,6 +1,6 @@
 import { columns, User } from './columns';
-import { DataTable } from '@/app/payments/data-table';
-import { UsersTableWrapper } from '@/app/users/UsersTableWrapper';
+import { DataTable } from '@/app/(dashboard)/payments/data-table';
+import { UsersTableWrapper } from '@/app/(dashboard)/users/UsersTableWrapper';
 
 const getData = async (): Promise<User[]> => {
     return [

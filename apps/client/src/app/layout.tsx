@@ -46,14 +46,12 @@ export default async function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <Navbar />
-          <div className=" ">
-            {/* Gradient */}
-            <div className="absolute inset-0 " />
 
-            {/* Wave */}
-            <BackgroundWave />
-          </div>
           <main className="mt-10">
+            <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/20" />
+              <BackgroundWave />
+            </div>
             <Providers>{children}</Providers>
           </main>
           <footer className="shrink-0">

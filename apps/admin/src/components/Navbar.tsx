@@ -1,3 +1,4 @@
+'use client';
 import { LogOut, Settings, User } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -12,8 +13,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import MyClock from '@/components/MyClock';
-
+import { useUser, useClerk } from '@clerk/nextjs';
 const Navbar = () => {
+    const { signOut } = useClerk();
     return (
         <nav className="bg-background sticky top-0 z-10 flex items-center justify-between p-4">
             {/* LEFT */}
@@ -47,7 +49,10 @@ const Navbar = () => {
                             <Settings />
                             Settings
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600 hover:bg-red-300 hover:text-white">
+                        <DropdownMenuItem
+                            className="text-red-600 hover:bg-red-300 hover:text-white"
+                            onClick={() => signOut()}
+                        >
                             <LogOut />
                             Logout
                         </DropdownMenuItem>

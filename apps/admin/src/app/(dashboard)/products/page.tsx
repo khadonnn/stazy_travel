@@ -1,6 +1,6 @@
-import { DataTable } from '@/app/payments/data-table';
+import { DataTable } from '@/app/(dashboard)/payments/data-table';
 import { Product } from './columns';
-import { ProductsTableWrapper } from '@/app/products/ProductsTableWrapper';
+import { ProductsTableWrapper } from '@/app/(dashboard)/products/ProductsTableWrapper';
 
 const getData = async (): Promise<Product[]> => {
     return [
