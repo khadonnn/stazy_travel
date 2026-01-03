@@ -16,7 +16,7 @@ services:
     ports:
       - "9094:9094"
     networks:
-      - kafka-network
+      - stazy-network
 
   kafka-broker-2:
     image: apache/kafka:3.7.1
@@ -35,7 +35,7 @@ services:
     ports:
       - "9095:9095"
     networks:
-      - kafka-network
+      - stazy-network
 
   kafka-broker-3:
     image: apache/kafka:3.7.1
@@ -54,7 +54,7 @@ services:
     ports:
       - "9096:9096"
     networks:
-      - kafka-network
+      - stazy-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -69,8 +69,23 @@ services:
       - kafka-broker-2
       - kafka-broker-3
     networks:
-      - kafka-network
+      - stazy-network
+  postgres:
+    # Image này đã cài sẵn Postgres 16 và extension pgvector
+    image: pgvector/pgvector:pg16
+    container_name: stazy-db
+    restart: always
+    environment:
+      # Bạn có thể đổi password ở đây
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=products
+    ports:
+      # Map port ra ngoài để Prisma ở máy thật kết nối được
+      - "5432:5432"
+    networks:
+      - stazy-network
 
 networks:
-  kafka-network:
+  stazy-network:
     driver: bridge

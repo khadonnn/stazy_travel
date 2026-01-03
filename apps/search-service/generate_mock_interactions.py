@@ -41,7 +41,7 @@ ALL_AMENITY_IDS = [
 
 # 2. Load stays (File __homeStay.json của bạn)
 try:
-    with open("__homeStay.json", "r", encoding="utf-8") as f:
+    with open("jsons/__homeStay.json", "r", encoding="utf-8") as f:
         stays = json.load(f)
 except FileNotFoundError:
     print("Lỗi: Không tìm thấy file __homeStay.json")
@@ -55,13 +55,13 @@ for stay in stays:
 
 # 4. Tạo 80 user giả
 users = []
-for i in range(1, 81):
+for i in range(1, 51):
     # FIX LỖI TẠI ĐÂY: Lấy mẫu từ danh sách ALL_AMENITY_IDS chúng ta vừa định nghĩa
     preferred = random.sample(ALL_AMENITY_IDS, k=random.randint(2, 5))
 
     users.append(
         {
-            "id": f"u{i}",
+            "id": f"user_fake_{i}",
             "preferred_amenities": preferred,
             "avg_budget": random.choice([500000, 1000000, 2000000, 5000000]),
         }
@@ -109,7 +109,7 @@ for user in users:
         )
 
 # 6. Lưu file
-with open("mock_interactions.json", "w", encoding="utf-8") as f:
+with open("jsons/__mock_interactions.json", "w", encoding="utf-8") as f:
     json.dump(interactions, f, ensure_ascii=False, indent=2)
 
 print(f"✅ Đã tạo {len(interactions)} hành vi thành công!")

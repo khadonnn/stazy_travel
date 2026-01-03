@@ -59,21 +59,24 @@ ADJECTIVES = [
 SCENARIOS = {
     "mountain": {
         "locs": ["Sapa", "Đà Lạt", "Tam Đảo", "Hà Giang", "Ninh Bình"],
-        "keywords": ["mountain", "forest", "valley", "nature"],
+        # Thêm landscape để lấy cảnh
+        "keywords": ["mountain", "forest", "valley", "nature", "landscape"],
         "titles": ["Retreat", "Lodge", "Homestay", "Hillside Villa", "Eco Farm"],
         "must_have": ["mountain-view", "hot-water", "garden", "bbq"],
         "cat_id": 3 # Homestay/Nature
     },
     "sea": {
         "locs": ["Hạ Long", "Nha Trang", "Phú Quốc", "Quy Nhơn", "Phú Yên", "Côn Đảo", "Mũi Né", "Vũng Tàu"],
-        "keywords": ["beach", "ocean", "resort", "island"],
+        # Thêm sea, ocean, landscape
+        "keywords": ["beach", "ocean", "sea", "island", "coast", "resort"],
         "titles": ["Resort & Spa", "Beach House", "Ocean View", "Seaside Hotel", "Bay Villa"],
         "must_have": ["beach-view", "sea-view", "pool", "bar"],
         "cat_id": 2 # Resort/Beach
     },
     "city": {
         "locs": ["Hà Nội", "TP.HCM", "Đà Nẵng", "Cần Thơ", "Huế", "Hội An"],
-        "keywords": ["city", "building", "urban", "modern"],
+        # Thêm architecture, building để tránh ảnh người đi đường
+        "keywords": ["city", "building", "urban", "modern", "architecture", "skyscraper"],
         "titles": ["Grand Hotel", "Urban Suite", "Central Stay", "Luxury Inn", "Apartment"],
         "must_have": ["city-view", "workspace", "reception-24h", "wifi"],
         "cat_id": 1 # Hotel/City
@@ -94,7 +97,7 @@ def generate_stays(count=100):
         # Tạo tên khách sạn ngẫu nhiên và hay hơn
         adjective = random.choice(ADJECTIVES)
         base_title = random.choice(config['titles'])
-        # Tỷ lệ 50% là "Luxury Sapa Retreat" hoặc "Sapa Luxury Retreat"
+        
         if random.random() > 0.5:
             full_title = f"{adjective} {loc} {base_title} {random.randint(10, 99)}"
         else:
@@ -103,14 +106,15 @@ def generate_stays(count=100):
         # Tạo Slug từ Title
         slug = create_slug(full_title)
 
-        # Tọa độ nhiễu nhẹ để không trùng nhau 1 điểm
+        # Tọa độ nhiễu nhẹ
         base_lat, base_lng = LOC_COORDS.get(loc, (10.0, 105.0))
         lat = base_lat + random.uniform(-0.03, 0.03)
         lng = base_lng + random.uniform(-0.03, 0.03)
 
-        # Gallery 4 ảnh
+        # --- SỬA GALLERY ---
+        # Thêm "interior, room" để ra ảnh nội thất thay vì ảnh người
         gallery = [
-            f"https://loremflickr.com/800/600/vietnam,nature,{keyword}?lock={i*10 + j}"
+            f"https://loremflickr.com/800/600/interior,room,hotel,{keyword}?lock={i*10 + j}"
             for j in range(4)
         ]
 
@@ -119,21 +123,23 @@ def generate_stays(count=100):
         sale_percent = random.choice([5, 10, 15, 20, 25, 30]) if has_sale else 0
         sale_off_text = f"-{sale_percent}% hôm nay" if has_sale else None
 
+        # --- SỬA FEATURED IMAGE ---
+        # Thêm nature, landscape, architecture để lấy view đẹp, tránh mặt người
+        # Bỏ chữ "vietnam" đi vì nó hay ra ảnh đời sống con người
+        featured_img_url = f"https://loremflickr.com/1200/800/nature,landscape,architecture,{keyword}?lock={i}"
+
         stay = {
             "id": i,
             "authorId": f"user_fake_{random.randint(1, 30)}",
-            "date": random_date(), # Ngày random
-            
-            # --- QUAN TRỌNG: Đổi href thành slug ---
+            "date": random_date(),
             "slug": slug,
-            
             "categoryId": config["cat_id"],
             "title": full_title,
-            "featuredImage": f"https://loremflickr.com/1200/800/vietnam,{keyword}?lock={i}",
+            "featuredImage": featured_img_url,
             "galleryImgs": gallery,
             "amenities": list(set(config["must_have"] + random.sample(ALL_AMENITY_IDS, k=random.randint(6, 12)))),
             "description": f"Trải nghiệm đẳng cấp tại {full_title}. Tọa lạc tại khu vực {loc} thơ mộng, mang đến không gian {keyword} yên bình. Phù hợp cho cả nghỉ dưỡng và công tác.",
-            "price": random.randint(10, 300) * 50000, # Giá từ 500k đến 15tr
+            "price": random.randint(10, 300) * 50000, 
             "address": f"Khu vực {keyword}, {loc}",
             "reviewStart": round(random.uniform(3.8, 5.0), 1),
             "reviewCount": random.randint(5, 600),
@@ -143,11 +149,8 @@ def generate_stays(count=100):
             "maxGuests": random.randint(2, 12),
             "bedrooms": random.randint(1, 6),
             "bathrooms": random.randint(1, 4),
-            
-            # --- Cập nhật Sale Off ---
             "saleOff": sale_off_text,
             "saleOffPercent": sale_percent,
-            
             "isAds": random.random() < 0.15,
             "map": {"lat": round(lat, 6), "lng": round(lng, 6)},
         }
@@ -159,10 +162,9 @@ def generate_stays(count=100):
 if __name__ == "__main__":
     data = generate_stays(100)
     
-    # Ghi file
-    filename = "__homeStay.json"
+    filename = "jsons/__homeStay.json"
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
     print(f"✅ Đã tạo {len(data)} khách sạn thành công vào file '{filename}'")
-    print("✨ Các tính năng mới: Slug chuẩn SEO, Tên đa dạng, Ngày tháng động, SaleOffPercent.")
+    print("✨ Ảnh đã được cập nhật sang chế độ phong cảnh/thiên nhiên.")

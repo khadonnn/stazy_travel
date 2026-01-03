@@ -7,11 +7,12 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
-  
+  extensions = [vector]
 }
 model User {
   id          String    @id @default(uuid()) 
@@ -61,7 +62,7 @@ model Hotel {
 
   // -- Info --
   date               DateTime @default(now()) // Đổi sang DateTime để dễ query time range
-  slug               String
+  slug           String   @unique
   title              String
   featuredImage      String
   
@@ -98,6 +99,7 @@ model Hotel {
 
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+  imageVector    Unsupported("vector(512)")?
 
 interactions Interaction[]
   @@map("hotels")
@@ -108,7 +110,7 @@ model Category {
   id        Int      @id @default(autoincrement())
   name      String
   slug      String   @unique
-  
+  description String?  @db.Text
   // TwMainColor thường là một chuỗi class name (vd: "red", "blue") hoặc mã màu
   color     String?  
   

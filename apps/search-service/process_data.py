@@ -24,8 +24,8 @@ def get_image_vector(url):
 
 
 # 2. Đọc file JSON gốc của bạn
-input_file = "__homeStay.json"  # Đổi tên cho đúng file của bạn
-output_file = "hotel_vectors.json"
+input_file = "jsons/__homeStay.json"  # Đổi tên cho đúng file của bạn
+output_file = "jsons/__hotel_vectors.json"
 
 with open(input_file, "r", encoding="utf-8") as f:
     stays = json.load(f)

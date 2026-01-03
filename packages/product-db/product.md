@@ -55,3 +55,15 @@ pnpm --filter @repo/product-db exec prisma migrate dev --name add_recommendation
 
 > chay seed, chinhr seed trong prisma.config
 > npx prisma db seed
+
+# nếu reset
+
+> npx prisma migrate reset
+> npx prisma generate
+> npx prisma db seed
+
+# nếu update thêm prisma
+
+> npx prisma migrate dev --name add_category_description
+> npx prisma generate
+> npx prisma db seed

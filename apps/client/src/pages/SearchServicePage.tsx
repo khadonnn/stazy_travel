@@ -86,7 +86,7 @@ export default function SearchServicePage() {
     const fetchInitialData = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch("http://localhost:8008/recommend/u1");
+        const res = await fetch("http://localhost:8008/recommend/user_fake_1");
         if (res.ok) {
           const matches = await res.json();
           updateUIWithResults(matches);
