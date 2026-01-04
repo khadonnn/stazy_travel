@@ -18,4 +18,14 @@ export type IUser = {
   role: UserRole;
   createdAt: Date;
   updatedAt: Date;
+  posts?: any[];
+};
+
+export type AuthorType = IUser & {
+  firstName?: string;
+  lastName?: string;
+  displayName?: string;
+  countPosts?: number;
+  href?: string;
+  starRating?: number;
 };

@@ -49,7 +49,7 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
         ratioClass="aspect-[4/3]"
         featuredImage={featuredImage || ""}
         galleryImgs={galleryImgs || []}
-        href={`/hotels/${id}`}
+        href={`/hotels/${slug}`}
         galleryClass={size === "default" ? undefined : ""}
         id={id}
       />
@@ -136,7 +136,7 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
       data-nc-id="StayCard"
     >
       {renderSliderGallery()}
-      <Link href={`/hotels/${id}`}>{renderContent()}</Link>
+      <Link href={`/hotels/${slug}`}>{renderContent()}</Link>
     </div>
   );
 }

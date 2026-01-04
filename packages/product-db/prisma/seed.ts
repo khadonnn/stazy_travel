@@ -141,8 +141,8 @@ async function main() {
         }
       }
 
-      let saleOffPercent = 0;
-      if (item.saleOff) {
+      let saleOffPercent = item.saleOffPercent || 0;
+      if (item.saleOff && saleOffPercent === 0) {
         const match = String(item.saleOff).match(/(\d+)/);
         if (match) {
           saleOffPercent = parseInt(match[0], 10);
@@ -164,10 +164,17 @@ async function main() {
         bathrooms: item.bathrooms || 1,
         map: item.map || {},
         authorId: defaultAuthor.id,
-        categoryId: categoryId, // Đã map chuẩn
+        categoryId: categoryId,
         isAds: item.isAds || false,
-        saleOff: item.saleOff || null,
-        saleOffPercent: saleOffPercent,
+
+        // --- CẬP NHẬT 5 TRƯỜNG CÒN THIẾU TẠI ĐÂY ---
+        reviewCount: item.reviewCount || 0, // Lấy từ JSON
+        reviewStart: item.reviewStart || 0, // Lấy từ JSON (Thường là Float trong Prisma)
+        viewCount: item.viewCount || 0, // Lấy từ JSON
+        like: item.like ?? false, // Lấy từ JSON (Dùng ?? để tránh lỗi nếu là false)
+        commentCount: item.commentCount || 0, // Lấy từ JSON
+        saleOff: item.saleOff || null, // Ví dụ: "-25% hôm nay"
+        saleOffPercent: saleOffPercent, // Số nguyên: 25
       };
 
       const savedHotel = await prisma.hotel.upsert({

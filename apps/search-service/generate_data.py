@@ -7,10 +7,8 @@ from datetime import datetime, timedelta
 # --- 1. CÁC HÀM TIỆN ÍCH ---
 
 def create_slug(text):
-    """
-    Chuyển đổi chuỗi có dấu thành slug chuẩn SEO.
-    VD: "Đà Lạt Lodge 1" -> "da-lat-lodge-1"
-    """
+    # Chuẩn hóa để không mất chữ "đ" và "Đ"
+    text = text.replace('Đ', 'd').replace('đ', 'd')
     text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('utf-8')
     text = text.lower()
     text = re.sub(r'[^\w\s-]', '', text)
@@ -18,13 +16,13 @@ def create_slug(text):
     return text
 
 def random_date(start_days_ago=90):
-    """Random ngày trong khoảng 90 ngày gần đây"""
     start_date = datetime.now() - timedelta(days=start_days_ago)
     random_days = random.randint(0, start_days_ago)
     return (start_date + timedelta(days=random_days)).strftime("%b %d, %Y")
 
 # --- 2. DỮ LIỆU CẤU HÌNH ---
 
+# DANH SÁCH AMENITIES ĐẦY ĐỦ (DẠNG STRING)
 ALL_AMENITY_IDS = [
     "wifi", "air-conditioning", "bathroom", "hot-water", "tv", "laundry",
     "luggage-storage", "housekeeping", "double-bed", "single-bed", "extra-bed",
@@ -40,6 +38,22 @@ ALL_AMENITY_IDS = [
     "award-winning", "top-rated", "trending",
 ]
 
+FILE_NAME_MAP = {
+    "Sapa": "sapa", "Đà Lạt": "da-lat", "Tam Đảo": "tam-dao",
+    "Hà Giang": "ha-giang", "Ninh Bình": "ninh-binh", "Hạ Long": "ha-long",
+    "Nha Trang": "nha-trang", "Phú Quốc": "phu-quoc", "Quy Nhơn": "quy-nhon",
+    "Phú Yên": "phu-yen", "Côn Đảo": "con-dao", "Mũi Né": "mui-ne",
+    "Vũng Tàu": "vung-tau", "Hà Nội": "ha-noi", "TP.HCM": "hcm",
+    "Đà Nẵng": "da-nang", "Cần Thơ": "can-tho", "Huế": "hue", "Hội An": "hoi-an"
+}
+
+IMG_COUNT_CONFIG = {
+    "sapa": 5, "da-lat": 5, "tam-dao": 5, "ha-giang": 5, "ninh-binh": 5,
+    "ha-long": 6, "nha-trang": 6, "phu-quoc": 7, "quy-nhon": 5, 
+    "phu-yen": 5, "con-dao": 5, "mui-ne": 6, "vung-tau": 5,
+    "ha-noi": 5, "hcm": 5, "da-nang": 5, "can-tho": 5, "hue": 5, "hoi-an": 5
+}
+
 LOC_COORDS = {
     "Sapa": (22.33, 103.84), "Đà Lạt": (11.94, 108.45), "Tam Đảo": (21.45, 105.64),
     "Hà Giang": (22.82, 104.98), "Ninh Bình": (20.25, 105.97), "Hạ Long": (20.95, 107.04),
@@ -50,38 +64,28 @@ LOC_COORDS = {
     "Hội An": (15.88, 108.33),
 }
 
-# Thêm tính từ để tên khách sạn phong phú hơn
-ADJECTIVES = [
-    "Luxury", "Cozy", "Modern", "Classic", "Hidden", "Sunny", 
-    "Royal", "Grand", "Boutique", "Charming", "Peaceful", "Vintage"
-]
-
 SCENARIOS = {
     "mountain": {
         "locs": ["Sapa", "Đà Lạt", "Tam Đảo", "Hà Giang", "Ninh Bình"],
-        # Thêm landscape để lấy cảnh
         "keywords": ["mountain", "forest", "valley", "nature", "landscape"],
         "titles": ["Retreat", "Lodge", "Homestay", "Hillside Villa", "Eco Farm"],
-        "must_have": ["mountain-view", "hot-water", "garden", "bbq"],
-        "cat_id": 3 # Homestay/Nature
+        "cat_id": 3
     },
     "sea": {
         "locs": ["Hạ Long", "Nha Trang", "Phú Quốc", "Quy Nhơn", "Phú Yên", "Côn Đảo", "Mũi Né", "Vũng Tàu"],
-        # Thêm sea, ocean, landscape
         "keywords": ["beach", "ocean", "sea", "island", "coast", "resort"],
         "titles": ["Resort & Spa", "Beach House", "Ocean View", "Seaside Hotel", "Bay Villa"],
-        "must_have": ["beach-view", "sea-view", "pool", "bar"],
-        "cat_id": 2 # Resort/Beach
+        "cat_id": 2
     },
     "city": {
         "locs": ["Hà Nội", "TP.HCM", "Đà Nẵng", "Cần Thơ", "Huế", "Hội An"],
-        # Thêm architecture, building để tránh ảnh người đi đường
         "keywords": ["city", "building", "urban", "modern", "architecture", "skyscraper"],
         "titles": ["Grand Hotel", "Urban Suite", "Central Stay", "Luxury Inn", "Apartment"],
-        "must_have": ["city-view", "workspace", "reception-24h", "wifi"],
-        "cat_id": 1 # Hotel/City
+        "cat_id": 1
     },
 }
+
+ADJECTIVES = ["Luxury", "Cozy", "Modern", "Classic", "Hidden", "Sunny", "Royal", "Grand", "Boutique", "Charming", "Peaceful", "Vintage"]
 
 # --- 3. HÀM TẠO DỮ LIỆU ---
 
@@ -90,57 +94,42 @@ def generate_stays(count=100):
     for i in range(1, count + 1):
         s_key = random.choice(list(SCENARIOS.keys()))
         config = SCENARIOS[s_key]
-        
         loc = random.choice(config["locs"])
         keyword = random.choice(config["keywords"])
         
-        # Tạo tên khách sạn ngẫu nhiên và hay hơn
-        adjective = random.choice(ADJECTIVES)
-        base_title = random.choice(config['titles'])
-        
-        if random.random() > 0.5:
-            full_title = f"{adjective} {loc} {base_title} {random.randint(10, 99)}"
-        else:
-            full_title = f"{loc} {adjective} {base_title} {random.randint(10, 99)}"
-
-        # Tạo Slug từ Title
+        full_title = f"{random.choice(ADJECTIVES)} {loc} {random.choice(config['titles'])} {random.randint(10, 99)}"
         slug = create_slug(full_title)
 
-        # Tọa độ nhiễu nhẹ
         base_lat, base_lng = LOC_COORDS.get(loc, (10.0, 105.0))
         lat = base_lat + random.uniform(-0.03, 0.03)
         lng = base_lng + random.uniform(-0.03, 0.03)
 
-        # --- SỬA GALLERY ---
-        # Thêm "interior, room" để ra ảnh nội thất thay vì ảnh người
-        gallery = [
-            f"https://loremflickr.com/800/600/interior,room,hotel,{keyword}?lock={i*10 + j}"
-            for j in range(4)
-        ]
+        # Lấy file ảnh local dựa trên mapping
+        file_prefix = FILE_NAME_MAP.get(loc, "sapa") 
+        max_imgs = IMG_COUNT_CONFIG.get(file_prefix, 5)
+        img_idx = random.randint(1, max_imgs)
+        featured_img_url = f"/locations/{file_prefix}-{img_idx}.jpg"
 
-        # Xử lý Sale Off
+        # TẠO MẢNG AMENITIES DẠNG CHUỖI (KHÔNG PHẢI SỐ)
+        # Lấy ngẫu nhiên từ 8 đến 15 tiện ích từ danh sách ALL_AMENITY_IDS
+        selected_amenities = random.sample(ALL_AMENITY_IDS, k=random.randint(8, 15))
+
         has_sale = random.random() < 0.3
         sale_percent = random.choice([5, 10, 15, 20, 25, 30]) if has_sale else 0
         sale_off_text = f"-{sale_percent}% hôm nay" if has_sale else None
-
-        # --- SỬA FEATURED IMAGE ---
-        # Thêm nature, landscape, architecture để lấy view đẹp, tránh mặt người
-        # Bỏ chữ "vietnam" đi vì nó hay ra ảnh đời sống con người
-        featured_img_url = f"https://loremflickr.com/1200/800/nature,landscape,architecture,{keyword}?lock={i}"
-
         stay = {
             "id": i,
-            "authorId": f"user_fake_{random.randint(1, 30)}",
+            "authorId": f"user_fake_{random.randint(1, 30)}", # Lưu ý ID này cần mapping trong seed.ts
             "date": random_date(),
             "slug": slug,
             "categoryId": config["cat_id"],
             "title": full_title,
             "featuredImage": featured_img_url,
-            "galleryImgs": gallery,
-            "amenities": list(set(config["must_have"] + random.sample(ALL_AMENITY_IDS, k=random.randint(6, 12)))),
-            "description": f"Trải nghiệm đẳng cấp tại {full_title}. Tọa lạc tại khu vực {loc} thơ mộng, mang đến không gian {keyword} yên bình. Phù hợp cho cả nghỉ dưỡng và công tác.",
+            "galleryImgs": [f"https://loremflickr.com/800/600/interior?lock={i*10+j}" for j in range(4)],
+            "amenities": selected_amenities, # TRẢ VỀ STRING[]
+            "description": f"Trải nghiệm đẳng cấp tại {full_title}. Tọa lạc tại khu vực {loc} thơ mộng.",
             "price": random.randint(10, 300) * 50000, 
-            "address": f"Khu vực {keyword}, {loc}",
+            "address": f"Đường trung tâm, {loc}",
             "reviewStart": round(random.uniform(3.8, 5.0), 1),
             "reviewCount": random.randint(5, 600),
             "viewCount": random.randint(100, 5000),
@@ -149,7 +138,7 @@ def generate_stays(count=100):
             "maxGuests": random.randint(2, 12),
             "bedrooms": random.randint(1, 6),
             "bathrooms": random.randint(1, 4),
-            "saleOff": sale_off_text,
+           "saleOff": sale_off_text,
             "saleOffPercent": sale_percent,
             "isAds": random.random() < 0.15,
             "map": {"lat": round(lat, 6), "lng": round(lng, 6)},
@@ -157,14 +146,8 @@ def generate_stays(count=100):
         stays.append(stay)
     return stays
 
-# --- 4. CHẠY SCRIPT ---
-
 if __name__ == "__main__":
     data = generate_stays(100)
-    
-    filename = "jsons/__homeStay.json"
-    with open(filename, "w", encoding="utf-8") as f:
+    with open("jsons/__homeStay.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
-
-    print(f"✅ Đã tạo {len(data)} khách sạn thành công vào file '{filename}'")
-    print("✨ Ảnh đã được cập nhật sang chế độ phong cảnh/thiên nhiên.")
+    print(f"✅ Đã cập nhật file JSON với amenities dạng String[] và featuredImage chuẩn xác.")

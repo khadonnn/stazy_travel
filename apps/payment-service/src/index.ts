@@ -43,16 +43,27 @@ app.route("/sessions", sessionRoute);
 app.route("/webhooks", webhookRoute);
 
 const start = async () => {
-  Promise.all([await producer.connect(), await consumer.connect()]);
-  await runKafkaSubscriptions();
   try {
+    console.log("🔄 Connecting to Kafka...");
+    // Sửa cú pháp: Không để await bên trong mảng Promise.all
+    await Promise.all([
+      producer
+        .connect()
+        .catch((e) => console.error("Kafka Producer Error:", e.message)),
+      consumer
+        .connect()
+        .catch((e) => console.error("Kafka Consumer Error:", e.message)),
+    ]);
+
+    await runKafkaSubscriptions();
+
     serve({
       fetch: app.fetch,
       port: 8002,
     });
-    console.log("Server is running on http://localhost:8002");
+    console.log("🚀 Payment service is running on http://localhost:8002");
   } catch (err) {
-    console.error(err);
+    console.error("💥 Failed to start Payment Service:", err);
     process.exit(1);
   }
 };
