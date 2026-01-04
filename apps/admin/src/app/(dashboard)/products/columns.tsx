@@ -11,16 +11,26 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ArrowUpDown, MoreHorizontal, Star, MapPin } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal, Star, Eye, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
-import { HotelColumn } from '@repo/types';
-// 1. Định nghĩa Type khớp với Prisma Model Hotel
-// Lưu ý: Các field relation (category, author) cần được include khi query từ Prisma
+import { ProductType } from '@repo/types'; // Import type mới sửa
 
-export const columns: ColumnDef<HotelColumn>[] = [
-    // --- SELECT BOX ---
+// --- MAP CATEGORY ID SANG TÊN ---
+// Trong thực tế, bạn nên fetch cái này từ 1 API categories riêng
+export const CATEGORY_MAP: Record<number, string> = {
+    1: 'Khách sạn', // 🏨
+    2: 'Homestay', // 🏡
+    3: 'Resort', // 🏖️
+    4: 'Biệt thự', // 🏰
+    5: 'Căn hộ', // 🏢
+    6: 'Nhà gỗ', // 🏕️
+    7: 'Khác', // 🌍
+};
+
+export const columns: ColumnDef<ProductType>[] = [
+    // 1. SELECT BOX
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,109 +51,126 @@ export const columns: ColumnDef<HotelColumn>[] = [
         enableHiding: false,
     },
 
-    // --- IMAGE & TITLE (Gộp chung để tiết kiệm diện tích) ---
+    // 2. INFO (Image + Title + Ads Badge)
     {
         accessorKey: 'title',
-        header: 'Hotel Name',
+        header: 'Product Info',
         cell: ({ row }) => {
-            const hotel = row.original;
+            const item = row.original;
             return (
                 <div className="flex items-center gap-3">
-                    <div className="relative h-12 w-12 min-w-[3rem] overflow-hidden rounded-md border border-gray-200">
+                    {/* Ảnh thumbnail */}
+                    <div className="relative h-14 w-14 min-w-[3.5rem] overflow-hidden rounded-md border border-gray-100 bg-gray-50">
                         <Image
-                            src={hotel.featuredImage || '/placeholder-hotel.jpg'}
-                            alt={hotel.title}
+                            src={item.featuredImage}
+                            alt={item.title}
                             fill
                             className="object-cover"
+                            onError={(e) => {
+                                // Fallback nếu ảnh lỗi (Optional)
+                                e.currentTarget.src = '/placeholder.png';
+                            }}
                         />
                     </div>
-                    <div className="flex flex-col">
-                        <span className="max-w-[200px] truncate font-medium" title={hotel.title}>
-                            {hotel.title}
+
+                    {/* Tên và Badge */}
+                    <div className="flex flex-col gap-1">
+                        <span className="max-w-[200px] truncate text-sm font-semibold" title={item.title}>
+                            {item.title}
                         </span>
-                        {hotel.isAds && (
-                            <span className="w-fit rounded bg-yellow-100 px-1 text-[10px] text-yellow-800">ADS</span>
-                        )}
+                        <div className="flex gap-2">
+                            {/* Check Category ID để hiển thị tên */}
+                            <Badge variant="secondary" className="h-5 px-1 py-0 text-[10px]">
+                                {CATEGORY_MAP[item.categoryId ?? 7] || `Cat-${item.categoryId}`}
+                            </Badge>
+                            {item.isAds && (
+                                <Badge className="h-5 bg-yellow-500 px-1 py-0 text-[10px] hover:bg-yellow-600">
+                                    ADS
+                                </Badge>
+                            )}
+                        </div>
                     </div>
                 </div>
             );
         },
     },
 
-    // --- CATEGORY ---
-    {
-        accessorKey: 'category',
-        header: 'Category',
-        cell: ({ row }) => {
-            return (
-                <Badge variant="outline" className="font-normal">
-                    {row.original.category?.name || 'Uncategorized'}
-                </Badge>
-            );
-        },
-    },
-
-    // --- PRICE (Format VND) ---
+    // 3. PRICE (Hiển thị giá gốc và giá giảm nếu có)
     {
         accessorKey: 'price',
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                    Price / Night
+                    Price
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
         cell: ({ row }) => {
-            const price = parseFloat(row.getValue('price'));
-            const formatted = new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-            }).format(price);
+            const price = row.original.price;
+            const saleOff = row.original.saleOff;
 
-            return <div className="pr-4 text-right font-medium">{formatted}</div>;
-        },
-    },
-
-    // --- RATING & REVIEWS ---
-    {
-        accessorKey: 'reviewStart',
-        header: 'Rating',
-        cell: ({ row }) => {
-            const rating = parseFloat(row.getValue('reviewStart')) || 0;
-            const count = row.original.reviewCount;
+            const formatCurrency = (val: number) =>
+                new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
 
             return (
-                <div className="flex items-center gap-1 text-slate-600">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-medium">{rating.toFixed(1)}</span>
-                    <span className="text-muted-foreground text-xs">({count})</span>
+                <div className="items-star flex flex-col pr-4">
+                    <span className="text-sm font-medium">{formatCurrency(price)}</span>
+                    {/* Nếu có giảm giá thì hiển thị thêm */}
+                    {saleOff && (
+                        <span className="text-xs text-green-600 line-through opacity-70">
+                            -{row.original.saleOffPercent}%
+                        </span>
+                    )}
                 </div>
             );
         },
     },
 
-    // --- ADDRESS (Rút gọn) ---
+    // 4. METRICS (View, Comment, Rating - Gộp chung để tiết kiệm chỗ)
     {
-        accessorKey: 'address',
-        header: 'Location',
+        id: 'metrics',
+        header: 'Performance',
         cell: ({ row }) => {
+            const { viewCount, commentCount, reviewStart, reviewCount } = row.original;
+
             return (
-                <div className="text-muted-foreground flex max-w-[150px] items-center">
-                    <MapPin className="mr-1 h-3 w-3 flex-shrink-0" />
-                    <span className="truncate text-xs" title={row.original.address}>
-                        {row.original.address}
-                    </span>
+                <div className="flex flex-col gap-1 text-xs text-gray-500">
+                    <div className="flex items-center gap-1">
+                        <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+                        <span className="font-semibold text-gray-700">{reviewStart}</span>
+                        <span>({reviewCount})</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1" title="Views">
+                            <Eye className="h-3 w-3" /> {viewCount}
+                        </span>
+                        <span className="flex items-center gap-1" title="Comments">
+                            <MessageSquare className="h-3 w-3" /> {commentCount}
+                        </span>
+                    </div>
                 </div>
             );
         },
     },
 
-    // --- ACTIONS ---
+    // 5. CAPACITY (Phòng ngủ/Khách)
+    {
+        accessorKey: 'maxGuests', // Dùng accessor để sort được nếu cần
+        header: 'Capacity',
+        cell: ({ row }) => (
+            <div className="text-xs text-gray-600">
+                <div>Guests: {row.original.maxGuests}</div>
+                <div>Beds: {row.original.bedrooms}</div>
+            </div>
+        ),
+    },
+
+    // 6. ACTIONS
     {
         id: 'actions',
         cell: ({ row }) => {
-            const hotel = row.original;
+            const product = row.original;
 
             return (
                 <DropdownMenu>
@@ -155,21 +182,14 @@ export const columns: ColumnDef<HotelColumn>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(hotel.id.toString())}>
-                            Copy Hotel ID
+                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.id.toString())}>
+                            Copy Product ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                            {/* Link tới trang Admin Edit */}
-                            <Link href={`/admin/hotels/${hotel.id}/edit`}>Edit Hotel</Link>
+                            <Link href={`/products/${product.id}`}>Edit Details</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            {/* Link tới trang Public xem thử */}
-                            <Link href={`/hotels/${hotel.slug}`} target="_blank">
-                                View on Site
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600 focus:text-red-600">Delete Hotel</DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600">Delete Product</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

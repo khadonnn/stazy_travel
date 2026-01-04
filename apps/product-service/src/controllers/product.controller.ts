@@ -406,3 +406,47 @@ export const getRelatedHotels = async (req: Request, res: Response) => {
     });
   }
 };
+
+// admin
+export const getHotelForAdmin = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Thiếu ID khách sạn." });
+    }
+
+    // Admin thường làm việc với ID số, nhưng nếu muốn hỗ trợ cả slug thì giữ logic check
+    // Ở đây mình ưu tiên tìm theo ID để tối ưu hiệu năng
+    const hotelId = Number(id);
+    if (isNaN(hotelId)) {
+      return res.status(400).json({ message: "ID không hợp lệ." });
+    }
+
+    // Chỉ dùng findUnique (nhẹ hơn update)
+    const hotel = await prisma.hotel.findUnique({
+      where: { id: hotelId },
+      include: {
+        category: true,
+        // Admin có thể cần xem full thông tin author, hoặc giữ nguyên như cũ
+        author: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+            jobName: true,
+          },
+        },
+      },
+    });
+
+    if (!hotel) {
+      return res.status(404).json({ message: "Không tìm thấy khách sạn." });
+    }
+
+    res.status(200).json(hotel);
+  } catch (error: any) {
+    console.error("Get hotel admin error:", error);
+    res.status(500).json({ message: "Lỗi server." });
+  }
+};

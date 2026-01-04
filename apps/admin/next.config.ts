@@ -22,6 +22,24 @@ const nextConfig: NextConfig = {
                 protocol: 'https',
                 hostname: 'picsum.photos',
             },
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '3003', // Port của Client App
+                pathname: '/locations/**', // Chỉ cho phép thư mục locations (để an toàn)
+            },
+            {
+                protocol: 'https',
+                hostname: 'res.cloudinary.com',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'loremflickr.com',
+                port: '',
+                pathname: '/**',
+            },
         ],
     },
 };

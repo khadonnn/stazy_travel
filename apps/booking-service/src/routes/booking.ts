@@ -33,7 +33,7 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
         // A. Gọi Product Service để lấy thông tin Hotel mới nhất
         // (Giả sử Product Service có API: GET /api/hotels/:id)
         const hotelRes = await fetch(
-          `${PRODUCT_SERVICE_URL}/api/hotels/${hotelId}`
+          `${PRODUCT_SERVICE_URL}/hotels/${hotelId}`
         );
 
         if (!hotelRes.ok) {

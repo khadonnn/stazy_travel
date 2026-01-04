@@ -4,10 +4,11 @@ import unicodedata
 import re
 from datetime import datetime, timedelta
 
-# --- 1. CÁC HÀM TIỆN ÍCH ---
+# ---------------------------------------------------------
+# 1. CẤU HÌNH & HÀM TIỆN ÍCH
+# ---------------------------------------------------------
 
 def create_slug(text):
-    # Chuẩn hóa để không mất chữ "đ" và "Đ"
     text = text.replace('Đ', 'd').replace('đ', 'd')
     text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('utf-8')
     text = text.lower()
@@ -20,9 +21,25 @@ def random_date(start_days_ago=90):
     random_days = random.randint(0, start_days_ago)
     return (start_date + timedelta(days=random_days)).strftime("%b %d, %Y")
 
-# --- 2. DỮ LIỆU CẤU HÌNH ---
+# --- LOAD ẢNH THẬT TỪ FILE CỦA BƯỚC 1 ---
+try:
+    with open("real_images_map.json", "r", encoding="utf-8") as f:
+        REAL_IMAGES_MAP = json.load(f)
+    print("✅ Đã load danh sách ảnh thật.")
+except FileNotFoundError:
+    print("❌ LỖI: Chưa có file 'real_images_map.json'. Hãy chạy get_images.py trước!")
+    REAL_IMAGES_MAP = {}
 
-# DANH SÁCH AMENITIES ĐẦY ĐỦ (DẠNG STRING)
+# MAPPING CẤU HÌNH
+FILE_NAME_MAP = {
+    "Sapa": "sapa", "Đà Lạt": "da-lat", "Tam Đảo": "tam-dao",
+    "Hà Giang": "ha-giang", "Ninh Bình": "ninh-binh", "Hạ Long": "ha-long",
+    "Nha Trang": "nha-trang", "Phú Quốc": "phu-quoc", "Quy Nhơn": "quy-nhon",
+    "Phú Yên": "phu-yen", "Côn Đảo": "con-dao", "Mũi Né": "mui-ne",
+    "Vũng Tàu": "vung-tau", "Hà Nội": "ha-noi", "TP.HCM": "hcm",
+    "Đà Nẵng": "da-nang", "Cần Thơ": "can-tho", "Huế": "hue", "Hội An": "hoi-an"
+}
+
 ALL_AMENITY_IDS = [
     "wifi", "air-conditioning", "bathroom", "hot-water", "tv", "laundry",
     "luggage-storage", "housekeeping", "double-bed", "single-bed", "extra-bed",
@@ -37,22 +54,6 @@ ALL_AMENITY_IDS = [
     "fire-safety", "first-aid", "workspace", "printer", "meeting-room",
     "award-winning", "top-rated", "trending",
 ]
-
-FILE_NAME_MAP = {
-    "Sapa": "sapa", "Đà Lạt": "da-lat", "Tam Đảo": "tam-dao",
-    "Hà Giang": "ha-giang", "Ninh Bình": "ninh-binh", "Hạ Long": "ha-long",
-    "Nha Trang": "nha-trang", "Phú Quốc": "phu-quoc", "Quy Nhơn": "quy-nhon",
-    "Phú Yên": "phu-yen", "Côn Đảo": "con-dao", "Mũi Né": "mui-ne",
-    "Vũng Tàu": "vung-tau", "Hà Nội": "ha-noi", "TP.HCM": "hcm",
-    "Đà Nẵng": "da-nang", "Cần Thơ": "can-tho", "Huế": "hue", "Hội An": "hoi-an"
-}
-
-IMG_COUNT_CONFIG = {
-    "sapa": 5, "da-lat": 5, "tam-dao": 5, "ha-giang": 5, "ninh-binh": 5,
-    "ha-long": 6, "nha-trang": 6, "phu-quoc": 7, "quy-nhon": 5, 
-    "phu-yen": 5, "con-dao": 5, "mui-ne": 6, "vung-tau": 5,
-    "ha-noi": 5, "hcm": 5, "da-nang": 5, "can-tho": 5, "hue": 5, "hoi-an": 5
-}
 
 LOC_COORDS = {
     "Sapa": (22.33, 103.84), "Đà Lạt": (11.94, 108.45), "Tam Đảo": (21.45, 105.64),
@@ -87,15 +88,22 @@ SCENARIOS = {
 
 ADJECTIVES = ["Luxury", "Cozy", "Modern", "Classic", "Hidden", "Sunny", "Royal", "Grand", "Boutique", "Charming", "Peaceful", "Vintage"]
 
-# --- 3. HÀM TẠO DỮ LIỆU ---
-
+# ---------------------------------------------------------
+# 2. HÀM TẠO DỮ LIỆU CHÍNH
+# ---------------------------------------------------------
 def generate_stays(count=100):
     stays = []
+    
+    # Lấy danh sách ảnh dự phòng (nếu không tìm thấy ảnh của tỉnh đó)
+    # Lấy đại danh sách đầu tiên tìm được trong map
+    fallback_images = []
+    if REAL_IMAGES_MAP:
+        fallback_images = list(REAL_IMAGES_MAP.values())[0]
+
     for i in range(1, count + 1):
         s_key = random.choice(list(SCENARIOS.keys()))
         config = SCENARIOS[s_key]
         loc = random.choice(config["locs"])
-        keyword = random.choice(config["keywords"])
         
         full_title = f"{random.choice(ADJECTIVES)} {loc} {random.choice(config['titles'])} {random.randint(10, 99)}"
         slug = create_slug(full_title)
@@ -104,29 +112,43 @@ def generate_stays(count=100):
         lat = base_lat + random.uniform(-0.03, 0.03)
         lng = base_lng + random.uniform(-0.03, 0.03)
 
-        # Lấy file ảnh local dựa trên mapping
+        # --- LOGIC CHỌN ẢNH THÔNG MINH ---
         file_prefix = FILE_NAME_MAP.get(loc, "sapa") 
-        max_imgs = IMG_COUNT_CONFIG.get(file_prefix, 5)
-        img_idx = random.randint(1, max_imgs)
-        featured_img_url = f"/locations/{file_prefix}-{img_idx}.jpg"
+        
+        # Lấy ảnh của đúng tỉnh đó
+        available_images = REAL_IMAGES_MAP.get(file_prefix)
+        
+        if available_images and len(available_images) > 0:
+            featured_img_url = random.choice(available_images)
+        else:
+            # Nếu tỉnh này chưa có ảnh trên Cloudinary, lấy tạm ảnh dự phòng
+            if fallback_images:
+                featured_img_url = random.choice(fallback_images)
+            else:
+                # Nếu không có ảnh nào cả -> Placeholder
+                featured_img_url = "https://placehold.co/600x400?text=No+Image"
 
-        # TẠO MẢNG AMENITIES DẠNG CHUỖI (KHÔNG PHẢI SỐ)
-        # Lấy ngẫu nhiên từ 8 đến 15 tiện ích từ danh sách ALL_AMENITY_IDS
         selected_amenities = random.sample(ALL_AMENITY_IDS, k=random.randint(8, 15))
-
         has_sale = random.random() < 0.3
         sale_percent = random.choice([5, 10, 15, 20, 25, 30]) if has_sale else 0
         sale_off_text = f"-{sale_percent}% hôm nay" if has_sale else None
+        
         stay = {
             "id": i,
-            "authorId": f"user_fake_{random.randint(1, 30)}", # Lưu ý ID này cần mapping trong seed.ts
+            "authorId": f"user_fake_{random.randint(1, 30)}", 
             "date": random_date(),
             "slug": slug,
             "categoryId": config["cat_id"],
             "title": full_title,
-            "featuredImage": featured_img_url,
-            "galleryImgs": [f"https://loremflickr.com/800/600/interior?lock={i*10+j}" for j in range(4)],
-            "amenities": selected_amenities, # TRẢ VỀ STRING[]
+            "featuredImage": featured_img_url, 
+            # Gallery giả lập (lấy cùng ảnh thumbnail cho đẹp hoặc loremflickr)
+            "galleryImgs": [
+                featured_img_url,
+                "https://loremflickr.com/800/600/interior?lock=" + str(i*10+1),
+                "https://loremflickr.com/800/600/interior?lock=" + str(i*10+2),
+                "https://loremflickr.com/800/600/interior?lock=" + str(i*10+3)
+            ],
+            "amenities": selected_amenities, 
             "description": f"Trải nghiệm đẳng cấp tại {full_title}. Tọa lạc tại khu vực {loc} thơ mộng.",
             "price": random.randint(10, 300) * 50000, 
             "address": f"Đường trung tâm, {loc}",
@@ -138,7 +160,7 @@ def generate_stays(count=100):
             "maxGuests": random.randint(2, 12),
             "bedrooms": random.randint(1, 6),
             "bathrooms": random.randint(1, 4),
-           "saleOff": sale_off_text,
+            "saleOff": sale_off_text,
             "saleOffPercent": sale_percent,
             "isAds": random.random() < 0.15,
             "map": {"lat": round(lat, 6), "lng": round(lng, 6)},
@@ -150,4 +172,4 @@ if __name__ == "__main__":
     data = generate_stays(100)
     with open("jsons/__homeStay.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
-    print(f"✅ Đã cập nhật file JSON với amenities dạng String[] và featuredImage chuẩn xác.")
+    print(f"✅ Đã tạo {len(data)} items thành công vào 'jsons/__homeStay.json'!")
