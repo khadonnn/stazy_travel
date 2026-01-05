@@ -1,0 +1,6382 @@
+[
+  {
+    "userId": "user_seed_1",
+    "hotelId": 41,
+    "type": "VIEW",
+    "timestamp": "2025-10-23T21:33:16.585259",
+    "metadata": {
+      "duration_sec": 115,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 32,
+    "type": "VIEW",
+    "timestamp": "2025-10-25T21:33:16.585259",
+    "metadata": {
+      "duration_sec": 25,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 23,
+    "type": "VIEW",
+    "timestamp": "2025-11-23T21:33:16.585259",
+    "metadata": {
+      "duration_sec": 129,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 39,
+    "type": "BOOK",
+    "timestamp": "2025-11-18T21:33:16.585259",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 7600000,
+      "checkIn": "2025-11-18T21:33:16.585259"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 16,
+    "type": "LIKE",
+    "timestamp": "2025-10-19T21:33:16.585259",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 51,
+    "type": "VIEW",
+    "timestamp": "2025-11-23T21:33:16.586261",
+    "metadata": {
+      "duration_sec": 67,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 22,
+    "type": "VIEW",
+    "timestamp": "2025-12-29T21:33:16.586261",
+    "metadata": {
+      "duration_sec": 178,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 13,
+    "type": "VIEW",
+    "timestamp": "2025-12-28T21:33:16.586261",
+    "metadata": {
+      "duration_sec": 108,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 74,
+    "type": "VIEW",
+    "timestamp": "2025-12-26T21:33:16.586261",
+    "metadata": {
+      "duration_sec": 32,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 37,
+    "type": "VIEW",
+    "timestamp": "2025-12-31T21:33:16.586261",
+    "metadata": {
+      "duration_sec": 129,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 82,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-23T21:33:16.587258",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 11400000,
+      "checkIn": "2025-11-23T21:33:16.587258"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 73,
+    "type": "LIKE",
+    "timestamp": "2025-10-13T21:33:16.587258",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 9,
+    "type": "VIEW",
+    "timestamp": "2025-10-31T21:33:16.587258",
+    "metadata": {
+      "duration_sec": 152,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 48,
+    "type": "VIEW",
+    "timestamp": "2025-10-22T21:33:16.587258",
+    "metadata": {
+      "duration_sec": 74,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 88,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-21T21:33:16.587258",
+    "metadata": {
+      "adults": 3,
+      "children": 1,
+      "totalPrice": 2400000,
+      "checkIn": "2025-12-21T21:33:16.587258"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 21,
+    "type": "VIEW",
+    "timestamp": "2025-12-02T21:33:16.587258",
+    "metadata": {
+      "duration_sec": 99,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 59,
+    "type": "VIEW",
+    "timestamp": "2025-12-01T21:33:16.588258",
+    "metadata": {
+      "duration_sec": 185,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 90,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-22T21:33:16.588258",
+    "metadata": {
+      "adults": 3,
+      "children": 1,
+      "totalPrice": 20400000,
+      "checkIn": "2025-10-22T21:33:16.588258"
+    }
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 68,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.588258",
+    "metadata": {
+      "duration_sec": 110,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 77,
+    "type": "LIKE",
+    "timestamp": "2025-12-21T21:33:16.588258",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 65,
+    "type": "VIEW",
+    "timestamp": "2025-10-25T21:33:16.588258",
+    "metadata": {
+      "duration_sec": 184,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 41,
+    "type": "VIEW",
+    "timestamp": "2025-12-28T21:33:16.588258",
+    "metadata": {
+      "duration_sec": 259,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 20,
+    "type": "LIKE",
+    "timestamp": "2025-12-17T21:33:16.588258",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 82,
+    "type": "VIEW",
+    "timestamp": "2025-10-24T21:33:16.588258",
+    "metadata": {
+      "duration_sec": 105,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 98,
+    "type": "VIEW",
+    "timestamp": "2025-10-12T21:33:16.588258",
+    "metadata": {
+      "duration_sec": 169,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 1,
+    "type": "VIEW",
+    "timestamp": "2025-11-25T21:33:16.588258",
+    "metadata": {
+      "duration_sec": 215,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 54,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-16T21:33:16.589766",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 7200000,
+      "checkIn": "2025-10-16T21:33:16.589766"
+    }
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 96,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.589766",
+    "metadata": {
+      "duration_sec": 129,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 54,
+    "type": "VIEW",
+    "timestamp": "2025-12-28T21:33:16.589766",
+    "metadata": {
+      "duration_sec": 80,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 33,
+    "type": "VIEW",
+    "timestamp": "2025-10-27T21:33:16.589766",
+    "metadata": {
+      "duration_sec": 191,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 24,
+    "type": "BOOK",
+    "timestamp": "2025-12-12T21:33:16.589766",
+    "metadata": {
+      "adults": 2,
+      "children": 0,
+      "totalPrice": 7200000,
+      "checkIn": "2025-12-12T21:33:16.589766"
+    }
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 88,
+    "type": "VIEW",
+    "timestamp": "2025-12-10T21:33:16.589766",
+    "metadata": {
+      "duration_sec": 181,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 100,
+    "type": "VIEW",
+    "timestamp": "2025-12-25T21:33:16.589766",
+    "metadata": {
+      "duration_sec": 249,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 75,
+    "type": "LIKE",
+    "timestamp": "2025-11-16T21:33:16.590774",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 64,
+    "type": "VIEW",
+    "timestamp": "2025-11-04T21:33:16.590774",
+    "metadata": {
+      "duration_sec": 176,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 77,
+    "type": "VIEW",
+    "timestamp": "2025-10-16T21:33:16.590774",
+    "metadata": {
+      "duration_sec": 130,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 51,
+    "type": "VIEW",
+    "timestamp": "2025-11-24T21:33:16.590774",
+    "metadata": {
+      "duration_sec": 92,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 70,
+    "type": "VIEW",
+    "timestamp": "2025-11-04T21:33:16.590774",
+    "metadata": {
+      "duration_sec": 73,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 4,
+    "type": "LIKE",
+    "timestamp": "2025-12-26T21:33:16.590774",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 36,
+    "type": "LIKE",
+    "timestamp": "2025-11-01T21:33:16.590774",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 100,
+    "type": "VIEW",
+    "timestamp": "2025-11-10T21:33:16.591774",
+    "metadata": {
+      "duration_sec": 101,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 55,
+    "type": "VIEW",
+    "timestamp": "2025-12-26T21:33:16.591774",
+    "metadata": {
+      "duration_sec": 54,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 84,
+    "type": "VIEW",
+    "timestamp": "2025-10-23T21:33:16.591774",
+    "metadata": {
+      "duration_sec": 64,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 66,
+    "type": "VIEW",
+    "timestamp": "2025-12-09T21:33:16.591774",
+    "metadata": {
+      "duration_sec": 147,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 81,
+    "type": "VIEW",
+    "timestamp": "2025-11-22T21:33:16.591774",
+    "metadata": {
+      "duration_sec": 197,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 100,
+    "type": "LIKE",
+    "timestamp": "2025-12-18T21:33:16.591774",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 91,
+    "type": "VIEW",
+    "timestamp": "2025-12-13T21:33:16.591774",
+    "metadata": {
+      "duration_sec": 157,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 36,
+    "type": "VIEW",
+    "timestamp": "2025-10-31T21:33:16.592774",
+    "metadata": {
+      "duration_sec": 254,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 45,
+    "type": "VIEW",
+    "timestamp": "2025-12-21T21:33:16.592774",
+    "metadata": {
+      "duration_sec": 102,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 98,
+    "type": "VIEW",
+    "timestamp": "2025-11-20T21:33:16.592774",
+    "metadata": {
+      "duration_sec": 166,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 10,
+    "type": "BOOK",
+    "timestamp": "2025-11-24T21:33:16.592774",
+    "metadata": {
+      "adults": 4,
+      "children": 0,
+      "totalPrice": 19500000,
+      "checkIn": "2025-11-24T21:33:16.592774"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 49,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-21T21:33:16.592774",
+    "metadata": {
+      "adults": 2,
+      "children": 2,
+      "totalPrice": 22200000,
+      "checkIn": "2025-10-21T21:33:16.592774"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 61,
+    "type": "LIKE",
+    "timestamp": "2025-11-24T21:33:16.592774",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 33,
+    "type": "VIEW",
+    "timestamp": "2025-12-12T21:33:16.592774",
+    "metadata": {
+      "duration_sec": 242,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 64,
+    "type": "VIEW",
+    "timestamp": "2025-12-30T21:33:16.593775",
+    "metadata": {
+      "duration_sec": 98,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 85,
+    "type": "VIEW",
+    "timestamp": "2025-11-22T21:33:16.593775",
+    "metadata": {
+      "duration_sec": 158,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 33,
+    "type": "VIEW",
+    "timestamp": "2025-11-06T21:33:16.593775",
+    "metadata": {
+      "duration_sec": 40,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 5,
+    "type": "VIEW",
+    "timestamp": "2025-11-13T21:33:16.593775",
+    "metadata": {
+      "duration_sec": 141,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 60,
+    "type": "VIEW",
+    "timestamp": "2025-12-31T21:33:16.594282",
+    "metadata": {
+      "duration_sec": 243,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 65,
+    "type": "VIEW",
+    "timestamp": "2025-11-11T21:33:16.594282",
+    "metadata": {
+      "duration_sec": 162,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 18,
+    "type": "VIEW",
+    "timestamp": "2025-12-08T21:33:16.594282",
+    "metadata": {
+      "duration_sec": 14,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 78,
+    "type": "VIEW",
+    "timestamp": "2025-10-15T21:33:16.594282",
+    "metadata": {
+      "duration_sec": 154,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 1,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-23T21:33:16.594282",
+    "metadata": {
+      "adults": 3,
+      "children": 0,
+      "totalPrice": 49200000,
+      "checkIn": "2025-11-23T21:33:16.594282"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 84,
+    "type": "LIKE",
+    "timestamp": "2025-10-20T21:33:16.594282",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 3,
+    "type": "VIEW",
+    "timestamp": "2025-11-19T21:33:16.594282",
+    "metadata": {
+      "duration_sec": 262,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 44,
+    "type": "VIEW",
+    "timestamp": "2025-12-28T21:33:16.595289",
+    "metadata": {
+      "duration_sec": 121,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 3,
+    "type": "BOOK",
+    "timestamp": "2025-12-11T21:33:16.595289",
+    "metadata": {
+      "adults": 4,
+      "children": 0,
+      "totalPrice": 4900000,
+      "checkIn": "2025-12-11T21:33:16.595289"
+    }
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 5,
+    "type": "VIEW",
+    "timestamp": "2025-11-14T21:33:16.595289",
+    "metadata": {
+      "duration_sec": 69,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 56,
+    "type": "VIEW",
+    "timestamp": "2026-01-01T21:33:16.595289",
+    "metadata": {
+      "duration_sec": 230,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 65,
+    "type": "VIEW",
+    "timestamp": "2025-12-18T21:33:16.595289",
+    "metadata": {
+      "duration_sec": 29,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 72,
+    "type": "VIEW",
+    "timestamp": "2025-10-17T21:33:16.595289",
+    "metadata": {
+      "duration_sec": 242,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 78,
+    "type": "LIKE",
+    "timestamp": "2025-12-19T21:33:16.596298",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 86,
+    "type": "VIEW",
+    "timestamp": "2025-10-25T21:33:16.596298",
+    "metadata": {
+      "duration_sec": 192,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 71,
+    "type": "VIEW",
+    "timestamp": "2025-11-22T21:33:16.596298",
+    "metadata": {
+      "duration_sec": 285,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 23,
+    "type": "VIEW",
+    "timestamp": "2025-11-26T21:33:16.596298",
+    "metadata": {
+      "duration_sec": 213,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 47,
+    "type": "VIEW",
+    "timestamp": "2025-10-14T21:33:16.596298",
+    "metadata": {
+      "duration_sec": 233,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 67,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.596298",
+    "metadata": {
+      "duration_sec": 230,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 88,
+    "type": "VIEW",
+    "timestamp": "2025-11-04T21:33:16.597297",
+    "metadata": {
+      "duration_sec": 260,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 66,
+    "type": "VIEW",
+    "timestamp": "2025-12-14T21:33:16.597297",
+    "metadata": {
+      "duration_sec": 29,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 71,
+    "type": "VIEW",
+    "timestamp": "2025-10-09T21:33:16.597297",
+    "metadata": {
+      "duration_sec": 278,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 90,
+    "type": "VIEW",
+    "timestamp": "2025-10-24T21:33:16.597297",
+    "metadata": {
+      "duration_sec": 181,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 92,
+    "type": "VIEW",
+    "timestamp": "2025-12-04T21:33:16.597297",
+    "metadata": {
+      "duration_sec": 216,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 69,
+    "type": "VIEW",
+    "timestamp": "2025-11-05T21:33:16.597297",
+    "metadata": {
+      "duration_sec": 215,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 73,
+    "type": "LIKE",
+    "timestamp": "2025-11-23T21:33:16.597297",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 79,
+    "type": "VIEW",
+    "timestamp": "2025-10-12T21:33:16.598297",
+    "metadata": {
+      "duration_sec": 89,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 53,
+    "type": "LIKE",
+    "timestamp": "2026-01-05T21:33:16.598297",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 96,
+    "type": "VIEW",
+    "timestamp": "2025-10-13T21:33:16.598963",
+    "metadata": {
+      "duration_sec": 260,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 13,
+    "type": "VIEW",
+    "timestamp": "2025-12-02T21:33:16.598963",
+    "metadata": {
+      "duration_sec": 159,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 19,
+    "type": "VIEW",
+    "timestamp": "2025-10-24T21:33:16.598963",
+    "metadata": {
+      "duration_sec": 297,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 39,
+    "type": "VIEW",
+    "timestamp": "2026-01-05T21:33:16.599972",
+    "metadata": {
+      "duration_sec": 136,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 26,
+    "type": "BOOK",
+    "timestamp": "2025-11-06T21:33:16.600482",
+    "metadata": {
+      "adults": 2,
+      "children": 2,
+      "totalPrice": 52800000,
+      "checkIn": "2025-11-06T21:33:16.600482"
+    }
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 67,
+    "type": "VIEW",
+    "timestamp": "2025-11-12T21:33:16.600482",
+    "metadata": {
+      "duration_sec": 121,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 83,
+    "type": "VIEW",
+    "timestamp": "2025-11-20T21:33:16.600482",
+    "metadata": {
+      "duration_sec": 225,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 64,
+    "type": "BOOK",
+    "timestamp": "2025-11-20T21:33:16.600482",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 800000,
+      "checkIn": "2025-11-20T21:33:16.600482"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 89,
+    "type": "VIEW",
+    "timestamp": "2025-11-30T21:33:16.601492",
+    "metadata": {
+      "duration_sec": 252,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 40,
+    "type": "VIEW",
+    "timestamp": "2025-11-20T21:33:16.601492",
+    "metadata": {
+      "duration_sec": 107,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 56,
+    "type": "VIEW",
+    "timestamp": "2025-12-15T21:33:16.601492",
+    "metadata": {
+      "duration_sec": 127,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 67,
+    "type": "VIEW",
+    "timestamp": "2026-01-03T21:33:16.602489",
+    "metadata": {
+      "duration_sec": 36,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 99,
+    "type": "VIEW",
+    "timestamp": "2025-11-03T21:33:16.602489",
+    "metadata": {
+      "duration_sec": 195,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 32,
+    "type": "VIEW",
+    "timestamp": "2025-10-30T21:33:16.602489",
+    "metadata": {
+      "duration_sec": 62,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 91,
+    "type": "LIKE",
+    "timestamp": "2025-11-13T21:33:16.602489",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 50,
+    "type": "VIEW",
+    "timestamp": "2025-12-16T21:33:16.602489",
+    "metadata": {
+      "duration_sec": 256,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 71,
+    "type": "LIKE",
+    "timestamp": "2025-12-03T21:33:16.603996",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 50,
+    "type": "VIEW",
+    "timestamp": "2025-10-13T21:33:16.603996",
+    "metadata": {
+      "duration_sec": 123,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 65,
+    "type": "LIKE",
+    "timestamp": "2025-12-29T21:33:16.603996",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 27,
+    "type": "VIEW",
+    "timestamp": "2025-11-21T21:33:16.603996",
+    "metadata": {
+      "duration_sec": 37,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 19,
+    "type": "VIEW",
+    "timestamp": "2025-12-07T21:33:16.603996",
+    "metadata": {
+      "duration_sec": 103,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 25,
+    "type": "VIEW",
+    "timestamp": "2025-10-13T21:33:16.605534",
+    "metadata": {
+      "duration_sec": 30,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 85,
+    "type": "VIEW",
+    "timestamp": "2025-10-17T21:33:16.605534",
+    "metadata": {
+      "duration_sec": 205,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 24,
+    "type": "BOOK",
+    "timestamp": "2026-01-05T21:33:16.605534",
+    "metadata": {
+      "adults": 3,
+      "children": 1,
+      "totalPrice": 14400000,
+      "checkIn": "2026-01-05T21:33:16.605534"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 88,
+    "type": "LIKE",
+    "timestamp": "2025-10-27T21:33:16.605534",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 68,
+    "type": "VIEW",
+    "timestamp": "2025-10-13T21:33:16.605534",
+    "metadata": {
+      "duration_sec": 176,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 81,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-27T21:33:16.606544",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 51600000,
+      "checkIn": "2025-10-27T21:33:16.606544"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 20,
+    "type": "VIEW",
+    "timestamp": "2025-12-04T21:33:16.606544",
+    "metadata": {
+      "duration_sec": 219,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 42,
+    "type": "VIEW",
+    "timestamp": "2025-12-22T21:33:16.606544",
+    "metadata": {
+      "duration_sec": 35,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 21,
+    "type": "VIEW",
+    "timestamp": "2025-12-20T21:33:16.606544",
+    "metadata": {
+      "duration_sec": 164,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 87,
+    "type": "VIEW",
+    "timestamp": "2025-12-28T21:33:16.606544",
+    "metadata": {
+      "duration_sec": 88,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 2,
+    "type": "VIEW",
+    "timestamp": "2025-11-17T21:33:16.606544",
+    "metadata": {
+      "duration_sec": 182,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 61,
+    "type": "VIEW",
+    "timestamp": "2025-12-10T21:33:16.607545",
+    "metadata": {
+      "duration_sec": 19,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 78,
+    "type": "VIEW",
+    "timestamp": "2025-12-30T21:33:16.607545",
+    "metadata": {
+      "duration_sec": 273,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 19,
+    "type": "VIEW",
+    "timestamp": "2025-11-23T21:33:16.607545",
+    "metadata": {
+      "duration_sec": 275,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 56,
+    "type": "VIEW",
+    "timestamp": "2025-11-10T21:33:16.607545",
+    "metadata": {
+      "duration_sec": 37,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 73,
+    "type": "VIEW",
+    "timestamp": "2025-10-12T21:33:16.607545",
+    "metadata": {
+      "duration_sec": 119,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 4,
+    "type": "VIEW",
+    "timestamp": "2025-11-19T21:33:16.607545",
+    "metadata": {
+      "duration_sec": 196,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 7,
+    "type": "LIKE",
+    "timestamp": "2025-12-10T21:33:16.607545",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 20,
+    "type": "VIEW",
+    "timestamp": "2025-11-22T21:33:16.608543",
+    "metadata": {
+      "duration_sec": 288,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 72,
+    "type": "LIKE",
+    "timestamp": "2025-10-10T21:33:16.608543",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 25,
+    "type": "VIEW",
+    "timestamp": "2025-11-02T21:33:16.608543",
+    "metadata": {
+      "duration_sec": 76,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 96,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.608543",
+    "metadata": {
+      "duration_sec": 269,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 54,
+    "type": "VIEW",
+    "timestamp": "2025-11-27T21:33:16.608543",
+    "metadata": {
+      "duration_sec": 25,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 97,
+    "type": "VIEW",
+    "timestamp": "2025-11-26T21:33:16.608543",
+    "metadata": {
+      "duration_sec": 287,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 42,
+    "type": "VIEW",
+    "timestamp": "2025-11-03T21:33:16.608543",
+    "metadata": {
+      "duration_sec": 232,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 22,
+    "type": "VIEW",
+    "timestamp": "2025-10-24T21:33:16.608543",
+    "metadata": {
+      "duration_sec": 133,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 59,
+    "type": "VIEW",
+    "timestamp": "2025-12-15T21:33:16.608543",
+    "metadata": {
+      "duration_sec": 219,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 98,
+    "type": "VIEW",
+    "timestamp": "2025-11-11T21:33:16.608543",
+    "metadata": {
+      "duration_sec": 242,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 70,
+    "type": "VIEW",
+    "timestamp": "2025-10-15T21:33:16.610057",
+    "metadata": {
+      "duration_sec": 219,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 84,
+    "type": "VIEW",
+    "timestamp": "2025-10-31T21:33:16.610057",
+    "metadata": {
+      "duration_sec": 274,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 42,
+    "type": "LIKE",
+    "timestamp": "2025-12-07T21:33:16.610057",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 94,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-28T21:33:16.611079",
+    "metadata": {
+      "adults": 2,
+      "children": 0,
+      "totalPrice": 29100000,
+      "checkIn": "2025-10-28T21:33:16.611079"
+    }
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 98,
+    "type": "LIKE",
+    "timestamp": "2025-11-17T21:33:16.611079",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 7,
+    "type": "VIEW",
+    "timestamp": "2025-12-08T21:33:16.612072",
+    "metadata": {
+      "duration_sec": 23,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 12,
+    "type": "VIEW",
+    "timestamp": "2025-11-02T21:33:16.612072",
+    "metadata": {
+      "duration_sec": 208,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 89,
+    "type": "VIEW",
+    "timestamp": "2025-10-16T21:33:16.612072",
+    "metadata": {
+      "duration_sec": 13,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 14,
+    "type": "VIEW",
+    "timestamp": "2025-12-03T21:33:16.612072",
+    "metadata": {
+      "duration_sec": 153,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 44,
+    "type": "VIEW",
+    "timestamp": "2025-11-08T21:33:16.612072",
+    "metadata": {
+      "duration_sec": 112,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 58,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-13T21:33:16.613186",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 6000000,
+      "checkIn": "2025-12-13T21:33:16.613186"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 35,
+    "type": "VIEW",
+    "timestamp": "2025-12-28T21:33:16.613186",
+    "metadata": {
+      "duration_sec": 266,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 54,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.613186",
+    "metadata": {
+      "duration_sec": 136,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 25,
+    "type": "VIEW",
+    "timestamp": "2025-11-01T21:33:16.613186",
+    "metadata": {
+      "duration_sec": 254,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 84,
+    "type": "LIKE",
+    "timestamp": "2025-10-17T21:33:16.613186",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 65,
+    "type": "VIEW",
+    "timestamp": "2025-12-05T21:33:16.634467",
+    "metadata": {
+      "duration_sec": 183,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 30,
+    "type": "VIEW",
+    "timestamp": "2025-12-25T21:33:16.636481",
+    "metadata": {
+      "duration_sec": 53,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 63,
+    "type": "LIKE",
+    "timestamp": "2025-10-25T21:33:16.637485",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 31,
+    "type": "VIEW",
+    "timestamp": "2025-12-10T21:33:16.638486",
+    "metadata": {
+      "duration_sec": 262,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 90,
+    "type": "VIEW",
+    "timestamp": "2025-12-07T21:33:16.642543",
+    "metadata": {
+      "duration_sec": 275,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 61,
+    "type": "LIKE",
+    "timestamp": "2025-12-11T21:33:16.643054",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 41,
+    "type": "VIEW",
+    "timestamp": "2025-10-25T21:33:16.643054",
+    "metadata": {
+      "duration_sec": 83,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 77,
+    "type": "VIEW",
+    "timestamp": "2025-12-21T21:33:16.644067",
+    "metadata": {
+      "duration_sec": 194,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 40,
+    "type": "BOOK",
+    "timestamp": "2025-11-18T21:33:16.649083",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 14000000,
+      "checkIn": "2025-11-18T21:33:16.649083"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 75,
+    "type": "BOOK",
+    "timestamp": "2025-11-25T21:33:16.649083",
+    "metadata": {
+      "adults": 3,
+      "children": 0,
+      "totalPrice": 9000000,
+      "checkIn": "2025-11-25T21:33:16.649083"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 43,
+    "type": "VIEW",
+    "timestamp": "2025-10-13T21:33:16.650097",
+    "metadata": {
+      "duration_sec": 85,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 13,
+    "type": "VIEW",
+    "timestamp": "2025-12-01T21:33:16.652221",
+    "metadata": {
+      "duration_sec": 213,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 46,
+    "type": "VIEW",
+    "timestamp": "2025-11-25T21:33:16.652221",
+    "metadata": {
+      "duration_sec": 75,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 51,
+    "type": "VIEW",
+    "timestamp": "2025-11-17T21:33:16.653234",
+    "metadata": {
+      "duration_sec": 215,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 14,
+    "type": "VIEW",
+    "timestamp": "2025-10-12T21:33:16.654235",
+    "metadata": {
+      "duration_sec": 247,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 30,
+    "type": "VIEW",
+    "timestamp": "2025-12-18T21:33:16.654235",
+    "metadata": {
+      "duration_sec": 58,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 22,
+    "type": "VIEW",
+    "timestamp": "2025-10-09T21:33:16.655234",
+    "metadata": {
+      "duration_sec": 173,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 76,
+    "type": "VIEW",
+    "timestamp": "2025-12-29T21:33:16.655234",
+    "metadata": {
+      "duration_sec": 144,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 53,
+    "type": "LIKE",
+    "timestamp": "2025-10-23T21:33:16.656244",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 14,
+    "type": "VIEW",
+    "timestamp": "2025-12-13T21:33:16.656244",
+    "metadata": {
+      "duration_sec": 280,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 16,
+    "type": "VIEW",
+    "timestamp": "2025-10-21T21:33:16.656244",
+    "metadata": {
+      "duration_sec": 119,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 23,
+    "type": "VIEW",
+    "timestamp": "2025-11-19T21:33:16.657242",
+    "metadata": {
+      "duration_sec": 280,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 88,
+    "type": "VIEW",
+    "timestamp": "2025-11-21T21:33:16.660773",
+    "metadata": {
+      "duration_sec": 63,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 74,
+    "type": "VIEW",
+    "timestamp": "2025-12-14T21:33:16.662804",
+    "metadata": {
+      "duration_sec": 83,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 76,
+    "type": "VIEW",
+    "timestamp": "2025-11-08T21:33:16.664793",
+    "metadata": {
+      "duration_sec": 229,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 74,
+    "type": "LIKE",
+    "timestamp": "2025-11-01T21:33:16.665793",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 24,
+    "type": "VIEW",
+    "timestamp": "2025-10-16T21:33:16.665793",
+    "metadata": {
+      "duration_sec": 154,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 100,
+    "type": "VIEW",
+    "timestamp": "2025-12-23T21:33:16.666797",
+    "metadata": {
+      "duration_sec": 286,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 67,
+    "type": "VIEW",
+    "timestamp": "2025-11-25T21:33:16.667550",
+    "metadata": {
+      "duration_sec": 181,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 71,
+    "type": "BOOK",
+    "timestamp": "2025-12-24T21:33:16.668063",
+    "metadata": {
+      "adults": 4,
+      "children": 2,
+      "totalPrice": 17100000,
+      "checkIn": "2025-12-24T21:33:16.668063"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 23,
+    "type": "VIEW",
+    "timestamp": "2025-12-25T21:33:16.669079",
+    "metadata": {
+      "duration_sec": 97,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 9,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-30T21:33:16.669079",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 1500000,
+      "checkIn": "2025-12-30T21:33:16.669079"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 36,
+    "type": "VIEW",
+    "timestamp": "2025-12-03T21:33:16.670076",
+    "metadata": {
+      "duration_sec": 264,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 22,
+    "type": "VIEW",
+    "timestamp": "2025-10-11T21:33:16.670586",
+    "metadata": {
+      "duration_sec": 16,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 53,
+    "type": "LIKE",
+    "timestamp": "2025-10-23T21:33:16.670586",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 73,
+    "type": "VIEW",
+    "timestamp": "2026-01-01T21:33:16.670586",
+    "metadata": {
+      "duration_sec": 162,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 20,
+    "type": "VIEW",
+    "timestamp": "2025-10-28T21:33:16.671597",
+    "metadata": {
+      "duration_sec": 214,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 37,
+    "type": "VIEW",
+    "timestamp": "2025-11-27T21:33:16.672597",
+    "metadata": {
+      "duration_sec": 174,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 28,
+    "type": "VIEW",
+    "timestamp": "2025-12-27T21:33:16.672597",
+    "metadata": {
+      "duration_sec": 25,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 68,
+    "type": "LIKE",
+    "timestamp": "2025-12-17T21:33:16.672597",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 84,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-02T21:33:16.674108",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 8000000,
+      "checkIn": "2025-11-02T21:33:16.674108"
+    }
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 4,
+    "type": "LIKE",
+    "timestamp": "2025-10-07T21:33:16.674108",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 32,
+    "type": "VIEW",
+    "timestamp": "2025-11-18T21:33:16.675122",
+    "metadata": {
+      "duration_sec": 74,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 27,
+    "type": "BOOK",
+    "timestamp": "2025-10-29T21:33:16.676135",
+    "metadata": {
+      "adults": 2,
+      "children": 0,
+      "totalPrice": 23700000,
+      "checkIn": "2025-10-29T21:33:16.676135"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 85,
+    "type": "VIEW",
+    "timestamp": "2025-12-20T21:33:16.677545",
+    "metadata": {
+      "duration_sec": 256,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 8,
+    "type": "BOOK",
+    "timestamp": "2025-12-05T21:33:16.677545",
+    "metadata": {
+      "adults": 2,
+      "children": 1,
+      "totalPrice": 2200000,
+      "checkIn": "2025-12-05T21:33:16.677545"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 18,
+    "type": "LIKE",
+    "timestamp": "2025-12-02T21:33:16.678053",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 76,
+    "type": "VIEW",
+    "timestamp": "2025-11-11T21:33:16.678053",
+    "metadata": {
+      "duration_sec": 129,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 87,
+    "type": "VIEW",
+    "timestamp": "2025-12-27T21:33:16.679063",
+    "metadata": {
+      "duration_sec": 206,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 26,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-22T21:33:16.679063",
+    "metadata": {
+      "adults": 4,
+      "children": 0,
+      "totalPrice": 35200000,
+      "checkIn": "2025-11-22T21:33:16.679063"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 6,
+    "type": "VIEW",
+    "timestamp": "2025-11-06T21:33:16.680063",
+    "metadata": {
+      "duration_sec": 255,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 54,
+    "type": "VIEW",
+    "timestamp": "2026-01-04T21:33:16.680573",
+    "metadata": {
+      "duration_sec": 218,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 11,
+    "type": "LIKE",
+    "timestamp": "2025-11-10T21:33:16.681204",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 58,
+    "type": "VIEW",
+    "timestamp": "2025-12-22T21:33:16.681204",
+    "metadata": {
+      "duration_sec": 201,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 62,
+    "type": "VIEW",
+    "timestamp": "2025-10-07T21:33:16.681919",
+    "metadata": {
+      "duration_sec": 59,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 65,
+    "type": "VIEW",
+    "timestamp": "2025-12-10T21:33:16.682485",
+    "metadata": {
+      "duration_sec": 211,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 95,
+    "type": "LIKE",
+    "timestamp": "2025-12-07T21:33:16.682485",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 44,
+    "type": "VIEW",
+    "timestamp": "2025-11-28T21:33:16.683024",
+    "metadata": {
+      "duration_sec": 130,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 85,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-30T21:33:16.683562",
+    "metadata": {
+      "adults": 3,
+      "children": 1,
+      "totalPrice": 9200000,
+      "checkIn": "2025-12-30T21:33:16.683562"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 72,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-26T21:33:16.683897",
+    "metadata": {
+      "adults": 3,
+      "children": 0,
+      "totalPrice": 19200000,
+      "checkIn": "2025-11-26T21:33:16.683897"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 38,
+    "type": "LIKE",
+    "timestamp": "2025-11-21T21:33:16.684405",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 41,
+    "type": "VIEW",
+    "timestamp": "2025-11-02T21:33:16.685820",
+    "metadata": {
+      "duration_sec": 251,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 77,
+    "type": "VIEW",
+    "timestamp": "2025-11-04T21:33:16.686330",
+    "metadata": {
+      "duration_sec": 63,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 25,
+    "type": "LIKE",
+    "timestamp": "2025-10-23T21:33:16.686330",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 80,
+    "type": "VIEW",
+    "timestamp": "2025-12-04T21:33:16.686979",
+    "metadata": {
+      "duration_sec": 110,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 5,
+    "type": "VIEW",
+    "timestamp": "2025-12-12T21:33:16.686979",
+    "metadata": {
+      "duration_sec": 97,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 27,
+    "type": "VIEW",
+    "timestamp": "2025-12-30T21:33:16.687521",
+    "metadata": {
+      "duration_sec": 74,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 82,
+    "type": "VIEW",
+    "timestamp": "2025-10-10T21:33:16.688533",
+    "metadata": {
+      "duration_sec": 289,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 28,
+    "type": "LIKE",
+    "timestamp": "2025-11-24T21:33:16.688533",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 58,
+    "type": "VIEW",
+    "timestamp": "2025-12-14T21:33:16.688533",
+    "metadata": {
+      "duration_sec": 19,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 17,
+    "type": "VIEW",
+    "timestamp": "2025-11-30T21:33:16.690042",
+    "metadata": {
+      "duration_sec": 53,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 35,
+    "type": "VIEW",
+    "timestamp": "2025-11-02T21:33:16.690042",
+    "metadata": {
+      "duration_sec": 184,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 59,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-23T21:33:16.693572",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 28800000,
+      "checkIn": "2025-12-23T21:33:16.693572"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 23,
+    "type": "VIEW",
+    "timestamp": "2026-01-03T21:33:16.694349",
+    "metadata": {
+      "duration_sec": 300,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 90,
+    "type": "VIEW",
+    "timestamp": "2025-12-03T21:33:16.695362",
+    "metadata": {
+      "duration_sec": 216,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 39,
+    "type": "VIEW",
+    "timestamp": "2025-11-13T21:33:16.696216",
+    "metadata": {
+      "duration_sec": 154,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 7,
+    "type": "VIEW",
+    "timestamp": "2025-10-12T21:33:16.696729",
+    "metadata": {
+      "duration_sec": 126,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 37,
+    "type": "VIEW",
+    "timestamp": "2025-11-14T21:33:16.696729",
+    "metadata": {
+      "duration_sec": 142,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 49,
+    "type": "VIEW",
+    "timestamp": "2025-11-26T21:33:16.697747",
+    "metadata": {
+      "duration_sec": 175,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 18,
+    "type": "LIKE",
+    "timestamp": "2025-10-20T21:33:16.697747",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 19,
+    "type": "VIEW",
+    "timestamp": "2025-11-19T21:33:16.699746",
+    "metadata": {
+      "duration_sec": 160,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 34,
+    "type": "VIEW",
+    "timestamp": "2025-10-12T21:33:16.700257",
+    "metadata": {
+      "duration_sec": 203,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 87,
+    "type": "VIEW",
+    "timestamp": "2025-11-20T21:33:16.700257",
+    "metadata": {
+      "duration_sec": 278,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 47,
+    "type": "VIEW",
+    "timestamp": "2025-12-30T21:33:16.700257",
+    "metadata": {
+      "duration_sec": 153,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 73,
+    "type": "VIEW",
+    "timestamp": "2025-10-15T21:33:16.701274",
+    "metadata": {
+      "duration_sec": 153,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 7,
+    "type": "VIEW",
+    "timestamp": "2025-11-22T21:33:16.702270",
+    "metadata": {
+      "duration_sec": 131,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 38,
+    "type": "VIEW",
+    "timestamp": "2025-11-29T21:33:16.702270",
+    "metadata": {
+      "duration_sec": 241,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 99,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-16T21:33:16.703780",
+    "metadata": {
+      "adults": 2,
+      "children": 2,
+      "totalPrice": 16200000,
+      "checkIn": "2025-10-16T21:33:16.703780"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 96,
+    "type": "VIEW",
+    "timestamp": "2025-12-23T21:33:16.703780",
+    "metadata": {
+      "duration_sec": 228,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 97,
+    "type": "VIEW",
+    "timestamp": "2025-11-24T21:33:16.703780",
+    "metadata": {
+      "duration_sec": 31,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 97,
+    "type": "VIEW",
+    "timestamp": "2025-10-11T21:33:16.705309",
+    "metadata": {
+      "duration_sec": 280,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 1,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-14T21:33:16.705309",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 49200000,
+      "checkIn": "2025-10-14T21:33:16.705309"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 7,
+    "type": "VIEW",
+    "timestamp": "2025-12-27T21:33:16.706322",
+    "metadata": {
+      "duration_sec": 90,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 66,
+    "type": "VIEW",
+    "timestamp": "2025-11-09T21:33:16.707324",
+    "metadata": {
+      "duration_sec": 77,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 80,
+    "type": "VIEW",
+    "timestamp": "2025-11-15T21:33:16.707324",
+    "metadata": {
+      "duration_sec": 47,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 88,
+    "type": "VIEW",
+    "timestamp": "2025-11-12T21:33:16.708325",
+    "metadata": {
+      "duration_sec": 31,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 22,
+    "type": "VIEW",
+    "timestamp": "2025-10-31T21:33:16.710850",
+    "metadata": {
+      "duration_sec": 260,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 21,
+    "type": "BOOK",
+    "timestamp": "2025-12-02T21:33:16.710850",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 1400000,
+      "checkIn": "2025-12-02T21:33:16.710850"
+    }
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 80,
+    "type": "BOOK",
+    "timestamp": "2025-12-17T21:33:16.716382",
+    "metadata": {
+      "adults": 4,
+      "children": 2,
+      "totalPrice": 24600000,
+      "checkIn": "2025-12-17T21:33:16.716382"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 27,
+    "type": "VIEW",
+    "timestamp": "2025-12-07T21:33:16.716382",
+    "metadata": {
+      "duration_sec": 71,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 77,
+    "type": "VIEW",
+    "timestamp": "2025-11-10T21:33:16.716382",
+    "metadata": {
+      "duration_sec": 207,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 13,
+    "type": "BOOK",
+    "timestamp": "2025-12-21T21:33:16.717380",
+    "metadata": {
+      "adults": 1,
+      "children": 1,
+      "totalPrice": 2900000,
+      "checkIn": "2025-12-21T21:33:16.717380"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 10,
+    "type": "VIEW",
+    "timestamp": "2025-12-15T21:33:16.717380",
+    "metadata": {
+      "duration_sec": 181,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 26,
+    "type": "LIKE",
+    "timestamp": "2025-10-18T21:33:16.717380",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 74,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2026-01-01T21:33:16.718381",
+    "metadata": {
+      "adults": 4,
+      "children": 1,
+      "totalPrice": 7000000,
+      "checkIn": "2026-01-01T21:33:16.718381"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 70,
+    "type": "VIEW",
+    "timestamp": "2025-11-20T21:33:16.718381",
+    "metadata": {
+      "duration_sec": 77,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 22,
+    "type": "VIEW",
+    "timestamp": "2025-10-19T21:33:16.719890",
+    "metadata": {
+      "duration_sec": 276,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 63,
+    "type": "LIKE",
+    "timestamp": "2025-10-18T21:33:16.719890",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 95,
+    "type": "VIEW",
+    "timestamp": "2025-12-13T21:33:16.720902",
+    "metadata": {
+      "duration_sec": 48,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 89,
+    "type": "LIKE",
+    "timestamp": "2025-12-23T21:33:16.720902",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 96,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-28T21:33:16.720902",
+    "metadata": {
+      "adults": 2,
+      "children": 0,
+      "totalPrice": 11600000,
+      "checkIn": "2025-11-28T21:33:16.720902"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 43,
+    "type": "VIEW",
+    "timestamp": "2026-01-02T21:33:16.721901",
+    "metadata": {
+      "duration_sec": 51,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 17,
+    "type": "VIEW",
+    "timestamp": "2025-10-24T21:33:16.721901",
+    "metadata": {
+      "duration_sec": 142,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 91,
+    "type": "VIEW",
+    "timestamp": "2025-12-23T21:33:16.722902",
+    "metadata": {
+      "duration_sec": 25,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 55,
+    "type": "LIKE",
+    "timestamp": "2025-12-31T21:33:16.722902",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 70,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-09T21:33:16.724412",
+    "metadata": {
+      "adults": 4,
+      "children": 1,
+      "totalPrice": 39000000,
+      "checkIn": "2025-11-09T21:33:16.724412"
+    }
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 18,
+    "type": "LIKE",
+    "timestamp": "2025-10-13T21:33:16.724412",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 46,
+    "type": "BOOK",
+    "timestamp": "2025-10-23T21:33:16.726427",
+    "metadata": {
+      "adults": 1,
+      "children": 0,
+      "totalPrice": 2000000,
+      "checkIn": "2025-10-23T21:33:16.726427"
+    }
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 37,
+    "type": "VIEW",
+    "timestamp": "2025-11-03T21:33:16.727942",
+    "metadata": {
+      "duration_sec": 68,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 36,
+    "type": "VIEW",
+    "timestamp": "2025-11-26T21:33:16.727942",
+    "metadata": {
+      "duration_sec": 156,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 64,
+    "type": "VIEW",
+    "timestamp": "2025-11-26T21:33:16.728960",
+    "metadata": {
+      "duration_sec": 263,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 74,
+    "type": "VIEW",
+    "timestamp": "2025-11-14T21:33:16.729966",
+    "metadata": {
+      "duration_sec": 246,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 46,
+    "type": "VIEW",
+    "timestamp": "2025-12-17T21:33:16.730479",
+    "metadata": {
+      "duration_sec": 123,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 31,
+    "type": "LIKE",
+    "timestamp": "2025-11-21T21:33:16.730479",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 43,
+    "type": "VIEW",
+    "timestamp": "2025-10-22T21:33:16.733502",
+    "metadata": {
+      "duration_sec": 84,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 16,
+    "type": "VIEW",
+    "timestamp": "2025-10-21T21:33:16.733927",
+    "metadata": {
+      "duration_sec": 13,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 17,
+    "type": "BOOK",
+    "timestamp": "2026-01-04T21:33:16.735447",
+    "metadata": {
+      "adults": 1,
+      "children": 1,
+      "totalPrice": 5400000,
+      "checkIn": "2026-01-04T21:33:16.735447"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 39,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-14T21:33:16.736958",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 15200000,
+      "checkIn": "2025-12-14T21:33:16.736958"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 38,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-23T21:33:16.738540",
+    "metadata": {
+      "adults": 2,
+      "children": 1,
+      "totalPrice": 17600000,
+      "checkIn": "2025-12-23T21:33:16.738540"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 5,
+    "type": "VIEW",
+    "timestamp": "2025-12-25T21:33:16.738540",
+    "metadata": {
+      "duration_sec": 161,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 37,
+    "type": "VIEW",
+    "timestamp": "2025-10-07T21:33:16.740878",
+    "metadata": {
+      "duration_sec": 60,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 64,
+    "type": "VIEW",
+    "timestamp": "2025-12-25T21:33:16.741446",
+    "metadata": {
+      "duration_sec": 64,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 33,
+    "type": "VIEW",
+    "timestamp": "2025-11-04T21:33:16.743231",
+    "metadata": {
+      "duration_sec": 197,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 63,
+    "type": "VIEW",
+    "timestamp": "2025-10-24T21:33:16.744565",
+    "metadata": {
+      "duration_sec": 160,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 41,
+    "type": "VIEW",
+    "timestamp": "2025-11-25T21:33:16.745588",
+    "metadata": {
+      "duration_sec": 49,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 29,
+    "type": "VIEW",
+    "timestamp": "2025-12-01T21:33:16.746678",
+    "metadata": {
+      "duration_sec": 220,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 45,
+    "type": "LIKE",
+    "timestamp": "2025-11-03T21:33:16.747691",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 89,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-30T21:33:16.747691",
+    "metadata": {
+      "adults": 2,
+      "children": 2,
+      "totalPrice": 19800000,
+      "checkIn": "2025-12-30T21:33:16.747691"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 52,
+    "type": "VIEW",
+    "timestamp": "2025-12-21T21:33:16.747691",
+    "metadata": {
+      "duration_sec": 35,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 29,
+    "type": "VIEW",
+    "timestamp": "2025-10-17T21:33:16.748689",
+    "metadata": {
+      "duration_sec": 152,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 19,
+    "type": "VIEW",
+    "timestamp": "2025-11-27T21:33:16.748689",
+    "metadata": {
+      "duration_sec": 42,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 79,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-22T21:33:16.749689",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 7600000,
+      "checkIn": "2025-11-22T21:33:16.749689"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 50,
+    "type": "VIEW",
+    "timestamp": "2025-10-19T21:33:16.750198",
+    "metadata": {
+      "duration_sec": 227,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 95,
+    "type": "VIEW",
+    "timestamp": "2025-10-31T21:33:16.752211",
+    "metadata": {
+      "duration_sec": 143,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 20,
+    "type": "VIEW",
+    "timestamp": "2025-11-12T21:33:16.759761",
+    "metadata": {
+      "duration_sec": 94,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 79,
+    "type": "BOOK",
+    "timestamp": "2025-11-20T21:33:16.760299",
+    "metadata": {
+      "adults": 4,
+      "children": 1,
+      "totalPrice": 11400000,
+      "checkIn": "2025-11-20T21:33:16.760299"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 63,
+    "type": "VIEW",
+    "timestamp": "2025-12-14T21:33:16.761310",
+    "metadata": {
+      "duration_sec": 193,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 75,
+    "type": "VIEW",
+    "timestamp": "2025-10-27T21:33:16.762320",
+    "metadata": {
+      "duration_sec": 79,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 84,
+    "type": "VIEW",
+    "timestamp": "2025-10-09T21:33:16.762320",
+    "metadata": {
+      "duration_sec": 189,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 33,
+    "type": "LIKE",
+    "timestamp": "2025-11-11T21:33:16.762320",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 88,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-28T21:33:16.762320",
+    "metadata": {
+      "adults": 3,
+      "children": 1,
+      "totalPrice": 2400000,
+      "checkIn": "2025-12-28T21:33:16.762320"
+    }
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 51,
+    "type": "VIEW",
+    "timestamp": "2025-11-04T21:33:16.762320",
+    "metadata": {
+      "duration_sec": 251,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 5,
+    "type": "VIEW",
+    "timestamp": "2025-10-15T21:33:16.762320",
+    "metadata": {
+      "duration_sec": 26,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 53,
+    "type": "VIEW",
+    "timestamp": "2025-12-09T21:33:16.763321",
+    "metadata": {
+      "duration_sec": 157,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 93,
+    "type": "VIEW",
+    "timestamp": "2025-11-02T21:33:16.763321",
+    "metadata": {
+      "duration_sec": 205,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 8,
+    "type": "VIEW",
+    "timestamp": "2025-10-22T21:33:16.763321",
+    "metadata": {
+      "duration_sec": 207,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 41,
+    "type": "VIEW",
+    "timestamp": "2025-12-04T21:33:16.764325",
+    "metadata": {
+      "duration_sec": 145,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 72,
+    "type": "VIEW",
+    "timestamp": "2025-11-27T21:33:16.765322",
+    "metadata": {
+      "duration_sec": 215,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 6,
+    "type": "LIKE",
+    "timestamp": "2025-11-05T21:33:16.765322",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 73,
+    "type": "VIEW",
+    "timestamp": "2025-12-16T21:33:16.766320",
+    "metadata": {
+      "duration_sec": 61,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 67,
+    "type": "VIEW",
+    "timestamp": "2025-12-21T21:33:16.766320",
+    "metadata": {
+      "duration_sec": 141,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 8,
+    "type": "VIEW",
+    "timestamp": "2025-12-25T21:33:16.766320",
+    "metadata": {
+      "duration_sec": 85,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 27,
+    "type": "VIEW",
+    "timestamp": "2025-11-27T21:33:16.767326",
+    "metadata": {
+      "duration_sec": 70,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 89,
+    "type": "VIEW",
+    "timestamp": "2025-10-31T21:33:16.767326",
+    "metadata": {
+      "duration_sec": 130,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 39,
+    "type": "VIEW",
+    "timestamp": "2025-12-03T21:33:16.767326",
+    "metadata": {
+      "duration_sec": 150,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 56,
+    "type": "LIKE",
+    "timestamp": "2025-10-16T21:33:16.768319",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 76,
+    "type": "BOOK",
+    "timestamp": "2025-10-19T21:33:16.768319",
+    "metadata": {
+      "adults": 3,
+      "children": 1,
+      "totalPrice": 43200000,
+      "checkIn": "2025-10-19T21:33:16.768319"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 1,
+    "type": "VIEW",
+    "timestamp": "2025-12-16T21:33:16.768319",
+    "metadata": {
+      "duration_sec": 268,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 6,
+    "type": "VIEW",
+    "timestamp": "2025-11-22T21:33:16.768319",
+    "metadata": {
+      "duration_sec": 200,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 99,
+    "type": "VIEW",
+    "timestamp": "2025-12-07T21:33:16.769840",
+    "metadata": {
+      "duration_sec": 75,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 5,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.770853",
+    "metadata": {
+      "duration_sec": 126,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 81,
+    "type": "VIEW",
+    "timestamp": "2025-11-24T21:33:16.771362",
+    "metadata": {
+      "duration_sec": 151,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 81,
+    "type": "VIEW",
+    "timestamp": "2025-12-29T21:33:16.771362",
+    "metadata": {
+      "duration_sec": 184,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 8,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-27T21:33:16.771362",
+    "metadata": {
+      "adults": 3,
+      "children": 0,
+      "totalPrice": 6600000,
+      "checkIn": "2025-11-27T21:33:16.771362"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 58,
+    "type": "VIEW",
+    "timestamp": "2025-11-27T21:33:16.772371",
+    "metadata": {
+      "duration_sec": 81,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 41,
+    "type": "VIEW",
+    "timestamp": "2025-11-11T21:33:16.772371",
+    "metadata": {
+      "duration_sec": 181,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 54,
+    "type": "LIKE",
+    "timestamp": "2025-11-16T21:33:16.772371",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 77,
+    "type": "VIEW",
+    "timestamp": "2025-12-29T21:33:16.773380",
+    "metadata": {
+      "duration_sec": 79,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 72,
+    "type": "VIEW",
+    "timestamp": "2025-10-22T21:33:16.773380",
+    "metadata": {
+      "duration_sec": 26,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 88,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2026-01-05T21:33:16.774380",
+    "metadata": {
+      "adults": 1,
+      "children": 1,
+      "totalPrice": 7200000,
+      "checkIn": "2026-01-05T21:33:16.774380"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 33,
+    "type": "VIEW",
+    "timestamp": "2025-12-15T21:33:16.774380",
+    "metadata": {
+      "duration_sec": 208,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 81,
+    "type": "VIEW",
+    "timestamp": "2025-11-20T21:33:16.774380",
+    "metadata": {
+      "duration_sec": 221,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 2,
+    "type": "VIEW",
+    "timestamp": "2025-10-26T21:33:16.775389",
+    "metadata": {
+      "duration_sec": 93,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 45,
+    "type": "VIEW",
+    "timestamp": "2025-11-09T21:33:16.775389",
+    "metadata": {
+      "duration_sec": 125,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 48,
+    "type": "LIKE",
+    "timestamp": "2025-12-28T21:33:16.776389",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 44,
+    "type": "VIEW",
+    "timestamp": "2025-10-11T21:33:16.776389",
+    "metadata": {
+      "duration_sec": 247,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 86,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-30T21:33:16.776389",
+    "metadata": {
+      "adults": 4,
+      "children": 2,
+      "totalPrice": 1200000,
+      "checkIn": "2025-10-30T21:33:16.776389"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 86,
+    "type": "LIKE",
+    "timestamp": "2025-10-24T21:33:16.777390",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 99,
+    "type": "VIEW",
+    "timestamp": "2025-11-09T21:33:16.777390",
+    "metadata": {
+      "duration_sec": 115,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 73,
+    "type": "VIEW",
+    "timestamp": "2025-10-19T21:33:16.777390",
+    "metadata": {
+      "duration_sec": 51,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 63,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-20T21:33:16.778391",
+    "metadata": {
+      "adults": 1,
+      "children": 0,
+      "totalPrice": 11800000,
+      "checkIn": "2025-10-20T21:33:16.778391"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 98,
+    "type": "VIEW",
+    "timestamp": "2025-10-09T21:33:16.778391",
+    "metadata": {
+      "duration_sec": 37,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 20,
+    "type": "LIKE",
+    "timestamp": "2025-11-10T21:33:16.778391",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 39,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-24T21:33:16.778391",
+    "metadata": {
+      "adults": 2,
+      "children": 0,
+      "totalPrice": 22800000,
+      "checkIn": "2025-11-24T21:33:16.778391"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 36,
+    "type": "VIEW",
+    "timestamp": "2025-12-10T21:33:16.778391",
+    "metadata": {
+      "duration_sec": 257,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 84,
+    "type": "LIKE",
+    "timestamp": "2025-12-04T21:33:16.778391",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 84,
+    "type": "VIEW",
+    "timestamp": "2025-11-26T21:33:16.778391",
+    "metadata": {
+      "duration_sec": 182,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 84,
+    "type": "VIEW",
+    "timestamp": "2025-10-09T21:33:16.779900",
+    "metadata": {
+      "duration_sec": 36,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 73,
+    "type": "LIKE",
+    "timestamp": "2025-12-10T21:33:16.779900",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 34,
+    "type": "VIEW",
+    "timestamp": "2025-11-28T21:33:16.781434",
+    "metadata": {
+      "duration_sec": 203,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 33,
+    "type": "VIEW",
+    "timestamp": "2026-01-02T21:33:16.781434",
+    "metadata": {
+      "duration_sec": 71,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 65,
+    "type": "VIEW",
+    "timestamp": "2025-12-30T21:33:16.782446",
+    "metadata": {
+      "duration_sec": 275,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 49,
+    "type": "VIEW",
+    "timestamp": "2025-12-05T21:33:16.782446",
+    "metadata": {
+      "duration_sec": 63,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 80,
+    "type": "LIKE",
+    "timestamp": "2025-10-20T21:33:16.783448",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 36,
+    "type": "VIEW",
+    "timestamp": "2025-11-13T21:33:16.783448",
+    "metadata": {
+      "duration_sec": 289,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 90,
+    "type": "VIEW",
+    "timestamp": "2025-12-15T21:33:16.784448",
+    "metadata": {
+      "duration_sec": 87,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 65,
+    "type": "VIEW",
+    "timestamp": "2025-10-26T21:33:16.785458",
+    "metadata": {
+      "duration_sec": 24,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 14,
+    "type": "VIEW",
+    "timestamp": "2025-11-07T21:33:16.786085",
+    "metadata": {
+      "duration_sec": 212,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 29,
+    "type": "LIKE",
+    "timestamp": "2025-11-06T21:33:16.786085",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 43,
+    "type": "LIKE",
+    "timestamp": "2025-10-31T21:33:16.787095",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 33,
+    "type": "VIEW",
+    "timestamp": "2025-11-10T21:33:16.787095",
+    "metadata": {
+      "duration_sec": 86,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 92,
+    "type": "BOOK",
+    "timestamp": "2025-10-12T21:33:16.787095",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 29700000,
+      "checkIn": "2025-10-12T21:33:16.787095"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 75,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-15T21:33:16.788097",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 9000000,
+      "checkIn": "2025-10-15T21:33:16.788097"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 26,
+    "type": "VIEW",
+    "timestamp": "2025-11-12T21:33:16.788097",
+    "metadata": {
+      "duration_sec": 101,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 62,
+    "type": "VIEW",
+    "timestamp": "2025-10-07T21:33:16.789100",
+    "metadata": {
+      "duration_sec": 177,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 7,
+    "type": "VIEW",
+    "timestamp": "2025-10-14T21:33:16.790097",
+    "metadata": {
+      "duration_sec": 70,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 51,
+    "type": "VIEW",
+    "timestamp": "2025-12-25T21:33:16.790097",
+    "metadata": {
+      "duration_sec": 104,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 90,
+    "type": "LIKE",
+    "timestamp": "2025-10-31T21:33:16.790097",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 16,
+    "type": "VIEW",
+    "timestamp": "2026-01-04T21:33:16.790097",
+    "metadata": {
+      "duration_sec": 249,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 13,
+    "type": "VIEW",
+    "timestamp": "2025-10-21T21:33:16.791372",
+    "metadata": {
+      "duration_sec": 191,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 23,
+    "type": "VIEW",
+    "timestamp": "2025-10-16T21:33:16.791881",
+    "metadata": {
+      "duration_sec": 113,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 39,
+    "type": "VIEW",
+    "timestamp": "2025-10-22T21:33:16.791881",
+    "metadata": {
+      "duration_sec": 194,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 11,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-17T21:33:16.792894",
+    "metadata": {
+      "adults": 4,
+      "children": 0,
+      "totalPrice": 34400000,
+      "checkIn": "2025-10-17T21:33:16.792894"
+    }
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 8,
+    "type": "VIEW",
+    "timestamp": "2025-10-17T21:33:16.792894",
+    "metadata": {
+      "duration_sec": 161,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 40,
+    "type": "BOOK",
+    "timestamp": "2025-12-07T21:33:16.793900",
+    "metadata": {
+      "adults": 2,
+      "children": 1,
+      "totalPrice": 14000000,
+      "checkIn": "2025-12-07T21:33:16.793900"
+    }
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 23,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-04T21:33:16.793900",
+    "metadata": {
+      "adults": 1,
+      "children": 1,
+      "totalPrice": 3900000,
+      "checkIn": "2025-11-04T21:33:16.793900"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 67,
+    "type": "VIEW",
+    "timestamp": "2025-10-27T21:33:16.793900",
+    "metadata": {
+      "duration_sec": 269,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 95,
+    "type": "VIEW",
+    "timestamp": "2025-10-09T21:33:16.793900",
+    "metadata": {
+      "duration_sec": 158,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 16,
+    "type": "VIEW",
+    "timestamp": "2025-12-28T21:33:16.795421",
+    "metadata": {
+      "duration_sec": 183,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 77,
+    "type": "VIEW",
+    "timestamp": "2025-12-03T21:33:16.795421",
+    "metadata": {
+      "duration_sec": 196,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 54,
+    "type": "VIEW",
+    "timestamp": "2026-01-01T21:33:16.796440",
+    "metadata": {
+      "duration_sec": 225,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 77,
+    "type": "LIKE",
+    "timestamp": "2025-12-15T21:33:16.796440",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 18,
+    "type": "VIEW",
+    "timestamp": "2025-12-23T21:33:16.796440",
+    "metadata": {
+      "duration_sec": 184,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 1,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-17T21:33:16.796440",
+    "metadata": {
+      "adults": 2,
+      "children": 2,
+      "totalPrice": 32800000,
+      "checkIn": "2025-12-17T21:33:16.796440"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 51,
+    "type": "VIEW",
+    "timestamp": "2025-12-31T21:33:16.797440",
+    "metadata": {
+      "duration_sec": 55,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 6,
+    "type": "VIEW",
+    "timestamp": "2025-10-29T21:33:16.797440",
+    "metadata": {
+      "duration_sec": 211,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 67,
+    "type": "VIEW",
+    "timestamp": "2025-10-24T21:33:16.797440",
+    "metadata": {
+      "duration_sec": 190,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 1,
+    "type": "VIEW",
+    "timestamp": "2025-12-29T21:33:16.797440",
+    "metadata": {
+      "duration_sec": 267,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 31,
+    "type": "LIKE",
+    "timestamp": "2025-12-10T21:33:16.798441",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 43,
+    "type": "VIEW",
+    "timestamp": "2025-12-01T21:33:16.798441",
+    "metadata": {
+      "duration_sec": 287,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 22,
+    "type": "VIEW",
+    "timestamp": "2025-10-18T21:33:16.798441",
+    "metadata": {
+      "duration_sec": 137,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 11,
+    "type": "BOOK",
+    "timestamp": "2025-11-28T21:33:16.798441",
+    "metadata": {
+      "adults": 3,
+      "children": 0,
+      "totalPrice": 51600000,
+      "checkIn": "2025-11-28T21:33:16.798441"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 19,
+    "type": "VIEW",
+    "timestamp": "2025-10-15T21:33:16.798441",
+    "metadata": {
+      "duration_sec": 103,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 20,
+    "type": "VIEW",
+    "timestamp": "2025-10-14T21:33:16.798441",
+    "metadata": {
+      "duration_sec": 90,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 47,
+    "type": "VIEW",
+    "timestamp": "2025-12-12T21:33:16.799955",
+    "metadata": {
+      "duration_sec": 229,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 83,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-23T21:33:16.799955",
+    "metadata": {
+      "adults": 4,
+      "children": 2,
+      "totalPrice": 32800000,
+      "checkIn": "2025-11-23T21:33:16.799955"
+    }
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 98,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-09T21:33:16.799955",
+    "metadata": {
+      "adults": 2,
+      "children": 0,
+      "totalPrice": 15000000,
+      "checkIn": "2025-12-09T21:33:16.799955"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 21,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.800967",
+    "metadata": {
+      "duration_sec": 250,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 34,
+    "type": "LIKE",
+    "timestamp": "2025-12-18T21:33:16.800967",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 44,
+    "type": "VIEW",
+    "timestamp": "2025-10-18T21:33:16.801620",
+    "metadata": {
+      "duration_sec": 70,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 25,
+    "type": "VIEW",
+    "timestamp": "2025-11-02T21:33:16.802152",
+    "metadata": {
+      "duration_sec": 143,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 69,
+    "type": "VIEW",
+    "timestamp": "2025-12-02T21:33:16.802152",
+    "metadata": {
+      "duration_sec": 40,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 50,
+    "type": "VIEW",
+    "timestamp": "2025-12-06T21:33:16.802152",
+    "metadata": {
+      "duration_sec": 224,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 10,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2026-01-02T21:33:16.803164",
+    "metadata": {
+      "adults": 2,
+      "children": 2,
+      "totalPrice": 19500000,
+      "checkIn": "2026-01-02T21:33:16.803164"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 47,
+    "type": "VIEW",
+    "timestamp": "2025-11-28T21:33:16.803164",
+    "metadata": {
+      "duration_sec": 79,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 76,
+    "type": "VIEW",
+    "timestamp": "2025-12-10T21:33:16.804178",
+    "metadata": {
+      "duration_sec": 250,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 30,
+    "type": "LIKE",
+    "timestamp": "2025-12-27T21:33:16.804178",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 97,
+    "type": "VIEW",
+    "timestamp": "2025-11-02T21:33:16.805201",
+    "metadata": {
+      "duration_sec": 39,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 51,
+    "type": "VIEW",
+    "timestamp": "2025-11-13T21:33:16.805201",
+    "metadata": {
+      "duration_sec": 81,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 67,
+    "type": "VIEW",
+    "timestamp": "2025-11-01T21:33:16.805201",
+    "metadata": {
+      "duration_sec": 234,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 59,
+    "type": "VIEW",
+    "timestamp": "2025-10-20T21:33:16.806171",
+    "metadata": {
+      "duration_sec": 175,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 61,
+    "type": "VIEW",
+    "timestamp": "2025-11-01T21:33:16.806171",
+    "metadata": {
+      "duration_sec": 151,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 98,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2026-01-03T21:33:16.807169",
+    "metadata": {
+      "adults": 2,
+      "children": 2,
+      "totalPrice": 5000000,
+      "checkIn": "2026-01-03T21:33:16.807169"
+    }
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 26,
+    "type": "VIEW",
+    "timestamp": "2025-11-30T21:33:16.807169",
+    "metadata": {
+      "duration_sec": 143,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 11,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-16T21:33:16.807169",
+    "metadata": {
+      "adults": 3,
+      "children": 1,
+      "totalPrice": 17200000,
+      "checkIn": "2025-12-16T21:33:16.807169"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 82,
+    "type": "VIEW",
+    "timestamp": "2025-10-30T21:33:16.808165",
+    "metadata": {
+      "duration_sec": 196,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 90,
+    "type": "LIKE",
+    "timestamp": "2025-12-01T21:33:16.808165",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 61,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-17T21:33:16.808165",
+    "metadata": {
+      "adults": 1,
+      "children": 0,
+      "totalPrice": 7800000,
+      "checkIn": "2025-12-17T21:33:16.808165"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 50,
+    "type": "VIEW",
+    "timestamp": "2025-12-11T21:33:16.808165",
+    "metadata": {
+      "duration_sec": 262,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 32,
+    "type": "VIEW",
+    "timestamp": "2025-10-25T21:33:16.809677",
+    "metadata": {
+      "duration_sec": 245,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 27,
+    "type": "VIEW",
+    "timestamp": "2025-11-12T21:33:16.809677",
+    "metadata": {
+      "duration_sec": 288,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 19,
+    "type": "VIEW",
+    "timestamp": "2025-10-10T21:33:16.810690",
+    "metadata": {
+      "duration_sec": 47,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 25,
+    "type": "VIEW",
+    "timestamp": "2025-11-27T21:33:16.810690",
+    "metadata": {
+      "duration_sec": 19,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 84,
+    "type": "VIEW",
+    "timestamp": "2025-12-17T21:33:16.810690",
+    "metadata": {
+      "duration_sec": 226,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 4,
+    "type": "VIEW",
+    "timestamp": "2025-10-12T21:33:16.810690",
+    "metadata": {
+      "duration_sec": 93,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 51,
+    "type": "VIEW",
+    "timestamp": "2025-11-18T21:33:16.812202",
+    "metadata": {
+      "duration_sec": 284,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 7,
+    "type": "VIEW",
+    "timestamp": "2025-11-26T21:33:16.812202",
+    "metadata": {
+      "duration_sec": 147,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 25,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.813213",
+    "metadata": {
+      "duration_sec": 194,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 26,
+    "type": "VIEW",
+    "timestamp": "2025-10-31T21:33:16.813213",
+    "metadata": {
+      "duration_sec": 195,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 12,
+    "type": "VIEW",
+    "timestamp": "2025-11-22T21:33:16.813213",
+    "metadata": {
+      "duration_sec": 105,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 61,
+    "type": "VIEW",
+    "timestamp": "2026-01-05T21:33:16.813213",
+    "metadata": {
+      "duration_sec": 269,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_29",
+    "hotelId": 92,
+    "type": "LIKE",
+    "timestamp": "2025-11-02T21:33:16.814223",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_29",
+    "hotelId": 38,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-23T21:33:16.814223",
+    "metadata": {
+      "adults": 4,
+      "children": 1,
+      "totalPrice": 17600000,
+      "checkIn": "2025-11-23T21:33:16.814223"
+    }
+  },
+  {
+    "userId": "user_seed_29",
+    "hotelId": 89,
+    "type": "VIEW",
+    "timestamp": "2025-10-16T21:33:16.814223",
+    "metadata": {
+      "duration_sec": 57,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_29",
+    "hotelId": 55,
+    "type": "VIEW",
+    "timestamp": "2025-12-25T21:33:16.815221",
+    "metadata": {
+      "duration_sec": 281,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_29",
+    "hotelId": 20,
+    "type": "VIEW",
+    "timestamp": "2025-11-14T21:33:16.815221",
+    "metadata": {
+      "duration_sec": 58,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_29",
+    "hotelId": 52,
+    "type": "VIEW",
+    "timestamp": "2025-11-19T21:33:16.816227",
+    "metadata": {
+      "duration_sec": 210,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 96,
+    "type": "VIEW",
+    "timestamp": "2025-12-18T21:33:16.817991",
+    "metadata": {
+      "duration_sec": 27,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 76,
+    "type": "VIEW",
+    "timestamp": "2025-11-30T21:33:16.819003",
+    "metadata": {
+      "duration_sec": 196,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 58,
+    "type": "LIKE",
+    "timestamp": "2025-12-21T21:33:16.819003",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 48,
+    "type": "VIEW",
+    "timestamp": "2025-10-07T21:33:16.820514",
+    "metadata": {
+      "duration_sec": 197,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 60,
+    "type": "VIEW",
+    "timestamp": "2025-12-05T21:33:16.820514",
+    "metadata": {
+      "duration_sec": 49,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 34,
+    "type": "VIEW",
+    "timestamp": "2025-11-23T21:33:16.821535",
+    "metadata": {
+      "duration_sec": 206,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 62,
+    "type": "LIKE",
+    "timestamp": "2025-11-28T21:33:16.822525",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 58,
+    "type": "VIEW",
+    "timestamp": "2025-10-27T21:33:16.822525",
+    "metadata": {
+      "duration_sec": 154,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 63,
+    "type": "LIKE",
+    "timestamp": "2025-12-12T21:33:16.823039",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 45,
+    "type": "VIEW",
+    "timestamp": "2025-10-16T21:33:16.825050",
+    "metadata": {
+      "duration_sec": 61,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 91,
+    "type": "LIKE",
+    "timestamp": "2025-10-14T21:33:16.826061",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 100,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-18T21:33:16.826061",
+    "metadata": {
+      "adults": 3,
+      "children": 1,
+      "totalPrice": 7200000,
+      "checkIn": "2025-12-18T21:33:16.826061"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 87,
+    "type": "VIEW",
+    "timestamp": "2025-12-10T21:33:16.827062",
+    "metadata": {
+      "duration_sec": 172,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 73,
+    "type": "LIKE",
+    "timestamp": "2025-10-31T21:33:16.828067",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 54,
+    "type": "VIEW",
+    "timestamp": "2026-01-01T21:33:16.828580",
+    "metadata": {
+      "duration_sec": 135,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 39,
+    "type": "LIKE",
+    "timestamp": "2025-11-30T21:33:16.828580",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 16,
+    "type": "VIEW",
+    "timestamp": "2025-11-08T21:33:16.828580",
+    "metadata": {
+      "duration_sec": 277,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 37,
+    "type": "VIEW",
+    "timestamp": "2025-10-26T21:33:16.828580",
+    "metadata": {
+      "duration_sec": 264,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 75,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-15T21:33:16.830092",
+    "metadata": {
+      "adults": 3,
+      "children": 0,
+      "totalPrice": 3000000,
+      "checkIn": "2025-11-15T21:33:16.830092"
+    }
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 29,
+    "type": "VIEW",
+    "timestamp": "2025-11-29T21:33:16.834468",
+    "metadata": {
+      "duration_sec": 136,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 56,
+    "type": "VIEW",
+    "timestamp": "2025-10-16T21:33:16.836482",
+    "metadata": {
+      "duration_sec": 256,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 100,
+    "type": "BOOK",
+    "timestamp": "2025-12-29T21:33:16.836983",
+    "metadata": {
+      "adults": 4,
+      "children": 1,
+      "totalPrice": 21600000,
+      "checkIn": "2025-12-29T21:33:16.836983"
+    }
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 87,
+    "type": "VIEW",
+    "timestamp": "2025-11-05T21:33:16.837493",
+    "metadata": {
+      "duration_sec": 34,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 37,
+    "type": "VIEW",
+    "timestamp": "2025-11-03T21:33:16.837493",
+    "metadata": {
+      "duration_sec": 58,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 32,
+    "type": "VIEW",
+    "timestamp": "2025-12-06T21:33:16.837493",
+    "metadata": {
+      "duration_sec": 115,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 24,
+    "type": "VIEW",
+    "timestamp": "2025-11-02T21:33:16.838505",
+    "metadata": {
+      "duration_sec": 239,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 74,
+    "type": "LIKE",
+    "timestamp": "2025-11-15T21:33:16.838505",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 56,
+    "type": "VIEW",
+    "timestamp": "2026-01-02T21:33:16.838505",
+    "metadata": {
+      "duration_sec": 96,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 5,
+    "type": "VIEW",
+    "timestamp": "2025-11-05T21:33:16.840014",
+    "metadata": {
+      "duration_sec": 267,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 39,
+    "type": "VIEW",
+    "timestamp": "2025-12-15T21:33:16.840014",
+    "metadata": {
+      "duration_sec": 290,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 65,
+    "type": "VIEW",
+    "timestamp": "2025-10-25T21:33:16.840014",
+    "metadata": {
+      "duration_sec": 161,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 9,
+    "type": "VIEW",
+    "timestamp": "2025-12-11T21:33:16.841809",
+    "metadata": {
+      "duration_sec": 166,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 4,
+    "type": "VIEW",
+    "timestamp": "2025-10-27T21:33:16.841809",
+    "metadata": {
+      "duration_sec": 231,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 94,
+    "type": "VIEW",
+    "timestamp": "2025-12-21T21:33:16.841809",
+    "metadata": {
+      "duration_sec": 84,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 66,
+    "type": "LIKE",
+    "timestamp": "2025-11-09T21:33:16.842825",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 16,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.842825",
+    "metadata": {
+      "duration_sec": 151,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 52,
+    "type": "VIEW",
+    "timestamp": "2025-11-13T21:33:16.843825",
+    "metadata": {
+      "duration_sec": 74,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 8,
+    "type": "VIEW",
+    "timestamp": "2025-12-07T21:33:16.844819",
+    "metadata": {
+      "duration_sec": 205,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 21,
+    "type": "VIEW",
+    "timestamp": "2025-10-30T21:33:16.845329",
+    "metadata": {
+      "duration_sec": 291,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 57,
+    "type": "LIKE",
+    "timestamp": "2025-11-17T21:33:16.845329",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 97,
+    "type": "VIEW",
+    "timestamp": "2025-11-12T21:33:16.845329",
+    "metadata": {
+      "duration_sec": 62,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 3,
+    "type": "VIEW",
+    "timestamp": "2025-11-01T21:33:16.846341",
+    "metadata": {
+      "duration_sec": 97,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 2,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-01T21:33:16.846341",
+    "metadata": {
+      "adults": 2,
+      "children": 0,
+      "totalPrice": 30000000,
+      "checkIn": "2025-12-01T21:33:16.846341"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 85,
+    "type": "LIKE",
+    "timestamp": "2025-10-18T21:33:16.847342",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 44,
+    "type": "VIEW",
+    "timestamp": "2025-12-04T21:33:16.847342",
+    "metadata": {
+      "duration_sec": 247,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 61,
+    "type": "LIKE",
+    "timestamp": "2025-12-08T21:33:16.847342",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 17,
+    "type": "VIEW",
+    "timestamp": "2025-12-29T21:33:16.848342",
+    "metadata": {
+      "duration_sec": 40,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 46,
+    "type": "VIEW",
+    "timestamp": "2025-11-15T21:33:16.848342",
+    "metadata": {
+      "duration_sec": 295,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 16,
+    "type": "VIEW",
+    "timestamp": "2025-10-22T21:33:16.849052",
+    "metadata": {
+      "duration_sec": 74,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 89,
+    "type": "VIEW",
+    "timestamp": "2025-11-18T21:33:16.849052",
+    "metadata": {
+      "duration_sec": 80,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 20,
+    "type": "VIEW",
+    "timestamp": "2025-11-22T21:33:16.850067",
+    "metadata": {
+      "duration_sec": 279,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 71,
+    "type": "BOOK",
+    "timestamp": "2026-01-05T21:33:16.850576",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 5700000,
+      "checkIn": "2026-01-05T21:33:16.850576"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 30,
+    "type": "VIEW",
+    "timestamp": "2025-10-28T21:33:16.850576",
+    "metadata": {
+      "duration_sec": 144,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 74,
+    "type": "VIEW",
+    "timestamp": "2025-10-19T21:33:16.851588",
+    "metadata": {
+      "duration_sec": 128,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 27,
+    "type": "VIEW",
+    "timestamp": "2025-12-26T21:33:16.851588",
+    "metadata": {
+      "duration_sec": 282,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 66,
+    "type": "VIEW",
+    "timestamp": "2025-11-17T21:33:16.851588",
+    "metadata": {
+      "duration_sec": 76,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 82,
+    "type": "LIKE",
+    "timestamp": "2025-12-04T21:33:16.852602",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 92,
+    "type": "VIEW",
+    "timestamp": "2025-12-13T21:33:16.852602",
+    "metadata": {
+      "duration_sec": 270,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 70,
+    "type": "VIEW",
+    "timestamp": "2025-12-22T21:33:16.853606",
+    "metadata": {
+      "duration_sec": 137,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 42,
+    "type": "VIEW",
+    "timestamp": "2025-10-09T21:33:16.853606",
+    "metadata": {
+      "duration_sec": 107,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 22,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-12T21:33:16.855124",
+    "metadata": {
+      "adults": 4,
+      "children": 1,
+      "totalPrice": 27600000,
+      "checkIn": "2025-10-12T21:33:16.855124"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 99,
+    "type": "LIKE",
+    "timestamp": "2025-10-19T21:33:16.856136",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 97,
+    "type": "VIEW",
+    "timestamp": "2025-12-17T21:33:16.857148",
+    "metadata": {
+      "duration_sec": 219,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 74,
+    "type": "VIEW",
+    "timestamp": "2025-11-13T21:33:16.858148",
+    "metadata": {
+      "duration_sec": 240,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 100,
+    "type": "VIEW",
+    "timestamp": "2025-12-20T21:33:16.858148",
+    "metadata": {
+      "duration_sec": 106,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 43,
+    "type": "LIKE",
+    "timestamp": "2025-11-30T21:33:16.858148",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 3,
+    "type": "LIKE",
+    "timestamp": "2025-10-15T21:33:16.858148",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 38,
+    "type": "VIEW",
+    "timestamp": "2025-10-14T21:33:16.858148",
+    "metadata": {
+      "duration_sec": 170,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 95,
+    "type": "LIKE",
+    "timestamp": "2025-12-15T21:33:16.859666",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 18,
+    "type": "LIKE",
+    "timestamp": "2025-11-15T21:33:16.859666",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 23,
+    "type": "VIEW",
+    "timestamp": "2025-10-14T21:33:16.859666",
+    "metadata": {
+      "duration_sec": 20,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 69,
+    "type": "VIEW",
+    "timestamp": "2026-01-03T21:33:16.859666",
+    "metadata": {
+      "duration_sec": 119,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 86,
+    "type": "VIEW",
+    "timestamp": "2025-10-25T21:33:16.860679",
+    "metadata": {
+      "duration_sec": 216,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 48,
+    "type": "VIEW",
+    "timestamp": "2025-12-14T21:33:16.861692",
+    "metadata": {
+      "duration_sec": 48,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 82,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-27T21:33:16.862695",
+    "metadata": {
+      "adults": 3,
+      "children": 2,
+      "totalPrice": 22800000,
+      "checkIn": "2025-10-27T21:33:16.862695"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 45,
+    "type": "LIKE",
+    "timestamp": "2025-11-11T21:33:16.864109",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 20,
+    "type": "VIEW",
+    "timestamp": "2025-12-22T21:33:16.864109",
+    "metadata": {
+      "duration_sec": 208,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 41,
+    "type": "VIEW",
+    "timestamp": "2025-11-07T21:33:16.865125",
+    "metadata": {
+      "duration_sec": 191,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 48,
+    "type": "LIKE",
+    "timestamp": "2025-12-11T21:33:16.865125",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 69,
+    "type": "LIKE",
+    "timestamp": "2025-11-11T21:33:16.865125",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 4,
+    "type": "VIEW",
+    "timestamp": "2025-11-10T21:33:16.866643",
+    "metadata": {
+      "duration_sec": 282,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 43,
+    "type": "VIEW",
+    "timestamp": "2025-12-12T21:33:16.866643",
+    "metadata": {
+      "duration_sec": 188,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 54,
+    "type": "VIEW",
+    "timestamp": "2025-10-15T21:33:16.866643",
+    "metadata": {
+      "duration_sec": 115,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 82,
+    "type": "VIEW",
+    "timestamp": "2025-11-19T21:33:16.867655",
+    "metadata": {
+      "duration_sec": 204,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 100,
+    "type": "VIEW",
+    "timestamp": "2025-12-28T21:33:16.867655",
+    "metadata": {
+      "duration_sec": 206,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 22,
+    "type": "VIEW",
+    "timestamp": "2025-11-30T21:33:16.867655",
+    "metadata": {
+      "duration_sec": 83,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 50,
+    "type": "VIEW",
+    "timestamp": "2025-12-24T21:33:16.868654",
+    "metadata": {
+      "duration_sec": 192,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 38,
+    "type": "LIKE",
+    "timestamp": "2025-11-01T21:33:16.868654",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 66,
+    "type": "LIKE",
+    "timestamp": "2025-11-27T21:33:16.868654",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 50,
+    "type": "VIEW",
+    "timestamp": "2025-11-30T21:33:16.869655",
+    "metadata": {
+      "duration_sec": 143,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 7,
+    "type": "VIEW",
+    "timestamp": "2025-11-19T21:33:16.870164",
+    "metadata": {
+      "duration_sec": 93,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 20,
+    "type": "VIEW",
+    "timestamp": "2025-11-04T21:33:16.870164",
+    "metadata": {
+      "duration_sec": 220,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 64,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-26T21:33:16.871177",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 1600000,
+      "checkIn": "2025-12-26T21:33:16.871177"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 38,
+    "type": "VIEW",
+    "timestamp": "2025-12-24T21:33:16.871177",
+    "metadata": {
+      "duration_sec": 49,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 22,
+    "type": "VIEW",
+    "timestamp": "2025-11-09T21:33:16.872176",
+    "metadata": {
+      "duration_sec": 131,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 17,
+    "type": "VIEW",
+    "timestamp": "2026-01-02T21:33:16.873188",
+    "metadata": {
+      "duration_sec": 162,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 20,
+    "type": "BOOK",
+    "timestamp": "2025-11-12T21:33:16.873188",
+    "metadata": {
+      "adults": 2,
+      "children": 2,
+      "totalPrice": 27600000,
+      "checkIn": "2025-11-12T21:33:16.873188"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 16,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2026-01-04T21:33:16.874191",
+    "metadata": {
+      "adults": 2,
+      "children": 0,
+      "totalPrice": 8200000,
+      "checkIn": "2026-01-04T21:33:16.874191"
+    }
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 64,
+    "type": "LIKE",
+    "timestamp": "2025-10-22T21:33:16.874191",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 85,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.875188",
+    "metadata": {
+      "duration_sec": 186,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 10,
+    "type": "VIEW",
+    "timestamp": "2025-12-01T21:33:16.875188",
+    "metadata": {
+      "duration_sec": 228,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 90,
+    "type": "LIKE",
+    "timestamp": "2025-12-09T21:33:16.876200",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 96,
+    "type": "VIEW",
+    "timestamp": "2025-10-30T21:33:16.876200",
+    "metadata": {
+      "duration_sec": 174,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 65,
+    "type": "VIEW",
+    "timestamp": "2025-10-31T21:33:16.876200",
+    "metadata": {
+      "duration_sec": 102,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 30,
+    "type": "VIEW",
+    "timestamp": "2025-12-16T21:33:16.876200",
+    "metadata": {
+      "duration_sec": 266,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 82,
+    "type": "LIKE",
+    "timestamp": "2025-12-28T21:33:16.877198",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 14,
+    "type": "VIEW",
+    "timestamp": "2025-10-12T21:33:16.877198",
+    "metadata": {
+      "duration_sec": 148,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 62,
+    "type": "VIEW",
+    "timestamp": "2025-12-27T21:33:16.877198",
+    "metadata": {
+      "duration_sec": 42,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 49,
+    "type": "VIEW",
+    "timestamp": "2025-12-06T21:33:16.877705",
+    "metadata": {
+      "duration_sec": 125,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 24,
+    "type": "VIEW",
+    "timestamp": "2025-11-19T21:33:16.877705",
+    "metadata": {
+      "duration_sec": 27,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 18,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-07T21:33:16.877705",
+    "metadata": {
+      "adults": 4,
+      "children": 2,
+      "totalPrice": 27600000,
+      "checkIn": "2025-10-07T21:33:16.877705"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 70,
+    "type": "VIEW",
+    "timestamp": "2025-11-19T21:33:16.877705",
+    "metadata": {
+      "duration_sec": 66,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 70,
+    "type": "VIEW",
+    "timestamp": "2025-12-19T21:33:16.877705",
+    "metadata": {
+      "duration_sec": 243,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 45,
+    "type": "LIKE",
+    "timestamp": "2025-10-12T21:33:16.877705",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 48,
+    "type": "VIEW",
+    "timestamp": "2025-12-04T21:33:16.879032",
+    "metadata": {
+      "duration_sec": 20,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 68,
+    "type": "VIEW",
+    "timestamp": "2025-10-08T21:33:16.879716",
+    "metadata": {
+      "duration_sec": 78,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 94,
+    "type": "LIKE",
+    "timestamp": "2025-11-11T21:33:16.879716",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 42,
+    "type": "VIEW",
+    "timestamp": "2025-12-21T21:33:16.879716",
+    "metadata": {
+      "duration_sec": 294,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 65,
+    "type": "LIKE",
+    "timestamp": "2025-12-13T21:33:16.879716",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 32,
+    "type": "VIEW",
+    "timestamp": "2025-11-13T21:33:16.879716",
+    "metadata": {
+      "duration_sec": 94,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 20,
+    "type": "VIEW",
+    "timestamp": "2025-10-13T21:33:16.879716",
+    "metadata": {
+      "duration_sec": 135,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 11,
+    "type": "LIKE",
+    "timestamp": "2025-12-11T21:33:16.881077",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 57,
+    "type": "LIKE",
+    "timestamp": "2025-11-04T21:33:16.881077",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 20,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-11T21:33:16.881077",
+    "metadata": {
+      "adults": 1,
+      "children": 1,
+      "totalPrice": 13800000,
+      "checkIn": "2025-10-11T21:33:16.881077"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 80,
+    "type": "VIEW",
+    "timestamp": "2025-10-13T21:33:16.882077",
+    "metadata": {
+      "duration_sec": 247,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 75,
+    "type": "VIEW",
+    "timestamp": "2025-11-17T21:33:16.882077",
+    "metadata": {
+      "duration_sec": 250,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 69,
+    "type": "VIEW",
+    "timestamp": "2025-12-15T21:33:16.882077",
+    "metadata": {
+      "duration_sec": 116,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 16,
+    "type": "VIEW",
+    "timestamp": "2026-01-05T21:33:16.883074",
+    "metadata": {
+      "duration_sec": 12,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 80,
+    "type": "VIEW",
+    "timestamp": "2025-11-03T21:33:16.883074",
+    "metadata": {
+      "duration_sec": 275,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 62,
+    "type": "VIEW",
+    "timestamp": "2025-11-07T21:33:16.883074",
+    "metadata": {
+      "duration_sec": 255,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 81,
+    "type": "VIEW",
+    "timestamp": "2025-12-04T21:33:16.884089",
+    "metadata": {
+      "duration_sec": 246,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 50,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-20T21:33:16.884089",
+    "metadata": {
+      "adults": 1,
+      "children": 1,
+      "totalPrice": 18800000,
+      "checkIn": "2025-10-20T21:33:16.884089"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 3,
+    "type": "VIEW",
+    "timestamp": "2025-10-16T21:33:16.884089",
+    "metadata": {
+      "duration_sec": 260,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 13,
+    "type": "VIEW",
+    "timestamp": "2025-12-19T21:33:16.885075",
+    "metadata": {
+      "duration_sec": 96,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 46,
+    "type": "VIEW",
+    "timestamp": "2025-10-14T21:33:16.885075",
+    "metadata": {
+      "duration_sec": 109,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 82,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-11T21:33:16.885075",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 22800000,
+      "checkIn": "2025-11-11T21:33:16.885075"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 73,
+    "type": "VIEW",
+    "timestamp": "2025-11-15T21:33:16.885075",
+    "metadata": {
+      "duration_sec": 260,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 60,
+    "type": "BOOK",
+    "timestamp": "2025-11-04T21:33:16.886078",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 8100000,
+      "checkIn": "2025-11-04T21:33:16.886078"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 36,
+    "type": "VIEW",
+    "timestamp": "2025-12-14T21:33:16.886078",
+    "metadata": {
+      "duration_sec": 200,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 52,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-16T21:33:16.886078",
+    "metadata": {
+      "adults": 3,
+      "children": 1,
+      "totalPrice": 38400000,
+      "checkIn": "2025-11-16T21:33:16.886078"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 100,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-24T21:33:16.887588",
+    "metadata": {
+      "adults": 1,
+      "children": 0,
+      "totalPrice": 21600000,
+      "checkIn": "2025-10-24T21:33:16.887588"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 4,
+    "type": "VIEW",
+    "timestamp": "2025-11-18T21:33:16.887588",
+    "metadata": {
+      "duration_sec": 71,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 24,
+    "type": "VIEW",
+    "timestamp": "2025-10-22T21:33:16.887588",
+    "metadata": {
+      "duration_sec": 220,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 58,
+    "type": "VIEW",
+    "timestamp": "2025-10-30T21:33:16.887588",
+    "metadata": {
+      "duration_sec": 179,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 82,
+    "type": "VIEW",
+    "timestamp": "2025-10-21T21:33:16.888601",
+    "metadata": {
+      "duration_sec": 138,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 3,
+    "type": "VIEW",
+    "timestamp": "2025-10-31T21:33:16.888601",
+    "metadata": {
+      "duration_sec": 10,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 89,
+    "type": "VIEW",
+    "timestamp": "2025-11-01T21:33:16.888601",
+    "metadata": {
+      "duration_sec": 212,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 31,
+    "type": "VIEW",
+    "timestamp": "2025-12-25T21:33:16.888601",
+    "metadata": {
+      "duration_sec": 264,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 14,
+    "type": "VIEW",
+    "timestamp": "2025-11-29T21:33:16.888601",
+    "metadata": {
+      "duration_sec": 262,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 92,
+    "type": "VIEW",
+    "timestamp": "2025-11-12T21:33:16.888601",
+    "metadata": {
+      "duration_sec": 272,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 61,
+    "type": "VIEW",
+    "timestamp": "2026-01-04T21:33:16.888601",
+    "metadata": {
+      "duration_sec": 72,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 7,
+    "type": "VIEW",
+    "timestamp": "2025-12-15T21:33:16.888601",
+    "metadata": {
+      "duration_sec": 233,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 12,
+    "type": "LIKE",
+    "timestamp": "2025-11-08T21:33:16.890113",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 47,
+    "type": "VIEW",
+    "timestamp": "2025-12-14T21:33:16.890113",
+    "metadata": {
+      "duration_sec": 53,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 61,
+    "type": "VIEW",
+    "timestamp": "2025-12-25T21:33:16.890113",
+    "metadata": {
+      "duration_sec": 258,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 22,
+    "type": "VIEW",
+    "timestamp": "2026-01-04T21:33:16.890113",
+    "metadata": {
+      "duration_sec": 265,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 14,
+    "type": "VIEW",
+    "timestamp": "2025-10-16T21:33:16.890113",
+    "metadata": {
+      "duration_sec": 172,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 61,
+    "type": "LIKE",
+    "timestamp": "2025-11-18T21:33:16.890113",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 9,
+    "type": "VIEW",
+    "timestamp": "2025-11-03T21:33:16.891125",
+    "metadata": {
+      "duration_sec": 212,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 64,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-05T21:33:16.891125",
+    "metadata": {
+      "adults": 3,
+      "children": 0,
+      "totalPrice": 2400000,
+      "checkIn": "2025-11-05T21:33:16.891125"
+    }
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 73,
+    "type": "VIEW",
+    "timestamp": "2025-12-27T21:33:16.891125",
+    "metadata": {
+      "duration_sec": 128,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_44",
+    "hotelId": 96,
+    "type": "VIEW",
+    "timestamp": "2025-11-21T21:33:16.892125",
+    "metadata": {
+      "duration_sec": 21,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_44",
+    "hotelId": 79,
+    "type": "VIEW",
+    "timestamp": "2025-12-22T21:33:16.892125",
+    "metadata": {
+      "duration_sec": 180,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_44",
+    "hotelId": 95,
+    "type": "VIEW",
+    "timestamp": "2025-12-29T21:33:16.892125",
+    "metadata": {
+      "duration_sec": 35,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_44",
+    "hotelId": 49,
+    "type": "VIEW",
+    "timestamp": "2025-11-11T21:33:16.893133",
+    "metadata": {
+      "duration_sec": 172,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_44",
+    "hotelId": 41,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-05T21:33:16.893133",
+    "metadata": {
+      "adults": 1,
+      "children": 1,
+      "totalPrice": 33000000,
+      "checkIn": "2025-12-05T21:33:16.893133"
+    }
+  },
+  {
+    "userId": "user_seed_44",
+    "hotelId": 4,
+    "type": "VIEW",
+    "timestamp": "2025-11-16T21:33:16.893133",
+    "metadata": {
+      "duration_sec": 195,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_44",
+    "hotelId": 1,
+    "type": "LIKE",
+    "timestamp": "2025-11-12T21:33:16.893133",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_44",
+    "hotelId": 11,
+    "type": "VIEW",
+    "timestamp": "2025-12-18T21:33:16.893133",
+    "metadata": {
+      "duration_sec": 147,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_44",
+    "hotelId": 73,
+    "type": "VIEW",
+    "timestamp": "2025-12-08T21:33:16.894134",
+    "metadata": {
+      "duration_sec": 135,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_44",
+    "hotelId": 52,
+    "type": "VIEW",
+    "timestamp": "2025-11-21T21:33:16.894799",
+    "metadata": {
+      "duration_sec": 282,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 76,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-24T21:33:16.894799",
+    "metadata": {
+      "adults": 3,
+      "children": 0,
+      "totalPrice": 14400000,
+      "checkIn": "2025-10-24T21:33:16.894799"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 92,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-02T21:33:16.894799",
+    "metadata": {
+      "adults": 2,
+      "children": 2,
+      "totalPrice": 29700000,
+      "checkIn": "2025-12-02T21:33:16.894799"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 35,
+    "type": "VIEW",
+    "timestamp": "2025-10-29T21:33:16.895830",
+    "metadata": {
+      "duration_sec": 250,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 52,
+    "type": "VIEW",
+    "timestamp": "2025-11-05T21:33:16.895830",
+    "metadata": {
+      "duration_sec": 160,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 87,
+    "type": "VIEW",
+    "timestamp": "2025-12-02T21:33:16.895830",
+    "metadata": {
+      "duration_sec": 141,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 89,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-17T21:33:16.895830",
+    "metadata": {
+      "adults": 2,
+      "children": 1,
+      "totalPrice": 13200000,
+      "checkIn": "2025-10-17T21:33:16.895830"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 12,
+    "type": "VIEW",
+    "timestamp": "2025-12-09T21:33:16.895830",
+    "metadata": {
+      "duration_sec": 277,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 42,
+    "type": "VIEW",
+    "timestamp": "2025-11-21T21:33:16.896813",
+    "metadata": {
+      "duration_sec": 154,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 50,
+    "type": "VIEW",
+    "timestamp": "2025-10-16T21:33:16.896813",
+    "metadata": {
+      "duration_sec": 293,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 43,
+    "type": "VIEW",
+    "timestamp": "2025-10-28T21:33:16.897812",
+    "metadata": {
+      "duration_sec": 107,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 82,
+    "type": "LIKE",
+    "timestamp": "2025-11-15T21:33:16.898321",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 12,
+    "type": "VIEW",
+    "timestamp": "2025-12-02T21:33:16.898321",
+    "metadata": {
+      "duration_sec": 150,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 54,
+    "type": "VIEW",
+    "timestamp": "2025-12-27T21:33:16.898321",
+    "metadata": {
+      "duration_sec": 47,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 83,
+    "type": "VIEW",
+    "timestamp": "2025-12-30T21:33:16.898321",
+    "metadata": {
+      "duration_sec": 124,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_45",
+    "hotelId": 51,
+    "type": "VIEW",
+    "timestamp": "2025-11-06T21:33:16.898321",
+    "metadata": {
+      "duration_sec": 50,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 91,
+    "type": "VIEW",
+    "timestamp": "2025-11-29T21:33:16.898321",
+    "metadata": {
+      "duration_sec": 27,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 48,
+    "type": "VIEW",
+    "timestamp": "2025-10-07T21:33:16.898321",
+    "metadata": {
+      "duration_sec": 114,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 95,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-09T21:33:16.899833",
+    "metadata": {
+      "adults": 2,
+      "children": 0,
+      "totalPrice": 58800000,
+      "checkIn": "2025-11-09T21:33:16.899833"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 72,
+    "type": "VIEW",
+    "timestamp": "2025-12-12T21:33:16.899833",
+    "metadata": {
+      "duration_sec": 33,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 48,
+    "type": "VIEW",
+    "timestamp": "2025-10-21T21:33:16.900844",
+    "metadata": {
+      "duration_sec": 242,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 66,
+    "type": "VIEW",
+    "timestamp": "2025-11-10T21:33:16.900844",
+    "metadata": {
+      "duration_sec": 180,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 19,
+    "type": "VIEW",
+    "timestamp": "2025-11-04T21:33:16.900844",
+    "metadata": {
+      "duration_sec": 101,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 63,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-10-08T21:33:16.901846",
+    "metadata": {
+      "adults": 2,
+      "children": 2,
+      "totalPrice": 17700000,
+      "checkIn": "2025-10-08T21:33:16.901846"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 37,
+    "type": "BOOK",
+    "timestamp": "2025-10-24T21:33:16.901846",
+    "metadata": {
+      "adults": 4,
+      "children": 1,
+      "totalPrice": 7100000,
+      "checkIn": "2025-10-24T21:33:16.901846"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 78,
+    "type": "BOOK",
+    "timestamp": "2025-11-29T21:33:16.901846",
+    "metadata": {
+      "adults": 4,
+      "children": 2,
+      "totalPrice": 22800000,
+      "checkIn": "2025-11-29T21:33:16.901846"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 81,
+    "type": "VIEW",
+    "timestamp": "2025-12-15T21:33:16.902842",
+    "metadata": {
+      "duration_sec": 255,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 11,
+    "type": "VIEW",
+    "timestamp": "2025-11-29T21:33:16.902842",
+    "metadata": {
+      "duration_sec": 196,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 47,
+    "type": "VIEW",
+    "timestamp": "2025-12-29T21:33:16.902842",
+    "metadata": {
+      "duration_sec": 254,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 39,
+    "type": "VIEW",
+    "timestamp": "2025-10-28T21:33:16.903847",
+    "metadata": {
+      "duration_sec": 204,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 81,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-30T21:33:16.903847",
+    "metadata": {
+      "adults": 4,
+      "children": 2,
+      "totalPrice": 51600000,
+      "checkIn": "2025-12-30T21:33:16.903847"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 83,
+    "type": "VIEW",
+    "timestamp": "2025-11-29T21:33:16.903847",
+    "metadata": {
+      "duration_sec": 78,
+      "scroll_depth": "100%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 26,
+    "type": "LIKE",
+    "timestamp": "2025-12-30T21:33:16.903847",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 88,
+    "type": "VIEW",
+    "timestamp": "2025-10-23T21:33:16.904853",
+    "metadata": {
+      "duration_sec": 61,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 68,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-12-08T21:33:16.904853",
+    "metadata": {
+      "adults": 1,
+      "children": 2,
+      "totalPrice": 10600000,
+      "checkIn": "2025-12-08T21:33:16.904853"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 79,
+    "type": "VIEW",
+    "timestamp": "2025-12-24T21:33:16.904853",
+    "metadata": {
+      "duration_sec": 223,
+      "scroll_depth": "50%"
+    }
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 97,
+    "type": "VIEW",
+    "timestamp": "2025-11-05T21:33:16.904853",
+    "metadata": {
+      "duration_sec": 22,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_49",
+    "hotelId": 38,
+    "type": "LIKE",
+    "timestamp": "2025-12-13T21:33:16.905854",
+    "metadata": null
+  },
+  {
+    "userId": "user_seed_49",
+    "hotelId": 59,
+    "type": "VIEW",
+    "timestamp": "2025-10-31T21:33:16.905854",
+    "metadata": {
+      "duration_sec": 82,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_49",
+    "hotelId": 48,
+    "type": "VIEW",
+    "timestamp": "2025-12-13T21:33:16.905854",
+    "metadata": {
+      "duration_sec": 208,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_49",
+    "hotelId": 24,
+    "type": "VIEW",
+    "timestamp": "2025-10-18T21:33:16.905854",
+    "metadata": {
+      "duration_sec": 246,
+      "scroll_depth": "25%"
+    }
+  },
+  {
+    "userId": "user_seed_49",
+    "hotelId": 26,
+    "type": "CLICK_BOOK_NOW",
+    "timestamp": "2025-11-25T21:33:16.905854",
+    "metadata": {
+      "adults": 2,
+      "children": 1,
+      "totalPrice": 35200000,
+      "checkIn": "2025-11-25T21:33:16.905854"
+    }
+  }
+]

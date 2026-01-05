@@ -1,4 +1,11 @@
-import { PrismaClient } from "../generated/prisma/client";
+import {
+  PrismaClient,
+  InteractionType,
+  BookingStatus,
+  PaymentStatus,
+  PaymentMethod,
+} from "../generated/prisma/client";
+// Lưu ý: Import type từ generated client để đảm bảo type-safe
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import fs from "fs";
@@ -12,278 +19,353 @@ const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
+// Hàm tiện ích đọc file JSON an toàn
+const readJson = (filename: string) => {
+  const filePath = path.join(process.cwd(), "jsons", filename);
+  if (!fs.existsSync(filePath)) {
+    console.warn(`⚠️  Không tìm thấy file: ${filename} (Bỏ qua bước này)`);
+    return [];
+  }
+  return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+};
+
 async function main() {
-  console.log("🚀 Bắt đầu seed dữ liệu...");
-  const jsonDir = path.join(process.cwd(), "jsons");
+  console.log("🚀 Bắt đầu quá trình Seeding...");
+
+  // --- 0. DỌN DẸP DỮ LIỆU CŨ (Tùy chọn, cẩn thận khi chạy trên Prod) ---
+  // Xóa theo thứ tự quan hệ ngược để tránh lỗi khóa ngoại
+  // await prisma.recommendation.deleteMany();
+  // await prisma.booking.deleteMany();
+  // await prisma.interaction.deleteMany();
+  // await prisma.searchQueryLog.deleteMany();
+  // await prisma.hotel.deleteMany();
+  // await prisma.userPreference.deleteMany();
+  // await prisma.user.deleteMany();
+  // console.log("🗑️  Đã dọn dẹp database cũ.");
 
   // --- 1. SETUP DEFAULT ADMIN ---
-  const defaultAuthor = await prisma.user.upsert({
-    where: { email: "admin@stazy.com" },
+  const adminEmail = "admin@stazy.com";
+  await prisma.user.upsert({
+    where: { email: adminEmail },
     update: {},
     create: {
-      email: "admin@stazy.com",
-      name: "Stazy Admin",
-      password: "password123",
+      email: adminEmail,
+      name: "Stazy Super Admin",
+      password: "hashed_password_here", // Thực tế nên hash
       role: "ADMIN",
       avatar: "https://i.pravatar.cc/150?u=admin",
+      createdAt: new Date(),
     },
   });
+  console.log("👤 Admin setup done.");
 
   // --- 2. SEED CATEGORIES ---
-  const categoryPath = path.join(jsonDir, "__category.json");
-  let defaultCategoryId: number | null = null;
+  const categories = [
+    {
+      id: 1,
+      name: "Khách sạn",
+      slug: "khach-san",
+      icon: "HiOutlineOfficeBuilding",
+    },
+    { id: 2, name: "Homestay", slug: "homestay", icon: "HiOutlineHome" },
+    { id: 3, name: "Resort", slug: "resort", icon: "HiOutlineSun" },
+    { id: 4, name: "Biệt thự", slug: "biet-thu", icon: "HiOutlineKey" },
+    { id: 5, name: "Căn hộ", slug: "can-ho", icon: "HiOutlineBuildingOffice2" },
+    { id: 6, name: "Nhà gỗ", slug: "nha-go", icon: "HiOutlineTree" },
+    { id: 7, name: "Khác", slug: "khac", icon: "HiOutlineDotsHorizontal" },
+  ];
 
-  if (fs.existsSync(categoryPath)) {
-    const categoriesData = JSON.parse(fs.readFileSync(categoryPath, "utf-8"));
-    console.log(`📂 Đang seed ${categoriesData.length} Categories...`);
-
-    for (const cat of categoriesData) {
-      const savedCat = await prisma.category.upsert({
-        where: { slug: cat.slug },
-        update: {
-          name: cat.name,
-          description: cat.description,
-          thumbnail: cat.thumbnail,
-          icon: cat.icon,
-        },
-        create: {
-          name: cat.name,
-          slug: cat.slug,
-          description: cat.description,
-          thumbnail: cat.thumbnail,
-          icon: cat.icon,
-        },
-      });
-
-      if (cat.slug === "khac") {
-        defaultCategoryId = savedCat.id;
-      }
-    }
-  } else {
-    const cat = await prisma.category.upsert({
-      where: { slug: "khac" },
-      update: {},
-      create: { name: "Khác", slug: "khac" },
+  for (const cat of categories) {
+    await prisma.category.upsert({
+      where: { id: cat.id },
+      update: cat,
+      create: cat,
     });
-    defaultCategoryId = cat.id;
   }
-
-  if (!defaultCategoryId) {
-    const cat = await prisma.category.findFirst();
-    defaultCategoryId = cat?.id || 1;
-  }
+  console.log(`📂 Categories synced.`);
 
   // --- 3. SEED USERS ---
-  const usersPath = path.join(jsonDir, "__users.json");
-  if (fs.existsSync(usersPath)) {
-    const usersData = JSON.parse(fs.readFileSync(usersPath, "utf-8"));
-    console.log(`👤 Đang seed ${usersData.length} Users...`);
+  // Sử dụng hàm readJson đã viết sẵn, không cần jsonDir hay fs.existsSync thủ công
+  const usersData = readJson("__users.json");
+  console.log(`👤 Đang xử lý ${usersData.length} Users...`);
 
-    for (const u of usersData) {
-      const { posts, ...userDataRaw } = u;
-      const userData = {
-        ...userDataRaw,
-        dob: userDataRaw.dob ? new Date(userDataRaw.dob) : null,
-        createdAt: userDataRaw.createdAt
-          ? new Date(userDataRaw.createdAt)
+  if (usersData.length > 0) {
+    for (const userData of usersData) {
+      const u: any = userData;
+
+      // 1. Tách 'posts' ra
+      const { preference, posts, ...userInfo } = u;
+
+      // 2. Xử lý Preference (Date conversion)
+      let formattedPreference = undefined;
+      if (preference) {
+        formattedPreference = {
+          ...preference,
+          lastBookingAt: preference.lastBookingAt
+            ? new Date(preference.lastBookingAt)
+            : null,
+          updatedAt: preference.updatedAt
+            ? new Date(preference.updatedAt)
+            : new Date(),
+        };
+      }
+
+      // 3. Xử lý User (Date conversion)
+      const finalUserData = {
+        ...userInfo,
+        dob: userInfo.dob ? new Date(userInfo.dob) : null,
+        createdAt: userInfo.createdAt
+          ? new Date(userInfo.createdAt)
           : new Date(),
-        updatedAt: userDataRaw.updatedAt
-          ? new Date(userDataRaw.updatedAt)
+        updatedAt: userInfo.updatedAt
+          ? new Date(userInfo.updatedAt)
           : new Date(),
       };
 
+      // 4. Upsert
       await prisma.user.upsert({
-        where: { id: u.id },
-        update: userData,
-        create: userData,
+        where: { id: userInfo.id },
+        update: {
+          ...finalUserData,
+          preference: formattedPreference
+            ? {
+                upsert: {
+                  create: formattedPreference,
+                  update: formattedPreference,
+                },
+              }
+            : undefined,
+        },
+        create: {
+          ...finalUserData,
+          preference: formattedPreference
+            ? { create: formattedPreference }
+            : undefined,
+        },
       });
     }
   }
 
   // --- 4. SEED HOTELS & VECTORS ---
-  const homeStayPath = path.join(jsonDir, "__homeStay.json");
+  const hotelsData = readJson("__homeStay.json");
+  const vectorsData = readJson("__hotel_vectors.json"); // [{id, imageVector, policiesVector}]
 
-  if (fs.existsSync(homeStayPath)) {
-    const homeStayData = JSON.parse(fs.readFileSync(homeStayPath, "utf-8"));
+  // Tạo Map để tra cứu vector O(1)
+  const vectorMap = new Map<any, any>(vectorsData.map((v: any) => [v.id, v]));
 
-    // Đọc file Vector (chứa cả imageVector và textVector nếu có)
-    let vectorMap = new Map();
-    const vectorPath = path.join(jsonDir, "__hotel_vectors.json");
-    if (fs.existsSync(vectorPath)) {
-      const vData = JSON.parse(fs.readFileSync(vectorPath, "utf-8"));
-      vData.forEach((v: any) => {
-        // Lưu cả object vector để lấy cả text và image sau này
-        vectorMap.set(v.id, {
-          image: v.vector || v.imageVector, // Tùy tên field trong json của bạn
-          text: v.textVector,
-        });
-      });
+  console.log(`🏨 Đang xử lý ${hotelsData.length} Hotels...`);
+
+  for (const hotel of hotelsData) {
+    const { id, category, reviewStart, ...rest } = hotel;
+
+    // Chuẩn bị data (loại bỏ field dư thừa, format date)
+    const hotelInput = {
+      ...rest,
+      categoryId: rest.categoryId,
+      reviewStar: reviewStart || rest.reviewStar || 0, // Fix naming cũ/mới
+
+      // Map JSON array sang PostgreSQL array (Text[])
+      galleryImgs: rest.galleryImgs || [],
+      amenities: rest.amenities || [],
+      tags: rest.tags || [],
+      suitableFor: rest.suitableFor || [], // Enum array
+      accessibility: rest.accessibility || [],
+      nearbyLandmarks: rest.nearbyLandmarks || [],
+
+      createdAt: rest.createdAt ? new Date(rest.createdAt) : new Date(),
+      updatedAt: new Date(), // Luôn update mới nhất
+
+      // Kết nối quan hệ
+      // Không cần category: connect vì categoryId đã là foreign key trực tiếp
+    };
+
+    // 4.1 Upsert Hotel (Chưa có Vector)
+    await prisma.hotel.upsert({
+      where: { id: id },
+      update: hotelInput,
+      create: {
+        id, // Giữ ID cứng từ JSON
+        ...hotelInput,
+      },
+    });
+
+    // 4.2 Update Vector (Raw SQL)
+    // Lưu ý: Prisma chưa support write vector trực tiếp trong hàm create/update
+    const vecData = vectorMap.get(id);
+    if (vecData) {
+      if (vecData.imageVector) {
+        const imgVecStr = `[${vecData.imageVector.join(",")}]`;
+        // Lưu ý tên bảng "hotels" (map name) hay "Hotel" (model name) -> Dựa vào schema @@map("hotels")
+        await prisma.$executeRaw`UPDATE hotels SET "imageVector" = ${imgVecStr}::vector WHERE id = ${id}`;
+      }
+
+      if (vecData.policiesVector) {
+        const polVecStr = `[${vecData.policiesVector.join(",")}]`;
+        await prisma.$executeRaw`UPDATE hotels SET "policiesVector" = ${polVecStr}::vector WHERE id = ${id}`;
+      }
     }
+  }
 
-    console.log("🏨 Đang seed Hotels...");
-    for (const item of homeStayData) {
-      let categoryId = defaultCategoryId;
+  // --- 5. SEED INTERACTIONS & BOOKINGS ---
+  const interactionsData = readJson("__interactions.json");
+  console.log(`✨ Đang xử lý ${interactionsData.length} Interactions...`);
 
-      if (item.category) {
-        const catSlug = item.category.toLowerCase().replace(/ /g, "-");
-        const existingCat = await prisma.category.findUnique({
-          where: { slug: catSlug },
-        });
-        if (existingCat) categoryId = existingCat.id;
-      }
+  let bookingCount = 0;
 
-      let saleOffPercent = item.saleOffPercent || 0;
-      if (item.saleOff && saleOffPercent === 0) {
-        const match = String(item.saleOff).match(/(\d+)/);
-        if (match) saleOffPercent = parseInt(match[0], 10);
-      }
-      const hotelSlug =
-        item.slug || item.title.toLowerCase().replace(/ /g, "-");
+  // Xóa interaction cũ để clean state (vì ID interaction tự tăng, khó upsert)
+  await prisma.interaction.deleteMany();
 
-      // 🔥 MỚI: Tạo trường fullDescription cho RAG/Agent đọc
-      // Gộp tiêu đề + mô tả + tiện ích + địa chỉ thành 1 văn bản giàu thông tin
-      const fullDescText = `
-        Tên: ${item.title}.
-        Loại hình: ${item.category}.
-        Mô tả: ${item.description}.
-        Tiện ích: ${Array.isArray(item.amenities) ? item.amenities.join(", ") : item.amenities}.
-        Địa chỉ: ${item.address}.
-        Giá: ${item.price} VND.
-      `.trim();
+  for (const interaction of interactionsData) {
+    const { userId, hotelId, type, timestamp, metadata } = interaction;
 
-      const hotelData = {
-        title: item.title,
-        featuredImage: item.featuredImage,
-        description: item.description,
+    // Kiểm tra ràng buộc khóa ngoại (User/Hotel phải tồn tại)
+    // Vì ta seed theo thứ tự nên chắc chắn tồn tại, nhưng check cho an toàn
 
-        // 🔥 MỚI: Lưu fullDescription vào DB (nếu schema đã có cột này)
-        // Nếu chưa có cột này trong schema.prisma, hãy comment dòng dưới lại
-        fullDescription: fullDescText,
+    // 5.1 Create Interaction
+    await prisma.interaction.create({
+      data: {
+        userId,
+        hotelId,
+        type: type as InteractionType, // Cast về Enum
+        timestamp: new Date(timestamp),
+        metadata: metadata || {},
+      },
+    });
 
-        address: item.address,
-        price: item.price ? String(item.price) : "0",
-        galleryImgs: item.galleryImgs || [],
-        amenities: item.amenities || [],
-        maxGuests: item.maxGuests || 2,
-        bedrooms: item.bedrooms || 1,
-        bathrooms: item.bathrooms || 1,
-        map: item.map || {},
-        authorId: defaultAuthor.id,
-        categoryId: categoryId,
-        isAds: item.isAds || false,
-        reviewCount: item.reviewCount || 0,
-        reviewStart: item.reviewStart || 0,
-        viewCount: item.viewCount || 0,
-        like: item.like ?? false,
-        commentCount: item.commentCount || 0,
-        saleOff: item.saleOff || null,
-        saleOffPercent: saleOffPercent,
-      };
+    // 5.2 Logic Booking tự động (Derived Data)
+    if (type === "BOOK") {
+      const checkInDate = new Date(timestamp);
+      const checkOutDate = new Date(checkInDate);
+      checkOutDate.setDate(checkOutDate.getDate() + 2); // Mặc định ở 2 đêm
 
-      const savedHotel = await prisma.hotel.upsert({
-        where: { slug: hotelSlug },
-        update: hotelData,
-        create: {
-          // 🔥 QUAN TRỌNG: BẮT BUỘC PHẢI CÓ DÒNG NÀY ĐỂ KHỚP ID VỚI PYTHON
-          id: item.id,
-          slug: hotelSlug,
-          ...hotelData,
+      const totalPrice = metadata?.totalPrice || 2000000;
+
+      await prisma.booking.create({
+        data: {
+          userId,
+          hotelId,
+
+          // Giả lập thông tin khách
+          guestName: "Guest Auto Generated",
+          guestEmail: `${userId}@example.com`,
+          guestPhone: "0909000000",
+          adults: metadata?.adults || 2,
+          children: metadata?.children || 0,
+
+          checkIn: checkInDate,
+          checkOut: checkOutDate,
+          nights: 2,
+
+          basePrice: totalPrice,
+          totalAmount: totalPrice,
+
+          status: BookingStatus.COMPLETED,
+          paymentStatus: PaymentStatus.SUCCEEDED,
+          paymentMethod: PaymentMethod.STRIPE,
+
+          createdAt: new Date(timestamp),
         },
       });
-
-      // --- CẬP NHẬT VECTOR ---
-      const vectors = vectorMap.get(item.id);
-      if (vectors) {
-        // 1. Update Image Vector
-        if (vectors.image && vectors.image.length > 0) {
-          const imgVecStr = JSON.stringify(vectors.image);
-          await prisma.$executeRaw`UPDATE "Hotel" SET "imageVector" = ${imgVecStr}::vector WHERE id = ${savedHotel.id}`;
-        }
-
-        // 2. 🔥 MỚI: Update Text Vector (Nếu có trong JSON và Schema)
-        // Dùng cho Semantic Search: "Tìm chỗ chill view núi"
-        if (vectors.text && vectors.text.length > 0) {
-          const txtVecStr = JSON.stringify(vectors.text);
-          // Hãy đảm bảo bạn đã thêm cột `textVector` trong schema.prisma
-          await prisma.$executeRaw`UPDATE "Hotel" SET "textVector" = ${txtVecStr}::vector WHERE id = ${savedHotel.id}`;
-        }
-      }
+      bookingCount++;
     }
   }
-
-  // --- 5. SEED INTERACTIONS ---
-  const interactionsPath = path.join(jsonDir, "mock_interactions.json");
-  let finalIntPath = interactionsPath;
-  if (!fs.existsSync(interactionsPath))
-    finalIntPath = path.join(jsonDir, "__mock_interactions.json");
-
-  if (fs.existsSync(finalIntPath)) {
-    const interactionsData = JSON.parse(fs.readFileSync(finalIntPath, "utf-8"));
-    console.log(`✨ Đang xử lý Interactions...`);
-
-    // Xóa cũ insert mới để tránh lỗi ID
-    await prisma.interaction.deleteMany({});
-
-    // Lọc user ID hợp lệ
-    const existingUsers = await prisma.user.findMany({ select: { id: true } });
-    const validUserIds = new Set(existingUsers.map((u) => u.id));
-
-    // Lọc hotel ID hợp lệ
-    const existingHotels = await prisma.hotel.findMany({
-      select: { id: true },
-    });
-    const validHotelIds = new Set(existingHotels.map((h) => h.id));
-
-    const formattedInteractions = interactionsData
-      .filter(
-        (i: any) => validUserIds.has(i.userId) && validHotelIds.has(i.stayId)
-      )
-      .map((i: any) => ({
-        userId: i.userId,
-        hotelId: i.stayId,
-        action: i.action,
-        weight: i.weight,
-        createdAt: new Date(i.timestamp),
-      }));
-
-    if (formattedInteractions.length > 0) {
-      await prisma.interaction.createMany({
-        data: formattedInteractions,
-        skipDuplicates: true,
-      });
-      console.log(`✅ Đã insert ${formattedInteractions.length} Interactions!`);
-    }
-  }
+  console.log(`✅ Generated ${bookingCount} bookings from interactions.`);
 
   // --- 6. SEED RECOMMENDATIONS ---
-  const recPath = path.join(jsonDir, "__recommendations.json");
-  if (fs.existsSync(recPath)) {
-    const recData = JSON.parse(fs.readFileSync(recPath, "utf-8"));
-    console.log(`🔮 Đang seed Recommendations (${recData.length} users)...`);
+  const recsData = readJson("__recommendations.json");
+  console.log(`🔮 Đang seed Recommendations...`);
 
-    for (const rec of recData) {
-      try {
-        await prisma.recommendation.upsert({
-          where: { userId: rec.userId },
-          update: { hotelIds: rec.hotelIds },
-          create: { userId: rec.userId, hotelIds: rec.hotelIds },
-        });
-      } catch (e) {}
-    }
+  for (const rec of recsData) {
+    await prisma.recommendation.upsert({
+      where: { userId: rec.userId },
+      update: {
+        hotelIds: rec.hotelIds,
+        score: rec.score || {}, // JSON score
+      },
+      create: {
+        userId: rec.userId,
+        hotelIds: rec.hotelIds,
+        score: rec.score || {},
+      },
+    });
+  }
+  // --- 6.5. SEED SEARCH LOGS (FAKE DATA) ---
+  console.log("🔍 Đang tạo giả lập lịch sử tìm kiếm...");
+
+  const searchKeywords = [
+    "Khách sạn view biển Nha Trang",
+    "Homestay Đà Lạt giá rẻ",
+    "Resort có hồ bơi vô cực",
+    "Biệt thự Vũng Tàu cho nhóm",
+    "Chỗ ở gần phố cổ Hội An",
+    "Khách sạn tình yêu Sài Gòn",
+    "Villa Sapa săn mây",
+    "Căn hộ cao cấp Landmark 81",
+    "Du lịch bụi Hà Giang",
+    "Resort Phú Quốc bãi sao",
+    "homestay có bếp tự nấu Sapa",
+    "chỗ nghỉ giá dưới 1 triệu ở Phú Quốc",
+    "chỗ nghỉ gần sân bay Tân Sơn Nhất",
+    "khách sạn có chỗ đậu xe rộng Cần Thơ",
+    "nơi ở sinh viên giá rẻ Đà Nẵng",
+  ];
+
+  const fakeSearchLogs = []; // Khai báo mảng rỗng, để TS tự suy luận sau
+  const usersForLog = await prisma.user.findMany({
+    select: { id: true },
+    take: 10,
+  });
+
+  for (let i = 0; i < 50; i++) {
+    // Lấy random user, dùng optional chaining (?.) và fallback null để tránh undefined
+    const randomUser =
+      usersForLog[Math.floor(Math.random() * usersForLog.length)];
+    const userId = Math.random() > 0.3 && randomUser ? randomUser.id : null;
+
+    // 🔥 FIX LỖI CHÍNH: Thêm "|| ''" để đảm bảo query luôn là string, không bao giờ undefined
+    const randomQuery =
+      searchKeywords[Math.floor(Math.random() * searchKeywords.length)] ||
+      "Khách sạn";
+
+    fakeSearchLogs.push({
+      userId: userId,
+      query: randomQuery,
+      timestamp: new Date(Date.now() - Math.floor(Math.random() * 1000000000)),
+      // Ép kiểu 'any' cho filters để Prisma nhận JSON thoải mái
+      filters: {
+        priceMax: Math.random() > 0.5 ? 2000000 : null,
+        amenities: Math.random() > 0.7 ? ["pool", "wifi"] : [],
+        guests: Math.random() > 0.6 ? { adults: 2, children: 1 } : null,
+      } as any,
+    });
   }
 
-  // --- 7. 🔥 QUAN TRỌNG: RESET SEQUENCE ID ---
-  // Vì chúng ta insert ID cứng (1, 2, 3...), Postgres sequence có thể bị lệch.
-  // Cần reset để khi tạo mới khách sạn sau này không bị lỗi "Duplicate ID".
-  await prisma.$executeRaw`SELECT setval(pg_get_serial_sequence('"Hotel"', 'id'), coalesce(max(id)+1, 1), false) FROM "Hotel";`;
-  console.log("✅ Đã reset ID sequence.");
+  // Dùng createMany
+  if (fakeSearchLogs.length > 0) {
+    await prisma.searchQueryLog.createMany({
+      data: fakeSearchLogs,
+    });
+    console.log(`✅ Đã tạo ${fakeSearchLogs.length} dòng log tìm kiếm.`);
+  }
+  // --- 7. RESET SEQUENCE (Quan trọng cho Postgres) ---
+  // Reset sequence ID cho bảng hotels, categories... để tránh lỗi duplicate key khi insert mới sau này
+  try {
+    await prisma.$executeRaw`SELECT setval('hotels_id_seq', (SELECT MAX(id) FROM hotels));`;
+    await prisma.$executeRaw`SELECT setval('categories_id_seq', (SELECT MAX(id) FROM categories));`;
+    // User ID là string UUID/String nên không cần reset sequence
+    console.log("🔄 Sequences reset done.");
+  } catch (err) {
+    console.warn(
+      "⚠️  Không thể reset sequence (Có thể do tên sequence khác nhau tùy môi trường)."
+    );
+  }
 
-  console.log("✅ Seed dữ liệu hoàn tất!");
+  console.log("🏁 SEEDING HOÀN TẤT! Hệ thống đã sẵn sàng.");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Lỗi seed:", e);
+    console.error("❌ Lỗi Seeding Critial:", e);
     process.exit(1);
   })
   .finally(async () => {

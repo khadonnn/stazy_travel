@@ -1,165 +1,310 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// stazy-booking-schema.prisma
 
 generator client {
-  provider = "prisma-client"
+  provider        = "prisma-client"
   output   = "../generated/prisma"
-  previewFeatures = ["postgresqlExtensions"]
+  previewFeatures = ["postgresqlExtensions"] // Cần thiết cho pgvector
 }
 
 datasource db {
-  provider = "postgresql"
+  provider   = "postgresql"
   extensions = [vector]
 }
-model User {
-  id          String    @id @default(uuid()) 
-  
-  // Thông tin đăng nhập & Cơ bản
-  email       String    @unique
-  password    String?    
-  name        String    
-  nickname    String?
-  phone       String?
-  gender      String?
-  dob         DateTime? 
-  address     String?
-  
-  avatar      String?   
-  bgImage  String?   
-  
-  jobName     String?  
-  desc         String?   @db.Text
-  
-  role        Role      @default(USER) // Enum: USER, AUTHOR, ADMIN
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 
-  // Quan hệ: Một User có thể đăng nhiều Hotel
-  hotels      Hotel[]
-  interactions Interaction[]
-recommendation Recommendation?
+// =========================================
+// 1. MODEL: USER & PREFERENCES
+// =========================================
+
+model User {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  password String?
+  
+  // Profile Info
+  name     String
+  nickname String?
+  phone    String?
+  gender   String?
+  dob      DateTime?
+  address  String?
+  
+  // Media
+  avatar   String?
+  bgImage  String?
+  
+  // Job/Bio
+  jobName  String?
+  desc     String? @db.Text
+  
+  role     Role    @default(USER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // --- RELATIONS ---
+  hotels        Hotel[]         @relation("HotelAuthor")
+  interactions  Interaction[]
+  bookings      Booking[]
+  
+  // Quan hệ 1-1: Sở thích người dùng (Tách riêng để bảng User đỡ nặng)
+  preference    UserPreference?
+  recommendation Recommendation?
+
+  // Log tìm kiếm (Optional)
+  searchLogs    SearchQueryLog[]
+
   @@map("users")
 }
 
-// --- ENUM ROLE ---
+model UserPreference {
+  id              Int      @id @default(autoincrement())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Explicit Preferences (User tự chọn hoặc AI suy luận)
+  favoriteAmenities String[] // ["pool", "gym", "sea_view"]
+  favoriteCities    String[] // ["nha_trang", "da_nang"]
+  
+  // Behavioral Insights (AI tính toán từ History)
+  avgPriceExpect    Decimal? @db.Decimal(12, 2) // Mức giá user hay xem/đặt
+  preferredRatingMin Float?  // Vd: Chỉ thích rating > 4.0
+  
+  // Stats
+  pastBookingCount  Int      @default(0)
+  lastBookingAt     DateTime?
+
+  updatedAt         DateTime @updatedAt
+
+  @@map("user_preferences")
+}
+
 enum Role {
   USER
   AUTHOR
   ADMIN
 }
+
+// =========================================
+// 2. MODEL: HOTEL & AI CONTEXT
+// =========================================
+
 model Hotel {
-  id                 Int      @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   
-  // -- Relations --
-  authorId           String
-  author            User     @relation(fields: [authorId], references: [id])
+  // Relations
+  authorId      String
+  author        User     @relation("HotelAuthor", fields: [authorId], references: [id])
   
-  categoryId  Int
-  category           Category @relation(fields: [categoryId], references: [id])
+  categoryId    Int
+  category      Category @relation(fields: [categoryId], references: [id])
 
-  // -- Info --
-  date               DateTime @default(now()) // Đổi sang DateTime để dễ query time range
-  slug           String   @unique
-  title              String
-  featuredImage      String
-  
-  // -- Arrays (Postgres Only) --
-  galleryImgs        String[] 
-  amenities          String[]
-
-  description        String   @db.Text
-  price              Decimal  @db.Decimal(12, 2)
-  address            String
-  
-  // -- Ratings & Stats --
-  reviewStar        Float    @default(0)
-  reviewCount        Int      @default(0)
-  viewCount          Int      @default(0)
-  commentCount       Int      @default(0)
-  
-  like               Boolean  @default(false)
-  isAds              Boolean  @default(false)
-  
-  // -- Room Info --
-  maxGuests          Int
-  bedrooms           Int
-  bathrooms          Int
-  
-  // -- Sale Off Logic --
-  saleOff            String?  // Text hiển thị: "-5% hôm nay"
-  saleOffPercent     Int      @default(0) // Số để Query/Sort: 5 (Đây là cột quan trọng mới thêm)
-
-  // -- Map -- 
-  map                Json     
-  // -- AI Vector -- 
+  // Basic Info
+  slug          String   @unique
+  title         String
+  featuredImage String
+  galleryImgs   String[]
+  description   String   @db.Text
   fullDescription String? @db.Text
-  policies      String? @db.Text
   
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  imageVector    Unsupported("vector(512)")?
+  // Location & Map
+  address       String
+  map           Json     // { lat: ..., lng: ... }
+  nearbyLandmarks String[] // ["cho_dem", "vinpearl"] -> Hỗ trợ gợi ý theo địa điểm
 
-interactions Interaction[]
+  // Pricing & Rooms
+  price         Decimal  @db.Decimal(12, 2)
+  saleOff       String?  // Text: "-30% Hè"
+  saleOffPercent Int     @default(0) // Số: 30
+  
+  maxGuests     Int
+  bedrooms      Int
+  bathrooms     Int
+
+  // Attributes & Context (Quan trọng cho Filtering)
+  amenities     String[]
+  tags          String[] // ["romantic", "pet-friendly", "business"]
+  suitableFor   TripType[] // Enum array cho Postgres
+  accessibility String[] // ["wheelchair", "elevator"]
+
+  // Stats
+  reviewStar    Float    @default(0)
+  reviewCount   Int      @default(0)
+  viewCount     Int      @default(0)
+  commentCount  Int      @default(0)
+  cancellationRate Float @default(0.0) // Tỷ lệ hủy (0.0 -> 1.0)
+  
+  // Flags
+  like          Boolean  @default(false) // Cờ tạm (nên cân nhắc bỏ nếu dùng interaction)
+  isAds         Boolean  @default(false)
+
+  // --- AI / VECTOR FIELDS ---
+  // Embedding cho hình ảnh (Visual search)
+  imageVector   Unsupported("vector(512)")? 
+  
+  // Embedding cho chính sách (Semantic search: "tìm phòng cho hủy giờ chót")
+  policies      String?  @db.Text
+  policiesVector Unsupported("vector(512)")?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  interactions  Interaction[]
+  bookings      Booking[]
+
   @@map("hotels")
 }
 
+enum TripType {
+  BUSINESS
+  FAMILY
+  COUPLE
+  SOLO
+  GROUP
+}
 
 model Category {
-  id        Int      @id @default(autoincrement())
-  name      String
-  slug      String   @unique
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
   description String?  @db.Text
-  // TwMainColor thường là một chuỗi class name (vd: "red", "blue") hoặc mã màu
-  color     String?  
+  color       String?  
+  icon        String?  
+  thumbnail   String?
+  count       Int      @default(0)
   
-  // Chứa tên icon (vd: "HiOutlineHome") hoặc đường dẫn SVG
-  icon      String?  
-  
-  // Field này thường là tính toán (computed), nhưng nếu bạn muốn lưu cứng:
-  count     Int      @default(0)
-  
-  // Đường dẫn ảnh thumbnail
-  thumbnail String?
-
-  // Quan hệ ngược lại với Hotel (đã có trong schema trước của bạn)
-  hotels    Hotel[]
+  hotels      Hotel[]
 
   @@map("categories")
 }
 
-// 1. Bảng lưu hành vi người dùng (Input cho AI)
-model Interaction {
-  id        Int      @id @default(autoincrement())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  
-  hotelId   Int
-  hotel     Hotel    @relation(fields: [hotelId], references: [id])
-  
-  // Hành động: VIEW (1 điểm), LIKE (3 điểm), BOOK (5 điểm)
-  action    String   
-  weight    Float    // Điểm số quy đổi từ hành động
-  
-  createdAt DateTime @default(now())
+// =========================================
+// 3. MODEL: BOOKING & TRANSACTION (NEW)
+// =========================================
 
+model Booking {
+  id            String   @id @default(uuid())
+  
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  
+  hotelId       Int
+  hotel         Hotel    @relation(fields: [hotelId], references: [id])
+
+  // Guest Info (Snapshot tại thời điểm đặt - hỗ trợ auto-fill lần sau)
+  guestName     String
+  guestEmail    String
+  guestPhone    String
+  adults        Int      @default(1)
+  children      Int      @default(0)
+
+  // Schedule
+  checkIn       DateTime
+  checkOut      DateTime
+  nights        Int      // Computed in logic
+
+  // Payment Info
+  basePrice     Decimal  @db.Decimal(12, 2)
+  discount      Decimal  @db.Decimal(12, 2) @default(0)
+  totalAmount   Decimal  @db.Decimal(12, 2)
+  currency      String   @default("VND")
+
+  paymentMethod PaymentMethod
+  paymentStatus PaymentStatus @default(PENDING)
+  paymentIntentId String?     // Stripe/VNPAY ID
+
+  // Status
+  status        BookingStatus @default(PENDING)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([hotelId])
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING    // Đang giữ chỗ/chờ thanh toán
+  CONFIRMED  // Đã thanh toán/Xác nhận
+  CANCELLED  // Đã hủy
+  COMPLETED  // Đã checkout xong
+}
+
+enum PaymentMethod {
+  STRIPE
+  PAYPAL
+  VNPAY
+  BANK_TRANSFER
+  CASH_ON_CHECKIN
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+// =========================================
+// 4. MODEL: AI INTERACTION & ANALYTICS
+// =========================================
+
+model Interaction {
+  id        Int             @id @default(autoincrement())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  hotelId   Int?            // Có thể null nếu action là SEARCH
+  hotel     Hotel?          @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  
+  // Phân loại chi tiết thay vì String
+  type      InteractionType @default(VIEW)
+  
+  // Context của hành động (Quan trọng cho RAG/Agent)
+  // Vd: { "search_query": "biển", "duration": 5000 (ms viewed), "filter": "price < 1M" }
+  metadata  Json?           
+
+  timestamp DateTime        @default(now())
+
+  @@index([userId, type])
+  @@index([hotelId])
   @@map("interactions")
 }
 
-// 2. Bảng lưu kết quả gợi ý (Output của AI)
-// Để Frontend chỉ việc query bảng này là ra list gợi ý
+enum InteractionType {
+  VIEW            // Xem chi tiết
+  LIKE            // Thả tim
+  SHARE           // Chia sẻ
+  BOOK            // Đặt phòng thành công
+  CLICK_BOOK_NOW  // Bấm nút đặt nhưng chưa thanh toán (High intent)
+  CANCEL_BOOKING  // Hủy (Negative signal)
+  SEARCH_QUERY    // Tìm kiếm (Lưu vào metadata)
+  FILTER_APPLIED  // Lọc
+}
+
+// Bảng riêng để lưu Recommendation Cache
 model Recommendation {
   id        Int      @id @default(autoincrement())
-  userId    String 
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  hotelIds  Int[]    // List ID gợi ý
+  score     Json?    // { "hotel_1": 0.98, "hotel_2": 0.85 } - Giải thích độ phù hợp
   
-  // List các hotel ID được gợi ý (lưu dạng mảng số nguyên)
-  hotelIds  Int[]    
-  
-  user     User     @relation(fields: [userId], references: [id])
   updatedAt DateTime @updatedAt
-  @@unique([userId]) // Mỗi user chỉ có 1 dòng gợi ý mới nhất
+
   @@map("recommendations")
+}
+
+// Bảng log Search Query chuyên biệt (Optional - để train AI)
+model SearchQueryLog {
+  id        Int      @id @default(autoincrement())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  query     String
+  filters   Json?
+  timestamp DateTime @default(now())
+
+  @@map("search_query_logs")
 }

@@ -1,1399 +1,1488 @@
 [
   {
-    "id": "user_fake_1",
-    "email": "anmai@gmail.com",
+    "id": "user_seed_1",
+    "email": "bayentran@gmail.com",
     "password": "123456",
-    "name": "An Mai",
-    "nickname": "janehoang",
-    "phone": "0581181270",
-    "gender": "female",
-    "dob": "1982-11-22",
-    "address": "Số 56, Đường Lê Lợi, Quận Hoàn Kiếm, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_1",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=385",
-    "jobName": "Nông dân",
-    "desc": "Xin chào, tôi là An Mai. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.119201",
-    "updatedAt": "2026-01-03T14:35:35.119201",
-    "posts": [
-      {
-        "id": 61
-      },
-      {
-        "id": 32
-      },
-      {
-        "id": 7
-      }
-    ]
-  },
-  {
-    "id": "user_fake_2",
-    "email": "bamaivu@gmail.com",
-    "password": "123456",
-    "name": "Bà Mai Vũ",
-    "nickname": "kbui",
-    "phone": "0979339650",
-    "gender": "male",
-    "dob": "1968-04-30",
-    "address": "Số 196, Đường Phan Chu Trinh, Quận 3, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_2",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=239",
-    "jobName": "Kiến trúc sư phần mềm",
-    "desc": "Xin chào, tôi là Bà Mai Vũ. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.134828",
-    "updatedAt": "2026-01-03T14:35:35.134828",
-    "posts": [
-      {
-        "id": 27
-      },
-      {
-        "id": 30
-      },
-      {
-        "id": 21
-      }
-    ]
-  },
-  {
-    "id": "user_fake_3",
-    "email": "thanhmainguyen@gmail.com",
-    "password": "123456",
-    "name": "Thành Mai Nguyễn",
-    "nickname": "johnhoang",
-    "phone": "0763184837",
-    "gender": "male",
-    "dob": "1965-08-19",
-    "address": "Số 405, Đường Trần Hưng Đạo, Quận Hoàn Kiếm, Cần Thơ",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_3",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=931",
-    "jobName": "Kiểm toán",
-    "desc": "Xin chào, tôi là Thành Mai Nguyễn. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.144590",
-    "updatedAt": "2026-01-03T14:35:35.144590",
-    "posts": [
-      {
-        "id": 32
-      },
-      {
-        "id": 24
-      },
-      {
-        "id": 49
-      },
-      {
-        "id": 5
-      },
-      {
-        "id": 99
-      },
-      {
-        "id": 34
-      }
-    ]
-  },
-  {
-    "id": "user_fake_4",
-    "email": "baanhtran@gmail.com",
-    "password": "123456",
-    "name": "Bà Ánh Trần",
-    "nickname": "johntran",
-    "phone": "0864317460",
-    "gender": "male",
-    "dob": "1976-01-13",
-    "address": "Số 270, Đường Nguyễn Huệ, Quận Bình Thạnh, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_4",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=387",
-    "jobName": "Nhân viên nhà hàng",
-    "desc": "Xin chào, tôi là Bà Ánh Trần. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.144590",
-    "updatedAt": "2026-01-03T14:35:35.144590",
-    "posts": [
-      {
-        "id": 11
-      },
-      {
-        "id": 80
-      },
-      {
-        "id": 24
-      },
-      {
-        "id": 58
-      },
-      {
-        "id": 100
-      },
-      {
-        "id": 79
-      }
-    ]
-  },
-  {
-    "id": "user_fake_5",
-    "email": "nhientanpham@gmail.com",
-    "password": "123456",
-    "name": "Nhiên Tấn Phạm",
-    "nickname": "johnnguyen",
-    "phone": "0897433964",
-    "gender": "female",
-    "dob": "1981-12-24",
-    "address": "Số 343, Đường Võ Văn Kiệt, Quận 7, Đà Nẵng",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_5",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=393",
-    "jobName": "Chuyên viên nhân sự",
-    "desc": "Xin chào, tôi là Nhiên Tấn Phạm. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.144590",
-    "updatedAt": "2026-01-03T14:35:35.144590",
-    "posts": [
-      {
-        "id": 48
-      },
-      {
-        "id": 30
-      },
-      {
-        "id": 56
-      },
-      {
-        "id": 46
-      },
-      {
-        "id": 96
-      },
-      {
-        "id": 99
-      }
-    ]
-  },
-  {
-    "id": "user_fake_6",
-    "email": "hoangxuanbui@gmail.com",
-    "password": "123456",
-    "name": "Hoàng Xuân Bùi",
-    "nickname": "maijane",
-    "phone": "0618045347",
-    "gender": "female",
-    "dob": "2005-11-11",
-    "address": "Số 94, Đường Lê Lợi, Quận Hoàn Kiếm, Hà Nội",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_6",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=200",
-    "jobName": "Chuyên viên tư vấn tuyển sinh",
-    "desc": "Xin chào, tôi là Hoàng Xuân Bùi. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.144590",
-    "updatedAt": "2026-01-03T14:35:35.144590",
-    "posts": [
-      {
-        "id": 35
-      },
-      {
-        "id": 53
-      },
-      {
-        "id": 60
-      },
-      {
-        "id": 80
-      },
-      {
-        "id": 84
-      }
-    ]
-  },
-  {
-    "id": "user_fake_7",
-    "email": "bahuongle@gmail.com",
-    "password": "123456",
-    "name": "Bà Hương Lê",
-    "nickname": "ehoang",
-    "phone": "0582778572",
-    "gender": "male",
-    "dob": "1976-11-26",
-    "address": "Số 182, Đường Phan Chu Trinh, Quận 1, Hải Phòng",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_7",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=144",
-    "jobName": "Digital Marketer",
-    "desc": "Xin chào, tôi là Bà Hương Lê. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.144590",
-    "updatedAt": "2026-01-03T14:35:35.144590",
-    "posts": [
-      {
-        "id": 4
-      },
-      {
-        "id": 54
-      },
-      {
-        "id": 100
-      },
-      {
-        "id": 69
-      },
-      {
-        "id": 89
-      },
-      {
-        "id": 70
-      }
-    ]
-  },
-  {
-    "id": "user_fake_8",
-    "email": "anhkhoanguyen@gmail.com",
-    "password": "123456",
-    "name": "Anh Khoa Nguyễn",
-    "nickname": "janepham",
-    "phone": "0464618263",
-    "gender": "female",
-    "dob": "2004-02-12",
-    "address": "Số 347, Đường Võ Văn Kiệt, Quận Hoàn Kiếm, Cần Thơ",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_8",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=357",
-    "jobName": "Nhân viên lễ tân",
-    "desc": "Xin chào, tôi là Anh Khoa Nguyễn. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.145609",
-    "updatedAt": "2026-01-03T14:35:35.145609",
-    "posts": [
-      {
-        "id": 50
-      },
-      {
-        "id": 21
-      },
-      {
-        "id": 56
-      },
-      {
-        "id": 42
-      },
-      {
-        "id": 55
-      }
-    ]
-  },
-  {
-    "id": "user_fake_9",
-    "email": "hunghaiduong@gmail.com",
-    "password": "123456",
-    "name": "Hưng Hải Dương",
-    "nickname": "johndang",
-    "phone": "0893777536",
-    "gender": "male",
-    "dob": "1985-08-10",
-    "address": "Số 430, Đường Nguyễn Huệ, Quận 1, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_9",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=783",
-    "jobName": "Nhân Viên Bán Hàng",
-    "desc": "Xin chào, tôi là Hưng Hải Dương. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.145609",
-    "updatedAt": "2026-01-03T14:35:35.145609",
-    "posts": [
-      {
-        "id": 46
-      },
-      {
-        "id": 49
-      },
-      {
-        "id": 80
-      },
-      {
-        "id": 42
-      },
-      {
-        "id": 89
-      },
-      {
-        "id": 14
-      }
-    ]
-  },
-  {
-    "id": "user_fake_10",
-    "email": "anhdungvu@gmail.com",
-    "password": "123456",
-    "name": "Anh Dũng Vũ",
-    "nickname": "john31",
-    "phone": "0853096436",
-    "gender": "female",
-    "dob": "1980-12-02",
-    "address": "Số 492, Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_10",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=135",
-    "jobName": "Y tá",
-    "desc": "Xin chào, tôi là Anh Dũng Vũ. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.145609",
-    "updatedAt": "2026-01-03T14:35:35.145609",
-    "posts": [
-      {
-        "id": 100
-      },
-      {
-        "id": 91
-      },
-      {
-        "id": 68
-      },
-      {
-        "id": 33
-      },
-      {
-        "id": 11
-      },
-      {
-        "id": 25
-      }
-    ]
-  },
-  {
-    "id": "user_fake_11",
-    "email": "haithedang@gmail.com",
-    "password": "123456",
-    "name": "Hải Thế Đặng",
-    "nickname": "ppham",
-    "phone": "0423534528",
-    "gender": "female",
-    "dob": "1998-06-11",
-    "address": "Số 164, Đường Phan Chu Trinh, Quận 3, Đà Nẵng",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_11",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=343",
-    "jobName": "Nhà báo",
-    "desc": "Xin chào, tôi là Hải Thế Đặng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.145609",
-    "updatedAt": "2026-01-03T14:35:35.145609",
-    "posts": [
-      {
-        "id": 1
-      },
-      {
-        "id": 43
-      },
-      {
-        "id": 31
-      }
-    ]
-  },
-  {
-    "id": "user_fake_12",
-    "email": "ongtungmai@gmail.com",
-    "password": "123456",
-    "name": "Ông Tùng Mai",
-    "nickname": "hoangjane",
-    "phone": "0814605985",
-    "gender": "male",
-    "dob": "2006-10-23",
-    "address": "Số 446, Đường Phan Chu Trinh, Quận 1, Đà Nẵng",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_12",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=291",
-    "jobName": "Biên dịch viên",
-    "desc": "Xin chào, tôi là Ông Tùng Mai. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.145609",
-    "updatedAt": "2026-01-03T14:35:35.145609",
-    "posts": [
-      {
-        "id": 52
-      },
-      {
-        "id": 28
-      },
-      {
-        "id": 35
-      }
-    ]
-  },
-  {
-    "id": "user_fake_13",
-    "email": "lamhoang@gmail.com",
-    "password": "123456",
-    "name": "Lâm Hoàng",
-    "nickname": "john02",
-    "phone": "0398787578",
-    "gender": "male",
-    "dob": "2007-09-29",
-    "address": "Số 324, Đường Hai Bà Trưng, Quận Bình Thạnh, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_13",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=398",
-    "jobName": "Kế toán",
-    "desc": "Xin chào, tôi là Lâm Hoàng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.145609",
-    "updatedAt": "2026-01-03T14:35:35.145609",
-    "posts": [
-      {
-        "id": 64
-      },
-      {
-        "id": 45
-      },
-      {
-        "id": 88
-      },
-      {
-        "id": 84
-      },
-      {
-        "id": 71
-      },
-      {
-        "id": 57
-      }
-    ]
-  },
-  {
-    "id": "user_fake_14",
-    "email": "chikimbui@gmail.com",
-    "password": "123456",
-    "name": "Chị Kim Bùi",
-    "nickname": "johnvu",
-    "phone": "0756664396",
-    "gender": "male",
-    "dob": "1983-02-23",
-    "address": "Số 264, Đường Nguyễn Huệ, Quận Hoàn Kiếm, Hà Nội",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_14",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=384",
-    "jobName": "Nhân viên lễ tân",
-    "desc": "Xin chào, tôi là Chị Kim Bùi. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.145609",
-    "updatedAt": "2026-01-03T14:35:35.145609",
-    "posts": [
-      {
-        "id": 20
-      },
-      {
-        "id": 44
-      },
-      {
-        "id": 19
-      }
-    ]
-  },
-  {
-    "id": "user_fake_15",
-    "email": "phuongduong@gmail.com",
-    "password": "123456",
-    "name": "Phương Dương",
-    "nickname": "jvu",
-    "phone": "0323672498",
-    "gender": "female",
-    "dob": "2002-06-04",
-    "address": "Số 303, Đường Phan Chu Trinh, Quận Bình Thạnh, Cần Thơ",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_15",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=980",
-    "jobName": "Biên dịch viên",
-    "desc": "Xin chào, tôi là Phương Dương. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 86
-      },
-      {
-        "id": 46
-      },
-      {
-        "id": 28
-      },
-      {
-        "id": 80
-      },
-      {
-        "id": 6
-      }
-    ]
-  },
-  {
-    "id": "user_fake_16",
-    "email": "khoaducduong@gmail.com",
-    "password": "123456",
-    "name": "Khoa Đức Dương",
-    "nickname": "janebui",
-    "phone": "0349384307",
-    "gender": "male",
-    "dob": "1977-04-22",
-    "address": "Số 336, Đường Nguyễn Huệ, Quận 7, Hà Nội",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_16",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=891",
-    "jobName": "Nhà tư vấn tài chính",
-    "desc": "Xin chào, tôi là Khoa Đức Dương. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 32
-      },
-      {
-        "id": 88
-      },
-      {
-        "id": 82
-      },
-      {
-        "id": 72
-      },
-      {
-        "id": 13
-      },
-      {
-        "id": 10
-      }
-    ]
-  },
-  {
-    "id": "user_fake_17",
-    "email": "balamdang@gmail.com",
-    "password": "123456",
-    "name": "Bà Lâm Đặng",
-    "nickname": "buijane",
-    "phone": "0747835465",
-    "gender": "female",
-    "dob": "1989-03-22",
-    "address": "Số 311, Đường Nguyễn Huệ, Quận Bình Thạnh, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_17",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=281",
-    "jobName": "Kiến trúc sư phần mềm",
-    "desc": "Xin chào, tôi là Bà Lâm Đặng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 26
-      },
-      {
-        "id": 3
-      },
-      {
-        "id": 32
-      },
-      {
-        "id": 17
-      },
-      {
-        "id": 80
-      }
-    ]
-  },
-  {
-    "id": "user_fake_18",
-    "email": "thanhpham@gmail.com",
-    "password": "123456",
-    "name": "Thành Phạm",
-    "nickname": "maijane",
-    "phone": "0611204806",
-    "gender": "male",
-    "dob": "2005-02-23",
-    "address": "Số 343, Đường Nguyễn Huệ, Quận 7, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_18",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=767",
-    "jobName": "Chuyên viên tư vấn tuyển sinh",
-    "desc": "Xin chào, tôi là Thành Phạm. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 99
-      },
-      {
-        "id": 88
-      },
-      {
-        "id": 81
-      },
-      {
-        "id": 76
-      }
-    ]
-  },
-  {
-    "id": "user_fake_19",
-    "email": "nhatphunguyen@gmail.com",
-    "password": "123456",
-    "name": "Nhật Phú Nguyễn",
-    "nickname": "janedang",
-    "phone": "0458202861",
-    "gender": "male",
-    "dob": "1998-05-06",
-    "address": "Số 320, Đường Lê Lợi, Quận 3, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_19",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=714",
-    "jobName": "Kỹ sư sản xuất",
-    "desc": "Xin chào, tôi là Nhật Phú Nguyễn. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 5
-      },
-      {
-        "id": 12
-      },
-      {
-        "id": 17
-      }
-    ]
-  },
-  {
-    "id": "user_fake_20",
-    "email": "hungmai@gmail.com",
-    "password": "123456",
-    "name": "Hưng Mai",
-    "nickname": "johnnguyen",
-    "phone": "0564339561",
-    "gender": "female",
-    "dob": "1980-12-18",
-    "address": "Số 293, Đường Trần Hưng Đạo, Quận 3, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_20",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=313",
-    "jobName": "Kế toán",
-    "desc": "Xin chào, tôi là Hưng Mai. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 23
-      },
-      {
-        "id": 59
-      },
-      {
-        "id": 94
-      },
-      {
-        "id": 45
-      }
-    ]
-  },
-  {
-    "id": "user_fake_21",
-    "email": "bahanhnguyen@gmail.com",
-    "password": "123456",
-    "name": "Bà Hạnh Nguyễn",
-    "nickname": "johnduong",
-    "phone": "0628749447",
-    "gender": "female",
-    "dob": "2001-10-16",
-    "address": "Số 74, Đường Lê Lợi, Quận 1, Hà Nội",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_21",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=487",
-    "jobName": "Điều Dưỡng",
-    "desc": "Xin chào, tôi là Bà Hạnh Nguyễn. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 27
-      },
-      {
-        "id": 94
-      },
-      {
-        "id": 30
-      }
-    ]
-  },
-  {
-    "id": "user_fake_22",
-    "email": "phuctandang@gmail.com",
-    "password": "123456",
-    "name": "Phúc Tấn Đặng",
-    "nickname": "john74",
-    "phone": "0854466814",
-    "gender": "female",
-    "dob": "1979-01-19",
-    "address": "Số 69, Đường Lê Lợi, Quận Bình Thạnh, Hà Nội",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_22",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=107",
-    "jobName": "DevOps Engineer",
-    "desc": "Xin chào, tôi là Phúc Tấn Đặng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 31
-      },
-      {
-        "id": 43
-      },
-      {
-        "id": 56
-      },
-      {
-        "id": 68
-      }
-    ]
-  },
-  {
-    "id": "user_fake_23",
-    "email": "bahaile@gmail.com",
-    "password": "123456",
-    "name": "Bà Hải Lê",
-    "nickname": "nle",
-    "phone": "0753745348",
-    "gender": "female",
-    "dob": "2006-09-25",
-    "address": "Số 349, Đường Lê Lợi, Quận 3, Đà Nẵng",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_23",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=579",
-    "jobName": "Dược sĩ",
-    "desc": "Xin chào, tôi là Bà Hải Lê. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 70
-      },
-      {
-        "id": 21
-      },
-      {
-        "id": 1
-      },
-      {
-        "id": 61
-      }
-    ]
-  },
-  {
-    "id": "user_fake_24",
-    "email": "thaodang@gmail.com",
-    "password": "123456",
-    "name": "Thảo Đặng",
-    "nickname": "janedang",
-    "phone": "0918140997",
-    "gender": "male",
-    "dob": "1986-02-26",
-    "address": "Số 58, Đường Nguyễn Huệ, Quận Tân Bình, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_24",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=24",
-    "jobName": "Chuyên viên phân tích thị trường",
-    "desc": "Xin chào, tôi là Thảo Đặng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 16
-      },
-      {
-        "id": 73
-      },
-      {
-        "id": 91
-      }
-    ]
-  },
-  {
-    "id": "user_fake_25",
-    "email": "tuthimai@gmail.com",
-    "password": "123456",
-    "name": "Tú Thị Mai",
-    "nickname": "jane24",
-    "phone": "0384936589",
-    "gender": "male",
-    "dob": "1997-08-17",
-    "address": "Số 260, Đường Phan Chu Trinh, Quận Hoàn Kiếm, Cần Thơ",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_25",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=2",
-    "jobName": "Sales Representative",
-    "desc": "Xin chào, tôi là Tú Thị Mai. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 81
-      },
-      {
-        "id": 57
-      },
-      {
-        "id": 29
-      },
-      {
-        "id": 52
-      },
-      {
-        "id": 9
-      },
-      {
-        "id": 40
-      }
-    ]
-  },
-  {
-    "id": "user_fake_26",
-    "email": "congocpham@gmail.com",
-    "password": "123456",
-    "name": "Cô Ngọc Phạm",
-    "nickname": "john50",
-    "phone": "0897737165",
-    "gender": "male",
-    "dob": "1992-02-21",
-    "address": "Số 134, Đường Lý Tự Trọng, Quận 3, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_26",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=300",
-    "jobName": "Kỹ sư xây dựng",
-    "desc": "Xin chào, tôi là Cô Ngọc Phạm. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 47
-      },
-      {
-        "id": 69
-      },
-      {
-        "id": 64
-      },
-      {
-        "id": 12
-      },
-      {
-        "id": 8
-      },
-      {
-        "id": 45
-      }
-    ]
-  },
-  {
-    "id": "user_fake_27",
-    "email": "tungmai@gmail.com",
-    "password": "123456",
-    "name": "Tùng Mai",
-    "nickname": "buijohn",
-    "phone": "0678680815",
-    "gender": "female",
-    "dob": "1996-07-03",
-    "address": "Số 111, Đường Lý Tự Trọng, Quận 3, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_27",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=61",
-    "jobName": "Kỹ sư xây dựng",
-    "desc": "Xin chào, tôi là Tùng Mai. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 14
-      },
-      {
-        "id": 30
-      },
-      {
-        "id": 31
-      },
-      {
-        "id": 45
-      }
-    ]
-  },
-  {
-    "id": "user_fake_28",
-    "email": "anhdungvu1@gmail.com",
-    "password": "123456",
-    "name": "Anh Dũng Vũ",
-    "nickname": "john74",
-    "phone": "0878323032",
-    "gender": "female",
-    "dob": "2000-05-05",
-    "address": "Số 151, Đường Hai Bà Trưng, Quận Hoàn Kiếm, Cần Thơ",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_28",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=630",
-    "jobName": "Lập trình viên",
-    "desc": "Xin chào, tôi là Anh Dũng Vũ. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 46
-      },
-      {
-        "id": 88
-      },
-      {
-        "id": 6
-      },
-      {
-        "id": 89
-      }
-    ]
-  },
-  {
-    "id": "user_fake_29",
-    "email": "banhatdang@gmail.com",
-    "password": "123456",
-    "name": "Bà Nhật Đặng",
-    "nickname": "john27",
-    "phone": "0353059996",
-    "gender": "male",
-    "dob": "2002-10-11",
-    "address": "Số 54, Đường Phan Chu Trinh, Quận 7, Cần Thơ",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_29",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=593",
-    "jobName": "Giáo viên",
-    "desc": "Xin chào, tôi là Bà Nhật Đặng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 23
-      },
-      {
-        "id": 96
-      },
-      {
-        "id": 64
-      },
-      {
-        "id": 66
-      },
-      {
-        "id": 75
-      }
-    ]
-  },
-  {
-    "id": "user_fake_30",
-    "email": "chaudang@gmail.com",
-    "password": "123456",
-    "name": "Châu Đặng",
-    "nickname": "janebui",
-    "phone": "0447016126",
-    "gender": "female",
-    "dob": "1980-11-17",
-    "address": "Số 237, Đường Hai Bà Trưng, Quận 7, Hà Nội",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_30",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=246",
-    "jobName": "Chuyên viên tư vấn tuyển sinh",
-    "desc": "Xin chào, tôi là Châu Đặng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "AUTHOR",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": [
-      {
-        "id": 69
-      },
-      {
-        "id": 72
-      },
-      {
-        "id": 70
-      },
-      {
-        "id": 68
-      },
-      {
-        "id": 85
-      },
-      {
-        "id": 22
-      }
-    ]
-  },
-  {
-    "id": "user_fake_31",
-    "email": "nhienduchoang@gmail.com",
-    "password": "123456",
-    "name": "Nhiên Đức Hoàng",
-    "nickname": "fvu",
-    "phone": "0344637136",
-    "gender": "male",
-    "dob": "2000-04-12",
-    "address": "Số 323, Đường Võ Văn Kiệt, Quận 1, Hà Nội",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_31",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=368",
-    "jobName": "Luật sư",
-    "desc": "Xin chào, tôi là Nhiên Đức Hoàng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "ADMIN",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": []
-  },
-  {
-    "id": "user_fake_32",
-    "email": "quyongtunguyen@gmail.com",
-    "password": "123456",
-    "name": "Quý ông Tú Nguyễn",
-    "nickname": "hoangjane",
-    "phone": "0601301835",
-    "gender": "male",
-    "dob": "2001-05-10",
-    "address": "Số 172, Đường Nguyễn Huệ, Quận Bình Thạnh, Hải Phòng",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_32",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=256",
-    "jobName": "Nghệ sĩ",
-    "desc": "Xin chào, tôi là Quý ông Tú Nguyễn. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": []
-  },
-  {
-    "id": "user_fake_33",
-    "email": "balambui@gmail.com",
-    "password": "123456",
-    "name": "Bà Lâm Bùi",
-    "nickname": "john44",
-    "phone": "0468589334",
-    "gender": "female",
-    "dob": "1996-08-06",
-    "address": "Số 477, Đường Lê Lợi, Quận 3, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_33",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=345",
-    "jobName": "Kỹ sư nông nghiệp",
-    "desc": "Xin chào, tôi là Bà Lâm Bùi. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "ADMIN",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": []
-  },
-  {
-    "id": "user_fake_34",
-    "email": "lamvu@gmail.com",
-    "password": "123456",
-    "name": "Lâm Vũ",
-    "nickname": "fbui",
-    "phone": "0449281252",
-    "gender": "male",
-    "dob": "2005-09-09",
-    "address": "Số 221, Đường Trần Hưng Đạo, Quận 7, Hải Phòng",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_34",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=324",
-    "jobName": "Kỹ sư xây dựng",
-    "desc": "Xin chào, tôi là Lâm Vũ. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "ADMIN",
-    "createdAt": "2026-01-03T14:35:35.146128",
-    "updatedAt": "2026-01-03T14:35:35.146128",
-    "posts": []
-  },
-  {
-    "id": "user_fake_35",
-    "email": "nhienvu@gmail.com",
-    "password": "123456",
-    "name": "Nhiên Vũ",
-    "nickname": "john41",
-    "phone": "0437949487",
-    "gender": "female",
-    "dob": "1992-11-09",
-    "address": "Số 371, Đường Phan Chu Trinh, Quận 7, Đà Nẵng",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_35",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=367",
-    "jobName": "Tư vấn khách hàng",
-    "desc": "Xin chào, tôi là Nhiên Vũ. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
-  },
-  {
-    "id": "user_fake_36",
-    "email": "baomaimai@gmail.com",
-    "password": "123456",
-    "name": "Bảo Mai Mai",
-    "nickname": "johnle",
-    "phone": "0719899201",
-    "gender": "female",
-    "dob": "1968-12-19",
-    "address": "Số 78, Đường Võ Văn Kiệt, Quận Bình Thạnh, Hà Nội",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_36",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=135",
-    "jobName": "Chuyên viên nhân sự",
-    "desc": "Xin chào, tôi là Bảo Mai Mai. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
-  },
-  {
-    "id": "user_fake_37",
-    "email": "phuongbaobui@gmail.com",
-    "password": "123456",
-    "name": "Phương Bảo Bùi",
-    "nickname": "janemai",
-    "phone": "0486583600",
-    "gender": "female",
-    "dob": "1992-07-13",
-    "address": "Số 46, Đường Lý Tự Trọng, Quận Hoàn Kiếm, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_37",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=796",
-    "jobName": "Chuyên viên phân tích thị trường",
-    "desc": "Xin chào, tôi là Phương Bảo Bùi. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
-  },
-  {
-    "id": "user_fake_38",
-    "email": "duongpham@gmail.com",
-    "password": "123456",
-    "name": "Dương Phạm",
+    "name": "Bà Yến Trần",
     "nickname": "tranjohn",
-    "phone": "0854330359",
+    "phone": "0822362253",
+    "gender": "female",
+    "dob": "1979-08-28",
+    "address": "Số 105, Đường Lê Duẩn, Quận 1, Quảng Trị",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_1",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=1",
+    "jobName": "Dược sĩ",
+    "desc": "Xin chào, tôi là Bà Yến Trần. Yêu thích du lịch.",
+    "role": "AUTHOR",
+    "preference": {
+      "favoriteAmenities": [
+        "ac",
+        "sea_view",
+        "wifi",
+        "kitchen",
+        "parking"
+      ],
+      "favoriteCities": [
+        "nha_trang",
+        "da_lat"
+      ],
+      "avgPriceExpect": 2200000,
+      "preferredRatingMin": 4.4,
+      "pastBookingCount": 10,
+      "lastBookingAt": "2025-08-09T21:20:16.216278"
+    },
+    "createdAt": "2026-01-05T21:20:16.216278",
+    "updatedAt": "2026-01-05T21:20:16.216278"
+  },
+  {
+    "id": "user_seed_2",
+    "email": "hanhle@gmail.com",
+    "password": "123456",
+    "name": "Hạnh Lê",
+    "nickname": "janeduong",
+    "phone": "0527633042",
+    "gender": "female",
+    "dob": "2007-03-21",
+    "address": "Số 82, Đường Nguyễn Huệ, Thành phố Biên Hòa, Quảng Bình",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_2",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=2",
+    "jobName": "Luật sư",
+    "desc": "Xin chào, tôi là Hạnh Lê. Yêu thích du lịch.",
+    "role": "AUTHOR",
+    "preference": {
+      "favoriteAmenities": [
+        "parking",
+        "sea_view"
+      ],
+      "favoriteCities": [
+        "sapa",
+        "ha_noi"
+      ],
+      "avgPriceExpect": 3500000,
+      "preferredRatingMin": 4.0,
+      "pastBookingCount": 2,
+      "lastBookingAt": "2025-04-27T21:20:16.216278"
+    },
+    "createdAt": "2026-01-05T21:20:16.216278",
+    "updatedAt": "2026-01-05T21:20:16.216278"
+  },
+  {
+    "id": "user_seed_3",
+    "email": "kimvanvu@gmail.com",
+    "password": "123456",
+    "name": "Kim Văn Vũ",
+    "nickname": "johnnguyen",
+    "phone": "0403665595",
+    "gender": "female",
+    "dob": "1976-06-17",
+    "address": "Số 78, Đường Trần Cao Vân, Huyện Hòa Vang, Vĩnh Phúc",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_3",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=3",
+    "jobName": "Nhân viên hành chính",
+    "desc": "Xin chào, tôi là Kim Văn Vũ. Yêu thích du lịch.",
+    "role": "AUTHOR",
+    "preference": {
+      "favoriteAmenities": [
+        "pets_allowed",
+        "kitchen",
+        "pool",
+        "parking"
+      ],
+      "favoriteCities": [
+        "ha_noi",
+        "hcm"
+      ],
+      "avgPriceExpect": 3400000,
+      "preferredRatingMin": 3.8,
+      "pastBookingCount": 2,
+      "lastBookingAt": "2025-01-20T21:20:16.231081"
+    },
+    "createdAt": "2026-01-05T21:20:16.231081",
+    "updatedAt": "2026-01-05T21:20:16.231081"
+  },
+  {
+    "id": "user_seed_4",
+    "email": "thaonguyen@gmail.com",
+    "password": "123456",
+    "name": "Thảo Nguyễn",
+    "nickname": "john00",
+    "phone": "0331286340",
     "gender": "male",
-    "dob": "2007-05-24",
-    "address": "Số 142, Đường Trần Hưng Đạo, Quận Bình Thạnh, Hải Phòng",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_38",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=735",
+    "dob": "1997-07-30",
+    "address": "Số 222, Đường Nguyễn Tất Thành, Quận Nam Từ Liêm, Gia Lai",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_4",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=4",
+    "jobName": "Chuyên viên tư vấn tuyển sinh",
+    "desc": "Xin chào, tôi là Thảo Nguyễn. Yêu thích du lịch.",
+    "role": "AUTHOR",
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.231081",
+    "updatedAt": "2026-01-05T21:20:16.231081"
+  },
+  {
+    "id": "user_seed_5",
+    "email": "anquangdang@gmail.com",
+    "password": "123456",
+    "name": "An Quang Đặng",
+    "nickname": "mmai",
+    "phone": "0511175190",
+    "gender": "male",
+    "dob": "1978-01-17",
+    "address": "Số 404, Đường Phạm Văn Đồng, Quận Thủ Đức, Bà Rịa - Vũng Tàu",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_5",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=5",
+    "jobName": "Nhân viên khách sạn",
+    "desc": "Xin chào, tôi là An Quang Đặng. Yêu thích du lịch.",
+    "role": "AUTHOR",
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.231081",
+    "updatedAt": "2026-01-05T21:20:16.231081"
+  },
+  {
+    "id": "user_seed_6",
+    "email": "namtritran@gmail.com",
+    "password": "123456",
+    "name": "Nam Trí Trần",
+    "nickname": "maijane",
+    "phone": "0686863460",
+    "gender": "female",
+    "dob": "1984-12-12",
+    "address": "Số 194, Đường Trần Hưng Đạo, Quận Hà Đông, Cần Thơ",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_6",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=6",
     "jobName": "Thực tập sinh giáo dục",
-    "desc": "Xin chào, tôi là Dương Phạm. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
+    "desc": "Xin chào, tôi là Nam Trí Trần. Yêu thích du lịch.",
     "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
+    "preference": {
+      "favoriteAmenities": [
+        "kitchen",
+        "sea_view",
+        "pool",
+        "breakfast"
+      ],
+      "favoriteCities": [
+        "da_lat"
+      ],
+      "avgPriceExpect": 3000000,
+      "preferredRatingMin": 4.7,
+      "pastBookingCount": 1,
+      "lastBookingAt": "2025-01-14T21:20:16.231081"
+    },
+    "createdAt": "2026-01-05T21:20:16.231081",
+    "updatedAt": "2026-01-05T21:20:16.231081"
   },
   {
-    "id": "user_fake_39",
-    "email": "quycobaovu@gmail.com",
+    "id": "user_seed_7",
+    "email": "xuannguyen@gmail.com",
     "password": "123456",
-    "name": "Quý cô Bảo Vũ",
-    "nickname": "john80",
-    "phone": "0484453625",
+    "name": "Xuân Nguyễn",
+    "nickname": "mvu",
+    "phone": "0984527966",
     "gender": "female",
-    "dob": "1975-04-24",
-    "address": "Số 75, Đường Lý Tự Trọng, Quận Hoàn Kiếm, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_39",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=963",
-    "jobName": "Chuyên viên bảo mật",
-    "desc": "Xin chào, tôi là Quý cô Bảo Vũ. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "ADMIN",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
+    "dob": "1999-09-17",
+    "address": "Số 298, Đường Bà Huyện Thanh Quan, Quận 1, Hải Phòng",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_7",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=7",
+    "jobName": "Luật sư",
+    "desc": "Xin chào, tôi là Xuân Nguyễn. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "mountain_view",
+        "sea_view"
+      ],
+      "favoriteCities": [
+        "nha_trang",
+        "da_nang"
+      ],
+      "avgPriceExpect": 800000,
+      "preferredRatingMin": 3.7,
+      "pastBookingCount": 6,
+      "lastBookingAt": "2025-05-15T21:20:16.231081"
+    },
+    "createdAt": "2026-01-05T21:20:16.231081",
+    "updatedAt": "2026-01-05T21:20:16.231081"
   },
   {
-    "id": "user_fake_40",
-    "email": "backhoale@gmail.com",
+    "id": "user_seed_8",
+    "email": "tungmaile@gmail.com",
     "password": "123456",
-    "name": "Bác Khoa Lê",
-    "nickname": "john92",
-    "phone": "0584140920",
-    "gender": "female",
-    "dob": "1976-11-12",
-    "address": "Số 496, Đường Hai Bà Trưng, Quận Tân Bình, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_40",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=478",
+    "name": "Tùng Mai Lê",
+    "nickname": "hoangjohn",
+    "phone": "0577945565",
+    "gender": "male",
+    "dob": "1983-02-08",
+    "address": "Số 165, Đường Nguyễn Văn Linh, Thành phố Vũng Tàu, Đồng Nai",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_8",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=8",
+    "jobName": "Nhân viên nhà hàng",
+    "desc": "Xin chào, tôi là Tùng Mai Lê. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "breakfast",
+        "pets_allowed"
+      ],
+      "favoriteCities": [
+        "da_nang",
+        "hcm"
+      ],
+      "avgPriceExpect": 2800000,
+      "preferredRatingMin": 4.0,
+      "pastBookingCount": 8,
+      "lastBookingAt": "2025-01-06T21:20:16.231081"
+    },
+    "createdAt": "2026-01-05T21:20:16.231081",
+    "updatedAt": "2026-01-05T21:20:16.231081"
+  },
+  {
+    "id": "user_seed_9",
+    "email": "anhdungduong@gmail.com",
+    "password": "123456",
+    "name": "Anh Dũng Dương",
+    "nickname": "janebui",
+    "phone": "0426532526",
+    "gender": "male",
+    "dob": "2003-04-25",
+    "address": "Số 341, Đường Nguyễn Huệ, Quận Cầu Giấy, Quảng Trị",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_9",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=9",
     "jobName": "Giáo viên",
-    "desc": "Xin chào, tôi là Bác Khoa Lê. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
+    "desc": "Xin chào, tôi là Anh Dũng Dương. Yêu thích du lịch.",
     "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.232590",
+    "updatedAt": "2026-01-05T21:20:16.232590"
   },
   {
-    "id": "user_fake_41",
-    "email": "chixuandang@gmail.com",
+    "id": "user_seed_10",
+    "email": "thaonguyen1@gmail.com",
     "password": "123456",
-    "name": "Chị Xuân Đặng",
-    "nickname": "janenguyen",
-    "phone": "0738940214",
+    "name": "Thảo Nguyễn",
+    "nickname": "john87",
+    "phone": "0396023061",
     "gender": "female",
-    "dob": "1975-12-26",
-    "address": "Số 451, Đường Lê Lợi, Quận 7, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_41",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=492",
-    "jobName": "Project Manager",
-    "desc": "Xin chào, tôi là Chị Xuân Đặng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
+    "dob": "1977-02-07",
+    "address": "Số 313, Đường Trần Phú, Quận Bình Thạnh, Hải Phòng",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_10",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=10",
+    "jobName": "Nhân viên ngân hàng",
+    "desc": "Xin chào, tôi là Thảo Nguyễn. Yêu thích du lịch.",
     "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.232590",
+    "updatedAt": "2026-01-05T21:20:16.232590"
   },
   {
-    "id": "user_fake_42",
-    "email": "thanhhoang@gmail.com",
+    "id": "user_seed_11",
+    "email": "anhnhienbui@gmail.com",
     "password": "123456",
-    "name": "Thành Hoàng",
-    "nickname": "lejohn",
-    "phone": "0963208280",
-    "gender": "female",
-    "dob": "1972-09-28",
-    "address": "Số 225, Đường Lý Tự Trọng, Quận Tân Bình, Cần Thơ",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_42",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=353",
-    "jobName": "Nhân Viên Bán Hàng",
-    "desc": "Xin chào, tôi là Thành Hoàng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "ADMIN",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
-  },
-  {
-    "id": "user_fake_43",
-    "email": "quycothanhpham@gmail.com",
-    "password": "123456",
-    "name": "Quý cô Thành Phạm",
-    "nickname": "johnpham",
-    "phone": "0491787271",
+    "name": "Anh Nhiên Bùi",
+    "nickname": "hhoang",
+    "phone": "0402093110",
     "gender": "male",
-    "dob": "1981-06-23",
-    "address": "Số 209, Đường Lý Tự Trọng, Quận Bình Thạnh, Đà Nẵng",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_43",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=938",
-    "jobName": "Tester",
-    "desc": "Xin chào, tôi là Quý cô Thành Phạm. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "ADMIN",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
-  },
-  {
-    "id": "user_fake_44",
-    "email": "ongvule@gmail.com",
-    "password": "123456",
-    "name": "Ông Vũ Lê",
-    "nickname": "jane78",
-    "phone": "0468981258",
-    "gender": "female",
-    "dob": "1977-04-10",
-    "address": "Số 37, Đường Trần Hưng Đạo, Quận Tân Bình, Hà Nội",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_44",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=783",
-    "jobName": "Kỹ sư giám sát",
-    "desc": "Xin chào, tôi là Ông Vũ Lê. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "ADMIN",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
-  },
-  {
-    "id": "user_fake_45",
-    "email": "thanhnguyen@gmail.com",
-    "password": "123456",
-    "name": "Thành Nguyễn",
-    "nickname": "jane74",
-    "phone": "0611290195",
-    "gender": "female",
-    "dob": "1992-03-02",
-    "address": "Số 199, Đường Hai Bà Trưng, Quận Hoàn Kiếm, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_45",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=483",
-    "jobName": "Chuyên viên tín dụng",
-    "desc": "Xin chào, tôi là Thành Nguyễn. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
+    "dob": "1979-02-20",
+    "address": "Số 499, Đường Lê Duẩn, Quận 1, Nghệ An",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_11",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=11",
+    "jobName": "Giảng viên",
+    "desc": "Xin chào, tôi là Anh Nhiên Bùi. Yêu thích du lịch.",
     "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
+    "preference": {
+      "favoriteAmenities": [
+        "ac",
+        "kitchen"
+      ],
+      "favoriteCities": [
+        "hcm"
+      ],
+      "avgPriceExpect": 600000,
+      "preferredRatingMin": 3.8,
+      "pastBookingCount": 10,
+      "lastBookingAt": "2025-04-10T21:20:16.232590"
+    },
+    "createdAt": "2026-01-05T21:20:16.232590",
+    "updatedAt": "2026-01-05T21:20:16.232590"
   },
   {
-    "id": "user_fake_46",
-    "email": "thanhhoang1@gmail.com",
+    "id": "user_seed_12",
+    "email": "hongnguyen@gmail.com",
     "password": "123456",
-    "name": "Thành Hoàng",
-    "nickname": "john93",
-    "phone": "0716335659",
+    "name": "Hồng Nguyễn",
+    "nickname": "duongjane",
+    "phone": "0966925047",
     "gender": "female",
-    "dob": "1983-07-24",
-    "address": "Số 343, Đường Lê Lợi, Quận 3, Cần Thơ",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_46",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=820",
-    "jobName": "Kỹ sư nông nghiệp",
-    "desc": "Xin chào, tôi là Thành Hoàng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
+    "dob": "1997-06-30",
+    "address": "Số 128, Đường Trần Hưng Đạo, Huyện Bình Chánh, Bến Tre",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_12",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=12",
+    "jobName": "Kiến trúc sư",
+    "desc": "Xin chào, tôi là Hồng Nguyễn. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": {
+      "favoriteAmenities": [
+        "parking",
+        "ac",
+        "breakfast"
+      ],
+      "favoriteCities": [
+        "sapa",
+        "hcm"
+      ],
+      "avgPriceExpect": 600000,
+      "preferredRatingMin": 4.6,
+      "pastBookingCount": 9,
+      "lastBookingAt": "2025-01-11T21:20:16.232590"
+    },
+    "createdAt": "2026-01-05T21:20:16.232590",
+    "updatedAt": "2026-01-05T21:20:16.232590"
   },
   {
-    "id": "user_fake_47",
-    "email": "dungvu@gmail.com",
+    "id": "user_seed_13",
+    "email": "cothaomai@gmail.com",
     "password": "123456",
-    "name": "Dũng Vũ",
-    "nickname": "phamjane",
-    "phone": "0807338941",
-    "gender": "female",
-    "dob": "1981-11-30",
-    "address": "Số 278, Đường Hai Bà Trưng, Quận 3, Hà Nội",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_47",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=399",
+    "name": "Cô Thảo Mai",
+    "nickname": "john46",
+    "phone": "0348892622",
+    "gender": "male",
+    "dob": "1989-02-02",
+    "address": "Số 135, Đường Lý Tự Trọng, Thành phố Biên Hòa, Bắc Ninh",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_13",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=13",
     "jobName": "Quản lý sản xuất",
-    "desc": "Xin chào, tôi là Dũng Vũ. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
+    "desc": "Xin chào, tôi là Cô Thảo Mai. Yêu thích du lịch.",
     "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
+    "preference": {
+      "favoriteAmenities": [
+        "kitchen",
+        "sea_view"
+      ],
+      "favoriteCities": [
+        "sapa",
+        "vung_tau",
+        "nha_trang"
+      ],
+      "avgPriceExpect": 1500000,
+      "preferredRatingMin": 4.2,
+      "pastBookingCount": 8,
+      "lastBookingAt": "2025-12-13T21:20:16.232590"
+    },
+    "createdAt": "2026-01-05T21:20:16.232590",
+    "updatedAt": "2026-01-05T21:20:16.232590"
   },
   {
-    "id": "user_fake_48",
-    "email": "nhienduchoang1@gmail.com",
+    "id": "user_seed_14",
+    "email": "chiphuongtran@gmail.com",
     "password": "123456",
-    "name": "Nhiên Đức Hoàng",
-    "nickname": "dangjane",
-    "phone": "0826693112",
+    "name": "Chị Phương Trần",
+    "nickname": "johnduong",
+    "phone": "0635863107",
+    "gender": "female",
+    "dob": "1992-10-24",
+    "address": "Số 336, Đường Trần Hưng Đạo, Quận 5, Gia Lai",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_14",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=14",
+    "jobName": "Project Manager",
+    "desc": "Xin chào, tôi là Chị Phương Trần. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "sea_view",
+        "pool",
+        "parking",
+        "kitchen"
+      ],
+      "favoriteCities": [
+        "vung_tau",
+        "sapa",
+        "da_nang"
+      ],
+      "avgPriceExpect": 3400000,
+      "preferredRatingMin": 4.3,
+      "pastBookingCount": 4,
+      "lastBookingAt": "2025-05-20T21:20:16.232590"
+    },
+    "createdAt": "2026-01-05T21:20:16.232590",
+    "updatedAt": "2026-01-05T21:20:16.232590"
+  },
+  {
+    "id": "user_seed_15",
+    "email": "khoaphunguyen@gmail.com",
+    "password": "123456",
+    "name": "Khoa Phú Nguyễn",
+    "nickname": "vujane",
+    "phone": "0931345531",
     "gender": "male",
-    "dob": "1989-02-01",
-    "address": "Số 442, Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_48",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=682",
-    "jobName": "Kiểm toán",
-    "desc": "Xin chào, tôi là Nhiên Đức Hoàng. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
-    "role": "ADMIN",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
-  },
-  {
-    "id": "user_fake_49",
-    "email": "vule@gmail.com",
-    "password": "123456",
-    "name": "Vũ Lê",
-    "nickname": "jane88",
-    "phone": "0882349552",
-    "gender": "female",
-    "dob": "1980-02-04",
-    "address": "Số 179, Đường Phan Chu Trinh, Quận 7, TP. Hồ Chí Minh",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_49",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=419",
+    "dob": "1976-02-22",
+    "address": "Số 56, Đường Lý Tự Trọng, Huyện Thanh Trì, Tiền Giang",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_15",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=15",
     "jobName": "Thực tập sinh giáo dục",
-    "desc": "Xin chào, tôi là Vũ Lê. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
+    "desc": "Xin chào, tôi là Khoa Phú Nguyễn. Yêu thích du lịch.",
     "role": "USER",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
+    "preference": {
+      "favoriteAmenities": [
+        "ac",
+        "pool",
+        "mountain_view"
+      ],
+      "favoriteCities": [
+        "hcm"
+      ],
+      "avgPriceExpect": 800000,
+      "preferredRatingMin": 4.3,
+      "pastBookingCount": 2,
+      "lastBookingAt": "2025-12-21T21:20:16.232590"
+    },
+    "createdAt": "2026-01-05T21:20:16.232590",
+    "updatedAt": "2026-01-05T21:20:16.232590"
   },
   {
-    "id": "user_fake_50",
-    "email": "minhtran@gmail.com",
+    "id": "user_seed_16",
+    "email": "cokimduong@gmail.com",
     "password": "123456",
-    "name": "Minh Trần",
-    "nickname": "hmai",
-    "phone": "0661856612",
+    "name": "Cô Kim Dương",
+    "nickname": "otran",
+    "phone": "0638261466",
+    "gender": "male",
+    "dob": "1997-10-13",
+    "address": "Số 26, Đường Phạm Văn Đồng, Quận Bình Thạnh, Quảng Nam",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_16",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=16",
+    "jobName": "Nhân viên hành chính",
+    "desc": "Xin chào, tôi là Cô Kim Dương. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "pool",
+        "ac",
+        "kitchen",
+        "mountain_view"
+      ],
+      "favoriteCities": [
+        "hcm",
+        "da_lat"
+      ],
+      "avgPriceExpect": 4200000,
+      "preferredRatingMin": 3.5,
+      "pastBookingCount": 8,
+      "lastBookingAt": "2025-08-30T21:20:16.232590"
+    },
+    "createdAt": "2026-01-05T21:20:16.232590",
+    "updatedAt": "2026-01-05T21:20:16.232590"
+  },
+  {
+    "id": "user_seed_17",
+    "email": "quanghaihoang@gmail.com",
+    "password": "123456",
+    "name": "Quang Hải Hoàng",
+    "nickname": "janevu",
+    "phone": "0966688980",
     "gender": "female",
-    "dob": "1971-10-27",
-    "address": "Số 425, Đường Lê Lợi, Quận 7, Đà Lạt",
-    "avatar": "https://i.pravatar.cc/150?u=user_fake_50",
-    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=980",
+    "dob": "1970-03-27",
+    "address": "Số 40, Đường Bà Huyện Thanh Quan, Quận 5, Quảng Trị",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_17",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=17",
     "jobName": "Thực tập sinh giáo dục",
-    "desc": "Xin chào, tôi là Minh Trần. Chào mừng bạn đến với không gian nghỉ dưỡng của tôi.",
+    "desc": "Xin chào, tôi là Quang Hải Hoàng. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "breakfast",
+        "wifi",
+        "mountain_view",
+        "pool"
+      ],
+      "favoriteCities": [
+        "vung_tau"
+      ],
+      "avgPriceExpect": 3100000,
+      "preferredRatingMin": 4.7,
+      "pastBookingCount": 7,
+      "lastBookingAt": "2025-01-19T21:20:16.232590"
+    },
+    "createdAt": "2026-01-05T21:20:16.232590",
+    "updatedAt": "2026-01-05T21:20:16.232590"
+  },
+  {
+    "id": "user_seed_18",
+    "email": "chibui@gmail.com",
+    "password": "123456",
+    "name": "Chi Bùi",
+    "nickname": "maijane",
+    "phone": "0903204097",
+    "gender": "female",
+    "dob": "1966-08-05",
+    "address": "Số 497, Đường Hoàng Quốc Việt, Quận Đống Đa, Đắk Nông",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_18",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=18",
+    "jobName": "Quản lý sản xuất",
+    "desc": "Xin chào, tôi là Chi Bùi. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "pool",
+        "wifi",
+        "kitchen",
+        "mountain_view",
+        "ac"
+      ],
+      "favoriteCities": [
+        "da_nang",
+        "vung_tau",
+        "hcm"
+      ],
+      "avgPriceExpect": 4300000,
+      "preferredRatingMin": 4.0,
+      "pastBookingCount": 4,
+      "lastBookingAt": "2025-02-14T21:20:16.233600"
+    },
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_19",
+    "email": "ongphucbui@gmail.com",
+    "password": "123456",
+    "name": "Ông Phúc Bùi",
+    "nickname": "janenguyen",
+    "phone": "0478664003",
+    "gender": "male",
+    "dob": "1986-08-08",
+    "address": "Số 16, Đường Hoàng Diệu, Quận Tây Hồ, Hà Nội",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_19",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=19",
+    "jobName": "Quản lý sản xuất",
+    "desc": "Xin chào, tôi là Ông Phúc Bùi. Yêu thích du lịch.",
     "role": "ADMIN",
-    "createdAt": "2026-01-03T14:35:35.147684",
-    "updatedAt": "2026-01-03T14:35:35.147684",
-    "posts": []
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_20",
+    "email": "chilinhle@gmail.com",
+    "password": "123456",
+    "name": "Chị Linh Lê",
+    "nickname": "jane97",
+    "phone": "0643664406",
+    "gender": "female",
+    "dob": "1986-09-13",
+    "address": "Số 313, Đường Nguyễn Tất Thành, Huyện Củ Chi, TP. Hồ Chí Minh",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_20",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=20",
+    "jobName": "Thực tập sinh giáo dục",
+    "desc": "Xin chào, tôi là Chị Linh Lê. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "pool",
+        "mountain_view",
+        "breakfast",
+        "kitchen",
+        "pets_allowed"
+      ],
+      "favoriteCities": [
+        "ha_noi",
+        "vung_tau",
+        "sapa"
+      ],
+      "avgPriceExpect": 1800000,
+      "preferredRatingMin": 3.6,
+      "pastBookingCount": 3,
+      "lastBookingAt": "2025-04-22T21:20:16.233600"
+    },
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_21",
+    "email": "chihanhdang@gmail.com",
+    "password": "123456",
+    "name": "Chị Hạnh Đặng",
+    "nickname": "janele",
+    "phone": "0769501700",
+    "gender": "male",
+    "dob": "1977-10-21",
+    "address": "Số 314, Đường Trần Phú, Quận Hai Bà Trưng, Quảng Bình",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_21",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=21",
+    "jobName": "Chuyên viên nhân sự",
+    "desc": "Xin chào, tôi là Chị Hạnh Đặng. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "breakfast",
+        "kitchen",
+        "sea_view",
+        "parking",
+        "wifi"
+      ],
+      "favoriteCities": [
+        "da_nang",
+        "vung_tau",
+        "sapa"
+      ],
+      "avgPriceExpect": 3300000,
+      "preferredRatingMin": 4.2,
+      "pastBookingCount": 5,
+      "lastBookingAt": "2025-09-08T21:20:16.233600"
+    },
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_22",
+    "email": "chipham@gmail.com",
+    "password": "123456",
+    "name": "Chi Phạm",
+    "nickname": "dangjane",
+    "phone": "0928632958",
+    "gender": "male",
+    "dob": "2001-08-17",
+    "address": "Số 495, Đường Hoàng Diệu, Quận 7, Cần Thơ",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_22",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=22",
+    "jobName": "Kiến trúc sư",
+    "desc": "Xin chào, tôi là Chi Phạm. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "sea_view",
+        "mountain_view",
+        "kitchen",
+        "pets_allowed",
+        "pool"
+      ],
+      "favoriteCities": [
+        "ha_noi",
+        "da_lat",
+        "nha_trang"
+      ],
+      "avgPriceExpect": 800000,
+      "preferredRatingMin": 3.5,
+      "pastBookingCount": 2,
+      "lastBookingAt": "2025-01-18T21:20:16.233600"
+    },
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_23",
+    "email": "baotrihoang@gmail.com",
+    "password": "123456",
+    "name": "Bảo Trí Hoàng",
+    "nickname": "jane56",
+    "phone": "0679709109",
+    "gender": "female",
+    "dob": "2007-03-02",
+    "address": "Số 462, Đường Hoàng Quốc Việt, Quận 7, Thái Bình",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_23",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=23",
+    "jobName": "Công nhân sản xuất",
+    "desc": "Xin chào, tôi là Bảo Trí Hoàng. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "ac",
+        "wifi",
+        "breakfast",
+        "pets_allowed"
+      ],
+      "favoriteCities": [
+        "da_lat"
+      ],
+      "avgPriceExpect": 4800000,
+      "preferredRatingMin": 4.4,
+      "pastBookingCount": 7,
+      "lastBookingAt": "2025-05-18T21:20:16.233600"
+    },
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_24",
+    "email": "quyconhatnguyen@gmail.com",
+    "password": "123456",
+    "name": "Quý cô Nhật Nguyễn",
+    "nickname": "johnduong",
+    "phone": "0606865112",
+    "gender": "male",
+    "dob": "1991-05-19",
+    "address": "Số 64, Đường Hoàng Diệu, Thành phố Huế, Ninh Bình",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_24",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=24",
+    "jobName": "Nhân viên hành chính",
+    "desc": "Xin chào, tôi là Quý cô Nhật Nguyễn. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "parking",
+        "pool",
+        "ac",
+        "mountain_view",
+        "pets_allowed"
+      ],
+      "favoriteCities": [
+        "vung_tau",
+        "hcm"
+      ],
+      "avgPriceExpect": 4100000,
+      "preferredRatingMin": 4.1,
+      "pastBookingCount": 9,
+      "lastBookingAt": "2025-05-22T21:20:16.233600"
+    },
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_25",
+    "email": "bavanmai@gmail.com",
+    "password": "123456",
+    "name": "Bà Vân Mai",
+    "nickname": "lejohn",
+    "phone": "0978382759",
+    "gender": "female",
+    "dob": "1980-09-30",
+    "address": "Số 104, Đường Hoàng Quốc Việt, Quận Long Biên, Đà Nẵng",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_25",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=25",
+    "jobName": "Nhân viên nhà hàng",
+    "desc": "Xin chào, tôi là Bà Vân Mai. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_26",
+    "email": "tubui@gmail.com",
+    "password": "123456",
+    "name": "Tú Bùi",
+    "nickname": "epham",
+    "phone": "0487651060",
+    "gender": "female",
+    "dob": "1990-07-22",
+    "address": "Số 272, Đường Hoàng Diệu, Quận Ba Đình, Hà Tĩnh",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_26",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=26",
+    "jobName": "Kiểm toán",
+    "desc": "Xin chào, tôi là Tú Bùi. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_27",
+    "email": "kimduong@gmail.com",
+    "password": "123456",
+    "name": "Kim Dương",
+    "nickname": "john64",
+    "phone": "0366673784",
+    "gender": "female",
+    "dob": "2001-02-25",
+    "address": "Số 167, Đường Nguyễn Huệ, Quận Tây Hồ, Phú Yên",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_27",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=27",
+    "jobName": "Luật sư",
+    "desc": "Xin chào, tôi là Kim Dương. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": {
+      "favoriteAmenities": [
+        "ac",
+        "pets_allowed"
+      ],
+      "favoriteCities": [
+        "hcm",
+        "vung_tau",
+        "da_nang"
+      ],
+      "avgPriceExpect": 1300000,
+      "preferredRatingMin": 4.1,
+      "pastBookingCount": 8,
+      "lastBookingAt": "2025-11-09T21:20:16.233600"
+    },
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_28",
+    "email": "huongdang@gmail.com",
+    "password": "123456",
+    "name": "Hương Đặng",
+    "nickname": "dangjohn",
+    "phone": "0695675693",
+    "gender": "male",
+    "dob": "1986-05-13",
+    "address": "Số 251, Đường Hoàng Diệu, Quận Thanh Xuân, Vĩnh Phúc",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_28",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=28",
+    "jobName": "Quản lý sản xuất",
+    "desc": "Xin chào, tôi là Hương Đặng. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "wifi",
+        "parking",
+        "sea_view",
+        "pets_allowed",
+        "ac"
+      ],
+      "favoriteCities": [
+        "vung_tau",
+        "sapa",
+        "hcm"
+      ],
+      "avgPriceExpect": 2500000,
+      "preferredRatingMin": 4.2,
+      "pastBookingCount": 2,
+      "lastBookingAt": "2025-11-07T21:20:16.233600"
+    },
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_29",
+    "email": "cohuongdang@gmail.com",
+    "password": "123456",
+    "name": "Cô Hương Đặng",
+    "nickname": "duongjohn",
+    "phone": "0596925807",
+    "gender": "male",
+    "dob": "1965-09-02",
+    "address": "Số 203, Đường Trần Quốc Thảo, Huyện Hòa Vang, Hải Dương",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_29",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=29",
+    "jobName": "Nhà báo",
+    "desc": "Xin chào, tôi là Cô Hương Đặng. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "parking",
+        "mountain_view",
+        "wifi"
+      ],
+      "favoriteCities": [
+        "sapa"
+      ],
+      "avgPriceExpect": 3100000,
+      "preferredRatingMin": 3.5,
+      "pastBookingCount": 5,
+      "lastBookingAt": "2025-04-02T21:20:16.233600"
+    },
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_30",
+    "email": "baotran@gmail.com",
+    "password": "123456",
+    "name": "Bảo Trần",
+    "nickname": "khoang",
+    "phone": "0735754050",
+    "gender": "female",
+    "dob": "1988-02-28",
+    "address": "Số 326, Đường Kim Mã, Thành phố Quy Nhơn, Đồng Tháp",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_30",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=30",
+    "jobName": "Luật sư",
+    "desc": "Xin chào, tôi là Bảo Trần. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.233600",
+    "updatedAt": "2026-01-05T21:20:16.233600"
+  },
+  {
+    "id": "user_seed_31",
+    "email": "vanvu@gmail.com",
+    "password": "123456",
+    "name": "Vân Vũ",
+    "nickname": "janele",
+    "phone": "0408031339",
+    "gender": "male",
+    "dob": "1978-08-28",
+    "address": "Số 348, Đường Bà Huyện Thanh Quan, Quận Đống Đa, Ninh Bình",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_31",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=31",
+    "jobName": "Kỹ sư xây dựng",
+    "desc": "Xin chào, tôi là Vân Vũ. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.235111",
+    "updatedAt": "2026-01-05T21:20:16.235111"
+  },
+  {
+    "id": "user_seed_32",
+    "email": "kimthinguyen@gmail.com",
+    "password": "123456",
+    "name": "Kim Thị Nguyễn",
+    "nickname": "xnguyen",
+    "phone": "0614668492",
+    "gender": "male",
+    "dob": "1966-12-04",
+    "address": "Số 246, Đường Hàng Bài, Huyện Hòa Vang, TP. Hồ Chí Minh",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_32",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=32",
+    "jobName": "Sales Representative",
+    "desc": "Xin chào, tôi là Kim Thị Nguyễn. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "pets_allowed",
+        "parking"
+      ],
+      "favoriteCities": [
+        "ha_noi",
+        "da_lat"
+      ],
+      "avgPriceExpect": 2400000,
+      "preferredRatingMin": 4.0,
+      "pastBookingCount": 10,
+      "lastBookingAt": "2025-10-03T21:20:16.235111"
+    },
+    "createdAt": "2026-01-05T21:20:16.235111",
+    "updatedAt": "2026-01-05T21:20:16.235111"
+  },
+  {
+    "id": "user_seed_33",
+    "email": "kimpham@gmail.com",
+    "password": "123456",
+    "name": "Kim Phạm",
+    "nickname": "janedang",
+    "phone": "0638851264",
+    "gender": "female",
+    "dob": "1973-05-02",
+    "address": "Số 452, Đường Bà Huyện Thanh Quan, Huyện Củ Chi, Thái Bình",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_33",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=33",
+    "jobName": "Sales Representative",
+    "desc": "Xin chào, tôi là Kim Phạm. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "kitchen",
+        "pool",
+        "mountain_view"
+      ],
+      "favoriteCities": [
+        "sapa"
+      ],
+      "avgPriceExpect": 900000,
+      "preferredRatingMin": 3.8,
+      "pastBookingCount": 10,
+      "lastBookingAt": "2025-03-18T21:20:16.235111"
+    },
+    "createdAt": "2026-01-05T21:20:16.235111",
+    "updatedAt": "2026-01-05T21:20:16.235111"
+  },
+  {
+    "id": "user_seed_34",
+    "email": "ongnhienpham@gmail.com",
+    "password": "123456",
+    "name": "Ông Nhiên Phạm",
+    "nickname": "knguyen",
+    "phone": "0905280817",
+    "gender": "female",
+    "dob": "1994-11-23",
+    "address": "Số 77, Đường Trần Hưng Đạo, Quận Gò Vấp, Gia Lai",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_34",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=34",
+    "jobName": "Chuyên viên phân tích thị trường",
+    "desc": "Xin chào, tôi là Ông Nhiên Phạm. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.235111",
+    "updatedAt": "2026-01-05T21:20:16.235111"
+  },
+  {
+    "id": "user_seed_35",
+    "email": "hanhduong@gmail.com",
+    "password": "123456",
+    "name": "Hạnh Dương",
+    "nickname": "maijane",
+    "phone": "0405707114",
+    "gender": "female",
+    "dob": "1982-11-11",
+    "address": "Số 393, Đường Nguyễn Đình Chiểu, Huyện Hóc Môn, Thừa Thiên Huế",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_35",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=35",
+    "jobName": "UX/UI Designer",
+    "desc": "Xin chào, tôi là Hạnh Dương. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "wifi",
+        "kitchen"
+      ],
+      "favoriteCities": [
+        "nha_trang",
+        "vung_tau"
+      ],
+      "avgPriceExpect": 2400000,
+      "preferredRatingMin": 4.5,
+      "pastBookingCount": 6,
+      "lastBookingAt": "2025-11-18T21:20:16.235111"
+    },
+    "createdAt": "2026-01-05T21:20:16.235111",
+    "updatedAt": "2026-01-05T21:20:16.235111"
+  },
+  {
+    "id": "user_seed_36",
+    "email": "baovu@gmail.com",
+    "password": "123456",
+    "name": "Bảo Vũ",
+    "nickname": "jane12",
+    "phone": "0599331777",
+    "gender": "female",
+    "dob": "1979-08-10",
+    "address": "Số 408, Đường Võ Văn Kiệt, Quận Liên Chiểu, Quảng Ninh",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_36",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=36",
+    "jobName": "Bác sĩ",
+    "desc": "Xin chào, tôi là Bảo Vũ. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": {
+      "favoriteAmenities": [
+        "kitchen",
+        "mountain_view",
+        "pets_allowed",
+        "sea_view"
+      ],
+      "favoriteCities": [
+        "nha_trang"
+      ],
+      "avgPriceExpect": 900000,
+      "preferredRatingMin": 4.0,
+      "pastBookingCount": 3,
+      "lastBookingAt": "2025-05-10T21:20:16.235111"
+    },
+    "createdAt": "2026-01-05T21:20:16.235111",
+    "updatedAt": "2026-01-05T21:20:16.235111"
+  },
+  {
+    "id": "user_seed_37",
+    "email": "bakhoale@gmail.com",
+    "password": "123456",
+    "name": "Bà Khoa Lê",
+    "nickname": "fhoang",
+    "phone": "0719804780",
+    "gender": "female",
+    "dob": "2001-07-24",
+    "address": "Số 130, Đường Phạm Ngũ Lão, Quận Hải Châu, Phú Thọ",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_37",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=37",
+    "jobName": "Kỹ sư nông nghiệp",
+    "desc": "Xin chào, tôi là Bà Khoa Lê. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": {
+      "favoriteAmenities": [
+        "wifi",
+        "mountain_view",
+        "pets_allowed",
+        "ac",
+        "breakfast"
+      ],
+      "favoriteCities": [
+        "da_nang",
+        "da_lat"
+      ],
+      "avgPriceExpect": 2300000,
+      "preferredRatingMin": 4.3,
+      "pastBookingCount": 3,
+      "lastBookingAt": "2025-10-28T21:20:16.235111"
+    },
+    "createdAt": "2026-01-05T21:20:16.235111",
+    "updatedAt": "2026-01-05T21:20:16.235111"
+  },
+  {
+    "id": "user_seed_38",
+    "email": "chixuanhoang@gmail.com",
+    "password": "123456",
+    "name": "Chị Xuân Hoàng",
+    "nickname": "rbui",
+    "phone": "0759725255",
+    "gender": "male",
+    "dob": "1991-12-31",
+    "address": "Số 497, Đường Nguyễn Tất Thành, Quận Thanh Xuân, Ninh Bình",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_38",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=38",
+    "jobName": "Giám đốc kinh doanh",
+    "desc": "Xin chào, tôi là Chị Xuân Hoàng. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": {
+      "favoriteAmenities": [
+        "mountain_view",
+        "pool",
+        "wifi"
+      ],
+      "favoriteCities": [
+        "sapa",
+        "nha_trang",
+        "ha_noi"
+      ],
+      "avgPriceExpect": 3600000,
+      "preferredRatingMin": 4.5,
+      "pastBookingCount": 9,
+      "lastBookingAt": "2025-05-13T21:20:16.236124"
+    },
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_39",
+    "email": "duyentran@gmail.com",
+    "password": "123456",
+    "name": "Duyên Trần",
+    "nickname": "john29",
+    "phone": "0552999706",
+    "gender": "female",
+    "dob": "1972-01-09",
+    "address": "Số 122, Đường Võ Nguyên Giáp, Quận Long Biên, Quảng Bình",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_39",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=39",
+    "jobName": "Chuyên viên phân tích thị trường",
+    "desc": "Xin chào, tôi là Duyên Trần. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "mountain_view",
+        "parking",
+        "kitchen",
+        "breakfast"
+      ],
+      "favoriteCities": [
+        "hcm",
+        "ha_noi"
+      ],
+      "avgPriceExpect": 2900000,
+      "preferredRatingMin": 4.3,
+      "pastBookingCount": 2,
+      "lastBookingAt": "2025-04-16T21:20:16.236124"
+    },
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_40",
+    "email": "nhienmaimai@gmail.com",
+    "password": "123456",
+    "name": "Nhiên Mai Mai",
+    "nickname": "jle",
+    "phone": "0799355389",
+    "gender": "male",
+    "dob": "1993-04-20",
+    "address": "Số 495, Đường Nguyễn Thị Minh Khai, Quận Ngũ Hành Sơn, Đắk Lắk",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_40",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=40",
+    "jobName": "Kế toán",
+    "desc": "Xin chào, tôi là Nhiên Mai Mai. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "breakfast",
+        "ac",
+        "mountain_view"
+      ],
+      "favoriteCities": [
+        "da_nang"
+      ],
+      "avgPriceExpect": 3000000,
+      "preferredRatingMin": 4.1,
+      "pastBookingCount": 3,
+      "lastBookingAt": "2025-10-20T21:20:16.236124"
+    },
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_41",
+    "email": "kimvu@gmail.com",
+    "password": "123456",
+    "name": "Kim Vũ",
+    "nickname": "ydang",
+    "phone": "0424848430",
+    "gender": "female",
+    "dob": "1988-10-04",
+    "address": "Số 80, Đường Phạm Ngũ Lão, Thị xã Dĩ An, Bình Định",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_41",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=41",
+    "jobName": "Kiến trúc sư phần mềm",
+    "desc": "Xin chào, tôi là Kim Vũ. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": {
+      "favoriteAmenities": [
+        "ac",
+        "kitchen"
+      ],
+      "favoriteCities": [
+        "da_nang"
+      ],
+      "avgPriceExpect": 2800000,
+      "preferredRatingMin": 3.7,
+      "pastBookingCount": 5,
+      "lastBookingAt": "2025-02-08T21:20:16.236124"
+    },
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_42",
+    "email": "ongminhbui@gmail.com",
+    "password": "123456",
+    "name": "Ông Minh Bùi",
+    "nickname": "yle",
+    "phone": "0327431846",
+    "gender": "female",
+    "dob": "2003-05-12",
+    "address": "Số 334, Đường Bà Huyện Thanh Quan, Huyện Hòa Vang, Đồng Tháp",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_42",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=42",
+    "jobName": "UX/UI Designer",
+    "desc": "Xin chào, tôi là Ông Minh Bùi. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_43",
+    "email": "quangtrivu@gmail.com",
+    "password": "123456",
+    "name": "Quang Trí Vũ",
+    "nickname": "janetran",
+    "phone": "0945419227",
+    "gender": "female",
+    "dob": "1994-08-05",
+    "address": "Số 282, Đường Cách Mạng Tháng Tám, Quận 10, Phú Thọ",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_43",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=43",
+    "jobName": "Kiến trúc sư",
+    "desc": "Xin chào, tôi là Quang Trí Vũ. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_44",
+    "email": "nhatphuhoang@gmail.com",
+    "password": "123456",
+    "name": "Nhật Phú Hoàng",
+    "nickname": "tranjane",
+    "phone": "0369853955",
+    "gender": "male",
+    "dob": "1997-05-01",
+    "address": "Số 23, Đường Hoàng Quốc Việt, Quận Thanh Khê, Thừa Thiên Huế",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_44",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=44",
+    "jobName": "Kỹ sư sản xuất",
+    "desc": "Xin chào, tôi là Nhật Phú Hoàng. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "sea_view",
+        "wifi",
+        "mountain_view",
+        "ac",
+        "pets_allowed"
+      ],
+      "favoriteCities": [
+        "hcm",
+        "ha_noi",
+        "sapa"
+      ],
+      "avgPriceExpect": 2200000,
+      "preferredRatingMin": 4.4,
+      "pastBookingCount": 9,
+      "lastBookingAt": "2025-07-22T21:20:16.236124"
+    },
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_45",
+    "email": "namtriduong@gmail.com",
+    "password": "123456",
+    "name": "Nam Trí Dương",
+    "nickname": "maijane",
+    "phone": "0645385118",
+    "gender": "female",
+    "dob": "1989-11-26",
+    "address": "Số 36, Đường Lý Thường Kiệt, Quận Ngũ Hành Sơn, Gia Lai",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_45",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=45",
+    "jobName": "Nhà phân tích dữ liệu",
+    "desc": "Xin chào, tôi là Nam Trí Dương. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": null,
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_46",
+    "email": "ngocmai@gmail.com",
+    "password": "123456",
+    "name": "Ngọc Mai",
+    "nickname": "maijane",
+    "phone": "0799930162",
+    "gender": "female",
+    "dob": "2007-04-24",
+    "address": "Số 63, Đường Nguyễn Chí Thanh, Quận 3, Khánh Hòa",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_46",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=46",
+    "jobName": "Nhân viên kinh doanh",
+    "desc": "Xin chào, tôi là Ngọc Mai. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "pets_allowed",
+        "ac"
+      ],
+      "favoriteCities": [
+        "sapa",
+        "ha_noi",
+        "nha_trang"
+      ],
+      "avgPriceExpect": 3700000,
+      "preferredRatingMin": 4.0,
+      "pastBookingCount": 1,
+      "lastBookingAt": "2025-11-17T21:20:16.236124"
+    },
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_47",
+    "email": "dungphule@gmail.com",
+    "password": "123456",
+    "name": "Dũng Phú Lê",
+    "nickname": "jpham",
+    "phone": "0793837782",
+    "gender": "female",
+    "dob": "1983-10-23",
+    "address": "Số 441, Đường Lý Tự Trọng, Quận Hai Bà Trưng, Cần Thơ",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_47",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=47",
+    "jobName": "Tester",
+    "desc": "Xin chào, tôi là Dũng Phú Lê. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": {
+      "favoriteAmenities": [
+        "mountain_view",
+        "ac",
+        "pets_allowed",
+        "pool"
+      ],
+      "favoriteCities": [
+        "hcm",
+        "da_lat"
+      ],
+      "avgPriceExpect": 2000000,
+      "preferredRatingMin": 4.4,
+      "pastBookingCount": 3,
+      "lastBookingAt": "2025-08-06T21:20:16.236124"
+    },
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_48",
+    "email": "phuongtran@gmail.com",
+    "password": "123456",
+    "name": "Phương Trần",
+    "nickname": "tle",
+    "phone": "0548675948",
+    "gender": "male",
+    "dob": "1979-11-13",
+    "address": "Số 170, Đường Nguyễn Trãi, Quận Tân Bình, Quảng Ninh",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_48",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=48",
+    "jobName": "Công nhân sản xuất",
+    "desc": "Xin chào, tôi là Phương Trần. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": {
+      "favoriteAmenities": [
+        "ac",
+        "parking",
+        "kitchen"
+      ],
+      "favoriteCities": [
+        "sapa",
+        "nha_trang"
+      ],
+      "avgPriceExpect": 4000000,
+      "preferredRatingMin": 4.1,
+      "pastBookingCount": 6,
+      "lastBookingAt": "2025-10-03T21:20:16.236124"
+    },
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_49",
+    "email": "nhathoangvu@gmail.com",
+    "password": "123456",
+    "name": "Nhật Hoàng Vũ",
+    "nickname": "lejane",
+    "phone": "0909684759",
+    "gender": "female",
+    "dob": "1987-11-25",
+    "address": "Số 80, Đường Nguyễn Thị Minh Khai, Quận 3, Gia Lai",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_49",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=49",
+    "jobName": "Nghệ sĩ",
+    "desc": "Xin chào, tôi là Nhật Hoàng Vũ. Yêu thích du lịch.",
+    "role": "USER",
+    "preference": {
+      "favoriteAmenities": [
+        "ac",
+        "breakfast",
+        "sea_view",
+        "pool"
+      ],
+      "favoriteCities": [
+        "da_nang"
+      ],
+      "avgPriceExpect": 900000,
+      "preferredRatingMin": 4.8,
+      "pastBookingCount": 3,
+      "lastBookingAt": "2025-05-02T21:20:16.236124"
+    },
+    "createdAt": "2026-01-05T21:20:16.236124",
+    "updatedAt": "2026-01-05T21:20:16.236124"
+  },
+  {
+    "id": "user_seed_50",
+    "email": "quyconhatpham@gmail.com",
+    "password": "123456",
+    "name": "Quý cô Nhật Phạm",
+    "nickname": "johntran",
+    "phone": "0451780843",
+    "gender": "male",
+    "dob": "1995-08-25",
+    "address": "Số 442, Đường Trần Quốc Thảo, Thành phố Vũng Tàu, Thái Bình",
+    "avatar": "https://i.pravatar.cc/150?u=user_seed_50",
+    "bgImage": "https://loremflickr.com/800/400/nature,landscape?lock=50",
+    "jobName": "Chuyên viên tín dụng",
+    "desc": "Xin chào, tôi là Quý cô Nhật Phạm. Yêu thích du lịch.",
+    "role": "ADMIN",
+    "preference": {
+      "favoriteAmenities": [
+        "breakfast",
+        "pets_allowed",
+        "sea_view",
+        "wifi"
+      ],
+      "favoriteCities": [
+        "sapa"
+      ],
+      "avgPriceExpect": 1200000,
+      "preferredRatingMin": 3.5,
+      "pastBookingCount": 6,
+      "lastBookingAt": "2025-07-28T21:20:16.237485"
+    },
+    "createdAt": "2026-01-05T21:20:16.237485",
+    "updatedAt": "2026-01-05T21:20:16.237485"
   }
 ]
