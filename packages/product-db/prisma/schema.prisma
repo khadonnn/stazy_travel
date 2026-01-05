@@ -75,7 +75,7 @@ model Hotel {
   address            String
   
   // -- Ratings & Stats --
-  reviewStart        Float    @default(0)
+  reviewStar        Float    @default(0)
   reviewCount        Int      @default(0)
   viewCount          Int      @default(0)
   commentCount       Int      @default(0)
@@ -92,11 +92,12 @@ model Hotel {
   saleOff            String?  // Text hiển thị: "-5% hôm nay"
   saleOffPercent     Int      @default(0) // Số để Query/Sort: 5 (Đây là cột quan trọng mới thêm)
 
-  // -- Map --
-  // Dùng Json là gọn nhất. Nếu sau này cần tính khoảng cách bán kính (PostGIS), 
-  // bạn nên tách thành lat (Float) và lng (Float).
+  // -- Map -- 
   map                Json     
-
+  // -- AI Vector -- 
+  fullDescription String? @db.Text
+  policies      String? @db.Text
+  
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   imageVector    Unsupported("vector(512)")?

@@ -135,3 +135,32 @@ async def search_url(data: dict):
         return find_top_matches(query_vector, HOTEL_VECTORS)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/agent/chat")
+async def agent_chat(data: dict):
+    """
+    Input: { "message": "Tìm villa Đà Lạt ngày mai cho 2 người" }
+    """
+    user_message = data.get("message")
+    if not user_message:
+        raise HTTPException(status_code=400, detail="Missing message")
+
+    try:
+        # 1. Gọi Agent để phân tích ý định (Dùng Groq/Llama3)
+        intent = analyze_user_query(user_message)
+        
+        # In ra để debug xem Llama 3 trả về gì
+        print("🔍 Intent extracted:", intent.model_dump())
+
+        # 2. (Tạm thời) Trả về kết quả ngay để Test Frontend
+        # Sau này chúng ta sẽ chèn logic Search Database vào đây
+        
+        return {
+            "intent": intent.model_dump(), # Trả về JSON cấu trúc cho Frontend điền form
+            "results": [], # Chưa search DB nên tạm để rỗng
+            "agent_response": f"Tôi đã hiểu! Bạn muốn tìm phòng tại {intent.location} với mức giá khoảng {intent.max_price} VND. Tôi đã cập nhật bộ lọc cho bạn."
+        }
+
+    except Exception as e:
+        print(f"❌ Agent Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
