@@ -198,69 +198,87 @@ export const createHotel = async (req: Request, res: Response) => {
   try {
     const data = req.body;
 
-    // Xử lý logic SaleOff (chuyển "-10%..." thành số)
+    // 1. Lấy User ID từ Token (Giả sử bạn có middleware gán user vào req)
+    // const userId = req.user?.id;
+    // Nếu chưa có auth thì tạm dùng data.authorId nhưng phải cẩn thận.
+
+    // 2. Xử lý logic SaleOff
     let salePercent = 0;
     if (data.saleOff && typeof data.saleOff === "string") {
       const match = data.saleOff.match(/(\d+)%/);
       if (match) salePercent = parseInt(match[1], 10);
     }
 
+    // 3. Tạo slug nếu chưa có (Fallback)
+    // Nếu frontend không gửi slug, ta có thể dùng thư viện slugify để tạo từ title
+    const finalSlug = data.slug || data.title.toLowerCase().replace(/ /g, "-");
+
     const hotel = await prisma.hotel.create({
       data: {
-        // --- NHÓM CƠ BẢN ---
+        // --- ÉP KIỂU SỐ ĐỂ TRÁNH LỖI ---
         title: data.title,
         description: data.description,
-        price: data.price,
+        price: Number(data.price), // Ép về số
         address: data.address,
-        slug: data.slug, // Hoặc href nếu bạn chưa đổi
+        slug: finalSlug,
 
-        // --- NHÓM ẢNH ---
         featuredImage: data.featuredImage,
-        galleryImgs: data.galleryImgs,
+        galleryImgs: data.galleryImgs || [], // Mặc định mảng rỗng nếu null
 
-        // --- NHÓM TIỆN ÍCH ---
-        amenities: data.amenities,
-        maxGuests: data.maxGuests,
-        bedrooms: data.bedrooms,
-        bathrooms: data.bathrooms,
+        amenities: data.amenities || [],
+        maxGuests: Number(data.maxGuests),
+        bedrooms: Number(data.bedrooms),
+        bathrooms: Number(data.bathrooms),
 
-        // --- NHÓM MAP ---
-        map: data.map,
+        map: data.map, // Đảm bảo map là object { lat, lng }
 
-        // --- NHÓM QUAN HỆ ---
-        categoryId: data.categoryId,
-        authorId: data.authorId,
+        categoryId: Number(data.categoryId),
+        authorId: data.authorId, // Tốt nhất là dùng userId từ token
 
-        // ===============================================
-        // --- SỬA Ở ĐÂY: CHO PHÉP NHẬP DỮ LIỆU FAKE ---
-        // ===============================================
+        // --- DỮ LIỆU FAKE / MẶC ĐỊNH ---
+        reviewCount: Number(data.reviewCount) || 0,
+        viewCount: Number(data.viewCount) || 0,
 
-        // 1. Nếu data gửi lên có thì lấy, không thì mặc định 0
-        reviewCount: data.reviewCount || 0,
-        viewCount: data.viewCount || 0,
-        reviewStart: data.reviewStart || 0, // Lưu ý chính tả: Start hay Star?
-        commentCount: data.commentCount || 0,
+        // Check kỹ tên trường trong Prisma nhé
+        reviewStart: Number(data.reviewStart) || 0,
+        commentCount: Number(data.commentCount) || 0,
 
-        // 2. Boolean
-        like: data.like !== undefined ? data.like : false,
-        isAds: data.isAds !== undefined ? data.isAds : false,
+        like: Boolean(data.like), // Ép về boolean
+        isAds: Boolean(data.isAds),
 
-        // 3. Chuỗi SaleOff (Text hiển thị)
-        // Lúc nãy mình quên dòng này nên nó bị NULL
         saleOff: data.saleOff,
-        saleOffPercent: salePercent, // Số % để tính toán
+        saleOffPercent: salePercent,
       },
     });
 
+    // --- KAFKA / STRIPE ---
+    // Kiểm tra kỹ hotel.price là Decimal hay Int
     const stripProduce: StripeProductType = {
       id: hotel.id.toString(),
       name: hotel.title,
-      price: hotel.price.toNumber(),
+      // Nếu Prisma dùng Decimal, cần chuyển sang Number cẩn thận
+      price:
+        typeof hotel.price === "object" ? Number(hotel.price) : hotel.price,
     };
-    producer.send("hotel.created", { value: stripProduce });
+
+    // Check xem producer đã connect chưa để tránh crash app
+    if (producer) {
+      await producer.send("hotel.created", { value: stripProduce });
+    }
+
     res.status(201).json(hotel);
   } catch (error: any) {
-    console.log("Error:", error);
+    console.log("Create Hotel Error:", error);
+
+    // Xử lý lỗi trùng Slug (Mã lỗi P2002 của Prisma)
+    if (error.code === "P2002" && error.meta?.target?.includes("slug")) {
+      return res
+        .status(409)
+        .json({
+          message: "Tên khách sạn (Slug) đã tồn tại, vui lòng đổi tên khác.",
+        });
+    }
+
     res.status(500).json({ message: "Create failed", error: error.message });
   }
 };

@@ -15,6 +15,7 @@ import {
     User,
     ShoppingBasket,
     ChartSpline,
+    MapPinned,
 } from 'lucide-react';
 
 import {
@@ -136,8 +137,8 @@ const AppSidebar = () => {
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <Link href="/hotels">
-                                        <Shirt />
+                                    <Link href="/products">
+                                        <MapPinned />
                                         See all hotels
                                     </Link>
                                 </SidebarMenuButton>
@@ -150,7 +151,7 @@ const AppSidebar = () => {
                                         <SheetTrigger asChild>
                                             <SidebarMenuButton asChild>
                                                 <Link href="#">
-                                                    <Plus /> Add Product
+                                                    <Plus /> Add Hotel
                                                 </Link>
                                             </SidebarMenuButton>
                                         </SheetTrigger>

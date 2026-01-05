@@ -40,7 +40,7 @@ clerk_client = Clerk(bearer_auth=CLERK_SECRET_KEY)
 # File này nên được tạo trước bằng script xử lý ảnh
 HOTEL_VECTORS = []
 try:
-    with open("hotel_vectors.json", "r", encoding="utf-8") as f:
+    with open("jsons/__hotel_vectors.json", "r", encoding="utf-8") as f:
         HOTEL_VECTORS = json.load(f)
     print(f"✅ Loaded {len(HOTEL_VECTORS)} hotel vectors into memory.")
 except FileNotFoundError:

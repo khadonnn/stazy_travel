@@ -19,16 +19,18 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
-// Import file dữ liệu gốc
-import allStays from "@/data/jsons/__homeStay.json";
+// --- 1. ĐỊNH NGHĨA TYPE (Theo yêu cầu của bạn) ---
+export type LocationMap = {
+  lat: number;
+  lng: number;
+};
 
-// 👇 Khai báo kiểu để tránh lỗi amenities
-interface HotelStay {
+export type ProductType = {
   id: number;
   authorId: string;
   date: string;
   slug: string;
-  categoryId: number;
+  categoryId?: number;
   title: string;
   featuredImage: string;
   galleryImgs: string[];
@@ -36,78 +38,159 @@ interface HotelStay {
   description: string;
   price: number;
   address: string;
-  reviewStart: number;
-  reviewCount: number;
-  viewCount: number;
-  like: boolean;
-  commentCount: number;
-  maxGuests: number;
-  bedrooms: number;
-  bathrooms: number;
-}
-
-const typedAllStays = allStays as HotelStay[];
+  reviewStart?: number; // Backend trả về reviewStart
+  reviewCount?: number;
+  viewCount?: number;
+  like?: boolean;
+  commentCount?: number;
+  maxGuests?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  saleOff?: number | null;
+  saleOffPercent?: number;
+  isAds?: boolean;
+  map?: LocationMap;
+};
 
 export default function SearchServicePage() {
   // --- STATE QUẢN LÝ ---
+  // Dữ liệu gốc từ API Backend (thay cho file JSON)
+  const [allHotels, setAllHotels] = useState<ProductType[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
+  // State UI
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [searchDescription, setSearchDescription] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [activeFilter, setActiveFilter] = useState("recommend");
+
+  // Kết quả tìm kiếm hiển thị ra màn hình
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
-  // --- HÀM BỔ TRỢ: CẬP NHẬT UI TỪ KẾT QUẢ AI ---
-  const updateUIWithResults = (matches: any[]) => {
-    if (!matches) return;
-    const matchIds = matches.map((m) => m.id);
+  // URL Backend (Lấy từ biến môi trường hoặc hardcode)
+  const PRODUCT_API_URL =
+    process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL || "http://localhost:8000";
+  const AI_SERVICE_URL = "http://localhost:8008";
 
-    const filteredResults = typedAllStays
-      .filter((stay) => matchIds.includes(stay.id))
-      .map((stay) => {
-        const matchInfo = matches.find((m) => m.id === stay.id);
-        return {
-          id: stay.id,
-          name: stay.title,
-          price: stay.price.toLocaleString("vi-VN") + "đ",
-          rating: stay.reviewStart,
-          image: stay.featuredImage,
-          amenities: stay.amenities,
-          score: matchInfo?.score || 0.9,
-        };
-      })
-      .sort((a, b) => (b.score || 0) - (a.score || 0));
-    setSearchResults(filteredResults);
-  };
-
-  // --- 1. TỰ ĐỘNG GỢI Ý KHI LOAD TRANG ---
+  // --- 2. FETCH DỮ LIỆU TỪ BACKEND KHI LOAD TRANG ---
   useEffect(() => {
-    const fetchInitialData = async () => {
-      setIsLoading(true);
+    const fetchAllHotels = async () => {
       try {
-        const res = await fetch("http://localhost:8008/recommend/user_fake_1");
+        setIsLoadingData(true);
+        // Gọi API lấy tất cả khách sạn để làm dữ liệu gốc ánh xạ
+        const res = await fetch(`${PRODUCT_API_URL}/hotels?limit=1000`, {
+          cache: "no-store",
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch hotels");
+
+        const data = await res.json();
+        // Xử lý trường hợp API trả về { data: [...] } hoặc [...]
+        const hotels: ProductType[] = Array.isArray(data)
+          ? data
+          : data.data || [];
+        console.log(
+          `✅ Đã tải ${hotels.length} khách sạn từ Database.`,
+          hotels
+        );
+        setAllHotels(hotels);
+      } catch (error) {
+        console.error("Lỗi lấy dữ liệu khách sạn:", error);
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    fetchAllHotels();
+  }, []);
+
+  // --- 3. GỌI Ý RECOMMENDATION (Chỉ chạy khi đã có dữ liệu allHotels) ---
+  useEffect(() => {
+    if (allHotels.length === 0) return;
+
+    const fetchInitialRecommendations = async () => {
+      setIsSearching(true);
+      try {
+        // Gọi AI Recommend
+        const res = await fetch(`${AI_SERVICE_URL}/recommend/user_fake_1`);
         if (res.ok) {
           const matches = await res.json();
           updateUIWithResults(matches);
         }
       } catch (e) {
         console.log("⚠️ Server AI chưa bật, hiển thị data mặc định");
+        // Fallback: Lấy 6 cái đầu tiên từ API
         updateUIWithResults(
-          typedAllStays.slice(0, 6).map((s) => ({ id: s.id, score: 0.9 }))
+          allHotels.slice(0, 6).map((s) => ({ id: s.id, score: 0.9 }))
         );
       } finally {
-        setIsLoading(false);
+        setIsSearching(false);
       }
     };
-    fetchInitialData();
-  }, []);
 
-  // --- 🌟 MỚI: PHÁT HIỆN TỪ KHÓA ĐỂ LỌC THEO AMENITIES ---
+    fetchInitialRecommendations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allHotels]); // Chạy lại khi allHotels đã load xong
+
+  // --- HÀM BỔ TRỢ: CẬP NHẬT UI TỪ KẾT QUẢ AI ---
+  const updateUIWithResults = (matches: any[]) => {
+    console.log("1. Dữ liệu AI trả về (Matches):", matches);
+    if (!matches || matches.length === 0) {
+      console.warn("❌ AI trả về mảng rỗng!");
+      console.groupEnd();
+      setSearchResults([]);
+      return;
+    }
+    if (allHotels.length === 0) {
+      console.warn("❌ Chưa có dữ liệu allHotels để map!");
+      console.groupEnd();
+      return;
+    }
+    const matchIds = matches.map((m: any) => String(m.id));
+    console.log("2. Danh sách ID cần tìm:", matchIds);
+    const foundCount = allHotels.filter((h) =>
+      matchIds.includes(String(h.id))
+    ).length;
+    console.log(
+      `3. Tìm thấy ${foundCount}/${matchIds.length} ID khớp trong Database.`
+    );
+
+    const filteredResults = allHotels
+      .filter((stay) => matchIds.includes(String(stay.id)))
+      .map((stay) => {
+        const matchInfo = matches.find(
+          (m: any) => String(m.id) === String(stay.id)
+        );
+        return {
+          id: stay.id,
+          name: stay.title,
+          price: stay.price.toLocaleString("vi-VN") + "đ",
+          rating: stay.reviewStart || 5,
+          image: stay.featuredImage,
+          amenities: stay.amenities || [],
+          score: matchInfo?.score || 0.9,
+        };
+      })
+      .sort((a, b) => (b.score || 0) - (a.score || 0));
+
+    console.log("4. Kết quả cuối cùng render ra màn hình:", filteredResults);
+
+    if (filteredResults.length === 0 && matches.length > 0) {
+      alert(
+        `LỖI: AI tìm ra ID [${matchIds.slice(0, 3)}...] nhưng Database không có các ID này. Hãy kiểm tra lại Seed!`
+      );
+    }
+
+    setSearchResults(filteredResults);
+    console.groupEnd();
+  };
+
+  // --- 4. CÁC HÀM XỬ LÝ LOGIC TÌM KIẾM ---
+
   const handleKeywordSearch = (text: string): boolean => {
     const lowerText = text.toLowerCase();
-
-    // Xác định từ khóa → amenities tương ứng
     let targetAmenities: string[] = [];
     let matchedTagId: string | null = null;
 
@@ -127,31 +210,31 @@ export default function SearchServicePage() {
     }
 
     if (targetAmenities.length > 0) {
-      const localResults = typedAllStays
+      // Lọc từ allHotels (đã fetch từ API)
+      const localResults = allHotels
         .filter((stay) =>
-          stay.amenities.some((a) => targetAmenities.includes(a))
+          stay.amenities?.some((a) => targetAmenities.includes(a))
         )
         .map((stay) => ({
           id: stay.id,
           name: stay.title,
           price: stay.price.toLocaleString("vi-VN") + "đ",
-          rating: stay.reviewStart,
+          rating: stay.reviewStart || 5,
           image: stay.featuredImage,
           amenities: stay.amenities,
           score: 0.95,
-          matchedTagId, // dùng để highlight tag
+          matchedTagId,
         }))
         .sort(() => 0.5 - Math.random())
         .slice(0, 20);
 
       setSearchResults(localResults);
-      setIsLoading(false);
+      setIsSearching(false);
       return true;
     }
     return false;
   };
 
-  // --- 2. XỬ LÝ TÌM KIẾM (Hybrid Search) ---
   const handleSearch = async (overrideText?: string) => {
     const textToSearch = overrideText || searchDescription.trim();
     if (!selectedImage && !textToSearch) {
@@ -159,34 +242,39 @@ export default function SearchServicePage() {
       return;
     }
 
-    setIsLoading(true);
+    setIsSearching(true);
 
     if (selectedImage) {
+      // --- Search bằng Ảnh ---
+      console.log("📸 Đang tìm kiếm bằng ẢNH...");
       const reader = new FileReader();
       reader.readAsDataURL(selectedImage);
       reader.onloadend = async () => {
         const base64Image = reader.result as string;
         try {
-          const res = await fetch("http://localhost:8008/search-by-base64", {
+          const res = await fetch(`${AI_SERVICE_URL}/search-by-base64`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ image: base64Image }),
           });
           const matches = await res.json();
+          console.log("🔥 AI trả về matches:", matches);
           updateUIWithResults(matches);
         } catch (e) {
           console.error(e);
         } finally {
-          setIsLoading(false);
+          setIsSearching(false);
         }
       };
     } else {
-      // 👇 Ưu tiên xử lý từ khóa đặc biệt trước
+      // --- Search bằng Text ---
+      // 1. Ưu tiên Keyword logic
       const isKeywordSearch = handleKeywordSearch(textToSearch);
+
       if (!isKeywordSearch) {
-        // Nếu không phải → gọi AI như cũ
+        // 2. Gọi AI Search
         try {
-          const res = await fetch("http://localhost:8008/search-by-text", {
+          const res = await fetch(`${AI_SERVICE_URL}/search-by-text`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ description: textToSearch }),
@@ -196,7 +284,7 @@ export default function SearchServicePage() {
         } catch (error) {
           console.error("Lỗi server AI:", error);
         } finally {
-          setIsLoading(false);
+          setIsSearching(false);
         }
       }
     }
@@ -212,7 +300,7 @@ export default function SearchServicePage() {
     reader.readAsDataURL(file);
   };
 
-  // --- DANH SÁCH TAGS THEO KỊCH BẢN ---
+  // --- DỮ LIỆU TĨNH (Tags, Filters) ---
   const hotelTags = [
     {
       id: "beach",
@@ -262,32 +350,26 @@ export default function SearchServicePage() {
     { id: "like", label: "Yêu thích", icon: Heart, color: "bg-pink-500" },
   ];
 
-  // --- 🌟 MỚI: XÁC ĐỊNH TAG NÀO LIÊN QUAN DỰA TRÊN KẾT QUẢ HIỆN TẠI ---
+  // Logic Highlight Tags
   const getRelevantTagIds = () => {
     const relevant: Set<string> = new Set();
-
     for (const hotel of searchResults) {
       if (
         hotel.amenities?.some((a: string) =>
           ["beach-view", "sea-view"].includes(a)
         )
-      ) {
+      )
         relevant.add("beach");
-      }
-      if (hotel.amenities?.some((a: string) => a === "mountain-view")) {
+      if (hotel.amenities?.some((a: string) => a === "mountain-view"))
         relevant.add("mountain");
-      }
-      if (hotel.amenities?.some((a: string) => a === "city-view")) {
+      if (hotel.amenities?.some((a: string) => a === "city-view"))
         relevant.add("city");
-      }
-      // Thêm pool/luxury nếu cần
     }
-
     return relevant;
   };
-
   const relevantTagIds = getRelevantTagIds();
 
+  // --- RENDER UI ---
   return (
     <div
       className="min-h-screen text-white p-4 md:p-8"
@@ -298,17 +380,16 @@ export default function SearchServicePage() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* ... phần giao diện TRÁI giữ nguyên ... */}
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* CỘT TRÁI */}
+          {/* === CỘT TRÁI (SEARCH TOOLS) === */}
           <div className="lg:col-span-2 space-y-6 lg:sticky lg:top-8 lg:self-start">
-            {/* ... Upload và search form giữ nguyên ... */}
+            {/* 1. VISUAL SEARCH CARD */}
             <div className="bg-gray-800/50 backdrop-blur-md rounded-2xl p-6 border border-gray-700 shadow-2xl">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <Upload className="text-blue-400" /> AI Visual Search
               </h2>
-              {/* ... drag & drop ... */}
+
               <div
                 onDragOver={(e) => {
                   e.preventDefault();
@@ -366,12 +447,13 @@ export default function SearchServicePage() {
               )}
             </div>
 
+            {/* 2. TEXT SEARCH CARD */}
             <div className="bg-gray-800/50 backdrop-blur-md rounded-2xl p-6 border border-gray-700 shadow-2xl">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <Search className="text-purple-400" /> Tìm bằng mô tả
               </h2>
 
-              {/* TAGS GỢI Ý NHANH */}
+              {/* Tags suggestion */}
               <div className="bg-gray-800/30 rounded-2xl p-6 border border-gray-800 shadow-inner">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <Tag size={16} /> Gợi ý chủ đề nhanh
@@ -382,7 +464,7 @@ export default function SearchServicePage() {
                     return (
                       <button
                         key={tag.id}
-                        disabled={isLoading}
+                        disabled={isSearching || isLoadingData}
                         onClick={() => {
                           setSearchDescription(tag.name);
                           handleSearch(tag.query);
@@ -391,7 +473,7 @@ export default function SearchServicePage() {
                           ${isActive ? `${tag.color} text-white shadow-lg scale-105` : "bg-gray-700/40 text-gray-400 grayscale hover:grayscale-0 hover:bg-gray-700 hover:text-white"}
                           disabled:opacity-50 disabled:cursor-not-allowed`}
                       >
-                        {isLoading && isActive ? (
+                        {isSearching && isActive ? (
                           <Loader2 size={14} className="animate-spin" />
                         ) : (
                           <tag.icon size={14} />
@@ -403,6 +485,7 @@ export default function SearchServicePage() {
                 </div>
               </div>
 
+              {/* Search Input */}
               <div className="space-y-4 mt-4">
                 <div className="relative">
                   <input
@@ -412,6 +495,7 @@ export default function SearchServicePage() {
                     onChange={(e) => setSearchDescription(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     className="w-full px-4 py-3.5 bg-gray-900/50 border border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                    disabled={isLoadingData}
                   />
                   <Sparkles
                     size={18}
@@ -420,13 +504,15 @@ export default function SearchServicePage() {
                 </div>
                 <button
                   onClick={() => handleSearch()}
-                  disabled={isLoading}
+                  disabled={isSearching || isLoadingData}
                   className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? (
+                  {isSearching || isLoadingData ? (
                     <>
-                      <Loader2 size={20} className="animate-spin" /> AI đang
-                      phân tích...
+                      <Loader2 size={20} className="animate-spin" />
+                      {isLoadingData
+                        ? "Đang tải dữ liệu..."
+                        : "AI đang phân tích..."}
                     </>
                   ) : (
                     <>
@@ -438,9 +524,9 @@ export default function SearchServicePage() {
             </div>
           </div>
 
-          {/* CỘT PHẢI */}
+          {/* === CỘT PHẢI (RESULTS) === */}
           <div className="lg:col-span-3 space-y-8">
-            {/* 🌟 CẬP NHẬT: "Các chủ đề tìm kiếm liên quan" DỰA TRÊN amenities */}
+            {/* 3. RELATED TAGS HIGHLIGHT */}
             <div className="bg-gray-800/30 rounded-2xl p-6 border border-gray-800 shadow-inner">
               <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <Tag size={16} /> Các chủ đề tìm kiếm liên quan
@@ -449,11 +535,10 @@ export default function SearchServicePage() {
                 {hotelTags.map((tag) => {
                   const isActive = searchDescription === tag.name;
                   const isRelevant = relevantTagIds.has(tag.id);
-
                   return (
                     <button
                       key={tag.id}
-                      disabled={isLoading}
+                      disabled={isSearching}
                       onClick={() => {
                         setSearchDescription(tag.name);
                         handleSearch(tag.query);
@@ -462,7 +547,7 @@ export default function SearchServicePage() {
                         ${isActive || isRelevant ? `${tag.color} text-white shadow-lg scale-105 ring-2 ring-white/20` : "bg-gray-700/40 text-gray-400 grayscale hover:grayscale-0 hover:bg-gray-700 hover:text-white"}
                         disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
-                      {isLoading && isActive ? (
+                      {isSearching && isActive ? (
                         <Loader2 size={14} className="animate-spin" />
                       ) : (
                         <tag.icon size={14} />
@@ -477,7 +562,7 @@ export default function SearchServicePage() {
               </div>
             </div>
 
-            {/* KẾT QUẢ */}
+            {/* 4. RESULT GRID */}
             <div className="border border-gray-700/50 bg-gray-800/30 rounded-2xl p-6 backdrop-blur-md ">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                 <h2 className="text-2xl font-black">
@@ -503,50 +588,57 @@ export default function SearchServicePage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {searchResults.map((hotel) => (
-                  <Link
-                    key={hotel.id}
-                    href={`/hotels/${hotel.id}`}
-                    className="group bg-gray-800/40 rounded-2xl overflow-hidden border border-gray-800 hover:border-blue-500/50 transition-all block"
-                  >
-                    <div className="relative w-full h-44 overflow-hidden">
-                      <Image
-                        src={hotel.image}
-                        alt={hotel.name}
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute top-2 left-2 bg-blue-600/80 backdrop-blur-sm px-2 py-1 rounded-md text-[10px] font-bold">
-                        Khớp: {Math.round((hotel.score || 0.9) * 100)}%
+              {isLoadingData ? (
+                <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+                  <Loader2 size={40} className="animate-spin mb-4" />
+                  <p>Đang đồng bộ dữ liệu khách sạn...</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {searchResults.map((hotel) => (
+                    <Link
+                      key={hotel.id}
+                      href={`/hotels/${hotel.id}`} // Đảm bảo route này tồn tại trong Client App
+                      className="group bg-gray-800/40 rounded-2xl overflow-hidden border border-gray-800 hover:border-blue-500/50 transition-all block"
+                    >
+                      <div className="relative w-full h-44 overflow-hidden">
+                        <Image
+                          src={hotel.image}
+                          alt={hotel.name}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute top-2 left-2 bg-blue-600/80 backdrop-blur-sm px-2 py-1 rounded-md text-[10px] font-bold">
+                          Khớp: {Math.round((hotel.score || 0.9) * 100)}%
+                        </div>
                       </div>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-bold text-sm line-clamp-1 group-hover:text-blue-400">
-                        {hotel.name}
-                      </h3>
-                      <div className="flex flex-wrap gap-1 mt-2 mb-3">
-                        {hotel.amenities?.slice(0, 3).map((tag: string) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-0.5 bg-gray-700/50 text-[9px] text-gray-400 rounded-md border border-gray-600"
-                          >
-                            #{tag}
+                      <div className="p-4">
+                        <h3 className="font-bold text-sm line-clamp-1 group-hover:text-blue-400">
+                          {hotel.name}
+                        </h3>
+                        <div className="flex flex-wrap gap-1 mt-2 mb-3">
+                          {hotel.amenities?.slice(0, 3).map((tag: string) => (
+                            <span
+                              key={tag}
+                              className="px-2 py-0.5 bg-gray-700/50 text-[9px] text-gray-400 rounded-md border border-gray-600"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex justify-between items-center mt-auto">
+                          <span className="text-blue-400 font-black text-xs">
+                            {hotel.price}
                           </span>
-                        ))}
+                          <span className="text-[9px] font-bold uppercase text-gray-500">
+                            Chi tiết →
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex justify-between items-center mt-auto">
-                        <span className="text-blue-400 font-black text-xs">
-                          {hotel.price}
-                        </span>
-                        <span className="text-[9px] font-bold uppercase text-gray-500">
-                          Chi tiết →
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
