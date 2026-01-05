@@ -37,7 +37,7 @@ CREATE TABLE "hotels" (
     "description" TEXT NOT NULL,
     "price" DECIMAL(12,2) NOT NULL,
     "address" TEXT NOT NULL,
-    "reviewStart" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "reviewStar" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "reviewCount" INTEGER NOT NULL DEFAULT 0,
     "viewCount" INTEGER NOT NULL DEFAULT 0,
     "commentCount" INTEGER NOT NULL DEFAULT 0,

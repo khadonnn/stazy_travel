@@ -64,7 +64,7 @@ const StripePaymentForm = ({ bookingInfo }: StripePaymentFormProps) => {
       hotelId: firstItem?.hotelId, // Lấy ID khách sạn (cần thêm vào CartItem)
       hotelName: firstItem?.name, // Lấy Tên khách sạn (cần thêm vào CartItem)
       hotelImage: firstItem?.featuredImage,
-      hotelStars: firstItem?.reviewStart,
+      hotelStars: firstItem?.reviewStar,
       roomId: firstItem?.id,
       roomName: firstItem?.name,
     };

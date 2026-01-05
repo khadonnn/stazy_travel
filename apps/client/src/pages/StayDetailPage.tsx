@@ -207,7 +207,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       ...stayData,
       hotelId: stayData.id,
       name: stayData.title,
-      reviewStart: stayData.reviewStart ?? 0,
+      reviewStar: stayData.reviewStar ?? 0,
       nights,
       totalGuests: guests.adults + guests.children + guests.infants,
     });
@@ -255,7 +255,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     title,
     category,
     address,
-    reviewStart,
+    reviewStar,
     reviewCount,
     maxGuests,
     bedrooms,
@@ -358,7 +358,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
         </h2>
 
         <div className="flex items-center space-x-4">
-          <StartRating point={reviewStart} reviewCount={reviewCount} />
+          <StartRating point={reviewStar} reviewCount={reviewCount} />
           <span>·</span>
           <div className="flex items-center text-sm text-neutral-600 dark:text-neutral-400">
             <MapPin className="w-4 h-4 mr-1" />
@@ -714,7 +714,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
             </div>
             <div className="mt-2">
               <StartRating
-                point={stayData.reviewStart}
+                point={stayData.reviewStar}
                 reviewCount={stayData.reviewCount}
               />
             </div>

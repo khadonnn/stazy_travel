@@ -5,7 +5,7 @@ export type HotelColumn = {
   featuredImage: string;
   price: number | string; // Prisma Decimal thường trả về string hoặc number ở frontend
   address: string;
-  reviewStart: number; // Float trong DB
+  reviewStar: number; // Float trong DB
   reviewCount: number;
   description: string;
   category?: {
@@ -44,8 +44,8 @@ export type ProductType = {
 
   address: string;
 
-  // Lưu ý: JSON của bạn là 'reviewStart' (chữ 't' ở cuối), không phải 'Star'
-  reviewStart?: number;
+  // Lưu ý: JSON của bạn là 'reviewStar' (chữ 't' ở cuối), không phải 'Star'
+  reviewStar?: number;
   reviewCount?: number;
   viewCount?: number;
   like?: boolean;

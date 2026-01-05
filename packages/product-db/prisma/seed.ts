@@ -156,13 +156,13 @@ async function main() {
   console.log(`🏨 Đang xử lý ${hotelsData.length} Hotels...`);
 
   for (const hotel of hotelsData) {
-    const { id, category, reviewStart, ...rest } = hotel;
+    const { id, category, reviewStar, ...rest } = hotel;
 
     // Chuẩn bị data (loại bỏ field dư thừa, format date)
     const hotelInput = {
       ...rest,
       categoryId: rest.categoryId,
-      reviewStar: reviewStart || rest.reviewStar || 0, // Fix naming cũ/mới
+      reviewStar: reviewStar || rest.reviewStar || 0, // Fix naming cũ/mới
 
       // Map JSON array sang PostgreSQL array (Text[])
       galleryImgs: rest.galleryImgs || [],

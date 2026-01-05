@@ -79,7 +79,7 @@ export type CartItem = {
   title: string; // Tên khách sạn (Khớp Hotel.title)
   slug: string; // Slug khách sạn (Khớp Hotel.slug)
   featuredImage: string; // Ảnh đại diện (Khớp Hotel.featuredImage)
-  reviewStart: number; // Số sao (Khớp Hotel.reviewStart)
+  reviewStar: number; // Số sao (Khớp Hotel.reviewStar)
   address: string; // Địa chỉ (Khớp Hotel.address)
 
   // --- C. THÔNG TIN ĐẶT ---
@@ -104,7 +104,7 @@ export type FullPaymentData = {
   hotelId?: number;
   hotelName?: string; // Map từ item.title
   hotelImage?: string; // Map từ item.featuredImage
-  hotelStars?: number; // Map từ item.reviewStart
+  hotelStars?: number; // Map từ item.reviewStar
 
   roomId?: number; // Map từ item.id
   roomName?: string; // Map từ item.name

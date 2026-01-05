@@ -132,13 +132,13 @@ export const columns: ColumnDef<ProductType>[] = [
         id: 'metrics',
         header: 'Performance',
         cell: ({ row }) => {
-            const { viewCount, commentCount, reviewStart, reviewCount } = row.original;
+            const { viewCount, commentCount, reviewStar, reviewCount } = row.original;
 
             return (
                 <div className="flex flex-col gap-1 text-xs text-gray-500">
                     <div className="flex items-center gap-1">
                         <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
-                        <span className="font-semibold text-gray-700">{reviewStart}</span>
+                        <span className="font-semibold text-gray-700">{reviewStar}</span>
                         <span>({reviewCount})</span>
                     </div>
                     <div className="flex items-center gap-3">

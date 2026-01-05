@@ -43,7 +43,7 @@ const fetchStays = async (): Promise<HotelFrontend[]> => {
         description: hotel.description || "Chưa có mô tả",
         price: hotel.price ?? 500000,
         address: hotel.address || "Địa chỉ không xác định",
-        reviewStart: hotel.reviewStart ?? 4.5,
+        reviewStar: hotel.reviewStar ?? 4.5,
         reviewCount: hotel.reviewCount ?? 10,
         commentCount: hotel.commentCount ?? 5,
         viewCount: hotel.viewCount ?? 100,

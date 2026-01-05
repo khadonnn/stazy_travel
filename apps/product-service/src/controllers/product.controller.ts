@@ -240,7 +240,7 @@ export const createHotel = async (req: Request, res: Response) => {
         viewCount: Number(data.viewCount) || 0,
 
         // Check kỹ tên trường trong Prisma nhé
-        reviewStart: Number(data.reviewStart) || 0,
+        reviewStar: Number(data.reviewStar) || 0,
         commentCount: Number(data.commentCount) || 0,
 
         like: Boolean(data.like), // Ép về boolean
@@ -272,11 +272,9 @@ export const createHotel = async (req: Request, res: Response) => {
 
     // Xử lý lỗi trùng Slug (Mã lỗi P2002 của Prisma)
     if (error.code === "P2002" && error.meta?.target?.includes("slug")) {
-      return res
-        .status(409)
-        .json({
-          message: "Tên khách sạn (Slug) đã tồn tại, vui lòng đổi tên khác.",
-        });
+      return res.status(409).json({
+        message: "Tên khách sạn (Slug) đã tồn tại, vui lòng đổi tên khác.",
+      });
     }
 
     res.status(500).json({ message: "Create failed", error: error.message });
@@ -388,7 +386,7 @@ export const getRelatedHotels = async (req: Request, res: Response) => {
         take: limit,
         skip: skip,
         orderBy: {
-          viewCount: "desc", // Ưu tiên hiện cái nào nhiều view (hoặc reviewStart)
+          viewCount: "desc", // Ưu tiên hiện cái nào nhiều view (hoặc reviewStar)
         },
         // Chọn các trường cần thiết để hiển thị Card (không cần lấy hết description dài dòng)
         select: {
@@ -398,7 +396,7 @@ export const getRelatedHotels = async (req: Request, res: Response) => {
           price: true,
           address: true,
           featuredImage: true,
-          reviewStart: true,
+          reviewStar: true,
           reviewCount: true,
           saleOff: true,
         },

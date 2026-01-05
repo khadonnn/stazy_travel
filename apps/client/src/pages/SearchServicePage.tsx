@@ -38,7 +38,7 @@ export type ProductType = {
   description: string;
   price: number;
   address: string;
-  reviewStart?: number; // Backend trả về reviewStart
+  reviewStar?: number; // Backend trả về reviewStar
   reviewCount?: number;
   viewCount?: number;
   like?: boolean;
@@ -167,7 +167,7 @@ export default function SearchServicePage() {
           id: stay.id,
           name: stay.title,
           price: stay.price.toLocaleString("vi-VN") + "đ",
-          rating: stay.reviewStart || 5,
+          rating: stay.reviewStar || 5,
           image: stay.featuredImage,
           amenities: stay.amenities || [],
           score: matchInfo?.score || 0.9,
@@ -219,7 +219,7 @@ export default function SearchServicePage() {
           id: stay.id,
           name: stay.title,
           price: stay.price.toLocaleString("vi-VN") + "đ",
-          rating: stay.reviewStart || 5,
+          rating: stay.reviewStar || 5,
           image: stay.featuredImage,
           amenities: stay.amenities,
           score: 0.95,

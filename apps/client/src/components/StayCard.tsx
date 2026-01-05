@@ -30,7 +30,7 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
     saleOffPercent, // ✅ Trường mới (Int) lấy từ API
     isAds,
     price,
-    reviewStart,
+    reviewStar,
     reviewCount,
     id,
   } = data || {};
@@ -119,8 +119,8 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
             </span>
           )}
         </span>
-        {!!reviewStart && (
-          <StartRating reviewCount={reviewCount} point={reviewStart} />
+        {!!reviewStar && (
+          <StartRating reviewCount={reviewCount} point={reviewStar} />
         )}
       </div>
     </div>

@@ -2,7 +2,7 @@
   Warnings:
 
   - You are about to drop the column `date` on the `hotels` table. All the data in the column will be lost.
-  - You are about to drop the column `reviewStart` on the `hotels` table. All the data in the column will be lost.
+  - You are about to drop the column `reviewStar` on the `hotels` table. All the data in the column will be lost.
   - You are about to drop the column `action` on the `interactions` table. All the data in the column will be lost.
   - You are about to drop the column `createdAt` on the `interactions` table. All the data in the column will be lost.
   - You are about to drop the column `weight` on the `interactions` table. All the data in the column will be lost.
@@ -34,7 +34,7 @@ ALTER TABLE "recommendations" DROP CONSTRAINT "recommendations_userId_fkey";
 
 -- AlterTable
 ALTER TABLE "hotels" DROP COLUMN "date",
-DROP COLUMN "reviewStart",
+DROP COLUMN "reviewStar",
 ADD COLUMN     "accessibility" TEXT[],
 ADD COLUMN     "cancellationRate" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
 ADD COLUMN     "fullDescription" TEXT,

@@ -12,7 +12,7 @@ export interface StayApiResponse {
   description?: string;
   address: string;
   price: number;
-  reviewStart: number;
+  reviewStar: number;
   reviewCount: number;
   like: boolean;
   saleOff?: string;

@@ -237,7 +237,7 @@ def generate_stays(count=100):
             "price": base_price, 
             "address": f"{random.randint(1,999)} Đường {loc}, Việt Nam",
             
-            "reviewStar": round(random.uniform(3.8, 5.0), 1), # Đã sửa reviewStart -> reviewStar
+            "reviewStar": round(random.uniform(3.8, 5.0), 1), # Đã sửa reviewStar -> reviewStar
             "reviewCount": random.randint(10, 500),
             "viewCount": random.randint(100, 2000),
             "commentCount": random.randint(0, 50),

@@ -1,24 +1,24 @@
-type Gender = 'male' | 'female';
-type Role = 'USER' | 'AUTHOR' | 'ADMIN';
+type Gender = "male" | "female";
+type Role = "USER" | "AUTHOR" | "ADMIN";
 
 export interface User {
-    id: string;
-    email: string;
-    password: string;
-    name: string;
-    nickname: string;
-    phone: string;
-    gender: Gender;
-    dob: string; // hoặc Date nếu đã parse
-    address: string;
-    avatar: string;
-    bgImage: string;
-    jobName: string;
-    desc: string;
-    role: Role;
-    createdAt: string;
-    updatedAt: string;
-    posts: { id: number }[];
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  nickname: string;
+  phone: string;
+  gender: Gender;
+  dob: string; // hoặc Date nếu đã parse
+  address: string;
+  avatar: string;
+  bgImage: string;
+  jobName: string;
+  desc: string;
+  role: Role;
+  createdAt: string;
+  updatedAt: string;
+  posts: { id: number }[];
 }
 // example
 /* 
@@ -66,7 +66,7 @@ city: "Đà Nẵng",
 district: "Sơn Trà",
 map: { lat: 16.0544, lng: 108.2518 },
 category: "villa",
-reviewStart: 4.8,
+reviewStar: 4.8,
 reviewCount: 127,
 commentCount: 42,
 viewCount: 3450,
@@ -94,7 +94,7 @@ status: 'published',
 //     price: number; // Giá
 //     address: string; // Địa chỉ
 //     category: StayCategory; //  Loại (Hotel/Resort/Villa/Homestay)
-//     reviewStart: number; // Điểm trung bình (ví dụ: 4.5)
+//     reviewStar: number; // Điểm trung bình (ví dụ: 4.5)
 //     reviewCount: number; // Số review
 //     commentCount: number; // Số comment
 //     viewCount: number; // Số lượt xem

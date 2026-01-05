@@ -148,7 +148,7 @@ export interface StayDataType {
   district?: string;
 
   // Ratings & Stats
-  reviewStart?: number;
+  reviewStar?: number;
   reviewCount?: number;
   commentCount?: number;
   viewCount?: number;
@@ -198,7 +198,7 @@ export interface StayDataType {
 //   category?: StayCategory;
 //   categoryId?: number;
 
-//   reviewStart?: number; // Điểm trung bình (1–10 hoặc 1–5 → thống nhất)
+//   reviewStar?: number; // Điểm trung bình (1–10 hoặc 1–5 → thống nhất)
 //   reviewCount?: number;
 //   commentCount?: number;
 
