@@ -10,11 +10,13 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from clerk_backend_api import Clerk
 from sentence_transformers import SentenceTransformer, util
-
+from pydantic import BaseModel
 # Import logic từ các file trong src
 from src.embedding import get_image_vector, get_text_vector
 from src.search import find_top_matches
 from src.recommend import get_recommendations_for_user
+from agent import run_agent_logic
+from typing import List, Dict
 
 # 1. CẤU HÌNH HỆ THỐNG
 load_dotenv()
@@ -46,6 +48,10 @@ try:
 except FileNotFoundError:
     print("⚠️ Warning: hotel_vectors.json not found. Search results might be empty.")
 
+class ChatRequest(BaseModel):
+    message: str
+    user_id: str = "guest"
+    history: List[Dict[str, str]] = []
 # --- ENDPOINTS ---
 
 
@@ -137,30 +143,25 @@ async def search_url(data: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/agent/chat")
-async def agent_chat(data: dict):
+async def agent_chat(data: ChatRequest):
     """
-    Input: { "message": "Tìm villa Đà Lạt ngày mai cho 2 người" }
+    Endpoint xử lý chat thông minh.
+    Input: { "message": "...", "user_id": "..." }
     """
-    user_message = data.get("message")
-    if not user_message:
+    if not data.message:
         raise HTTPException(status_code=400, detail="Missing message")
 
     try:
-        # 1. Gọi Agent để phân tích ý định (Dùng Groq/Llama3)
-        intent = analyze_user_query(user_message)
+        print(f"📩 Chat request from {data.user_id}: {data.message}")
         
-        # In ra để debug xem Llama 3 trả về gì
-        print("🔍 Intent extracted:", intent.model_dump())
-
-        # 2. (Tạm thời) Trả về kết quả ngay để Test Frontend
-        # Sau này chúng ta sẽ chèn logic Search Database vào đây
+        # ✅ SỬA LỖI Ở ĐÂY: Gọi hàm run_agent_logic thay vì analyze_user_query
+        response_data = run_agent_logic(data.message, data.user_id, data.history)
         
-        return {
-            "intent": intent.model_dump(), # Trả về JSON cấu trúc cho Frontend điền form
-            "results": [], # Chưa search DB nên tạm để rỗng
-            "agent_response": f"Tôi đã hiểu! Bạn muốn tìm phòng tại {intent.location} với mức giá khoảng {intent.max_price} VND. Tôi đã cập nhật bộ lọc cho bạn."
-        }
+        return response_data
 
+    except Exception as e:
+        print(f"❌ Agent Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         print(f"❌ Agent Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

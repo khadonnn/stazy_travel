@@ -6,7 +6,7 @@ import { Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link"; // SỬ DỤNG LINK CỦA NEXT.JS
 import PaginationCus from "@/components/PaginationCus";
-import api from "@/lib/api/axios"; // Axios instance đã cấu hình
+import axios from "axios";
 import type { TwMainColor } from "@/types/stay";
 import { mapStay } from "@/lib/mappers/listings";
 import type { StayApiResponse } from "@/lib/mappers/listings";
@@ -28,7 +28,9 @@ const fetchStays = async (): Promise<HotelFrontend[]> => {
   const mapStaticStays = (): HotelFrontend[] =>
     homeStayDataJson.slice(0, 8).map((hotel) => {
       // ✅ Chuẩn hóa date → Date
-      const parsedDate = hotel.date ? new Date(hotel.date) : new Date();
+      const parsedDate = hotel.createdAt
+        ? new Date(hotel.createdAt)
+        : new Date();
 
       return {
         id: hotel.id,
@@ -58,7 +60,14 @@ const fetchStays = async (): Promise<HotelFrontend[]> => {
         // ⚠️ Nếu HotelFrontend có thêm createdAt/updatedAt — đảm bảo cung cấp nếu không optional
         createdAt: parsedDate,
         updatedAt: parsedDate,
-      };
+        fullDescription: "", // Hoặc ""
+        nearbyLandmarks: [], // Mặc định mảng rỗng
+        tags: [], // Mặc định mảng rỗng
+        suitableFor: [],
+        accessibility: [], // Mặc định mảng rỗng hoặc ["wheelchair accessible"]
+        cancellationRate: 0, // Mặc định số 0
+        policies: [],
+      } as unknown as HotelFrontend;
     });
 
   if (FORCE_FALLBACK) {
@@ -69,7 +78,9 @@ const fetchStays = async (): Promise<HotelFrontend[]> => {
 
   try {
     console.log("📡 Calling API /hotels...");
-    const res = await api.get("/hotels");
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL || "http://localhost:8000"}/hotels`
+    );
     console.log("✅ API Response received.");
 
     // Giả định cấu trúc response là res.data.data

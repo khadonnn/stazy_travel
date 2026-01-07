@@ -10,14 +10,26 @@ import numpy as np
 INPUT_FILE = "jsons/__interactions.json"
 OUTPUT_FILE = "jsons/__recommendations.json"
 
-# Định nghĩa trọng số cho các hành động (Khớp logic toàn hệ thống)
+# Định nghĩa trọng số (Implicit Feedback Score) khớp với luận văn
 WEIGHT_MAP = {
-    "VIEW": 1,            # Xem: Thể hiện sự tò mò
-    "SHARE": 2,           # Share: Thể hiện sự quan tâm
-    "LIKE": 3,            # Like: Thích thú
-    "CLICK_BOOK_NOW": 4,  # Ý định mua cao
-    "BOOK": 5,            # Đã mua: Tương tác mạnh nhất
-    "SEARCH_QUERY": 0.5   # Tìm kiếm: Tín hiệu yếu
+    # --- Tín hiệu ngữ cảnh (Yếu) ---
+    "SEARCH_QUERY": 0.5,    
+    "FILTER_APPLIED": 0.5,  
+
+    # --- Tín hiệu quan tâm (Tăng dần) ---
+    "VIEW": 1.0,            
+    "SHARE": 2.0,           
+    "LIKE": 3.0,            
+    
+    # --- Tín hiệu ý định mua (Cao) ---
+    "CLICK_BOOK_NOW": 4.0,  
+    "BOOK": 5.0,            
+    
+    # --- Tín hiệu cam kết sau mua ---
+    "RATING": 6.0,          # Trọng số cao nhất vì đã trải nghiệm thực tế
+
+    # --- Tín hiệu tiêu cực ---
+    "CANCEL": -5.0          # Phạt nặng để loại bỏ khỏi danh sách quan tâm
 }
 
 def main():
@@ -35,23 +47,35 @@ def main():
         print("❌ File interaction rỗng!")
         return
 
-    # 2. Tiền xử lý (Map Type -> Weight)
+    # 2. Tiền xử lý
     df = pd.DataFrame(data)
     
+    # BƯỚC QUAN TRỌNG: Loại bỏ các tương tác không gắn với Hotel cụ thể
+    # (Ví dụ: SEARCH_QUERY, FILTER_APPLIED thường có hotelId = null)
+    # Collaborative Filtering bắt buộc phải có Item ID.
+    original_len = len(df)
+    df = df[df['hotelId'].notna()]
+    print(f"🧹 Đã lọc bỏ {original_len - len(df)} dòng (Search/Filter không có hotelId).")
+    
     # Map loại hành động sang điểm số
-    # Nếu type không có trong map, mặc định là 1
     df['weight'] = df['type'].map(WEIGHT_MAP).fillna(1)
 
-    print(f"📊 Dữ liệu: {len(df)} tương tác. Đang tạo User-Item Matrix...")
+    print(f"📊 Dữ liệu sạch: {len(df)} dòng. Đang tạo User-Item Matrix...")
 
     # 3. Tạo Ma trận User-Item
     # Rows: User, Cols: Hotel, Values: Tổng trọng số (Sum)
-    # Ví dụ: Xem (1) + Like (3) = 4 điểm cho hotel đó
+    # Logic: VIEW(1) + LIKE(3) = 4. 
+    # Logic: BOOK(5) + CANCEL(-5) = 0 (Không gợi ý nữa).
     user_item_matrix = df.pivot_table(index='userId', columns='hotelId', values='weight', aggfunc='sum').fillna(0)
 
     # 4. Tính độ tương đồng (Collaborative Filtering - User Based)
     print("🧮 Đang tính Cosine Similarity...")
-    # Tính ma trận tương đồng giữa các User
+    
+    # Chỉ tính nếu ma trận không rỗng
+    if user_item_matrix.shape[0] == 0 or user_item_matrix.shape[1] == 0:
+        print("⚠️ Ma trận rỗng, không thể tính toán.")
+        return
+
     user_similarity = cosine_similarity(user_item_matrix)
     user_sim_df = pd.DataFrame(user_similarity, index=user_item_matrix.index, columns=user_item_matrix.index)
 
@@ -61,28 +85,33 @@ def main():
             return None
 
         # Lấy 10 người giống user này nhất (bỏ qua chính mình)
+        # Sắp xếp giảm dần độ tương đồng
         sim_users = user_sim_df[user_id].sort_values(ascending=False).iloc[1:11]
         
         recommended_hotels = {} # { hotel_id: predicted_score }
         
         for similar_user, similarity_score in sim_users.items():
+            # Nếu độ tương đồng quá thấp thì bỏ qua để tránh nhiễu
+            if similarity_score < 0.1: continue
+
             # Lấy lịch sử của người "hàng xóm"
             neighbor_history = user_item_matrix.loc[similar_user]
-            # Lấy những hotel mà hàng xóm đã tương tác (score > 0)
+            
+            # Chỉ xét những hotel mà hàng xóm có tương tác TÍCH CỰC (score > 0)
+            # Nếu hàng xóm Cancel (score <= 0) thì không gợi ý
             liked_hotels = neighbor_history[neighbor_history > 0].index.tolist()
             
             for hotel in liked_hotels:
-                # Chỉ gợi ý những hotel mà User hiện tại CHƯA xem/tương tác
+                # Chỉ gợi ý những hotel mà User hiện tại CHƯA tương tác (hoặc tương tác = 0)
                 if user_item_matrix.loc[user_id, hotel] == 0:
                     # Công thức: Score = Độ giống nhau * Điểm hứng thú của hàng xóm
                     score = similarity_score * neighbor_history[hotel]
                     recommended_hotels[hotel] = recommended_hotels.get(hotel, 0) + score
 
-        # Chuẩn hóa điểm số về thang 0.0 -> 1.0 (cho đẹp UI: 98% Match)
         if not recommended_hotels:
             return None
 
-        # Sort lấy top N
+        # Sort lấy top N điểm cao nhất
         sorted_recs = sorted(recommended_hotels.items(), key=lambda x: x[1], reverse=True)[:top_n]
         
         # Normalize score (chia cho max score để ra %)
@@ -92,7 +121,11 @@ def main():
         result_scores = {}
         
         for hotel_id, raw_score in sorted_recs:
-            final_score = round((raw_score / max_score) * 0.95 + 0.04, 2) # Trick để score đẹp (0.05 -> 0.99)
+            # Trick: Chuyển raw score thành % đẹp mắt (0.6 -> 0.99) để hiển thị UI
+            # Không dùng raw_score trực tiếp vì nó phụ thuộc vào độ lớn matrix
+            final_score = round((raw_score / max_score) * 0.4 + 0.55, 2) # Range từ 0.55 đến 0.95
+            
+            # Ép kiểu int cho ID để khớp Prisma
             result_ids.append(int(hotel_id))
             result_scores[str(hotel_id)] = final_score
             
@@ -110,7 +143,7 @@ def main():
             recommendations_export.append({
                 "userId": user_id,
                 "hotelIds": ids,
-                "score": scores # Output thêm cái này để Frontend hiển thị "98% phù hợp"
+                "score": scores 
             })
             count += 1
 

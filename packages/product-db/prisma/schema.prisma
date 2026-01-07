@@ -278,9 +278,10 @@ enum InteractionType {
   SHARE           // Chia sẻ
   BOOK            // Đặt phòng thành công
   CLICK_BOOK_NOW  // Bấm nút đặt nhưng chưa thanh toán (High intent)
-  CANCEL_BOOKING  // Hủy (Negative signal)
+  CANCEL  // Hủy (Negative signal)
   SEARCH_QUERY    // Tìm kiếm (Lưu vào metadata)
   FILTER_APPLIED  // Lọc
+  RATING
 }
 
 // Bảng riêng để lưu Recommendation Cache

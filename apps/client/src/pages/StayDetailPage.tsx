@@ -294,53 +294,68 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
 
   // --- RENDER SUB-COMPONENTS ---
   const renderHeaderImages = () => {
+    // 1. Chuẩn bị danh sách ảnh: Ảnh chính + 4 ảnh phụ
     const mainImage = featuredImage || "/placeholder.jpg";
-    const thumbs = galleryImgs?.slice(0, 4) || [];
+
+    // Đảm bảo luôn lấy đủ 4 ảnh cho khung bên phải (nếu thiếu thì mảng sẽ ít hơn, layout sẽ tự xử lý ở dưới)
+    const subImages = galleryImgs?.slice(1, 5) || [];
+
+    // Nếu không có đủ 4 ảnh phụ, ta cần logic để lấp đầy hoặc ẩn bớt (để đơn giản ta hiển thị những gì có)
+    // Để layout đẹp nhất, chiều cao nên responsive: Mobile thấp, Desktop cao vừa phải (khoảng 500-600px)
 
     return (
       <header className="rounded-md sm:rounded-xl overflow-hidden relative mt-4">
-        <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr] gap-2 h-[636px]">
+        {/* SỬ DỤNG GRID CHUẨN: 4 cột x 2 dòng */}
+        <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-2 h-[400px] md:h-[500px] lg:h-[600px]">
+          {/* ẢNH CHÍNH (BÊN TRÁI): Chiếm 2 cột, 2 dòng (full chiều cao bên trái) */}
           <div
-            className="relative rounded-md overflow-hidden cursor-pointer h-full"
+            className="md:col-span-2 md:row-span-2 relative cursor-pointer group"
             onClick={() => handleOpenModalImageGallery(0)}
           >
             <img
               src={mainImage}
               alt={title}
-              className="w-full h-full object-cover rounded-md sm:rounded-xl hover:scale-105 transition-transform duration-500"
-              loading="lazy"
+              className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 hover:opacity-20 transition-opacity" />
+            <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-15 transition-opacity duration-300" />
           </div>
 
-          <div className="grid grid-cols-2 grid-rows-2 gap-2 h-full">
-            {thumbs.map((img: string, index: number) => (
-              <div
-                key={index}
-                className={`relative rounded-md overflow-hidden ${!img ? "bg-neutral-100" : ""}`}
-                onClick={() => handleOpenModalImageGallery(index + 1)}
-              >
-                <img
-                  src={img || "/placeholder.jpg"}
-                  alt={`Gallery ${index}`}
-                  className="w-full h-full object-cover rounded-md sm:rounded-xl hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 hover:opacity-20 transition-opacity" />
-              </div>
-            ))}
-          </div>
-
-          <button
-            className="absolute left-3 bottom-3 z-10 hidden md:flex items-center px-4 py-2 rounded-xl bg-neutral-100 text-neutral-500 hover:bg-neutral-200"
-            onClick={() => handleOpenModalImageGallery(0)}
-          >
-            <GalleryVerticalEnd className="w-5 h-5" />
-            <span className="ml-2 text-neutral-800 text-sm font-medium">
-              Xem tất cả ảnh
-            </span>
-          </button>
+          {/* CÁC ẢNH PHỤ (BÊN PHẢI): Tự động lấp vào các ô còn lại */}
+          {/* Logic: Nếu có ảnh thì hiện, nếu thiếu thì ô đó sẽ trống hoặc ta có thể render placeholder */}
+          {subImages.length > 0
+            ? subImages.map((img, index) => (
+                <div
+                  key={index}
+                  className="relative cursor-pointer group overflow-hidden"
+                  onClick={() => handleOpenModalImageGallery(index + 1)}
+                >
+                  <img
+                    src={img || "/placeholder.jpg"}
+                    alt={`Gallery ${index}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-15 transition-opacity duration-300" />
+                </div>
+              ))
+            : // Nếu không có ảnh phụ nào, hiển thị placeholder để giữ khung không bị vỡ (tuỳ chọn)
+              [1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="bg-neutral-100 w-full h-full flex items-center justify-center text-neutral-400"
+                >
+                  <span className="text-xs">No Image</span>
+                </div>
+              ))}
         </div>
+
+        {/* Nút xem tất cả ảnh */}
+        <button
+          className="absolute right-3 bottom-3 z-10 hidden md:flex items-center px-4 py-2 rounded-lg bg-white/90 text-neutral-800 hover:bg-white shadow-sm transition-colors text-sm font-medium"
+          onClick={() => handleOpenModalImageGallery(0)}
+        >
+          <GalleryVerticalEnd className="w-4 h-4 mr-2" />
+          Xem tất cả ảnh
+        </button>
       </header>
     );
   };

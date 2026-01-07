@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import { CalendarIcon } from "lucide-react";
 import {
@@ -63,17 +64,19 @@ export default function StayDatesRangeInput({
   const popoverKey = isSSR ? "ssr" : "csr";
   return (
     <Popover open={open} onOpenChange={setOpen} key={popoverKey}>
-      <PopoverTrigger
-        className={cn(
-          "flex-1 z-10 flex relative items-center space-x-4 focus:outline-none",
-          fieldClassName,
-          className,
-          open && "cus-hero-field-focused"
-        )}
-        id=""
-      >
-        {renderInput()}
-        {date?.from && <ClearDataButton onClick={() => setDate(undefined)} />}
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={cn(
+            "flex-1 z-10 flex relative items-center space-x-4 focus:outline-none",
+            fieldClassName,
+            className,
+            open && "cus-hero-field-focused"
+          )}
+        >
+          {renderInput()}
+          {date?.from && <ClearDataButton onClick={() => setDate(undefined)} />}
+        </button>
       </PopoverTrigger>
 
       <PopoverContent className="w-auto p-0 bg-white dark:bg-neutral-800 rounded-3xl shadow-lg overflow-hidden">

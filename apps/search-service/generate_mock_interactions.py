@@ -37,18 +37,36 @@ INTERACTION_TYPES = [
     "CLICK_BOOK_NOW",  # Bấm đặt nhưng chưa thanh toán
     "BOOK",            # Đặt thành công
     "SHARE",           # Chia sẻ
-    "SEARCH_QUERY"     # Tìm kiếm (Sẽ làm riêng nếu cần)
+    "SEARCH_QUERY",     # Tìm kiếm (Sẽ làm riêng nếu cần)
+    "FILTER_APPLIED",
+    "RATING",           # Đánh giá (Sẽ làm riêng nếu cần)
+    "CANCEL"          # Hủy đặt phòng (Negative signal)
+
 ]
 
 # Trọng số cho từng hành động (để tính toán sơ bộ)
+# Trọng số cho từng hành động (Implicit Feedback Score)
 WEIGHT_MAP = {
-    "VIEW": 1,
-    "SHARE": 2,
-    "LIKE": 3,
-    "CLICK_BOOK_NOW": 4,
-    "BOOK": 5
-}
+    # --- Tín hiệu ngữ cảnh (Yếu) ---
+    "SEARCH_QUERY": 0.5,    # Thể hiện nhu cầu chung, chưa nhắm cụ thể hotel nào
+    "FILTER_APPLIED": 0.5,  # Ràng buộc, chưa phải là thích thú
 
+    # --- Tín hiệu quan tâm (Tăng dần) ---
+    "VIEW": 1.0,            # Tò mò xem thử
+    "SHARE": 2.0,           # Muốn lưu lại hoặc rủ người khác
+    "LIKE": 3.0,            # Thể hiện sở thích rõ ràng
+    
+    # --- Tín hiệu ý định mua (Cao) ---
+    "CLICK_BOOK_NOW": 4.0,  # Intent rất cao (High Intent)
+    "BOOK": 5.0,            # Conversion (Mục tiêu cuối cùng)
+    
+    # --- Tín hiệu cam kết sau mua ---
+    "RATING": 6.0,          # User đã ở và quay lại đánh giá -> Tương tác sâu nhất
+                            # (Lưu ý: Điểm số thực tế 1-5 sao sẽ nằm trong metadata)
+
+    # --- Tín hiệu tiêu cực ---
+    "CANCEL": -5.0          # Phạt nặng: Đã đặt nhưng hủy -> Không nên gợi ý lại ngay
+}
 def load_json(path):
     try:
         with open(path, "r", encoding="utf-8") as f:

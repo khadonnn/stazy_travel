@@ -65,14 +65,14 @@ async function main() {
       id: 1,
       name: "Khách sạn",
       slug: "khach-san",
-      icon: "HiOutlineOfficeBuilding",
+      icon: "🏨",
     },
-    { id: 2, name: "Homestay", slug: "homestay", icon: "HiOutlineHome" },
-    { id: 3, name: "Resort", slug: "resort", icon: "HiOutlineSun" },
-    { id: 4, name: "Biệt thự", slug: "biet-thu", icon: "HiOutlineKey" },
-    { id: 5, name: "Căn hộ", slug: "can-ho", icon: "HiOutlineBuildingOffice2" },
-    { id: 6, name: "Nhà gỗ", slug: "nha-go", icon: "HiOutlineTree" },
-    { id: 7, name: "Khác", slug: "khac", icon: "HiOutlineDotsHorizontal" },
+    { id: 2, name: "Homestay", slug: "homestay", icon: "🏡" },
+    { id: 3, name: "Resort", slug: "resort", icon: "🏖️" },
+    { id: 4, name: "Biệt thự", slug: "biet-thu", icon: "🏰" },
+    { id: 5, name: "Căn hộ", slug: "can-ho", icon: "🏢" },
+    { id: 6, name: "Nhà gỗ", slug: "nha-go", icon: "🏕️" },
+    { id: 7, name: "Khác", slug: "khac", icon: "🌍" },
   ];
 
   for (const cat of categories) {

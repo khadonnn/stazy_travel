@@ -12,7 +12,7 @@ import { HotelFrontend } from "@repo/types";
 
 export interface StayCardProps {
   className?: string;
-  data?: HotelFrontend;
+  data?: HotelFrontend | Partial<HotelFrontend>;
   size?: "default" | "small";
 }
 

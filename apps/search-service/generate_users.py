@@ -9,7 +9,7 @@ from unidecode import unidecode
 fake = Faker(["vi_VN"])
 
 # --- CẤU HÌNH ---
-NUM_USERS = 50 
+NUM_USERS = 200 
 OUTPUT_FILE = "jsons/__users.json"
 
 STREETS = [
