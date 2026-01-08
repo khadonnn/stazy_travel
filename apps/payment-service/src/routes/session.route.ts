@@ -5,44 +5,47 @@ import type { FullPaymentData } from "@repo/types";
 import { v4 as uuidv4 } from "uuid";
 
 const sessionRoute = new Hono();
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3002";
 
 sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
   try {
+    // Ép kiểu body theo FullPaymentData
     const body = (await c.req.json()) as FullPaymentData;
     const { items, user, checkInDate, checkOutDate } = body;
     const userId = c.get("userId");
 
-    // 1. Kiểm tra mảng rỗng
     if (!items || items.length === 0) {
       return c.json({ error: "Giỏ hàng trống" }, 400);
     }
 
     const bookingId = uuidv4();
+    const mainItem = items[0]; // Lấy item đầu tiên làm đại diện
 
-    // 2. Lấy item đầu tiên
-    const mainItem = items[0];
-
-    // 🔥 FIX LỖI "mainItem is possibly undefined" TẠI ĐÂY
-    // Nếu không lấy được mainItem thì chặn luôn
+    // 🔥 Check an toàn
     if (!mainItem) {
       return c.json({ error: "Dữ liệu phòng không hợp lệ" }, 400);
     }
 
-    // 👇 Tạo lineItems cho Stripe (Logic cũ)
+    // 👇 1. Tạo lineItems cho Stripe (Hiển thị trên trang thanh toán)
     const lineItems = items.map((item) => {
+      // Logic ảnh fallback
       const imageUrl = item.featuredImage?.startsWith("http")
         ? item.featuredImage
         : "https://placehold.co/600x400";
+
+      // Tạo tên hiển thị: "Tên Khách Sạn - Tên Phòng"
+      const displayName = `${item.title} - ${item.name}`;
 
       return {
         price_data: {
           currency: "vnd",
           product_data: {
-            name: item.title,
+            // ✅ Dùng item.title (Tên KS) hoặc displayName cho rõ nghĩa
+            name: displayName,
             description: `Check-in: ${new Date(checkInDate).toLocaleDateString("vi-VN")}`,
             images: [imageUrl],
             metadata: {
-              hotelId: String(item.id),
+              hotelId: String(item.hotelId), // ✅ Dùng item.hotelId
               slug: item.slug || "",
             },
           },
@@ -52,7 +55,7 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
       };
     });
 
-    // 3. Tạo Session
+    // 👇 2. Tạo Session
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
       mode: "payment",
@@ -60,7 +63,7 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
       client_reference_id: userId,
       customer_email: user.email,
 
-      // 👇 Metadata mở rộng (Giờ mainItem đã an toàn để dùng)
+      // 👇 3. Metadata (Quan trọng nhất để gửi về Booking Service)
       metadata: {
         bookingId: bookingId,
         userId: userId,
@@ -69,19 +72,20 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
         customerName: user.name,
         customerPhone: user.phone || "",
 
-        // Dữ liệu thật từ mainItem
-        hotelId: String(mainItem.id),
-        hotelName: mainItem.title,
-        hotelSlug: mainItem.slug || "",
-        hotelImage: mainItem.featuredImage || "",
-        hotelStars: String(mainItem.stars || 0),
+        // ✅ MAP ĐÚNG THEO TYPE CARTITEM
+        hotelId: String(mainItem.hotelId), // Field hotelId
+        hotelName: mainItem.title, // Field title là Tên Khách Sạn
+        hotelSlug: mainItem.slug, // Field slug
+        hotelImage: mainItem.featuredImage, // Field featuredImage
+        hotelStars: String(mainItem.reviewStar || 0),
         hotelAddress: mainItem.address || "Vietnam",
-        roomId: String(body.roomId || mainItem.id),
-        roomName: body.roomName || mainItem.name || "Standard Room",
+
+        // ✅ MAP ĐÚNG TÊN PHÒNG
+        roomId: String(mainItem.id), // Field id là Room ID
+        roomName: mainItem.name, // Field name là Tên Phòng
       },
 
-      return_url:
-        "http://localhost:3002/return?session_id={CHECKOUT_SESSION_ID}",
+      return_url: `${FRONTEND_URL}/return?session_id={CHECKOUT_SESSION_ID}`,
     });
 
     return c.json({

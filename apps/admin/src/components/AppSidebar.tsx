@@ -1,3 +1,4 @@
+'use client';
 import {
     Home,
     Inbox,
@@ -16,6 +17,7 @@ import {
     ShoppingBasket,
     ChartSpline,
     MapPinned,
+    Bell,
 } from 'lucide-react';
 
 import {
@@ -52,6 +54,7 @@ import AddOrder from '@/components/AddOrder';
 import AddProduct from '@/components/AddProduct';
 import AddCategory from '@/components/AddCategory';
 import AddUser from '@/components/AddUser';
+import { useNotificationStore } from '@/store/useNotificationStore';
 const items = [
     {
         title: 'Home',
@@ -67,6 +70,11 @@ const items = [
         title: 'Inbox',
         url: '#',
         icon: Inbox,
+    },
+    {
+        title: 'Notifications',
+        url: '/notifications',
+        icon: Bell,
     },
     {
         title: 'Calendar',
@@ -86,6 +94,7 @@ const items = [
 ];
 
 const AppSidebar = () => {
+    const { unreadCount } = useNotificationStore();
     return (
         <Sidebar collapsible="icon">
             {/* logo */}
@@ -121,7 +130,16 @@ const AppSidebar = () => {
                                             <span>{item.title}</span>
                                         </Link>
                                     </SidebarMenuButton>
-                                    {item.title === 'Inbox' && <SidebarMenuBadge>22</SidebarMenuBadge>}
+
+                                    {/* 🔥 LOGIC HIỂN THỊ BADGE Ở ĐÂY */}
+                                    {item.title === 'Notifications' && unreadCount > 0 && (
+                                        <SidebarMenuBadge className="bg-red-500 text-white hover:bg-red-600">
+                                            {unreadCount > 99 ? '99+' : unreadCount}
+                                        </SidebarMenuBadge>
+                                    )}
+
+                                    {/* Nếu muốn giữ badge tĩnh cho Inbox thì để dòng này, ko thì xóa */}
+                                    {/* {item.title === 'Inbox' && <SidebarMenuBadge>22</SidebarMenuBadge>} */}
                                 </SidebarMenuItem>
                             ))}
                         </SidebarMenu>
@@ -281,44 +299,6 @@ const AppSidebar = () => {
                         </CollapsibleContent>
                     </SidebarGroup>
                 </Collapsible>
-                {/* sub */}
-                {/* <Collapsible defaultOpen className="group/collapsible">
-                    <SidebarGroup>
-                        <SidebarGroupLabel asChild>
-                            <CollapsibleTrigger>
-                                Sub Projects
-                                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                            </CollapsibleTrigger>
-                        </SidebarGroupLabel>
-
-                        <CollapsibleContent>
-                            <SidebarMenu>
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton asChild>
-                                        <Link href="/#">
-                                            <Projector />
-                                            All projects
-                                        </Link>
-                                    </SidebarMenuButton>
-                                    <SidebarMenuSub>
-                                        <SidebarMenuSubItem>
-                                            <SidebarMenuSubButton asChild>
-                                                <Link href="/#">Project 1</Link>
-                                            </SidebarMenuSubButton>
-                                        </SidebarMenuSubItem>
-                                    </SidebarMenuSub>{' '}
-                                    <SidebarMenuSub>
-                                        <SidebarMenuSubItem>
-                                            <SidebarMenuSubButton asChild>
-                                                <Link href="/#">Project 2</Link>
-                                            </SidebarMenuSubButton>
-                                        </SidebarMenuSubItem>
-                                    </SidebarMenuSub>
-                                </SidebarMenuItem>
-                            </SidebarMenu>
-                        </CollapsibleContent>
-                    </SidebarGroup>
-                </Collapsible> */}
             </SidebarContent>
 
             <SidebarSeparator className="inset-0 ml-0" />

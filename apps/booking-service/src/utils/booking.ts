@@ -1,64 +1,106 @@
 import { Booking } from "@repo/booking-db";
+import { producer } from "./kafka";
 
-// Hàm xử lý Kafka: Update trạng thái thanh toán
+// ⚠️ QUAN TRỌNG: Nếu bạn có truy cập được vào DB Product thì nên import để fallback
+// import { Hotel } from "@repo/product-db";
+
 export const updateBookingStatusToPaid = async (
   bookingId: string,
   paymentData: any
 ) => {
   console.log(`⚡ [Service] Bắt đầu xử lý Booking UUID: ${bookingId}`);
 
-  // 🔴 1. Lấy thông tin từ Metadata (Được gửi từ Payment Service sang)
-  // Lưu ý: Metadata của Stripe luôn trả về dạng string, cần ép kiểu nếu là số
-  const meta = paymentData.metadata || {};
+  // 👉 Debug: Log toàn bộ metadata xem Stripe gửi về cái gì
+  console.log(
+    "🔍 [Debug] Raw Metadata received:",
+    JSON.stringify(paymentData.metadata, null, 2)
+  );
 
-  const hotelName = meta.hotelName || "Stazy Hotel (From Stripe)";
-  const hotelImage = meta.hotelImage || ""; // Link ảnh khách sạn
-  const hotelStars = Number(meta.hotelStars) || 0; // Số sao
-  const hotelAddress = meta.hotelAddress || "Updating...";
+  const meta = paymentData.metadata || {};
+  console.log("🔍 [Debug] Metadata:", JSON.stringify(meta, null, 2));
+
+  // 2. Tính toán ngày (Giữ nguyên logic của bạn)
+  const checkInDate = new Date(paymentData.checkInDate || Date.now());
+  const checkOutDate = new Date(paymentData.checkOutDate || Date.now());
+  const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+  const calculatedNights = Math.max(
+    1,
+    Math.ceil(timeDiff / (1000 * 3600 * 24))
+  );
+
+  // 3. Chuẩn bị dữ liệu để Update
+  // Ưu tiên lấy từ Metadata nếu có, nếu không thì giữ nguyên logic fallback
   const hotelId = Number(meta.hotelId) || 1;
+  const stripeHotelName = meta.hotelName;
+  const stripeAddress = meta.hotelAddress;
 
   try {
+    // 🔥 BƯỚC QUAN TRỌNG: Tìm Booking trước để xem nó đang lưu cái gì
+    const existingBooking = await Booking.findOne({ bookingId });
+
+    // Logic xác định tên khách sạn cuối cùng:
+    // - Nếu metadata có tên -> Dùng metadata (để sửa sai cho DB).
+    // - Nếu DB đã có tên (và không phải Unknown) -> Giữ nguyên DB.
+    // - Nếu cả 2 đều không có -> Chấp nhận Unknown.
+    let finalHotelName = "Unknown Hotel";
+    let finalAddress = "Address not provided";
+
+    if (stripeHotelName) {
+      finalHotelName = stripeHotelName;
+    } else if (
+      existingBooking?.bookingSnapshot?.hotel?.name &&
+      existingBooking.bookingSnapshot.hotel.name !== "Unknown Hotel"
+    ) {
+      finalHotelName = existingBooking.bookingSnapshot.hotel.name;
+    }
+
+    if (stripeAddress) {
+      finalAddress = stripeAddress;
+    } else if (existingBooking?.bookingSnapshot?.hotel?.address) {
+      finalAddress = existingBooking.bookingSnapshot.hotel.address;
+    }
+
+    // Thực hiện Update
     const result = await Booking.findOneAndUpdate(
-      { bookingId: bookingId }, // Điều kiện tìm kiếm
+      { bookingId: bookingId },
       {
-        // A. Cập nhật nếu tìm thấy (Booking đã tồn tại)
+        // ✅ CẬP NHẬT CẢ THÔNG TIN SNAPSHOT VÀO $SET LUÔN
+        // Để dù booking đã tồn tại thì nó vẫn bị ghi đè dữ liệu mới
         $set: {
           status: "CONFIRMED",
           "payment.status": "PAID",
           "payment.stripeSessionId": paymentData.stripeSessionId,
           updatedAt: new Date(),
+
+          // Cập nhật lại snapshot nếu cần thiết
+          "bookingSnapshot.hotel.name": finalHotelName,
+          "bookingSnapshot.hotel.address": finalAddress,
+          nights: calculatedNights,
+          checkIn: checkInDate,
+          checkOut: checkOutDate,
         },
 
-        // B. Tạo mới nếu KHÔNG tìm thấy (Logic Recover Booking)
         $setOnInsert: {
           bookingId: bookingId,
           userId: paymentData.userId || "guest_user",
-
-          // Sử dụng ID thật lấy từ metadata
           hotelId: hotelId,
-
           totalPrice: paymentData.amount,
-          checkIn: new Date(paymentData.checkInDate || Date.now()),
-          checkOut: new Date(paymentData.checkOutDate || Date.now()),
-          nights: 1,
-
-          // 👇 QUAN TRỌNG: Lưu Snapshot với dữ liệu thật
+          // ... Các trường snapshot đầy đủ khác cho trường hợp tạo mới tinh
           bookingSnapshot: {
             hotel: {
               id: hotelId,
-              name: hotelName, // ✅ Tên khách sạn thật
+              name: finalHotelName,
               slug: "recovered-booking",
-              address: hotelAddress, // ✅ Địa chỉ thật (nếu có gửi kèm)
-              image: hotelImage, // ✅ Ảnh thật
-              stars: hotelStars, // ✅ Số sao thật
+              address: finalAddress,
+              image: meta.hotelImage || "",
+              stars: Number(meta.hotelStars) || 0,
             },
             room: {
-              id: 1,
+              id: hotelId,
               name: "Standard Room",
               priceAtBooking: paymentData.amount,
             },
           },
-
           contactDetails: {
             fullName: paymentData.customerName || "Stripe Customer",
             email: paymentData.customerEmail || "stripe@stazy.com",
@@ -66,23 +108,34 @@ export const updateBookingStatusToPaid = async (
           },
         },
       },
-      { new: true, upsert: true } // Upsert = True: Không thấy thì tạo mới
+      { new: true, upsert: true }
     );
 
     console.log(`✅ [Service] ĐÃ LƯU MONGODB THÀNH CÔNG!`);
-    console.log(`   👉 MongoID: ${result._id}`);
-    console.log(`   👉 Status: ${result.status}`);
-    console.log(`   👉 Hotel: ${result.bookingSnapshot?.hotel?.name}`); // Log ra để kiểm tra
+    console.log(`   👉 Nights: ${result.nights}`);
+    console.log(`   👉 Hotel: ${result.bookingSnapshot?.hotel?.name}`);
+
+    // ... (Phần bắn Kafka Notification giữ nguyên như cũ) ...
+    const notificationPayload = {
+      bookingId: result.bookingId,
+      customerName: result.contactDetails?.fullName || "Khách hàng",
+      hotelName: result.bookingSnapshot?.hotel?.name || "Khách sạn",
+      totalPrice: result.totalPrice,
+      status: "CONFIRMED",
+      updatedAt: new Date(),
+    };
+
+    try {
+      await producer.connect();
+      await producer.send("booking.confirmed", notificationPayload);
+      console.log(`📢 [Kafka] Đã gửi event 'booking.confirmed'`);
+    } catch (kafkaError) {
+      console.error("❌ [Kafka Error]", kafkaError);
+    }
 
     return result;
   } catch (error: any) {
     console.error("❌ [Service] Lỗi lưu MongoDB:", error.message);
-    if (error.errors) {
-      console.error(
-        "🔍 Validation Errors:",
-        JSON.stringify(error.errors, null, 2)
-      );
-    }
     throw error;
   }
 };

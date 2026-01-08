@@ -124,7 +124,8 @@ export interface StayDataType {
   featuredImage: string;
   price: number; // Chấp nhận cả Decimal (Prisma) và number (API)
   address: string;
-
+  name?: string; // Tên phòng, ví dụ "Standard Room"
+  roomName?: string; // Tên phòng, ví dụ "Standard Room"
   // Các trường Optional (Có thể null/undefined từ CartItem)
   authorId?: string;
   categoryId?: number;

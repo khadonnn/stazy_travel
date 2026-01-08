@@ -34,13 +34,13 @@ async function main() {
 
   // --- 0. DỌN DẸP DỮ LIỆU CŨ (Tùy chọn, cẩn thận khi chạy trên Prod) ---
   // Xóa theo thứ tự quan hệ ngược để tránh lỗi khóa ngoại
-  // await prisma.recommendation.deleteMany();
-  // await prisma.booking.deleteMany();
-  // await prisma.interaction.deleteMany();
-  // await prisma.searchQueryLog.deleteMany();
-  // await prisma.hotel.deleteMany();
-  // await prisma.userPreference.deleteMany();
-  // await prisma.user.deleteMany();
+  await prisma.recommendation.deleteMany();
+  await prisma.booking.deleteMany();
+  await prisma.interaction.deleteMany();
+  await prisma.searchQueryLog.deleteMany();
+  await prisma.hotel.deleteMany();
+  await prisma.userPreference.deleteMany();
+  await prisma.user.deleteMany();
   // console.log("🗑️  Đã dọn dẹp database cũ.");
 
   // --- 1. SETUP DEFAULT ADMIN ---
@@ -156,14 +156,14 @@ async function main() {
   console.log(`🏨 Đang xử lý ${hotelsData.length} Hotels...`);
 
   for (const hotel of hotelsData) {
-    const { id, category, reviewStar, ...rest } = hotel;
+    const { id, category, reviewStar, name, ...rest } = hotel;
 
     // Chuẩn bị data (loại bỏ field dư thừa, format date)
     const hotelInput = {
       ...rest,
       categoryId: rest.categoryId,
       reviewStar: reviewStar || rest.reviewStar || 0, // Fix naming cũ/mới
-
+      roomName: name || "Standard Room",
       // Map JSON array sang PostgreSQL array (Text[])
       galleryImgs: rest.galleryImgs || [],
       amenities: rest.amenities || [],

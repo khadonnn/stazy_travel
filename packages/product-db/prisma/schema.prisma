@@ -101,6 +101,7 @@ model Hotel {
   // Basic Info
   slug          String   @unique
   title         String
+  roomName      String @default("Standard Room")
   featuredImage String
   galleryImgs   String[]
   description   String   @db.Text

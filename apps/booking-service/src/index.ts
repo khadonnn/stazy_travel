@@ -8,7 +8,11 @@ import { runKafkaSubscriptions } from "./utils/subscriptions.js";
 import cors from "@fastify/cors";
 const fastify = Fastify({ logger: true });
 await fastify.register(cors, {
-  origin: true,
+  origin: [
+    "http://localhost:3002", // Client App
+    "http://localhost:3003", // Admin App
+    "http://localhost:3000", // Backup
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: [
     "Authorization",
@@ -17,7 +21,7 @@ await fastify.register(cors, {
     "Origin",
     "X-Requested-With",
   ],
-  credentials: true,
+  credentials: true, // Cho phép gửi token/cookie
 });
 fastify.register(clerkPlugin);
 

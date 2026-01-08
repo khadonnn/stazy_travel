@@ -17,7 +17,7 @@ interface CreateBookingBody {
 
 // URL của Product Service (Nên để trong .env)
 const PRODUCT_SERVICE_URL =
-  process.env.PRODUCT_SERVICE_URL || "http://localhost:3002";
+  process.env.PRODUCT_SERVICE_URL || "http://localhost:8000";
 
 export const bookingRoute = async (fastify: FastifyInstance) => {
   // 1. API TẠO BOOKING (Quan trọng nhất)

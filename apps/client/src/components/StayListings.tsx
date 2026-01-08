@@ -79,7 +79,7 @@ const fetchStays = async (): Promise<HotelFrontend[]> => {
   try {
     console.log("📡 Calling API /hotels...");
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL || "http://localhost:8000"}/hotels`
+      `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/hotels`
     );
     console.log("✅ API Response received.");
 

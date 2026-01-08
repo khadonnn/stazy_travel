@@ -121,13 +121,13 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
               `${API_URL}/users/${hotelData.authorId}`
             );
             const userData = userRes.data;
-
+            const fullName = userData.name ?? userData.nickname ?? "Unknown";
             // Mapping dữ liệu từ Backend IUser -> Frontend AuthorType
             const mappedAuthor: AuthorType = {
               id: userData.id,
               // Tách tên nếu cần, hoặc dùng tạm name cho firstName
-              firstName: userData.name.split(" ")[0] || userData.name,
-              lastName: userData.name.split(" ").slice(1).join(" ") || "",
+              firstName: fullName.split(" ")[0] || fullName,
+              lastName: fullName.split(" ").slice(1).join(" ") || "",
               displayName: userData.nickname || userData.name,
               email: userData.email,
               avatar: userData.avatar || "/avatar.jpg",
@@ -202,14 +202,35 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     // Tính toán lại giá
     const pricePerNight = Number(stayData.price) || 0;
     const { nights } = calculatorPrice({ pricePerNight, date });
+    const categoryObj = stayData.category as any;
+    const categoryName = categoryObj?.name || categoryObj || "";
 
+    // Logic kiểm tra
+    const isWholeHouse = ["Biệt thự", "Homestay", "Căn hộ", "Nhà gỗ"].includes(
+      categoryName
+    );
+    const roomName = isWholeHouse ? "Nguyên căn" : "Standard Room";
     addItem({
       ...stayData,
       hotelId: stayData.id,
-      name: stayData.title,
+      id: stayData.id, // Room ID (Dùng để làm key xóa trong giỏ hàng)
+
+      // 2. 🔥 MAP TÊN KHÁCH SẠN (Quan trọng nhất để fix lỗi Unknown Hotel)
+      title: stayData.title, // Bắt buộc phải có trường này
+
+      // 3. MAP TÊN PHÒNG
+      // Nếu stayData không có field tên phòng, hãy đặt mặc định
+      name: roomName || "Standard Room",
+
+      // 4. Các trường khác
+      price: Number(stayData.price) || 0,
       reviewStar: stayData.reviewStar ?? 0,
       nights,
       totalGuests: guests.adults + guests.children + guests.infants,
+
+      // Map thêm ảnh để chắc chắn có hình
+      featuredImage: stayData.featuredImage || stayData.featuredImage,
+      address: stayData.address,
     });
     router.push("/cart");
   };

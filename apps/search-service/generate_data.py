@@ -199,13 +199,27 @@ def generate_stays(count=100):
         """.strip()
 
         # 8. Giá & Logic
-        base_price = random.randint(5, 100) * 100000 
-        if cat_id in [3, 4]: base_price *= 2
+        base_price = random.randint(3, 40) * 100000
+        if cat_id in [3, 4]: base_price = int(base_price * 1.5)
         
         has_sale = random.random() < 0.3
         sale_percent = random.choice([10, 20, 30, 50]) if has_sale else 0
         sale_text = f"-{sale_percent}% Summer Deal" if has_sale else None
-
+        # 9
+        room_name = "Standard Room" 
+        
+        if cat_id in [2, 4, 5, 6]: 
+            room_name = "Nguyên căn"
+        elif cat_id == 7:
+            room_name = random.choice(["Lều trại cao cấp", "Giường Dorm", "Bungalow"])
+        else:
+            room_name = random.choice([
+                "Standard Room", 
+                "Deluxe Room", 
+                "Suite City View", 
+                "Family Suite", 
+                "King Room with Balcony"
+            ])
         stay = {
             # --- CÁC TRƯỜNG CƠ BẢN ---
             "id": i,
@@ -218,6 +232,7 @@ def generate_stays(count=100):
             "category": cat_info["name"], # Để tạo JSON dễ đọc, khi seed DB thì dùng categoryId
             
             "title": full_title,
+            "name":room_name,
             "featuredImage": featured_img_url, 
             "galleryImgs": [featured_img_url] + [f"https://loremflickr.com/800/600/hotel?lock={i}{x}" for x in range(4)],
             
@@ -263,7 +278,16 @@ if __name__ == "__main__":
     os.makedirs(JSON_DIR, exist_ok=True)
 
     data = generate_stays(100)
-    
+    slug_count = {}
+    for item in data:
+        base_slug = item["slug"]
+
+        if base_slug not in slug_count:
+            slug_count[base_slug] = 1
+            item["slug"] = base_slug
+        else:
+            slug_count[base_slug] += 1
+            item["slug"] = f"{base_slug}-{slug_count[base_slug]}"
     output_path = os.path.join(JSON_DIR, "__homeStay.json")
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)

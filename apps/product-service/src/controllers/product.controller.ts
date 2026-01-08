@@ -6,7 +6,6 @@ import { StripeProductType } from "@repo/types";
 // 1. GET HOTELS (Lọc nâng cao: Giá, Search, Category, Bedroom, Sort)
 export const getHotels = async (req: Request, res: Response) => {
   try {
-    // 1. Lấy tham số
     const {
       search,
       category,
@@ -14,24 +13,25 @@ export const getHotels = async (req: Request, res: Response) => {
       price_max,
       bedrooms,
       limit,
-      page = 1,
+      page,
       sort,
     } = req.query;
 
-    // Helper: Chuyển đổi an toàn
+    // --- HELPER PARSE SỐ AN TOÀN ---
     const parseNumber = (val: any) => {
       const num = Number(val);
       return !isNaN(num) ? num : undefined;
     };
 
-    const pageInt = parseNumber(page) || 1;
+    // 1. XỬ LÝ PAGINATION (FIX LỖI CRASH DO SỐ ÂM)
+    // Nếu page không hợp lệ hoặc < 1, mặc định là 1
+    const pageInt = Math.max(parseNumber(page) || 1, 1);
     const limitInt = parseNumber(limit) || 10;
     const skip = (pageInt - 1) * limitInt;
 
-    // 2. Xây dựng WHERE
+    // 2. XÂY DỰNG WHERE
     const where: Prisma.HotelWhereInput = {};
 
-    // a. Search
     if (search && typeof search === "string" && search.trim() !== "") {
       where.OR = [
         { title: { contains: search, mode: "insensitive" } },
@@ -39,20 +39,19 @@ export const getHotels = async (req: Request, res: Response) => {
       ];
     }
 
-    // b. Category
     const categoryId = parseNumber(category);
     if (categoryId) where.categoryId = categoryId;
 
-    // c. Price
     const min = parseNumber(price_min);
     const max = parseNumber(price_max);
+
+    // Logic lọc giá (Cần cẩn thận vì DB là Decimal, input là Number)
     if (min !== undefined || max !== undefined) {
       where.price = {};
       if (min !== undefined) where.price.gte = min;
       if (max !== undefined) where.price.lte = max;
     }
 
-    // d. Bedrooms
     if (bedrooms) {
       if (String(bedrooms) === "4+") {
         where.bedrooms = { gte: 4 };
@@ -62,8 +61,8 @@ export const getHotels = async (req: Request, res: Response) => {
       }
     }
 
-    // 3. Xây dựng ORDER BY
-    let orderBy: Prisma.HotelOrderByWithRelationInput = { createdAt: "desc" };
+    // 3. XÂY DỰNG SORT (FIX LỖI SORT FIELD KHÔNG TỒN TẠI)
+    let orderBy: Prisma.HotelOrderByWithRelationInput = { id: "desc" }; // Mặc định ID cho an toàn
 
     switch (sort) {
       case "price_asc":
@@ -72,31 +71,24 @@ export const getHotels = async (req: Request, res: Response) => {
       case "price_desc":
         orderBy = { price: "desc" };
         break;
-
-      // Gộp case: saleOff thường mặc định là giảm dần (giảm sâu nhất lên đầu)
-      case "saleOff":
-      case "saleOff_desc":
-        orderBy = { saleOffPercent: "desc" };
-        break;
-
-      case "saleOff_asc":
-        // Lưu ý: Sắp xếp tăng dần nghĩa là 0% sẽ lên đầu (nếu không lọc)
-        orderBy = { saleOffPercent: "asc" };
-        break;
-
       case "viewCount":
         orderBy = { viewCount: "desc" };
         break;
       case "reviewCount":
         orderBy = { reviewCount: "desc" };
         break;
-
+      case "saleOff":
+      case "saleOff_desc":
+        orderBy = { saleOffPercent: "desc" };
+        break;
       default:
         orderBy = { createdAt: "desc" };
-        break;
+        break; // Đảm bảo model Hotel có createdAt
     }
 
-    // 4. Thực thi Query
+    console.log(`📡 [DEBUG] Fetching Hotels: Page ${pageInt}, Skip ${skip}`);
+
+    // 4. THỰC THI QUERY
     const [hotels, total] = await Promise.all([
       prisma.hotel.findMany({
         where,
@@ -105,15 +97,24 @@ export const getHotels = async (req: Request, res: Response) => {
         skip: skip,
         include: {
           category: true,
-          // author: true,
         },
       }),
       prisma.hotel.count({ where }),
     ]);
 
-    // 5. Response
+    // 🔥 5. QUAN TRỌNG: CHUYỂN ĐỔI DECIMAL -> NUMBER
+    // Đây là bước fix lỗi 500 Serialization
+    const sanitizedHotels = hotels.map((hotel) => {
+      return {
+        ...hotel,
+        price: Number(hotel.price), // Ép kiểu Decimal về Number
+        // Nếu có các trường Decimal khác (như avgRating), ép kiểu tương tự
+      };
+    });
+
+    // 6. TRẢ VỀ KẾT QUẢ
     res.status(200).json({
-      data: hotels,
+      data: sanitizedHotels, // Dùng dữ liệu đã sanitize
       pagination: {
         total,
         page: pageInt,
@@ -121,11 +122,17 @@ export const getHotels = async (req: Request, res: Response) => {
         totalPages: Math.ceil(total / limitInt),
       },
     });
-  } catch (error) {
-    console.error("❌ Error fetching hotels:", error);
+  } catch (error: any) {
+    // Log lỗi ra terminal backend để bạn đọc được nguyên nhân gốc
+    console.error("❌ BACKEND ERROR in getHotels:", error);
+
     res.status(500).json({
       message: "Internal Server Error",
-      error: error instanceof Error ? error.message : "Unknown error",
+      // Chỉ gửi chi tiết lỗi khi ở môi trường dev để bảo mật
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong",
     });
   }
 };

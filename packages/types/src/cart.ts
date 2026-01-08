@@ -81,6 +81,7 @@ export type CartItem = {
   featuredImage: string; // Ảnh đại diện (Khớp Hotel.featuredImage)
   reviewStar: number; // Số sao (Khớp Hotel.reviewStar)
   address: string; // Địa chỉ (Khớp Hotel.address)
+  nameRoom?: string; // Tên phòng, ví dụ "Standard Room"
 
   // --- C. THÔNG TIN ĐẶT ---
   nights: number; // Số đêm
