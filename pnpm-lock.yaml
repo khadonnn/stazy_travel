@@ -74,6 +74,12 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.6
         version: 1.2.8(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@repo/product-db':
+        specifier: workspace:*
+        version: link:../../packages/product-db
+      '@tanstack/react-query':
+        specifier: ^5.85.5
+        version: 5.90.11(react@19.2.3)
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -6216,6 +6222,11 @@ snapshots:
     dependencies:
       '@tanstack/query-core': 5.90.11
       react: 19.2.0
+
+  '@tanstack/react-query@5.90.11(react@19.2.3)':
+    dependencies:
+      '@tanstack/query-core': 5.90.11
+      react: 19.2.3
 
   '@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:

@@ -1,12 +1,16 @@
+'use client';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useQuery } from '@tanstack/react-query';
+import { getPopularStays } from '@/app/(dashboard)/actions/get-popular-stays';
+import { getLatestTransactions } from '@/app/(dashboard)/actions/get-latest-transactions';
 
 // Dữ liệu mẫu (mock data) cho Hotel Booking
 
 // 1. Dữ liệu Khách sạn Nổi bật (Top Performing Hotels) - Thay thế popularProducts
-const topPerformingHotels = [
+const mockHotels = [
     {
         id: 1,
         title: 'Khách sạn Rex Sài Gòn',
@@ -103,137 +107,149 @@ const recentBookings = [
     },
 ];
 
-// Hàm format tiền tệ
+const mockBookings = [
+    {
+        id: 'mock-b1',
+        hotelTitle: 'Khách sạn Rex (Mock)',
+        customerName: 'Nguyễn Văn A',
+        customerAvatar: 'https://github.com/shadcn.png',
+        amount: 3200000,
+        status: 'Confirmed',
+    },
+    // ... thêm mock data nếu cần
+];
+
+// Hàm format tiền
 const formatCurrency = (amount: number) => {
     const valueInThousands = amount / 1000;
-    const formattedValue = new Intl.NumberFormat('vi-VN', {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    }).format(valueInThousands);
+    const formattedValue = new Intl.NumberFormat('vi-VN').format(valueInThousands);
     return `${formattedValue}K`;
 };
 
 const CardList = ({ title }: { title: string }) => {
-    // Hàm chọn biến thể badge dựa trên trạng thái (status)
+    // 1. Xác định loại danh sách
+    const isHotelList = title === 'Popular Stays' || title === 'Top Recommended Stays';
+
+    // 2. Fetch Data (Chỉ chạy query tương ứng với loại list)
+    const { data: hotelData } = useQuery({
+        queryKey: ['popular-stays'],
+        queryFn: async () => await getPopularStays(),
+        enabled: isHotelList, // Chỉ fetch nếu là list khách sạn
+    });
+
+    const { data: bookingData } = useQuery({
+        queryKey: ['latest-transactions'],
+        queryFn: async () => await getLatestTransactions(),
+        enabled: !isHotelList, // Chỉ fetch nếu là list booking
+    });
+
+    // 3. Logic chọn Data (Real vs Mock)
+    // Nếu là Hotel List: lấy hotelData thật, nếu rỗng thì lấy mockHotels
+    // Nếu là Booking List: lấy bookingData thật, nếu rỗng thì lấy mockBookings
+    const realData = isHotelList ? hotelData : bookingData;
+    const listData = realData && realData.length > 0 ? realData : isHotelList ? mockHotels : mockBookings;
+
     const getStatusClasses = (status: string) => {
         switch (status) {
             case 'Confirmed':
-                // Màu xanh lá (Green) cho Confirmed
-                return 'bg-green-600 text-white dark:bg-green-700 hover:bg-green-700/80';
+                return 'bg-green-600 text-white hover:bg-green-700';
             case 'Pending':
-                // Màu xanh dương (Blue) cho Pending
-                return 'bg-blue-600 text-white dark:bg-blue-700 hover:bg-blue-700/80';
+                return 'bg-blue-600 text-white hover:bg-blue-700';
             case 'Cancelled':
-                // Sử dụng variant="destructive" của Shadcn UI (sẽ tự động áp dụng màu đỏ)
                 return 'destructive';
             default:
-                // Màu mặc định
                 return 'secondary';
         }
     };
 
-    const isHotelList = title === 'Popular Stays' || title === 'Top Recommended Stays';
-    const listData = isHotelList ? topPerformingHotels : recentBookings;
     return (
-        <div>
-            <h1 className="mb-6 text-lg font-medium">{title}</h1>
-            <ScrollArea className="max-h-[400px] overflow-y-auto">
-                <div className="flex flex-col gap-2">
-                    {listData.map((item, index) => {
-                        // HIỂN THỊ DANH SÁCH KHÁCH SẠN (topPerformingHotels)
+        <div className="w-full">
+            <div className="mb-6 flex items-center justify-between">
+                <h1 className="text-lg font-medium">{title}</h1>
+                {/* Chỉ báo trạng thái dữ liệu */}
+                {realData && realData.length > 0 ? (
+                    <span className="animate-pulse text-[10px] font-bold text-green-500">● LIVE</span>
+                ) : (
+                    <span className="text-[10px] font-bold text-gray-400">● MOCK</span>
+                )}
+            </div>
+
+            <ScrollArea className="max-h-[400px] overflow-y-auto pr-4">
+                <div className="flex flex-col gap-3">
+                    {listData.map((item: any) => {
                         if (isHotelList) {
-                            const hotelItem = item as (typeof topPerformingHotels)[0];
+                            // --- RENDER HOTEL CARD ---
                             return (
                                 <Card
-                                    key={hotelItem.id}
-                                    className="flex flex-row items-center justify-between gap-2 p-2"
+                                    key={item.id}
+                                    className="hover:bg-accent/50 flex flex-row items-center justify-between gap-3 p-3 transition"
                                 >
-                                    {/* 1. KHỐI TRÁI: ẢNH KHÁCH SẠN */}
-                                    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md">
+                                    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border">
                                         <Image
-                                            src={hotelItem.featuredImage}
-                                            alt={hotelItem.title}
+                                            src={item.featuredImage}
+                                            alt={item.title}
                                             fill
                                             className="object-cover"
                                         />
                                     </div>
-
-                                    {/* 2. KHỐI PHẢI (DIV CHÍNH) - Chiếm hết không gian còn lại */}
-                                    <div className="flex min-w-0 flex-1 flex-col">
-                                        {/* KHỐI TRÊN: Tên Khách sạn */}
+                                    <div className="flex min-w-0 flex-1 flex-col justify-center">
                                         <CardTitle className="mb-1 truncate text-sm font-medium">
-                                            {hotelItem.title}
+                                            {item.title}
                                         </CardTitle>
-
-                                        {/* KHỐI DƯỚI: Chia thành 2 cột (Địa điểm/Đánh giá & Giá/Views) */}
-                                        <div className="text-muted-foreground flex items-end justify-between text-xs">
-                                            {/* Cột Trái: Địa điểm và Giá/Views */}
-                                            <div className="flex min-w-0 flex-col gap-1 pr-2">
-                                                {/* Địa chỉ */}
-                                                <Badge variant="secondary" className="max-w-[150px] truncate">
-                                                    {hotelItem.address}
+                                        <div className="flex items-end justify-between">
+                                            <div className="flex flex-col gap-0.5">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="h-5 w-fit max-w-[120px] truncate px-1.5 text-[10px]"
+                                                >
+                                                    {item.address}
                                                 </Badge>
-                                                {/* Giá và Views */}
-                                                <div className="flex items-center">
-                                                    <span className="text-foreground pr-2 text-sm font-semibold underline decoration-gray-400 underline-offset-2">
-                                                        {formatCurrency(hotelItem.price)}
+                                                <div className="text-muted-foreground mt-1 text-xs">
+                                                    <span className="text-foreground font-bold underline decoration-dotted underline-offset-2">
+                                                        {formatCurrency(item.price)}
                                                     </span>
-                                                    <span className="text-xs">({hotelItem.viewCount} Views)</span>
+                                                    <span className="ml-1 text-[10px]">({item.viewCount} views)</span>
                                                 </div>
                                             </div>
-
-                                            {/* Cột Phải: Đánh giá */}
-                                            <div className="text-foreground flex items-center gap-1 font-semibold">
-                                                <span>⭐ {hotelItem.reviewStar}</span>
+                                            <div className="flex items-center gap-1 text-xs font-semibold">
+                                                ⭐ {item.reviewStar}
                                             </div>
                                         </div>
                                     </div>
-                                    <CardFooter className="hidden"></CardFooter>
                                 </Card>
                             );
-                        }
-
-                        // HIỂN THỊ DANH SÁCH GIAO DỊCH/NGƯỜI DÙNG (recentBookings)
-                        else {
-                            const userItem = item as (typeof recentBookings)[0];
-                            const statusClass = getStatusClasses(userItem.status);
+                        } else {
+                            // --- RENDER BOOKING CARD ---
+                            const statusClass = getStatusClasses(item.status);
                             const variant = statusClass === 'destructive' ? 'destructive' : 'secondary';
                             const className = statusClass === 'destructive' ? '' : statusClass;
+
                             return (
                                 <Card
-                                    key={userItem.id}
-                                    className="flex flex-row items-center justify-between gap-2 p-2"
+                                    key={item.id}
+                                    className="hover:bg-accent/50 flex flex-row items-center justify-between gap-3 p-3 transition"
                                 >
-                                    {/* Avatar Khách hàng */}
-                                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full">
+                                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border">
                                         <Image
-                                            src={userItem.customerAvatar}
-                                            alt={userItem.customerName}
+                                            src={item.customerAvatar}
+                                            alt={item.customerName || 'User'}
                                             fill
                                             className="object-cover"
                                         />
                                     </div>
-
-                                    <CardContent className="min-w-0 flex-1 p-0">
-                                        {/* Tên Khách hàng */}
-                                        <CardTitle className="truncate text-sm font-medium">
-                                            {userItem.customerName}
-                                        </CardTitle>
-                                        {/* Tên Khách sạn đã đặt */}
-                                        <Badge variant="secondary" className="max-w-[150px] truncate">
-                                            {userItem.hotelTitle}
+                                    <div className="min-w-0 flex-1">
+                                        <div className="truncate text-sm font-medium">{item.customerName}</div>
+                                        <div className="text-muted-foreground truncate text-xs">{item.hotelTitle}</div>
+                                    </div>
+                                    <div className="flex flex-col items-end gap-1">
+                                        <div className="text-sm font-semibold">{formatCurrency(item.amount)}</div>
+                                        <Badge
+                                            variant={variant}
+                                            className={`h-auto px-2 py-0.5 text-[10px] ${className}`}
+                                        >
+                                            {item.status}
                                         </Badge>
-                                    </CardContent>
-
-                                    <CardFooter className="flex flex-col items-end p-0! text-sm font-semibold whitespace-nowrap">
-                                        {/* Tổng tiền */}
-                                        {formatCurrency(userItem.amount)}
-                                        {/* Trạng thái Booking */}
-                                        <Badge variant={variant} className={`mt-1 text-xs ${className}`}>
-                                            {userItem.status}
-                                        </Badge>
-                                    </CardFooter>
+                                    </div>
                                 </Card>
                             );
                         }

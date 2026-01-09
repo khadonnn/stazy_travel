@@ -3,8 +3,9 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { viVN } from '@clerk/localizations';
 
-import { cookies } from 'next/headers';
 import { ClerkProvider } from '@clerk/nextjs';
+import { QueryClientProvider } from '@tanstack/react-query';
+import QueryProvider from './providers';
 const geistSans = Geist({
     variable: '--font-geist-sans',
     subsets: ['latin'],
@@ -36,7 +37,9 @@ export default async function RootLayout({
             signInUrl="/sign-in"
         >
             <html lang="en" suppressHydrationWarning>
-                <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+                <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                    <QueryProvider>{children}</QueryProvider>
+                </body>
             </html>
         </ClerkProvider>
     );

@@ -14,14 +14,33 @@ pip install "fastapi[standard]"
 
 # clip-ViT-B-32
 
-# tạo lại json
+#
 
-uv run python generate_users.py
-uv run generate_data.py
-uv run process_data.py (vector hoá)
-uv run generate_mock_interactions.py (giả lập)
-uv run generate_recommendations.py
-uv run generate_categories.py
+uv pip install --force-reinstall pandas "numpy<2" scikit-surprise
+
+# remove
+
+> Remove-Item -Recurse -Force .venv
+> uv venv
+> .venv\Scripts\activate
+> uv pip install -r requirements.txt
+
+#
+
+.venv\Scripts\activate
+
+# tạo lại json uv auto update =>
+
+uv pip install numpy==1.26.4 pandas==2.2.2 scikit-surprise==1.1.4 faker
+
+#
+
+python generate_users.py || uv run generate_users.py
+python generate_data.py || uv run generate_data.py
+python generate_mock_interactions.py
+python generate_mock_interactions.py || uv run generate_mock_interactions.py (giả lập)
+python generate_recommendations.py || uv run generate_recommendations.py
+python generate_categories.py || uv run generate_categories.py
 
 # flow
 

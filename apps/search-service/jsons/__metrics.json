@@ -1,0 +1,242 @@
+[
+  {
+    "rmse": 1.0618,
+    "precisionAt5": 65.57,
+    "recallAt5": 51.36,
+    "datasetSize": 56,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-12T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0562,
+    "precisionAt5": 65.63,
+    "recallAt5": 51.42,
+    "datasetSize": 70,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-13T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0563,
+    "precisionAt5": 65.98,
+    "recallAt5": 51.77,
+    "datasetSize": 83,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-14T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0448,
+    "precisionAt5": 65.75,
+    "recallAt5": 51.54,
+    "datasetSize": 96,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-15T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0484,
+    "precisionAt5": 66.28,
+    "recallAt5": 52.07,
+    "datasetSize": 109,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-16T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0458,
+    "precisionAt5": 66.49,
+    "recallAt5": 52.28,
+    "datasetSize": 122,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-17T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0425,
+    "precisionAt5": 66.67,
+    "recallAt5": 52.46,
+    "datasetSize": 135,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-18T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0328,
+    "precisionAt5": 66.53,
+    "recallAt5": 52.32,
+    "datasetSize": 148,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-19T01:00:47.876179"
+  },
+  {
+    "rmse": 1.028,
+    "precisionAt5": 66.64,
+    "recallAt5": 52.43,
+    "datasetSize": 162,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-20T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0194,
+    "precisionAt5": 66.55,
+    "recallAt5": 52.34,
+    "datasetSize": 175,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-21T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0283,
+    "precisionAt5": 67.34,
+    "recallAt5": 53.13,
+    "datasetSize": 188,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-22T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0259,
+    "precisionAt5": 67.57,
+    "recallAt5": 53.35,
+    "datasetSize": 201,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-23T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0071,
+    "precisionAt5": 66.97,
+    "recallAt5": 52.76,
+    "datasetSize": 214,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-24T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0039,
+    "precisionAt5": 67.16,
+    "recallAt5": 52.95,
+    "datasetSize": 227,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-25T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0104,
+    "precisionAt5": 67.82,
+    "recallAt5": 53.61,
+    "datasetSize": 240,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-26T01:00:47.876179"
+  },
+  {
+    "rmse": 1.0004,
+    "precisionAt5": 67.67,
+    "recallAt5": 53.46,
+    "datasetSize": 254,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-27T01:00:47.876179"
+  },
+  {
+    "rmse": 0.9909,
+    "precisionAt5": 67.54,
+    "recallAt5": 53.33,
+    "datasetSize": 267,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-28T01:00:47.876179"
+  },
+  {
+    "rmse": 0.987,
+    "precisionAt5": 67.69,
+    "recallAt5": 53.48,
+    "datasetSize": 280,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-29T01:00:47.876179"
+  },
+  {
+    "rmse": 0.995,
+    "precisionAt5": 68.44,
+    "recallAt5": 54.23,
+    "datasetSize": 293,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-30T01:00:47.876179"
+  },
+  {
+    "rmse": 0.988,
+    "precisionAt5": 68.43,
+    "recallAt5": 54.22,
+    "datasetSize": 306,
+    "algorithm": "SVD",
+    "createdAt": "2025-12-31T01:00:47.876179"
+  },
+  {
+    "rmse": 0.9697,
+    "precisionAt5": 67.86,
+    "recallAt5": 53.65,
+    "datasetSize": 319,
+    "algorithm": "SVD",
+    "createdAt": "2026-01-01T01:00:47.876179"
+  },
+  {
+    "rmse": 0.9664,
+    "precisionAt5": 68.04,
+    "recallAt5": 53.83,
+    "datasetSize": 332,
+    "algorithm": "SVD",
+    "createdAt": "2026-01-02T01:00:47.876179"
+  },
+  {
+    "rmse": 0.9735,
+    "precisionAt5": 68.74,
+    "recallAt5": 54.53,
+    "datasetSize": 346,
+    "algorithm": "SVD",
+    "createdAt": "2026-01-03T01:00:47.876179"
+  },
+  {
+    "rmse": 0.9575,
+    "precisionAt5": 68.29,
+    "recallAt5": 54.07,
+    "datasetSize": 359,
+    "algorithm": "SVD",
+    "createdAt": "2026-01-04T01:00:47.876179"
+  },
+  {
+    "rmse": 0.9512,
+    "precisionAt5": 68.32,
+    "recallAt5": 54.11,
+    "datasetSize": 372,
+    "algorithm": "SVD",
+    "createdAt": "2026-01-05T01:00:47.876179"
+  },
+  {
+    "rmse": 0.9468,
+    "precisionAt5": 68.44,
+    "recallAt5": 54.23,
+    "datasetSize": 385,
+    "algorithm": "SVD",
+    "createdAt": "2026-01-06T01:00:47.876179"
+  },
+  {
+    "rmse": 0.9442,
+    "precisionAt5": 68.66,
+    "recallAt5": 54.45,
+    "datasetSize": 398,
+    "algorithm": "SVD",
+    "createdAt": "2026-01-07T01:00:47.876179"
+  },
+  {
+    "rmse": 0.935,
+    "precisionAt5": 68.54,
+    "recallAt5": 54.33,
+    "datasetSize": 411,
+    "algorithm": "SVD",
+    "createdAt": "2026-01-08T01:00:47.876179"
+  },
+  {
+    "rmse": 0.9419,
+    "precisionAt5": 69.23,
+    "recallAt5": 55.02,
+    "datasetSize": 424,
+    "algorithm": "SVD",
+    "createdAt": "2026-01-09T01:00:47.876179"
+  },
+  {
+    "rmse": 0.9439,
+    "precisionAt5": 69.67,
+    "recallAt5": 55.46,
+    "datasetSize": 438,
+    "algorithm": "SVD",
+    "createdAt": "2026-01-10T01:00:47.876179"
+  }
+]

@@ -45,7 +45,7 @@ model User {
   hotels        Hotel[]         @relation("HotelAuthor")
   interactions  Interaction[]
   bookings      Booking[]
-  
+  reviews      Review[]
   // Quan hệ 1-1: Sở thích người dùng (Tách riêng để bảng User đỡ nặng)
   preference    UserPreference?
   recommendation Recommendation?
@@ -152,7 +152,7 @@ model Hotel {
   // Relations
   interactions  Interaction[]
   bookings      Booking[]
-
+  reviews      Review[]
   @@map("hotels")
 }
 
@@ -256,16 +256,16 @@ model Interaction {
   userId    String
   user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  hotelId   Int?            // Có thể null nếu action là SEARCH
+  hotelId   Int?            
   hotel     Hotel?          @relation(fields: [hotelId], references: [id], onDelete: Cascade)
   
-  // Phân loại chi tiết thay vì String
   type      InteractionType @default(VIEW)
   
-  // Context của hành động (Quan trọng cho RAG/Agent)
-  // Vd: { "search_query": "biển", "duration": 5000 (ms viewed), "filter": "price < 1M" }
+  // --- THÊM TRƯỜNG NÀY ---
+  // Nếu type == RATING, lưu số sao vào đây để dùng hàm _avg() của Prisma dễ dàng
+  rating    Int?            
+  
   metadata  Json?           
-
   timestamp DateTime        @default(now())
 
   @@index([userId, type])
@@ -309,4 +309,42 @@ model SearchQueryLog {
   timestamp DateTime @default(now())
 
   @@map("search_query_logs")
+}
+// chart
+model SystemMetric {
+  id           String   @id @default(uuid())
+  
+  // Các chỉ số đánh giá mô hình AI
+  rmse         Float    // Độ lỗi (Root Mean Square Error)
+  precisionAt5 Float    // Độ chính xác trong Top 5
+  recallAt5    Float    // Độ bao phủ trong Top 5
+  
+  // Metadata thêm (nếu cần)
+  algorithm    String   @default("SVD") // Tên thuật toán: SVD, KNN, NeuralCF...
+  datasetSize  Int?     // Số lượng dòng dữ liệu khi train
+  
+  createdAt    DateTime @default(now())
+
+  @@map("system_metrics")
+}
+model Review {
+  id        String   @id @default(uuid())
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  hotelId   Int
+  hotel     Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  
+  rating    Int      // 1-5 sao
+  comment   String?  @db.Text // Nội dung bình luận (Dùng cho Word Cloud)
+  
+  // Sentiment Analysis (AI có thể phân tích tích cực/tiêu cực sau này)
+  sentiment String?  // "POSITIVE", "NEGATIVE", "NEUTRAL"
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([hotelId])
+  @@map("reviews")
 }

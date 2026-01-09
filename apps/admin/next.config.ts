@@ -40,6 +40,18 @@ const nextConfig: NextConfig = {
                 port: '',
                 pathname: '/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'i.pravatar.cc',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                hostname: 'github.com',
+                protocol: 'https',
+                port: '',
+                pathname: '/**',
+            },
         ],
     },
 };
