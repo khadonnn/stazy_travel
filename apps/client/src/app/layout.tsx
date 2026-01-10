@@ -27,6 +27,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { viVN } from "@clerk/localizations";
 import BackgroundWave from "@/components/BackgroundWave";
 import { syncUserToDB } from "@/lib/clerk-sync";
+import { OnboardingModal } from "@/components/onboarding-modal";
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -56,6 +57,7 @@ export default async function RootLayout({
               <BackgroundWave />
             </div>
             <Providers>{children}</Providers>
+            <OnboardingModal />
           </main>
           <footer className="shrink-0">
             <Footer />

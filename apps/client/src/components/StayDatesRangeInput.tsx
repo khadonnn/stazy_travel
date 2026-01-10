@@ -66,6 +66,7 @@ export default function StayDatesRangeInput({
     <Popover open={open} onOpenChange={setOpen} key={popoverKey}>
       <PopoverTrigger asChild>
         <button
+          suppressHydrationWarning={true}
           type="button"
           className={cn(
             "flex-1 z-10 flex relative items-center space-x-4 focus:outline-none",
@@ -85,6 +86,7 @@ export default function StayDatesRangeInput({
           selected={date}
           onSelect={(range) => setDate(range ?? undefined)}
           numberOfMonths={2}
+          disabled={{ before: new Date() }}
         />
       </PopoverContent>
 

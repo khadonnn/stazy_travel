@@ -54,6 +54,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { AuthorType } from "@repo/types";
+import { trackInteraction } from "@/lib/utils/analytics";
 interface StayDetailPageClientProps {
   params: {
     slug: string;
@@ -162,7 +163,26 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       fetchData();
     }
   }, [slug]);
+  // --- 2. LOGIC THEO DÕI VIEW HOTEL ---
+  useEffect(() => {
+    // Chỉ track khi đã có dữ liệu hotel (có ID)
+    if (!stayData?.id) return;
 
+    const startTime = Date.now();
+    // console.log(`👁️ Bắt đầu theo dõi: ${stayData.title}`);
+
+    // Hàm cleanup chạy khi user rời trang hoặc đóng tab
+    return () => {
+      const endTime = Date.now();
+      const duration = Math.round((endTime - startTime) / 1000); // Tính giây
+
+      // Chỉ gửi nếu xem > 5 giây (để loại bỏ click nhầm/bounce)
+      if (duration > 5) {
+        trackInteraction("VIEW", stayData.id, { duration });
+        // console.log(`📡 Đã gửi VIEW event: ${duration}s`);
+      }
+    };
+  }, [stayData?.id]);
   // --- LOGIC MODAL ---
   const imagesForModal = useMemo(() => {
     if (!modalImageState) return [];
@@ -198,7 +218,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       return;
     }
     if (!stayData || isDisabled) return;
-
+    trackInteraction("CLICK_BOOK_NOW", stayData.id);
     // Tính toán lại giá
     const pricePerNight = Number(stayData.price) || 0;
     const { nights } = calculatorPrice({ pricePerNight, date });

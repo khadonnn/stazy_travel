@@ -60,7 +60,7 @@ model UserPreference {
   id              Int      @id @default(autoincrement())
   userId          String   @unique
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  interestedCategories String[]
   // Explicit Preferences (User tự chọn hoặc AI suy luận)
   favoriteAmenities String[] // ["pool", "gym", "sea_view"]
   favoriteCities    String[] // ["nha_trang", "da_nang"]
