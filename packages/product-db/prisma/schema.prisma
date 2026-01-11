@@ -255,7 +255,7 @@ model Interaction {
   id        Int             @id @default(autoincrement())
   userId    String
   user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  sessionId String?  @db.VarChar(255) // Để theo dấu chân người dùng trong 1 phiên
   hotelId   Int?            
   hotel     Hotel?          @relation(fields: [hotelId], references: [id], onDelete: Cascade)
   
@@ -322,7 +322,10 @@ model SystemMetric {
   // Metadata thêm (nếu cần)
   algorithm    String   @default("SVD") // Tên thuật toán: SVD, KNN, NeuralCF...
   datasetSize  Int?     // Số lượng dòng dữ liệu khi train
-  
+  executionTimeMs Int?  // (Optional) Thời gian chạy model (ms) để so sánh hiệu năng
+
+  trainingHistory Json? // Lưu dạng: [ { "k": 10, "rmse": 0.85 }, { "k": 20, "rmse": 0.82 }, ... ]
+  tuningParams Json? // Ví dụ: [{"param": 10, "metric": 0.8}, {"param": 20, "metric": 0.75}]
   createdAt    DateTime @default(now())
 
   @@map("system_metrics")
@@ -347,4 +350,29 @@ model Review {
 
   @@index([hotelId])
   @@map("reviews")
+}
+model DailyStat {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @unique @db.Date 
+  
+  // 1. Chỉ số Kinh doanh cốt lõi (Business Core)
+  totalRevenue     Decimal @default(0) @db.Decimal(12, 2)
+  totalBookings    Int     @default(0) // Số booking thành công
+  totalCancels     Int     @default(0) // Số booking bị hủy (QUAN TRỌNG)
+
+  // 2. Chỉ số Phễu chuyển đổi (Conversion Funnel)
+  totalViews       Int     @default(0) // Step 1
+  totalClickBook   Int     @default(0) // Step 2 (High Intent - CLICK_BOOK_NOW)
+  
+  // 3. Chỉ số Tương tác (Engagement)
+  totalLikes       Int     @default(0) 
+  totalSearch      Int     @default(0)
+  
+  // 4. (Optional) Nếu bạn muốn lưu các loại phụ (Share, Comment...) 
+  // mà không muốn tạo thêm cột, hãy dùng JSON
+  miscInteractions Json?   // Vd: { "share": 5, "comment": 12 }
+
+  createdAt DateTime @default(now())
+
+  @@map("daily_stats")
 }

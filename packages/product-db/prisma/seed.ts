@@ -26,7 +26,8 @@ const readJson = (filename: string) => {
     console.warn(`⚠️  Không tìm thấy file: ${filename} (Bỏ qua bước này)`);
     return [];
   }
-  return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  const data = fs.readFileSync(filePath, "utf-8");
+  return JSON.parse(data);
 };
 
 async function main() {
@@ -34,6 +35,7 @@ async function main() {
 
   // --- 0. DỌN DẸP DỮ LIỆU CŨ ---
   // Xóa theo thứ tự để tránh lỗi khóa ngoại (Foreign Key)
+  await prisma.dailyStat.deleteMany(); // <--- MỚI: Xóa thống kê ngày cũ
   await prisma.systemMetric.deleteMany();
   await prisma.review.deleteMany();
   await prisma.recommendation.deleteMany();
@@ -49,7 +51,7 @@ async function main() {
     await prisma.$executeRaw`ALTER SEQUENCE hotels_id_seq RESTART WITH 1;`;
     await prisma.$executeRaw`ALTER SEQUENCE categories_id_seq RESTART WITH 1;`;
   } catch (e) {
-    // Bỏ qua nếu lỗi
+    // Bỏ qua nếu lỗi (do environment khác nhau)
   }
 
   // --- 1. SETUP DEFAULT ADMIN ---
@@ -199,63 +201,58 @@ async function main() {
   const interactionsData = readJson("__interactions.json");
   console.log(`✨ Đang xử lý ${interactionsData.length} Interactions...`);
 
-  // Lấy list ID user hiện có trong DB để đảm bảo tính toàn vẹn dữ liệu
   const existingUserIds = new Set(
     (await prisma.user.findMany({ select: { id: true } })).map((u) => u.id)
   );
 
   for (const interaction of interactionsData) {
-    const { userId, hotelId, type, timestamp, metadata, rating } = interaction;
+    // MỚI: Thêm sessionId từ JSON
+    const { userId, hotelId, type, timestamp, metadata, rating, sessionId } =
+      interaction;
 
-    // Chỉ tạo interaction nếu User ID tồn tại (Vì interaction được tạo từ file users.json nên chắc chắn tồn tại)
     if (existingUserIds.has(userId)) {
-      // Tạo Interaction
+      // 5.1 Tạo Interaction
       await prisma.interaction.create({
         data: {
           userId,
           hotelId,
           type: type as InteractionType,
-          rating: rating || null,
+          rating: rating || null, // Hỗ trợ type RATING
           timestamp: new Date(timestamp),
+          sessionId: sessionId || null, // Lưu sessionId để vẽ Funnel
           metadata: metadata || {},
         },
       });
 
-      // Logic Booking tự động (Derived Data)
-      // Logic Booking tự động
+      // 5.2 Logic Booking tự động (Derived Data)
+      // Chỉ tạo Booking record khi gặp event BOOK.
+      // Doanh thu tổng hợp sẽ lấy từ bảng DailyStat, còn bảng Booking dùng cho list view.
       if (type === "BOOK") {
         const checkInDate = new Date(timestamp);
         const checkOutDate = new Date(checkInDate);
         checkOutDate.setDate(checkOutDate.getDate() + 2);
         const totalPrice = metadata?.totalPrice || 2000000;
 
-        // [QUAN TRỌNG] Lấy thông tin User thật
         const realUser = userMap.get(userId);
         const guestName = realUser ? realUser.name : "Guest Unknown";
         const guestEmail = realUser ? realUser.email : `${userId}@example.com`;
         const guestPhone = realUser ? realUser.phone : "0909000000";
 
-        // --- LOGIC MỚI: Random trạng thái thanh toán để biểu đồ đẹp hơn ---
+        // Random trạng thái thanh toán
         const rand = Math.random();
         let status: BookingStatus = BookingStatus.COMPLETED;
         let paymentStatus: PaymentStatus = PaymentStatus.SUCCEEDED;
 
-        // 10% là đơn đang chờ thanh toán (Có trong Total, chưa có trong Paid)
         if (rand < 0.1) {
           status = BookingStatus.PENDING;
           paymentStatus = PaymentStatus.PENDING;
-        }
-        // 5% là đơn đã hủy (Không tính doanh thu hoặc tùy logic dashboard)
-        else if (rand < 0.15) {
+        } else if (rand < 0.15) {
           status = BookingStatus.CANCELLED;
           paymentStatus = PaymentStatus.REFUNDED;
-        }
-        // 5% là thanh toán lỗi
-        else if (rand < 0.2) {
+        } else if (rand < 0.2) {
           status = BookingStatus.PENDING;
           paymentStatus = PaymentStatus.FAILED;
         }
-        // 80% còn lại là Thành công (SUCCEEDED)
 
         await prisma.booking.create({
           data: {
@@ -271,13 +268,12 @@ async function main() {
             nights: 2,
             basePrice: totalPrice,
             totalAmount: totalPrice,
-
-            // Sử dụng biến status đã random ở trên
             status: status,
             paymentStatus: paymentStatus,
             paymentMethod: PaymentMethod.STRIPE,
-
             createdAt: new Date(timestamp),
+            // Nếu bảng Booking của bạn có cột sessionId, hãy thêm vào đây:
+            // sessionId: sessionId
           },
         });
       }
@@ -285,6 +281,7 @@ async function main() {
   }
 
   // --- 5.5 SEED REVIEWS ---
+  // Sync với Interaction type RATING
   const reviewsData = readJson("__reviews.json");
   console.log(`💬 Đang xử lý ${reviewsData.length} Reviews...`);
 
@@ -303,16 +300,38 @@ async function main() {
     }
   }
 
-  // --- 5.6 SEED SYSTEM METRICS (KPIs) ---
-  const metricsData = readJson("__metrics.json");
+  // --- 6. SEED DAILY STATS (MỚI) ---
+  // Dữ liệu này được tổng hợp sẵn từ Python Script
+  const dailyStatsData = readJson("__daily_stats.json");
+  if (dailyStatsData && dailyStatsData.length > 0) {
+    console.log(`📈 Đang seed ${dailyStatsData.length} Daily Stats...`);
+    await prisma.dailyStat.createMany({
+      data: dailyStatsData.map((stat: any) => ({
+        date: new Date(stat.date),
+        totalRevenue: stat.totalRevenue,
+        totalBookings: stat.totalBookings,
+        totalViews: stat.totalViews,
+        conversionRate: stat.conversionRate,
+        // Nếu có trường khác trong schema thì map vào đây
+      })),
+      skipDuplicates: true,
+    });
+  }
+
+  // --- 7. SEED SYSTEM METRICS & TUNING (KPIs) ---
+  const metricsData = readJson("__metrics.json"); // File này chứa cả tuning params
   if (metricsData && metricsData.length > 0) {
-    console.log(`📊 Đang cập nhật ${metricsData.length} dòng AI Metrics...`);
+    console.log(`📊 Đang cập nhật AI Metrics & Tuning Data...`);
+
     const formattedMetrics = metricsData.map((m: any) => ({
+      algorithm: "SVD",
       rmse: m.rmse,
       precisionAt5: m.precisionAt5,
       recallAt5: m.recallAt5,
       datasetSize: m.datasetSize || 0,
-      algorithm: "SVD",
+      executionTimeMs: m.executionTimeMs || 0, // MỚI: Thời gian chạy
+      // MỚI: Lưu params tuning (K vs RMSE) vào JSON
+      tuningParams: m.tuningParams ? m.tuningParams : {},
       createdAt: new Date(m.createdAt),
     }));
 
@@ -321,7 +340,7 @@ async function main() {
     });
   }
 
-  // --- 6. SEED RECOMMENDATIONS ---
+  // --- 8. SEED RECOMMENDATIONS ---
   const recsData = readJson("__recommendations.json");
   console.log(`🔮 Đang seed Recommendations...`);
 
@@ -342,7 +361,7 @@ async function main() {
     }
   }
 
-  // --- 7. RESET SEQUENCE CUỐI CÙNG ---
+  // --- 9. RESET SEQUENCE CUỐI CÙNG ---
   try {
     await prisma.$executeRaw`SELECT setval('hotels_id_seq', (SELECT MAX(id) FROM hotels));`;
     await prisma.$executeRaw`SELECT setval('categories_id_seq', (SELECT MAX(id) FROM categories));`;
@@ -357,7 +376,7 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error("❌ Lỗi Seeding Critial:", e);
+    console.error("❌ Lỗi Seeding Critical:", e);
     process.exit(1);
   })
   .finally(async () => {

@@ -1,0 +1,1812 @@
+[
+  {
+    "date": "2025-11-23T00:00:00.000Z",
+    "totalRevenue": 13550000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 48,
+    "totalClickBook": 6,
+    "totalLikes": 10,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-11T00:00:00.000Z",
+    "totalRevenue": 12300000,
+    "totalBookings": 6,
+    "totalCancels": 1,
+    "totalViews": 37,
+    "totalClickBook": 7,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-08T00:00:00.000Z",
+    "totalRevenue": 1300000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 36,
+    "totalClickBook": 3,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-30T00:00:00.000Z",
+    "totalRevenue": 8300000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 27,
+    "totalClickBook": 5,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-01T00:00:00.000Z",
+    "totalRevenue": 3050000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 39,
+    "totalClickBook": 2,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-26T00:00:00.000Z",
+    "totalRevenue": 6150000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 31,
+    "totalClickBook": 5,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-23T00:00:00.000Z",
+    "totalRevenue": 14300000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 26,
+    "totalClickBook": 5,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-21T00:00:00.000Z",
+    "totalRevenue": 13600000,
+    "totalBookings": 7,
+    "totalCancels": 0,
+    "totalViews": 45,
+    "totalClickBook": 9,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-05T00:00:00.000Z",
+    "totalRevenue": 13500000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 31,
+    "totalClickBook": 5,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-22T00:00:00.000Z",
+    "totalRevenue": 11250000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 38,
+    "totalClickBook": 6,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-30T00:00:00.000Z",
+    "totalRevenue": 9450000,
+    "totalBookings": 5,
+    "totalCancels": 1,
+    "totalViews": 41,
+    "totalClickBook": 6,
+    "totalLikes": 12,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-10T00:00:00.000Z",
+    "totalRevenue": 4800000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 40,
+    "totalClickBook": 5,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-22T00:00:00.000Z",
+    "totalRevenue": 16700000,
+    "totalBookings": 7,
+    "totalCancels": 0,
+    "totalViews": 59,
+    "totalClickBook": 8,
+    "totalLikes": 18,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-07T00:00:00.000Z",
+    "totalRevenue": 24300000,
+    "totalBookings": 8,
+    "totalCancels": 0,
+    "totalViews": 41,
+    "totalClickBook": 8,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-06T00:00:00.000Z",
+    "totalRevenue": 2850000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 19,
+    "totalClickBook": 4,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-16T00:00:00.000Z",
+    "totalRevenue": 26200000,
+    "totalBookings": 9,
+    "totalCancels": 0,
+    "totalViews": 41,
+    "totalClickBook": 9,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-07T00:00:00.000Z",
+    "totalRevenue": 9050000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 25,
+    "totalClickBook": 5,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-01T00:00:00.000Z",
+    "totalRevenue": 14300000,
+    "totalBookings": 6,
+    "totalCancels": 1,
+    "totalViews": 41,
+    "totalClickBook": 7,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-09T00:00:00.000Z",
+    "totalRevenue": 25800000,
+    "totalBookings": 11,
+    "totalCancels": 0,
+    "totalViews": 71,
+    "totalClickBook": 11,
+    "totalLikes": 14,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-29T00:00:00.000Z",
+    "totalRevenue": 13700000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 56,
+    "totalClickBook": 10,
+    "totalLikes": 14,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-29T00:00:00.000Z",
+    "totalRevenue": 12650000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 41,
+    "totalClickBook": 5,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-21T00:00:00.000Z",
+    "totalRevenue": 5600000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 50,
+    "totalClickBook": 2,
+    "totalLikes": 15,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-05T00:00:00.000Z",
+    "totalRevenue": 15900000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 21,
+    "totalClickBook": 5,
+    "totalLikes": 2,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-09T00:00:00.000Z",
+    "totalRevenue": 6700000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 50,
+    "totalClickBook": 5,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-18T00:00:00.000Z",
+    "totalRevenue": 11150000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 31,
+    "totalClickBook": 5,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-28T00:00:00.000Z",
+    "totalRevenue": 6700000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 21,
+    "totalClickBook": 3,
+    "totalLikes": 2,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-18T00:00:00.000Z",
+    "totalRevenue": 10550000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 18,
+    "totalClickBook": 4,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-26T00:00:00.000Z",
+    "totalRevenue": 5500000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 37,
+    "totalClickBook": 4,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-27T00:00:00.000Z",
+    "totalRevenue": 7000000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 24,
+    "totalClickBook": 6,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-15T00:00:00.000Z",
+    "totalRevenue": 8300000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 35,
+    "totalClickBook": 5,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-19T00:00:00.000Z",
+    "totalRevenue": 17700000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 39,
+    "totalClickBook": 7,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-08T00:00:00.000Z",
+    "totalRevenue": 15250000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 28,
+    "totalClickBook": 5,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-17T00:00:00.000Z",
+    "totalRevenue": 12000000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 24,
+    "totalClickBook": 5,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-30T00:00:00.000Z",
+    "totalRevenue": 13700000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 41,
+    "totalClickBook": 6,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-14T00:00:00.000Z",
+    "totalRevenue": 18900000,
+    "totalBookings": 7,
+    "totalCancels": 0,
+    "totalViews": 57,
+    "totalClickBook": 7,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-08T00:00:00.000Z",
+    "totalRevenue": 5900000,
+    "totalBookings": 4,
+    "totalCancels": 1,
+    "totalViews": 29,
+    "totalClickBook": 7,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-19T00:00:00.000Z",
+    "totalRevenue": 17900000,
+    "totalBookings": 7,
+    "totalCancels": 0,
+    "totalViews": 36,
+    "totalClickBook": 8,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-02T00:00:00.000Z",
+    "totalRevenue": 12450000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 43,
+    "totalClickBook": 5,
+    "totalLikes": 10,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-06T00:00:00.000Z",
+    "totalRevenue": 14350000,
+    "totalBookings": 8,
+    "totalCancels": 1,
+    "totalViews": 42,
+    "totalClickBook": 8,
+    "totalLikes": 10,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-01T00:00:00.000Z",
+    "totalRevenue": 6900000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 38,
+    "totalClickBook": 3,
+    "totalLikes": 11,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-29T00:00:00.000Z",
+    "totalRevenue": 7200000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 32,
+    "totalClickBook": 6,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-31T00:00:00.000Z",
+    "totalRevenue": 3800000,
+    "totalBookings": 4,
+    "totalCancels": 1,
+    "totalViews": 38,
+    "totalClickBook": 5,
+    "totalLikes": 10,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-19T00:00:00.000Z",
+    "totalRevenue": 7500000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 39,
+    "totalClickBook": 4,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-01T00:00:00.000Z",
+    "totalRevenue": 6750000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 30,
+    "totalClickBook": 3,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-21T00:00:00.000Z",
+    "totalRevenue": 3500000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 29,
+    "totalClickBook": 2,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-15T00:00:00.000Z",
+    "totalRevenue": 5700000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 36,
+    "totalClickBook": 4,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-28T00:00:00.000Z",
+    "totalRevenue": 16250000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 21,
+    "totalClickBook": 4,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-10T00:00:00.000Z",
+    "totalRevenue": 8500000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 36,
+    "totalClickBook": 4,
+    "totalLikes": 13,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-05T00:00:00.000Z",
+    "totalRevenue": 15700000,
+    "totalBookings": 7,
+    "totalCancels": 0,
+    "totalViews": 53,
+    "totalClickBook": 10,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-05T00:00:00.000Z",
+    "totalRevenue": 9450000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 28,
+    "totalClickBook": 4,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-02T00:00:00.000Z",
+    "totalRevenue": 7950000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 33,
+    "totalClickBook": 3,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-26T00:00:00.000Z",
+    "totalRevenue": 3600000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 28,
+    "totalClickBook": 2,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-27T00:00:00.000Z",
+    "totalRevenue": 13350000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 44,
+    "totalClickBook": 8,
+    "totalLikes": 13,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-28T00:00:00.000Z",
+    "totalRevenue": 5300000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 36,
+    "totalClickBook": 3,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-17T00:00:00.000Z",
+    "totalRevenue": 14750000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 37,
+    "totalClickBook": 5,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-04T00:00:00.000Z",
+    "totalRevenue": 1800000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 22,
+    "totalClickBook": 1,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-07T00:00:00.000Z",
+    "totalRevenue": 10750000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 20,
+    "totalClickBook": 4,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-04T00:00:00.000Z",
+    "totalRevenue": 25900000,
+    "totalBookings": 11,
+    "totalCancels": 2,
+    "totalViews": 39,
+    "totalClickBook": 12,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-30T00:00:00.000Z",
+    "totalRevenue": 22500000,
+    "totalBookings": 8,
+    "totalCancels": 0,
+    "totalViews": 35,
+    "totalClickBook": 9,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-01T00:00:00.000Z",
+    "totalRevenue": 3800000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 16,
+    "totalClickBook": 2,
+    "totalLikes": 1,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-09T00:00:00.000Z",
+    "totalRevenue": 14900000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 30,
+    "totalClickBook": 5,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-13T00:00:00.000Z",
+    "totalRevenue": 13700000,
+    "totalBookings": 7,
+    "totalCancels": 1,
+    "totalViews": 40,
+    "totalClickBook": 10,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-11T00:00:00.000Z",
+    "totalRevenue": 7700000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 24,
+    "totalClickBook": 2,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-10T00:00:00.000Z",
+    "totalRevenue": 9650000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 64,
+    "totalClickBook": 10,
+    "totalLikes": 14,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-16T00:00:00.000Z",
+    "totalRevenue": 6650000,
+    "totalBookings": 5,
+    "totalCancels": 1,
+    "totalViews": 28,
+    "totalClickBook": 7,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-30T00:00:00.000Z",
+    "totalRevenue": 0,
+    "totalBookings": 0,
+    "totalCancels": 0,
+    "totalViews": 35,
+    "totalClickBook": 1,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-04T00:00:00.000Z",
+    "totalRevenue": 8200000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 35,
+    "totalClickBook": 4,
+    "totalLikes": 11,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-18T00:00:00.000Z",
+    "totalRevenue": 5550000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 31,
+    "totalClickBook": 4,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-27T00:00:00.000Z",
+    "totalRevenue": 7050000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 44,
+    "totalClickBook": 5,
+    "totalLikes": 11,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-20T00:00:00.000Z",
+    "totalRevenue": 5700000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 14,
+    "totalClickBook": 2,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-24T00:00:00.000Z",
+    "totalRevenue": 19450000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 82,
+    "totalClickBook": 8,
+    "totalLikes": 11,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-15T00:00:00.000Z",
+    "totalRevenue": 11100000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 50,
+    "totalClickBook": 4,
+    "totalLikes": 11,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-08T00:00:00.000Z",
+    "totalRevenue": 11900000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 30,
+    "totalClickBook": 4,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-13T00:00:00.000Z",
+    "totalRevenue": 10150000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 33,
+    "totalClickBook": 4,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-17T00:00:00.000Z",
+    "totalRevenue": 12900000,
+    "totalBookings": 6,
+    "totalCancels": 1,
+    "totalViews": 41,
+    "totalClickBook": 6,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-13T00:00:00.000Z",
+    "totalRevenue": 300000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 19,
+    "totalClickBook": 3,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-31T00:00:00.000Z",
+    "totalRevenue": 8350000,
+    "totalBookings": 5,
+    "totalCancels": 1,
+    "totalViews": 58,
+    "totalClickBook": 7,
+    "totalLikes": 14,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-29T00:00:00.000Z",
+    "totalRevenue": 18600000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 35,
+    "totalClickBook": 6,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-24T00:00:00.000Z",
+    "totalRevenue": 5250000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 15,
+    "totalClickBook": 3,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-17T00:00:00.000Z",
+    "totalRevenue": 13200000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 29,
+    "totalClickBook": 6,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-13T00:00:00.000Z",
+    "totalRevenue": 5700000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 37,
+    "totalClickBook": 2,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-01T00:00:00.000Z",
+    "totalRevenue": 7350000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 22,
+    "totalClickBook": 2,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-12T00:00:00.000Z",
+    "totalRevenue": 17900000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 37,
+    "totalClickBook": 6,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-27T00:00:00.000Z",
+    "totalRevenue": 6550000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 39,
+    "totalClickBook": 2,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-25T00:00:00.000Z",
+    "totalRevenue": 9100000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 39,
+    "totalClickBook": 3,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-03T00:00:00.000Z",
+    "totalRevenue": 1650000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 18,
+    "totalClickBook": 1,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-27T00:00:00.000Z",
+    "totalRevenue": 16550000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 38,
+    "totalClickBook": 6,
+    "totalLikes": 10,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-29T00:00:00.000Z",
+    "totalRevenue": 300000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 39,
+    "totalClickBook": 1,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-20T00:00:00.000Z",
+    "totalRevenue": 22650000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 43,
+    "totalClickBook": 6,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-04T00:00:00.000Z",
+    "totalRevenue": 6900000,
+    "totalBookings": 4,
+    "totalCancels": 1,
+    "totalViews": 16,
+    "totalClickBook": 4,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-17T00:00:00.000Z",
+    "totalRevenue": 3550000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 18,
+    "totalClickBook": 2,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-28T00:00:00.000Z",
+    "totalRevenue": 6950000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 26,
+    "totalClickBook": 3,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-24T00:00:00.000Z",
+    "totalRevenue": 10100000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 39,
+    "totalClickBook": 5,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-03T00:00:00.000Z",
+    "totalRevenue": 10650000,
+    "totalBookings": 5,
+    "totalCancels": 1,
+    "totalViews": 32,
+    "totalClickBook": 7,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-18T00:00:00.000Z",
+    "totalRevenue": 9600000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 22,
+    "totalClickBook": 4,
+    "totalLikes": 2,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-03T00:00:00.000Z",
+    "totalRevenue": 4350000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 46,
+    "totalClickBook": 2,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-26T00:00:00.000Z",
+    "totalRevenue": 18600000,
+    "totalBookings": 7,
+    "totalCancels": 1,
+    "totalViews": 50,
+    "totalClickBook": 8,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-08T00:00:00.000Z",
+    "totalRevenue": 6350000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 28,
+    "totalClickBook": 3,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-10T00:00:00.000Z",
+    "totalRevenue": 14450000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 43,
+    "totalClickBook": 6,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-25T00:00:00.000Z",
+    "totalRevenue": 17950000,
+    "totalBookings": 9,
+    "totalCancels": 0,
+    "totalViews": 55,
+    "totalClickBook": 9,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-07T00:00:00.000Z",
+    "totalRevenue": 9600000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 30,
+    "totalClickBook": 2,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-21T00:00:00.000Z",
+    "totalRevenue": 450000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 15,
+    "totalClickBook": 1,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-23T00:00:00.000Z",
+    "totalRevenue": 6400000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 26,
+    "totalClickBook": 5,
+    "totalLikes": 1,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-20T00:00:00.000Z",
+    "totalRevenue": 5300000,
+    "totalBookings": 4,
+    "totalCancels": 1,
+    "totalViews": 15,
+    "totalClickBook": 4,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-22T00:00:00.000Z",
+    "totalRevenue": 7750000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 19,
+    "totalClickBook": 3,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-25T00:00:00.000Z",
+    "totalRevenue": 15750000,
+    "totalBookings": 7,
+    "totalCancels": 0,
+    "totalViews": 31,
+    "totalClickBook": 7,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-03T00:00:00.000Z",
+    "totalRevenue": 3600000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 21,
+    "totalClickBook": 1,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-12T00:00:00.000Z",
+    "totalRevenue": 10000000,
+    "totalBookings": 5,
+    "totalCancels": 1,
+    "totalViews": 38,
+    "totalClickBook": 7,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-06T00:00:00.000Z",
+    "totalRevenue": 7700000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 30,
+    "totalClickBook": 9,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-19T00:00:00.000Z",
+    "totalRevenue": 9700000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 41,
+    "totalClickBook": 5,
+    "totalLikes": 11,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-23T00:00:00.000Z",
+    "totalRevenue": 6100000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 40,
+    "totalClickBook": 4,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-31T00:00:00.000Z",
+    "totalRevenue": 23200000,
+    "totalBookings": 8,
+    "totalCancels": 1,
+    "totalViews": 47,
+    "totalClickBook": 9,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-30T00:00:00.000Z",
+    "totalRevenue": 3600000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 31,
+    "totalClickBook": 1,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-08T00:00:00.000Z",
+    "totalRevenue": 4200000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 22,
+    "totalClickBook": 3,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-09T00:00:00.000Z",
+    "totalRevenue": 19200000,
+    "totalBookings": 7,
+    "totalCancels": 1,
+    "totalViews": 41,
+    "totalClickBook": 8,
+    "totalLikes": 10,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-02T00:00:00.000Z",
+    "totalRevenue": 9000000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 28,
+    "totalClickBook": 6,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-23T00:00:00.000Z",
+    "totalRevenue": 11250000,
+    "totalBookings": 5,
+    "totalCancels": 1,
+    "totalViews": 37,
+    "totalClickBook": 6,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-16T00:00:00.000Z",
+    "totalRevenue": 7250000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 34,
+    "totalClickBook": 3,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-14T00:00:00.000Z",
+    "totalRevenue": 18350000,
+    "totalBookings": 7,
+    "totalCancels": 0,
+    "totalViews": 41,
+    "totalClickBook": 10,
+    "totalLikes": 12,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-11T00:00:00.000Z",
+    "totalRevenue": 3250000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 21,
+    "totalClickBook": 3,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-26T00:00:00.000Z",
+    "totalRevenue": 6250000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 34,
+    "totalClickBook": 5,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-28T00:00:00.000Z",
+    "totalRevenue": 1800000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 17,
+    "totalClickBook": 3,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-21T00:00:00.000Z",
+    "totalRevenue": 5900000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 20,
+    "totalClickBook": 4,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-04T00:00:00.000Z",
+    "totalRevenue": 10950000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 25,
+    "totalClickBook": 5,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-12T00:00:00.000Z",
+    "totalRevenue": 13000000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 55,
+    "totalClickBook": 5,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-20T00:00:00.000Z",
+    "totalRevenue": 2700000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 33,
+    "totalClickBook": 1,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-06T00:00:00.000Z",
+    "totalRevenue": 18700000,
+    "totalBookings": 8,
+    "totalCancels": 1,
+    "totalViews": 35,
+    "totalClickBook": 11,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-11T00:00:00.000Z",
+    "totalRevenue": 750000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 3,
+    "totalClickBook": 1,
+    "totalLikes": 0,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-07T00:00:00.000Z",
+    "totalRevenue": 6450000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 35,
+    "totalClickBook": 4,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-02T00:00:00.000Z",
+    "totalRevenue": 16000000,
+    "totalBookings": 7,
+    "totalCancels": 0,
+    "totalViews": 35,
+    "totalClickBook": 8,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-09T00:00:00.000Z",
+    "totalRevenue": 12200000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 45,
+    "totalClickBook": 5,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-20T00:00:00.000Z",
+    "totalRevenue": 4650000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 35,
+    "totalClickBook": 2,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-05T00:00:00.000Z",
+    "totalRevenue": 9900000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 32,
+    "totalClickBook": 4,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-25T00:00:00.000Z",
+    "totalRevenue": 8600000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 25,
+    "totalClickBook": 3,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-06T00:00:00.000Z",
+    "totalRevenue": 8500000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 35,
+    "totalClickBook": 5,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-11T00:00:00.000Z",
+    "totalRevenue": 6600000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 41,
+    "totalClickBook": 2,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-02T00:00:00.000Z",
+    "totalRevenue": 2700000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 26,
+    "totalClickBook": 3,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-09T00:00:00.000Z",
+    "totalRevenue": 12050000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 35,
+    "totalClickBook": 9,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-13T00:00:00.000Z",
+    "totalRevenue": 20000000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 26,
+    "totalClickBook": 6,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-14T00:00:00.000Z",
+    "totalRevenue": 12150000,
+    "totalBookings": 4,
+    "totalCancels": 1,
+    "totalViews": 27,
+    "totalClickBook": 5,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-27T00:00:00.000Z",
+    "totalRevenue": 12200000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 42,
+    "totalClickBook": 5,
+    "totalLikes": 12,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-15T00:00:00.000Z",
+    "totalRevenue": 0,
+    "totalBookings": 0,
+    "totalCancels": 0,
+    "totalViews": 16,
+    "totalClickBook": 2,
+    "totalLikes": 1,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-15T00:00:00.000Z",
+    "totalRevenue": 4800000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 33,
+    "totalClickBook": 3,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-21T00:00:00.000Z",
+    "totalRevenue": 16450000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 39,
+    "totalClickBook": 7,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-10T00:00:00.000Z",
+    "totalRevenue": 15600000,
+    "totalBookings": 7,
+    "totalCancels": 0,
+    "totalViews": 39,
+    "totalClickBook": 8,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-12T00:00:00.000Z",
+    "totalRevenue": 9800000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 27,
+    "totalClickBook": 4,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-16T00:00:00.000Z",
+    "totalRevenue": 3950000,
+    "totalBookings": 3,
+    "totalCancels": 1,
+    "totalViews": 22,
+    "totalClickBook": 3,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-04T00:00:00.000Z",
+    "totalRevenue": 19300000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 49,
+    "totalClickBook": 6,
+    "totalLikes": 12,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-02T00:00:00.000Z",
+    "totalRevenue": 5300000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 27,
+    "totalClickBook": 3,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-06T00:00:00.000Z",
+    "totalRevenue": 8400000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 31,
+    "totalClickBook": 7,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-16T00:00:00.000Z",
+    "totalRevenue": 7900000,
+    "totalBookings": 5,
+    "totalCancels": 2,
+    "totalViews": 30,
+    "totalClickBook": 7,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-10T00:00:00.000Z",
+    "totalRevenue": 9450000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 33,
+    "totalClickBook": 6,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-22T00:00:00.000Z",
+    "totalRevenue": 12750000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 37,
+    "totalClickBook": 4,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-12T00:00:00.000Z",
+    "totalRevenue": 6200000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 23,
+    "totalClickBook": 5,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-24T00:00:00.000Z",
+    "totalRevenue": 5250000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 33,
+    "totalClickBook": 3,
+    "totalLikes": 1,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-28T00:00:00.000Z",
+    "totalRevenue": 1700000,
+    "totalBookings": 3,
+    "totalCancels": 1,
+    "totalViews": 35,
+    "totalClickBook": 4,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-29T00:00:00.000Z",
+    "totalRevenue": 8000000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 37,
+    "totalClickBook": 2,
+    "totalLikes": 10,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-24T00:00:00.000Z",
+    "totalRevenue": 10550000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 36,
+    "totalClickBook": 6,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-18T00:00:00.000Z",
+    "totalRevenue": 9100000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 30,
+    "totalClickBook": 5,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-22T00:00:00.000Z",
+    "totalRevenue": 4800000,
+    "totalBookings": 2,
+    "totalCancels": 0,
+    "totalViews": 30,
+    "totalClickBook": 4,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-14T00:00:00.000Z",
+    "totalRevenue": 600000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 37,
+    "totalClickBook": 2,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-20T00:00:00.000Z",
+    "totalRevenue": 15950000,
+    "totalBookings": 4,
+    "totalCancels": 0,
+    "totalViews": 37,
+    "totalClickBook": 9,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-19T00:00:00.000Z",
+    "totalRevenue": 15050000,
+    "totalBookings": 6,
+    "totalCancels": 0,
+    "totalViews": 31,
+    "totalClickBook": 8,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-19T00:00:00.000Z",
+    "totalRevenue": 9900000,
+    "totalBookings": 6,
+    "totalCancels": 1,
+    "totalViews": 50,
+    "totalClickBook": 8,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-25T00:00:00.000Z",
+    "totalRevenue": 8600000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 19,
+    "totalClickBook": 3,
+    "totalLikes": 0,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-10-24T00:00:00.000Z",
+    "totalRevenue": 3900000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 31,
+    "totalClickBook": 2,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-11-15T00:00:00.000Z",
+    "totalRevenue": 7850000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 30,
+    "totalClickBook": 4,
+    "totalLikes": 9,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-17T00:00:00.000Z",
+    "totalRevenue": 10400000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 11,
+    "totalClickBook": 3,
+    "totalLikes": 2,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-26T00:00:00.000Z",
+    "totalRevenue": 3600000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 22,
+    "totalClickBook": 1,
+    "totalLikes": 6,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-16T00:00:00.000Z",
+    "totalRevenue": 11450000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 32,
+    "totalClickBook": 7,
+    "totalLikes": 8,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-03T00:00:00.000Z",
+    "totalRevenue": 9100000,
+    "totalBookings": 4,
+    "totalCancels": 1,
+    "totalViews": 37,
+    "totalClickBook": 5,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-07T00:00:00.000Z",
+    "totalRevenue": 5850000,
+    "totalBookings": 3,
+    "totalCancels": 1,
+    "totalViews": 30,
+    "totalClickBook": 4,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-08-23T00:00:00.000Z",
+    "totalRevenue": 8250000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 29,
+    "totalClickBook": 5,
+    "totalLikes": 3,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-25T00:00:00.000Z",
+    "totalRevenue": 11350000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 30,
+    "totalClickBook": 4,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-05T00:00:00.000Z",
+    "totalRevenue": 14750000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 26,
+    "totalClickBook": 6,
+    "totalLikes": 2,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-31T00:00:00.000Z",
+    "totalRevenue": 13700000,
+    "totalBookings": 5,
+    "totalCancels": 0,
+    "totalViews": 30,
+    "totalClickBook": 6,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-03T00:00:00.000Z",
+    "totalRevenue": 3000000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 21,
+    "totalClickBook": 3,
+    "totalLikes": 7,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-09-14T00:00:00.000Z",
+    "totalRevenue": 1000000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 28,
+    "totalClickBook": 5,
+    "totalLikes": 4,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-07-22T00:00:00.000Z",
+    "totalRevenue": 16950000,
+    "totalBookings": 7,
+    "totalCancels": 0,
+    "totalViews": 28,
+    "totalClickBook": 8,
+    "totalLikes": 5,
+    "totalSearch": 0
+  },
+  {
+    "date": "2025-12-18T00:00:00.000Z",
+    "totalRevenue": 5900000,
+    "totalBookings": 3,
+    "totalCancels": 0,
+    "totalViews": 12,
+    "totalClickBook": 3,
+    "totalLikes": 1,
+    "totalSearch": 0
+  },
+  {
+    "date": "2026-01-11T00:00:00.000Z",
+    "totalRevenue": 2500000,
+    "totalBookings": 1,
+    "totalCancels": 0,
+    "totalViews": 23,
+    "totalClickBook": 1,
+    "totalLikes": 5,
+    "totalSearch": 0
+  }
+]
