@@ -1,4 +1,12 @@
 'use client';
+
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
+import { io } from 'socket.io-client';
+import { useNotificationStore } from '@/store/useNotificationStore'; // Đảm bảo đường dẫn đúng store của bạn
+
 import {
     Home,
     Inbox,
@@ -6,18 +14,16 @@ import {
     Search,
     Settings,
     Plus,
-    Projector,
     ChevronDown,
     CalendarCheck2,
     MessageSquareWarning,
     ChevronsUpDown,
-    PackagePlus,
-    Shirt,
     User,
     ShoppingBasket,
     ChartSpline,
     MapPinned,
     Bell,
+    LogOut,
 } from 'lucide-react';
 
 import {
@@ -33,13 +39,9 @@ import {
     SidebarMenuBadge,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarMenuSub,
-    SidebarMenuSubButton,
-    SidebarMenuSubItem,
     SidebarSeparator,
 } from '@/components/ui/sidebar';
-import Link from 'next/link';
-import Image from 'next/image';
+
 import {
     DropdownMenuItem,
     DropdownMenu,
@@ -48,56 +50,91 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Sheet, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
+
+// Import các component form con (giữ nguyên của bạn)
 import EditUser from '@/components/EditUser';
 import AddOrder from '@/components/AddOrder';
 import AddProduct from '@/components/AddProduct';
 import AddCategory from '@/components/AddCategory';
 import AddUser from '@/components/AddUser';
-import { useNotificationStore } from '@/store/useNotificationStore';
+
+// --- CẤU HÌNH URL ---
+const SOCKET_URL = 'http://localhost:3005';
+// URL API của Booking Service (8001) để lấy số liệu ban đầu
+const API_URL = process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || 'http://localhost:8001';
+
 const items = [
-    {
-        title: 'Home',
-        url: '/',
-        icon: Home,
-    },
-    {
-        title: 'Analytics',
-        url: '/analytics',
-        icon: ChartSpline,
-    },
-    {
-        title: 'Inbox',
-        url: '#',
-        icon: Inbox,
-    },
-    {
-        title: 'Notifications',
-        url: '/notifications',
-        icon: Bell,
-    },
-    {
-        title: 'Calendar',
-        url: '#',
-        icon: Calendar,
-    },
-    {
-        title: 'Search',
-        url: '#',
-        icon: Search,
-    },
-    {
-        title: 'Settings',
-        url: '/users/settings',
-        icon: Settings,
-    },
+    { title: 'Home', url: '/', icon: Home },
+    { title: 'Analytics', url: '/analytics', icon: ChartSpline },
+    { title: 'Inbox', url: '/message', icon: Inbox }, // Quan trọng: URL phải khớp logic check pathname
+    { title: 'Notifications', url: '/notifications', icon: Bell },
+    { title: 'Calendar', url: '#', icon: Calendar },
+    { title: 'Search', url: '#', icon: Search },
+    { title: 'Settings', url: '/users/settings', icon: Settings },
 ];
 
 const AppSidebar = () => {
-    const { unreadCount } = useNotificationStore();
+    const { unreadCount, increment, setUnreadCount } = useNotificationStore();
+    const pathname = usePathname();
+
+    // --- 1. FETCH SỐ TIN NHẮN CHƯA ĐỌC TỪ DB (KHI F5 TRANG) ---
+    useEffect(() => {
+        const fetchInitialUnread = async () => {
+            try {
+                // Gọi API đếm số tin isRead: false từ MongoDB
+                const res = await fetch(`${API_URL}/messages/stats/unread`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setUnreadCount(data.count || 0);
+                }
+            } catch (error) {
+                console.error('⚠️ Lỗi lấy số tin nhắn chưa đọc:', error);
+            }
+        };
+
+        // Chỉ gọi khi mới mount
+        fetchInitialUnread();
+    }, [setUnreadCount]);
+
+    // --- 2. LẮNG NGHE SOCKET REALTIME ---
+    useEffect(() => {
+        const socket = io(SOCKET_URL, {
+            query: { role: 'admin' },
+            transports: ['websocket'],
+        });
+
+        socket.on('connect', () => {
+            console.log('🔔 Sidebar connected to notification socket');
+        });
+
+        // Khi có tin nhắn mới từ user
+        socket.on('receive_message_from_user', (data: any) => {
+            console.log('🔔 Tin nhắn mới:', data);
+
+            // Logic: Chỉ tăng số nếu Admin ĐANG KHÔNG Ở trang /message
+            if (pathname !== '/message') {
+                increment();
+                // (Optional) Phát âm thanh "Ting"
+                // new Audio('/sounds/notification.mp3').play().catch(() => {});
+            }
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [pathname, increment]);
+
+    // --- 3. RESET SỐ KHI VÀO TRANG INBOX ---
+    useEffect(() => {
+        if (pathname === '/message') {
+            setUnreadCount(0);
+            // Lưu ý: Việc đánh dấu "đã đọc" trong DB sẽ do trang /message tự xử lý khi load chat
+        }
+    }, [pathname, setUnreadCount]);
+
     return (
         <Sidebar collapsible="icon">
-            {/* logo */}
+            {/* --- HEADER --- */}
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -116,7 +153,10 @@ const AppSidebar = () => {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
+
             <SidebarSeparator className="inset-0 ml-0" />
+
+            {/* --- CONTENT --- */}
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -124,28 +164,26 @@ const AppSidebar = () => {
                         <SidebarMenu>
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
+                                    <SidebarMenuButton asChild tooltip={item.title}>
                                         <Link href={item.url}>
                                             <item.icon />
                                             <span>{item.title}</span>
                                         </Link>
                                     </SidebarMenuButton>
 
-                                    {/* 🔥 LOGIC HIỂN THỊ BADGE Ở ĐÂY */}
-                                    {item.title === 'Notifications' && unreadCount > 0 && (
-                                        <SidebarMenuBadge className="bg-red-500 text-white hover:bg-red-600">
+                                    {/* 🔥 BADGE TIN NHẮN MÀU ĐỎ */}
+                                    {item.title === 'Inbox' && unreadCount > 0 && (
+                                        <SidebarMenuBadge className="animate-in zoom-in bg-red-500 font-bold text-white duration-300 hover:bg-red-600">
                                             {unreadCount > 99 ? '99+' : unreadCount}
                                         </SidebarMenuBadge>
                                     )}
-
-                                    {/* Nếu muốn giữ badge tĩnh cho Inbox thì để dòng này, ko thì xóa */}
-                                    {/* {item.title === 'Inbox' && <SidebarMenuBadge>22</SidebarMenuBadge>} */}
                                 </SidebarMenuItem>
                             ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-                {/* Hotels */}
+
+                {/* --- HOTELS GROUP --- */}
                 <SidebarGroup>
                     <SidebarGroupLabel>Hotels</SidebarGroupLabel>
                     <SidebarGroupAction title="Add Hotel">
@@ -156,47 +194,35 @@ const AppSidebar = () => {
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
                                     <Link href="/products">
-                                        <MapPinned />
-                                        See all hotels
+                                        <MapPinned /> See all hotels
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-                            {/* add product */}
                             <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    {/* RIGHT: Nút Settings */}
-                                    <Sheet>
-                                        <SheetTrigger asChild>
-                                            <SidebarMenuButton asChild>
-                                                <Link href="#">
-                                                    <Plus /> Add Hotel
-                                                </Link>
-                                            </SidebarMenuButton>
-                                        </SheetTrigger>
-                                        <AddProduct />
-                                    </Sheet>
-                                </SidebarMenuButton>
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <SidebarMenuButton>
+                                            <Plus /> Add Hotel
+                                        </SidebarMenuButton>
+                                    </SheetTrigger>
+                                    <AddProduct />
+                                </Sheet>
                             </SidebarMenuItem>
-                            {/* add category */}
                             <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    {/* RIGHT: Nút Settings */}
-                                    <Sheet>
-                                        <SheetTrigger asChild>
-                                            <SidebarMenuButton asChild>
-                                                <Link href="#">
-                                                    <Plus /> Add Category
-                                                </Link>
-                                            </SidebarMenuButton>
-                                        </SheetTrigger>
-                                        <AddCategory />
-                                    </Sheet>
-                                </SidebarMenuButton>
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <SidebarMenuButton>
+                                            <Plus /> Add Category
+                                        </SidebarMenuButton>
+                                    </SheetTrigger>
+                                    <AddCategory />
+                                </Sheet>
                             </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-                {/* User */}
+
+                {/* --- USERS GROUP --- */}
                 <SidebarGroup>
                     <SidebarGroupLabel>Users</SidebarGroupLabel>
                     <SidebarGroupAction title="Add User">
@@ -207,31 +233,25 @@ const AppSidebar = () => {
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
                                     <Link href="/users">
-                                        <User />
-                                        See All Users
+                                        <User /> See All Users
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-                            {/* add product */}
                             <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    {/* RIGHT: Nút Settings */}
-                                    <Sheet>
-                                        <SheetTrigger asChild>
-                                            <SidebarMenuButton asChild>
-                                                <Link href="#">
-                                                    <Plus /> Add User
-                                                </Link>
-                                            </SidebarMenuButton>
-                                        </SheetTrigger>
-                                        <AddUser />
-                                    </Sheet>
-                                </SidebarMenuButton>
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <SidebarMenuButton>
+                                            <Plus /> Add User
+                                        </SidebarMenuButton>
+                                    </SheetTrigger>
+                                    <AddUser />
+                                </Sheet>
                             </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-                {/* order/ payment */}
+
+                {/* --- ORDERS GROUP --- */}
                 <SidebarGroup>
                     <SidebarGroupLabel>Orders / Payments</SidebarGroupLabel>
                     <SidebarGroupAction title="Add Order">
@@ -242,31 +262,25 @@ const AppSidebar = () => {
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
                                     <Link href="/payments">
-                                        <ShoppingBasket />
-                                        See All Transactions
+                                        <ShoppingBasket /> See All Transactions
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-                            {/* add product */}
                             <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    {/* RIGHT: Nút Settings */}
-                                    <Sheet>
-                                        <SheetTrigger asChild>
-                                            <SidebarMenuButton asChild>
-                                                <Link href="#">
-                                                    <Plus /> Add Order
-                                                </Link>
-                                            </SidebarMenuButton>
-                                        </SheetTrigger>
-                                        <AddOrder />
-                                    </Sheet>
-                                </SidebarMenuButton>
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <SidebarMenuButton>
+                                            <Plus /> Add Order
+                                        </SidebarMenuButton>
+                                    </SheetTrigger>
+                                    <AddOrder />
+                                </Sheet>
                             </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-                {/* collapse */}
+
+                {/* --- TODOS COLLAPSIBLE --- */}
                 <Collapsible defaultOpen className="group/collapsible">
                     <SidebarGroup>
                         <SidebarGroupLabel asChild>
@@ -275,22 +289,20 @@ const AppSidebar = () => {
                                 <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                             </CollapsibleTrigger>
                         </SidebarGroupLabel>
-
                         <CollapsibleContent>
                             <SidebarGroupContent>
                                 <SidebarMenu>
                                     <SidebarMenuItem>
                                         <SidebarMenuButton asChild>
-                                            <Link href="/#">
-                                                <CalendarCheck2 />
-                                                Daily
+                                            <Link href="#">
+                                                <CalendarCheck2 /> Daily
                                             </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                     <SidebarMenuItem>
                                         <SidebarMenuButton asChild>
-                                            <Link href="/#">
-                                                <MessageSquareWarning /> Feed back
+                                            <Link href="#">
+                                                <MessageSquareWarning /> Feedback
                                             </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
@@ -302,6 +314,8 @@ const AppSidebar = () => {
             </SidebarContent>
 
             <SidebarSeparator className="inset-0 ml-0" />
+
+            {/* --- FOOTER (USER MENU) --- */}
             <SidebarFooter className="inset-0 rounded-md">
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -310,21 +324,28 @@ const AppSidebar = () => {
                                 <SidebarMenuButton size="lg">
                                     <Image
                                         src="/assets/images/avatar.jpg"
-                                        alt="logo"
+                                        alt="Avatar"
                                         width={20}
                                         height={20}
                                         className="h-10 w-10 shrink-0 rounded-lg border border-gray-700/20 object-cover dark:border-gray-200/20"
                                     />
                                     <div className="grid flex-1 text-left text-sm leading-tight">
                                         <span className="truncate font-semibold">Khadon</span>
-                                    </div>{' '}
+                                        <span className="truncate text-xs text-gray-500">Admin</span>
+                                    </div>
                                     <ChevronsUpDown className="ml-auto" />
                                 </SidebarMenuButton>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Account</DropdownMenuItem>
-                                <DropdownMenuItem>Setting</DropdownMenuItem>
-                                <DropdownMenuItem>Sign out</DropdownMenuItem>
+                            <DropdownMenuContent align="end" className="w-[--radix-dropdown-menu-trigger-width]">
+                                <DropdownMenuItem>
+                                    <User className="mr-2 h-4 w-4" /> Account
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Settings className="mr-2 h-4 w-4" /> Setting
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-600 focus:bg-red-50 focus:text-red-600">
+                                    <LogOut className="mr-2 h-4 w-4" /> Sign out
+                                </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </SidebarMenuItem>
@@ -333,4 +354,5 @@ const AppSidebar = () => {
         </Sidebar>
     );
 };
+
 export default AppSidebar;

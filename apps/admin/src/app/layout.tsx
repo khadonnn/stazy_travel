@@ -4,8 +4,8 @@ import './globals.css';
 import { viVN } from '@clerk/localizations';
 
 import { ClerkProvider } from '@clerk/nextjs';
-import { QueryClientProvider } from '@tanstack/react-query';
 import QueryProvider from './providers';
+import AdminSocketListener from '@/components/socket/AdminSocketListener';
 const geistSans = Geist({
     variable: '--font-geist-sans',
     subsets: ['latin'],
@@ -38,7 +38,10 @@ export default async function RootLayout({
         >
             <html lang="en" suppressHydrationWarning>
                 <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                    <QueryProvider>{children}</QueryProvider>
+                    <QueryProvider>
+                        <AdminSocketListener />
+                        {children}
+                    </QueryProvider>
                 </body>
             </html>
         </ClerkProvider>

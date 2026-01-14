@@ -121,8 +121,10 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
             const userRes = await axios.get<AuthorType>(
               `${API_URL}/users/${hotelData.authorId}`
             );
-            const userData = userRes.data;
+            const userData = userRes.data.data;
+            console.log("userData:", userData);
             const fullName = userData.name ?? userData.nickname ?? "Unknown";
+            console.log("fullname", fullName);
             // Mapping dữ liệu từ Backend IUser -> Frontend AuthorType
             const mappedAuthor: AuthorType = {
               id: userData.id,
@@ -432,7 +434,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
             <AvatarFallback>{displayName?.charAt(0) || "H"}</AvatarFallback>
           </Avatar>
           <span className="ml-2.5 text-neutral-500 dark:text-neutral-400">
-            Được chủ nhà{" "}
+            Được{" "}
             <span className="text-neutral-900 dark:text-neutral-200 font-medium">
               {displayName}
             </span>{" "}

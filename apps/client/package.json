@@ -50,6 +50,7 @@
         "react-hook-form": "^7.67.0",
         "react-hot-toast": "^2.5.2",
         "react-swipeable": "^7.0.2",
+        "socket.io-client": "^4.8.3",
         "sonner": "^2.0.7",
         "tailwind-merge": "^3.3.1",
         "zod": "^4.1.13",

@@ -1,0 +1,5450 @@
+[
+  {
+    "userId": "user_seed_198",
+    "hotelId": 77,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-02T13:56:36.737465"
+  },
+  {
+    "userId": "user_seed_76",
+    "hotelId": 16,
+    "rating": 2,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-28T13:57:40.737465"
+  },
+  {
+    "userId": "user_seed_76",
+    "hotelId": 20,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-28T13:17:27.737465"
+  },
+  {
+    "userId": "user_seed_177",
+    "hotelId": 35,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-24T13:37:43.737465"
+  },
+  {
+    "userId": "user_seed_177",
+    "hotelId": 57,
+    "rating": 3,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-24T13:37:56.737465"
+  },
+  {
+    "userId": "user_seed_93",
+    "hotelId": 65,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-13T13:49:56.737465"
+  },
+  {
+    "userId": "user_seed_186",
+    "hotelId": 29,
+    "rating": 1,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-18T13:05:53.737465"
+  },
+  {
+    "userId": "user_seed_61",
+    "hotelId": 37,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-18T13:34:51.737465"
+  },
+  {
+    "userId": "user_seed_61",
+    "hotelId": 99,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-07T13:50:59.737465"
+  },
+  {
+    "userId": "user_seed_77",
+    "hotelId": 89,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-30T13:38:45.737465"
+  },
+  {
+    "userId": "user_seed_181",
+    "hotelId": 74,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-20T13:18:32.737465"
+  },
+  {
+    "userId": "user_seed_189",
+    "hotelId": 58,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-29T13:50:35.737465"
+  },
+  {
+    "userId": "user_seed_171",
+    "hotelId": 73,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-21T13:28:28.737465"
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 100,
+    "rating": 1,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-16T13:58:02.737465"
+  },
+  {
+    "userId": "user_seed_78",
+    "hotelId": 48,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-21T13:29:15.737465"
+  },
+  {
+    "userId": "user_seed_85",
+    "hotelId": 10,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-21T13:40:34.737465"
+  },
+  {
+    "userId": "user_seed_85",
+    "hotelId": 87,
+    "rating": 1,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-21T13:38:44.737465"
+  },
+  {
+    "userId": "user_seed_198",
+    "hotelId": 31,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-08T13:33:48.737465"
+  },
+  {
+    "userId": "user_seed_154",
+    "hotelId": 86,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-30T13:41:49.737465"
+  },
+  {
+    "userId": "user_seed_154",
+    "hotelId": 46,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-30T13:32:54.737465"
+  },
+  {
+    "userId": "user_seed_167",
+    "hotelId": 67,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-12T13:19:48.737465"
+  },
+  {
+    "userId": "user_seed_83",
+    "hotelId": 50,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-07T13:32:53.737465"
+  },
+  {
+    "userId": "user_seed_159",
+    "hotelId": 3,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-29T13:34:42.737465"
+  },
+  {
+    "userId": "user_seed_147",
+    "hotelId": 9,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-02T13:34:10.737465"
+  },
+  {
+    "userId": "user_seed_58",
+    "hotelId": 51,
+    "rating": 3,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-18T13:08:39.737465"
+  },
+  {
+    "userId": "user_seed_121",
+    "hotelId": 52,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-09T13:43:27.737465"
+  },
+  {
+    "userId": "user_seed_144",
+    "hotelId": 12,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-06T13:46:23.737465"
+  },
+  {
+    "userId": "user_seed_174",
+    "hotelId": 62,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-11T13:31:47.737465"
+  },
+  {
+    "userId": "user_seed_127",
+    "hotelId": 87,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-15T13:17:51.737465"
+  },
+  {
+    "userId": "user_seed_139",
+    "hotelId": 20,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-02T13:32:37.737465"
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 54,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-13T13:39:00.737465"
+  },
+  {
+    "userId": "user_seed_136",
+    "hotelId": 86,
+    "rating": 3,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-22T13:24:13.737465"
+  },
+  {
+    "userId": "user_seed_54",
+    "hotelId": 9,
+    "rating": 2,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-10T13:33:47.737465"
+  },
+  {
+    "userId": "user_seed_190",
+    "hotelId": 6,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-01T13:13:31.737465"
+  },
+  {
+    "userId": "user_seed_190",
+    "hotelId": 75,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-01T13:09:34.737465"
+  },
+  {
+    "userId": "user_seed_119",
+    "hotelId": 28,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-15T13:37:57.737465"
+  },
+  {
+    "userId": "user_seed_83",
+    "hotelId": 33,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-01T13:17:25.737465"
+  },
+  {
+    "userId": "user_seed_83",
+    "hotelId": 8,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-28T13:28:57.737465"
+  },
+  {
+    "userId": "user_seed_95",
+    "hotelId": 20,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-02T13:15:03.737465"
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 86,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-01T13:45:59.737465"
+  },
+  {
+    "userId": "user_seed_28",
+    "hotelId": 28,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-01T13:00:58.737465"
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 14,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-03T13:22:54.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 52,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-14T13:46:08.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 86,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-14T13:38:16.737465"
+  },
+  {
+    "userId": "user_seed_100",
+    "hotelId": 86,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-27T13:11:59.737465"
+  },
+  {
+    "userId": "user_seed_187",
+    "hotelId": 78,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-29T13:39:12.737465"
+  },
+  {
+    "userId": "user_seed_184",
+    "hotelId": 88,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-03T13:17:22.737465"
+  },
+  {
+    "userId": "user_seed_170",
+    "hotelId": 30,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-31T12:58:56.737465"
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 16,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-06T13:52:32.737465"
+  },
+  {
+    "userId": "user_seed_37",
+    "hotelId": 55,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-30T13:40:43.737465"
+  },
+  {
+    "userId": "user_seed_177",
+    "hotelId": 40,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-13T13:10:46.737465"
+  },
+  {
+    "userId": "user_seed_119",
+    "hotelId": 67,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-20T13:05:22.737465"
+  },
+  {
+    "userId": "user_seed_119",
+    "hotelId": 45,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-20T13:36:08.737465"
+  },
+  {
+    "userId": "user_seed_36",
+    "hotelId": 28,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-28T13:31:09.737465"
+  },
+  {
+    "userId": "user_seed_106",
+    "hotelId": 41,
+    "rating": 3,
+    "comment": "Vệ sinh chưa sạch, còn bụi bẩn.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-12T13:30:41.737465"
+  },
+  {
+    "userId": "user_seed_152",
+    "hotelId": 89,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-28T13:54:34.737465"
+  },
+  {
+    "userId": "user_seed_195",
+    "hotelId": 31,
+    "rating": 3,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-09T13:14:00.737465"
+  },
+  {
+    "userId": "user_seed_195",
+    "hotelId": 86,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-09T13:51:59.737465"
+  },
+  {
+    "userId": "user_seed_167",
+    "hotelId": 42,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-23T13:36:50.737465"
+  },
+  {
+    "userId": "user_seed_165",
+    "hotelId": 22,
+    "rating": 2,
+    "comment": "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-11T13:12:58.737465"
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 33,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-25T13:38:17.737465"
+  },
+  {
+    "userId": "user_seed_138",
+    "hotelId": 66,
+    "rating": 3,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-08T13:21:44.737465"
+  },
+  {
+    "userId": "user_seed_178",
+    "hotelId": 8,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-25T13:41:51.737465"
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 24,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-06T13:51:12.737465"
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 14,
+    "rating": 2,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-02T13:03:59.737465"
+  },
+  {
+    "userId": "user_seed_122",
+    "hotelId": 56,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-02T13:47:17.737465"
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 33,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-04T13:12:13.737465"
+  },
+  {
+    "userId": "user_seed_148",
+    "hotelId": 74,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-02T13:02:20.737465"
+  },
+  {
+    "userId": "user_seed_148",
+    "hotelId": 63,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-02T13:38:18.737465"
+  },
+  {
+    "userId": "user_seed_148",
+    "hotelId": 99,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-02T12:59:20.737465"
+  },
+  {
+    "userId": "user_seed_188",
+    "hotelId": 26,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-11T13:38:01.737465"
+  },
+  {
+    "userId": "user_seed_43",
+    "hotelId": 87,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-25T13:13:46.737465"
+  },
+  {
+    "userId": "user_seed_70",
+    "hotelId": 80,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-06T13:29:44.737465"
+  },
+  {
+    "userId": "user_seed_171",
+    "hotelId": 25,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-18T13:55:16.737465"
+  },
+  {
+    "userId": "user_seed_141",
+    "hotelId": 47,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-04T13:05:50.737465"
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 44,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-22T13:05:10.737465"
+  },
+  {
+    "userId": "user_seed_134",
+    "hotelId": 64,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-25T13:02:15.737465"
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 18,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-31T13:28:28.737465"
+  },
+  {
+    "userId": "user_seed_195",
+    "hotelId": 95,
+    "rating": 1,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-07T13:37:49.737465"
+  },
+  {
+    "userId": "user_seed_105",
+    "hotelId": 22,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-07T13:23:54.737465"
+  },
+  {
+    "userId": "user_seed_105",
+    "hotelId": 47,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-07T13:36:28.737465"
+  },
+  {
+    "userId": "user_seed_136",
+    "hotelId": 19,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-01T13:48:33.737465"
+  },
+  {
+    "userId": "user_seed_183",
+    "hotelId": 97,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-28T13:21:15.737465"
+  },
+  {
+    "userId": "user_seed_126",
+    "hotelId": 16,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-08T13:04:38.737465"
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 55,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-31T13:13:08.737465"
+  },
+  {
+    "userId": "user_seed_64",
+    "hotelId": 12,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-20T13:49:11.737465"
+  },
+  {
+    "userId": "user_seed_126",
+    "hotelId": 87,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-06T13:02:07.737465"
+  },
+  {
+    "userId": "user_seed_187",
+    "hotelId": 21,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-02T13:10:30.737465"
+  },
+  {
+    "userId": "user_seed_71",
+    "hotelId": 94,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-11T13:04:52.737465"
+  },
+  {
+    "userId": "user_seed_71",
+    "hotelId": 85,
+    "rating": 1,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-11T13:09:00.737465"
+  },
+  {
+    "userId": "user_seed_200",
+    "hotelId": 79,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-27T13:55:50.737465"
+  },
+  {
+    "userId": "user_seed_98",
+    "hotelId": 34,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-27T13:22:50.737465"
+  },
+  {
+    "userId": "user_seed_98",
+    "hotelId": 16,
+    "rating": 1,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-27T13:54:54.737465"
+  },
+  {
+    "userId": "user_seed_100",
+    "hotelId": 8,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-01T13:09:16.737465"
+  },
+  {
+    "userId": "user_seed_100",
+    "hotelId": 95,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-01T13:18:54.737465"
+  },
+  {
+    "userId": "user_seed_38",
+    "hotelId": 17,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-08T13:21:23.737465"
+  },
+  {
+    "userId": "user_seed_125",
+    "hotelId": 53,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-13T13:26:49.737465"
+  },
+  {
+    "userId": "user_seed_120",
+    "hotelId": 20,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-10T13:39:38.737465"
+  },
+  {
+    "userId": "user_seed_148",
+    "hotelId": 9,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-08T13:32:12.737465"
+  },
+  {
+    "userId": "user_seed_144",
+    "hotelId": 72,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-15T13:28:06.737465"
+  },
+  {
+    "userId": "user_seed_144",
+    "hotelId": 24,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-15T13:26:14.737465"
+  },
+  {
+    "userId": "user_seed_80",
+    "hotelId": 62,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-16T13:36:44.737465"
+  },
+  {
+    "userId": "user_seed_188",
+    "hotelId": 93,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-31T13:49:08.737465"
+  },
+  {
+    "userId": "user_seed_127",
+    "hotelId": 81,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-21T13:20:28.737465"
+  },
+  {
+    "userId": "user_seed_76",
+    "hotelId": 14,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-10T13:49:20.737465"
+  },
+  {
+    "userId": "user_seed_76",
+    "hotelId": 78,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-10T13:09:06.737465"
+  },
+  {
+    "userId": "user_seed_84",
+    "hotelId": 95,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-16T13:51:24.737465"
+  },
+  {
+    "userId": "user_seed_84",
+    "hotelId": 24,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-16T13:33:32.737465"
+  },
+  {
+    "userId": "user_seed_23",
+    "hotelId": 69,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-29T13:29:11.737465"
+  },
+  {
+    "userId": "user_seed_99",
+    "hotelId": 96,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-11T13:23:22.737465"
+  },
+  {
+    "userId": "user_seed_60",
+    "hotelId": 57,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-30T13:03:10.737465"
+  },
+  {
+    "userId": "user_seed_87",
+    "hotelId": 25,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-04T13:56:45.737465"
+  },
+  {
+    "userId": "user_seed_152",
+    "hotelId": 13,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-11T13:27:12.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 49,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-11T13:48:15.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 62,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-11T13:28:59.737465"
+  },
+  {
+    "userId": "user_seed_48",
+    "hotelId": 3,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-12T13:34:36.737465"
+  },
+  {
+    "userId": "user_seed_58",
+    "hotelId": 86,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-28T13:09:34.737465"
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 20,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-23T13:39:21.737465"
+  },
+  {
+    "userId": "user_seed_142",
+    "hotelId": 26,
+    "rating": 1,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-01T13:14:22.737465"
+  },
+  {
+    "userId": "user_seed_66",
+    "hotelId": 91,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-14T13:40:32.737465"
+  },
+  {
+    "userId": "user_seed_123",
+    "hotelId": 61,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-28T13:06:04.737465"
+  },
+  {
+    "userId": "user_seed_157",
+    "hotelId": 71,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-07T13:26:51.737465"
+  },
+  {
+    "userId": "user_seed_153",
+    "hotelId": 71,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-21T13:16:49.737465"
+  },
+  {
+    "userId": "user_seed_171",
+    "hotelId": 6,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-18T13:47:24.737465"
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 48,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-03T13:13:51.737465"
+  },
+  {
+    "userId": "user_seed_38",
+    "hotelId": 23,
+    "rating": 3,
+    "comment": "Vệ sinh chưa sạch, còn bụi bẩn.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-24T13:44:41.737465"
+  },
+  {
+    "userId": "user_seed_137",
+    "hotelId": 89,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-04T13:30:23.737465"
+  },
+  {
+    "userId": "user_seed_109",
+    "hotelId": 43,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-12T12:59:02.737465"
+  },
+  {
+    "userId": "user_seed_87",
+    "hotelId": 25,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-07T13:29:08.737465"
+  },
+  {
+    "userId": "user_seed_80",
+    "hotelId": 59,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-12T13:26:46.737465"
+  },
+  {
+    "userId": "user_seed_175",
+    "hotelId": 75,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-03T13:41:54.737465"
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 76,
+    "rating": 1,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-10T13:30:33.737465"
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 50,
+    "rating": 1,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-10T13:48:12.737465"
+  },
+  {
+    "userId": "user_seed_12",
+    "hotelId": 81,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-07T13:29:48.737465"
+  },
+  {
+    "userId": "user_seed_63",
+    "hotelId": 57,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-21T13:13:56.737465"
+  },
+  {
+    "userId": "user_seed_63",
+    "hotelId": 9,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-21T13:48:40.737465"
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 20,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-20T13:01:09.737465"
+  },
+  {
+    "userId": "user_seed_80",
+    "hotelId": 20,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-18T13:12:37.737465"
+  },
+  {
+    "userId": "user_seed_73",
+    "hotelId": 33,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-31T13:34:44.737465"
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 97,
+    "rating": 1,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-16T13:47:10.737465"
+  },
+  {
+    "userId": "user_seed_83",
+    "hotelId": 16,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-10T13:36:44.737465"
+  },
+  {
+    "userId": "user_seed_128",
+    "hotelId": 29,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-22T13:08:51.737465"
+  },
+  {
+    "userId": "user_seed_173",
+    "hotelId": 26,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-21T13:25:21.737465"
+  },
+  {
+    "userId": "user_seed_173",
+    "hotelId": 69,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-21T13:46:05.737465"
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 65,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-19T13:41:24.737465"
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 30,
+    "rating": 3,
+    "comment": "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-19T13:43:41.737465"
+  },
+  {
+    "userId": "user_seed_194",
+    "hotelId": 74,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-23T13:10:46.737465"
+  },
+  {
+    "userId": "user_seed_129",
+    "hotelId": 88,
+    "rating": 1,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-21T13:08:40.737465"
+  },
+  {
+    "userId": "user_seed_68",
+    "hotelId": 84,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-19T13:37:30.737465"
+  },
+  {
+    "userId": "user_seed_68",
+    "hotelId": 67,
+    "rating": 2,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-19T13:40:07.737465"
+  },
+  {
+    "userId": "user_seed_73",
+    "hotelId": 64,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-25T13:52:25.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 41,
+    "rating": 3,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-21T13:12:39.737465"
+  },
+  {
+    "userId": "user_seed_149",
+    "hotelId": 10,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-04T13:23:25.737465"
+  },
+  {
+    "userId": "user_seed_70",
+    "hotelId": 11,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-28T13:30:09.737465"
+  },
+  {
+    "userId": "user_seed_97",
+    "hotelId": 85,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-03T12:59:37.737465"
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 18,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-28T13:16:42.737465"
+  },
+  {
+    "userId": "user_seed_124",
+    "hotelId": 78,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-21T13:27:32.737465"
+  },
+  {
+    "userId": "user_seed_90",
+    "hotelId": 8,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-27T13:25:24.737465"
+  },
+  {
+    "userId": "user_seed_136",
+    "hotelId": 72,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-11T13:57:03.737465"
+  },
+  {
+    "userId": "user_seed_183",
+    "hotelId": 78,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-18T13:37:22.737465"
+  },
+  {
+    "userId": "user_seed_87",
+    "hotelId": 58,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-01T13:19:34.737465"
+  },
+  {
+    "userId": "user_seed_183",
+    "hotelId": 10,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-14T13:50:49.737465"
+  },
+  {
+    "userId": "user_seed_189",
+    "hotelId": 22,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-15T13:43:03.737465"
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 43,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-16T12:58:31.737465"
+  },
+  {
+    "userId": "user_seed_123",
+    "hotelId": 78,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-09T13:25:34.737465"
+  },
+  {
+    "userId": "user_seed_167",
+    "hotelId": 57,
+    "rating": 2,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-24T13:04:35.737465"
+  },
+  {
+    "userId": "user_seed_182",
+    "hotelId": 94,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-14T13:08:16.737465"
+  },
+  {
+    "userId": "user_seed_17",
+    "hotelId": 48,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-24T13:03:18.737465"
+  },
+  {
+    "userId": "user_seed_135",
+    "hotelId": 86,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-27T13:18:45.737465"
+  },
+  {
+    "userId": "user_seed_135",
+    "hotelId": 18,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-27T13:51:43.737465"
+  },
+  {
+    "userId": "user_seed_107",
+    "hotelId": 78,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-06T13:13:51.737465"
+  },
+  {
+    "userId": "user_seed_138",
+    "hotelId": 70,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-17T13:11:41.737465"
+  },
+  {
+    "userId": "user_seed_138",
+    "hotelId": 50,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-17T13:52:51.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 98,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-08T13:24:59.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 40,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-08T13:39:38.737465"
+  },
+  {
+    "userId": "user_seed_67",
+    "hotelId": 8,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-14T12:59:21.737465"
+  },
+  {
+    "userId": "user_seed_102",
+    "hotelId": 54,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-01T13:29:30.737465"
+  },
+  {
+    "userId": "user_seed_106",
+    "hotelId": 83,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-22T13:30:09.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 46,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-15T13:49:33.737465"
+  },
+  {
+    "userId": "user_seed_63",
+    "hotelId": 64,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-30T13:33:09.737465"
+  },
+  {
+    "userId": "user_seed_191",
+    "hotelId": 74,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-05T13:32:56.737465"
+  },
+  {
+    "userId": "user_seed_68",
+    "hotelId": 46,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-11T13:04:32.737465"
+  },
+  {
+    "userId": "user_seed_118",
+    "hotelId": 42,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-29T13:20:27.737465"
+  },
+  {
+    "userId": "user_seed_174",
+    "hotelId": 28,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-01T13:15:06.737465"
+  },
+  {
+    "userId": "user_seed_196",
+    "hotelId": 81,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-23T13:16:42.737465"
+  },
+  {
+    "userId": "user_seed_129",
+    "hotelId": 44,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-16T13:24:32.737465"
+  },
+  {
+    "userId": "user_seed_97",
+    "hotelId": 61,
+    "rating": 3,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-20T13:47:28.737465"
+  },
+  {
+    "userId": "user_seed_102",
+    "hotelId": 32,
+    "rating": 3,
+    "comment": "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-12T13:00:01.737465"
+  },
+  {
+    "userId": "user_seed_134",
+    "hotelId": 37,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-25T13:21:04.737465"
+  },
+  {
+    "userId": "user_seed_180",
+    "hotelId": 40,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-10T13:31:12.737465"
+  },
+  {
+    "userId": "user_seed_97",
+    "hotelId": 22,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-21T13:00:22.737465"
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 83,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-11T13:29:41.737465"
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 48,
+    "rating": 3,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-11T13:41:44.737465"
+  },
+  {
+    "userId": "user_seed_82",
+    "hotelId": 52,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-09T13:21:39.737465"
+  },
+  {
+    "userId": "user_seed_188",
+    "hotelId": 1,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-18T13:01:27.737465"
+  },
+  {
+    "userId": "user_seed_113",
+    "hotelId": 95,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-14T13:32:41.737465"
+  },
+  {
+    "userId": "user_seed_38",
+    "hotelId": 18,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-11T13:00:27.737465"
+  },
+  {
+    "userId": "user_seed_27",
+    "hotelId": 33,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-22T13:25:54.737465"
+  },
+  {
+    "userId": "user_seed_147",
+    "hotelId": 76,
+    "rating": 3,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-15T13:55:38.737465"
+  },
+  {
+    "userId": "user_seed_87",
+    "hotelId": 47,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-10T13:53:00.737465"
+  },
+  {
+    "userId": "user_seed_124",
+    "hotelId": 97,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-27T13:51:43.737465"
+  },
+  {
+    "userId": "user_seed_124",
+    "hotelId": 20,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-27T13:37:19.737465"
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 23,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-10T13:48:55.737465"
+  },
+  {
+    "userId": "user_seed_105",
+    "hotelId": 13,
+    "rating": 1,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-17T13:05:41.737465"
+  },
+  {
+    "userId": "user_seed_143",
+    "hotelId": 56,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-10T13:31:36.737465"
+  },
+  {
+    "userId": "user_seed_171",
+    "hotelId": 73,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-12T13:16:13.737465"
+  },
+  {
+    "userId": "user_seed_96",
+    "hotelId": 16,
+    "rating": 1,
+    "comment": "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-23T13:33:16.737465"
+  },
+  {
+    "userId": "user_seed_194",
+    "hotelId": 31,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-18T13:13:25.737465"
+  },
+  {
+    "userId": "user_seed_196",
+    "hotelId": 53,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-29T13:52:36.737465"
+  },
+  {
+    "userId": "user_seed_76",
+    "hotelId": 51,
+    "rating": 2,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-04T13:24:02.737465"
+  },
+  {
+    "userId": "user_seed_103",
+    "hotelId": 94,
+    "rating": 1,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-08T13:01:59.737465"
+  },
+  {
+    "userId": "user_seed_43",
+    "hotelId": 69,
+    "rating": 1,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-31T13:19:55.737465"
+  },
+  {
+    "userId": "user_seed_185",
+    "hotelId": 27,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-06T13:45:53.737465"
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 69,
+    "rating": 2,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-11T13:37:34.737465"
+  },
+  {
+    "userId": "user_seed_172",
+    "hotelId": 26,
+    "rating": 1,
+    "comment": "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-03T13:14:45.737465"
+  },
+  {
+    "userId": "user_seed_149",
+    "hotelId": 52,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-27T13:29:08.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 71,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-18T13:04:12.737465"
+  },
+  {
+    "userId": "user_seed_102",
+    "hotelId": 30,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-02T13:43:07.737465"
+  },
+  {
+    "userId": "user_seed_76",
+    "hotelId": 70,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-06T13:16:17.737465"
+  },
+  {
+    "userId": "user_seed_39",
+    "hotelId": 79,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-15T13:06:08.737465"
+  },
+  {
+    "userId": "user_seed_120",
+    "hotelId": 45,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-15T13:30:51.737465"
+  },
+  {
+    "userId": "user_seed_19",
+    "hotelId": 97,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-10T13:25:17.737465"
+  },
+  {
+    "userId": "user_seed_160",
+    "hotelId": 26,
+    "rating": 1,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-09T13:47:40.737465"
+  },
+  {
+    "userId": "user_seed_143",
+    "hotelId": 9,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-01T13:55:01.737465"
+  },
+  {
+    "userId": "user_seed_120",
+    "hotelId": 1,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-14T13:01:06.737465"
+  },
+  {
+    "userId": "user_seed_62",
+    "hotelId": 50,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-11T13:51:00.737465"
+  },
+  {
+    "userId": "user_seed_98",
+    "hotelId": 90,
+    "rating": 3,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-12T13:02:33.737465"
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 41,
+    "rating": 3,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-04T13:45:13.737465"
+  },
+  {
+    "userId": "user_seed_144",
+    "hotelId": 73,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-23T13:04:44.737465"
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 24,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-11T13:12:14.737465"
+  },
+  {
+    "userId": "user_seed_198",
+    "hotelId": 77,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-26T13:48:52.737465"
+  },
+  {
+    "userId": "user_seed_80",
+    "hotelId": 87,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-29T13:55:47.737465"
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 29,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-06T13:22:20.737465"
+  },
+  {
+    "userId": "user_seed_87",
+    "hotelId": 38,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-22T13:01:50.737465"
+  },
+  {
+    "userId": "user_seed_154",
+    "hotelId": 47,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-25T13:10:50.737465"
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 75,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-23T13:04:45.737465"
+  },
+  {
+    "userId": "user_seed_182",
+    "hotelId": 80,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-09T13:50:07.737465"
+  },
+  {
+    "userId": "user_seed_131",
+    "hotelId": 25,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-08T13:06:23.737465"
+  },
+  {
+    "userId": "user_seed_38",
+    "hotelId": 5,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-07T13:32:09.737465"
+  },
+  {
+    "userId": "user_seed_86",
+    "hotelId": 48,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-04T13:36:41.737465"
+  },
+  {
+    "userId": "user_seed_94",
+    "hotelId": 60,
+    "rating": 2,
+    "comment": "Vệ sinh chưa sạch, còn bụi bẩn.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-16T13:35:05.737465"
+  },
+  {
+    "userId": "user_seed_94",
+    "hotelId": 3,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-16T13:17:10.737465"
+  },
+  {
+    "userId": "user_seed_175",
+    "hotelId": 33,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-08T13:33:31.737465"
+  },
+  {
+    "userId": "user_seed_127",
+    "hotelId": 15,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-04T13:33:15.737465"
+  },
+  {
+    "userId": "user_seed_127",
+    "hotelId": 69,
+    "rating": 2,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-04T13:32:43.737465"
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 83,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-02T13:24:58.737465"
+  },
+  {
+    "userId": "user_seed_71",
+    "hotelId": 84,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-21T13:14:00.737465"
+  },
+  {
+    "userId": "user_seed_63",
+    "hotelId": 24,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-26T13:33:16.737465"
+  },
+  {
+    "userId": "user_seed_191",
+    "hotelId": 100,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-11T12:59:01.737465"
+  },
+  {
+    "userId": "user_seed_88",
+    "hotelId": 6,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-11T13:29:34.737465"
+  },
+  {
+    "userId": "user_seed_129",
+    "hotelId": 34,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-20T13:07:31.737465"
+  },
+  {
+    "userId": "user_seed_129",
+    "hotelId": 54,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-20T13:44:34.737465"
+  },
+  {
+    "userId": "user_seed_142",
+    "hotelId": 75,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-23T13:22:30.737465"
+  },
+  {
+    "userId": "user_seed_145",
+    "hotelId": 95,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-10T13:28:45.737465"
+  },
+  {
+    "userId": "user_seed_85",
+    "hotelId": 2,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-23T13:53:54.737465"
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 1,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-26T13:06:12.737465"
+  },
+  {
+    "userId": "user_seed_43",
+    "hotelId": 93,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-21T13:25:02.737465"
+  },
+  {
+    "userId": "user_seed_43",
+    "hotelId": 100,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-21T13:07:16.737465"
+  },
+  {
+    "userId": "user_seed_69",
+    "hotelId": 55,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-16T13:04:06.737465"
+  },
+  {
+    "userId": "user_seed_180",
+    "hotelId": 91,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-27T13:30:23.737465"
+  },
+  {
+    "userId": "user_seed_76",
+    "hotelId": 69,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-23T13:42:41.737465"
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 24,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-20T13:01:32.737465"
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 7,
+    "rating": 1,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-20T13:28:01.737465"
+  },
+  {
+    "userId": "user_seed_183",
+    "hotelId": 67,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-28T13:13:34.737465"
+  },
+  {
+    "userId": "user_seed_115",
+    "hotelId": 34,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-02T13:26:27.737465"
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 43,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-21T13:19:26.737465"
+  },
+  {
+    "userId": "user_seed_165",
+    "hotelId": 60,
+    "rating": 1,
+    "comment": "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-13T13:26:01.737465"
+  },
+  {
+    "userId": "user_seed_122",
+    "hotelId": 19,
+    "rating": 2,
+    "comment": "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-27T13:30:26.737465"
+  },
+  {
+    "userId": "user_seed_136",
+    "hotelId": 9,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-14T13:30:51.737465"
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 21,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-08T13:14:02.737465"
+  },
+  {
+    "userId": "user_seed_101",
+    "hotelId": 19,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-08T13:52:38.737465"
+  },
+  {
+    "userId": "user_seed_120",
+    "hotelId": 9,
+    "rating": 3,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-09T13:15:06.737465"
+  },
+  {
+    "userId": "user_seed_120",
+    "hotelId": 77,
+    "rating": 3,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-09T13:01:18.737465"
+  },
+  {
+    "userId": "user_seed_12",
+    "hotelId": 100,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-17T13:13:49.737465"
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 63,
+    "rating": 1,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-16T13:28:45.737465"
+  },
+  {
+    "userId": "user_seed_107",
+    "hotelId": 66,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-02T13:57:31.737465"
+  },
+  {
+    "userId": "user_seed_78",
+    "hotelId": 15,
+    "rating": 3,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-26T13:31:37.737465"
+  },
+  {
+    "userId": "user_seed_133",
+    "hotelId": 2,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-05T12:59:21.737465"
+  },
+  {
+    "userId": "user_seed_114",
+    "hotelId": 69,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-27T13:54:11.737465"
+  },
+  {
+    "userId": "user_seed_79",
+    "hotelId": 93,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-07T12:58:26.737465"
+  },
+  {
+    "userId": "user_seed_41",
+    "hotelId": 90,
+    "rating": 1,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-21T13:36:37.737465"
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 31,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-15T13:20:31.737465"
+  },
+  {
+    "userId": "user_seed_81",
+    "hotelId": 5,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-18T13:18:13.737465"
+  },
+  {
+    "userId": "user_seed_29",
+    "hotelId": 92,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-13T13:24:42.737465"
+  },
+  {
+    "userId": "user_seed_163",
+    "hotelId": 70,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-07T13:04:39.737465"
+  },
+  {
+    "userId": "user_seed_105",
+    "hotelId": 30,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-01T13:13:12.737465"
+  },
+  {
+    "userId": "user_seed_36",
+    "hotelId": 79,
+    "rating": 1,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-21T13:40:13.737465"
+  },
+  {
+    "userId": "user_seed_91",
+    "hotelId": 20,
+    "rating": 1,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-02T13:48:16.737465"
+  },
+  {
+    "userId": "user_seed_140",
+    "hotelId": 31,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-16T13:27:55.737465"
+  },
+  {
+    "userId": "user_seed_161",
+    "hotelId": 13,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-24T13:09:54.737465"
+  },
+  {
+    "userId": "user_seed_138",
+    "hotelId": 37,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-13T13:44:11.737465"
+  },
+  {
+    "userId": "user_seed_95",
+    "hotelId": 97,
+    "rating": 3,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-10T13:16:42.737465"
+  },
+  {
+    "userId": "user_seed_139",
+    "hotelId": 69,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-18T13:05:45.737465"
+  },
+  {
+    "userId": "user_seed_166",
+    "hotelId": 93,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-07T13:06:10.737465"
+  },
+  {
+    "userId": "user_seed_55",
+    "hotelId": 48,
+    "rating": 3,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-14T13:44:32.737465"
+  },
+  {
+    "userId": "user_seed_149",
+    "hotelId": 21,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-18T13:28:20.737465"
+  },
+  {
+    "userId": "user_seed_149",
+    "hotelId": 46,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-18T13:32:56.737465"
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 24,
+    "rating": 3,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-22T13:21:09.737465"
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 19,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-09T13:11:42.737465"
+  },
+  {
+    "userId": "user_seed_159",
+    "hotelId": 70,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-08T13:32:02.737465"
+  },
+  {
+    "userId": "user_seed_85",
+    "hotelId": 47,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-24T13:28:10.737465"
+  },
+  {
+    "userId": "user_seed_100",
+    "hotelId": 29,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-06T13:17:18.737465"
+  },
+  {
+    "userId": "user_seed_105",
+    "hotelId": 38,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-18T13:31:04.737465"
+  },
+  {
+    "userId": "user_seed_157",
+    "hotelId": 38,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-31T13:35:20.737465"
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 78,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-09T13:21:32.737465"
+  },
+  {
+    "userId": "user_seed_174",
+    "hotelId": 90,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-14T13:35:44.737465"
+  },
+  {
+    "userId": "user_seed_82",
+    "hotelId": 39,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-02T13:12:37.737465"
+  },
+  {
+    "userId": "user_seed_123",
+    "hotelId": 31,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-21T13:28:39.737465"
+  },
+  {
+    "userId": "user_seed_165",
+    "hotelId": 29,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-27T13:40:57.737465"
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 49,
+    "rating": 3,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-19T13:10:47.737465"
+  },
+  {
+    "userId": "user_seed_19",
+    "hotelId": 35,
+    "rating": 2,
+    "comment": "Vệ sinh chưa sạch, còn bụi bẩn.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-08T13:08:15.737465"
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 89,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-15T13:37:15.737465"
+  },
+  {
+    "userId": "user_seed_79",
+    "hotelId": 5,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-20T13:52:20.737465"
+  },
+  {
+    "userId": "user_seed_37",
+    "hotelId": 39,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-04T13:29:05.737465"
+  },
+  {
+    "userId": "user_seed_40",
+    "hotelId": 85,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-05T13:34:55.737465"
+  },
+  {
+    "userId": "user_seed_104",
+    "hotelId": 1,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-24T13:20:03.737465"
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 46,
+    "rating": 1,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-22T12:58:32.737465"
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 8,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-08T13:40:31.737465"
+  },
+  {
+    "userId": "user_seed_123",
+    "hotelId": 61,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-18T13:15:27.737465"
+  },
+  {
+    "userId": "user_seed_147",
+    "hotelId": 11,
+    "rating": 2,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-05T13:13:00.737465"
+  },
+  {
+    "userId": "user_seed_166",
+    "hotelId": 39,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-04T13:34:08.737465"
+  },
+  {
+    "userId": "user_seed_139",
+    "hotelId": 98,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-23T13:10:40.737465"
+  },
+  {
+    "userId": "user_seed_58",
+    "hotelId": 98,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-06T13:18:14.737465"
+  },
+  {
+    "userId": "user_seed_80",
+    "hotelId": 50,
+    "rating": 3,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-20T13:11:58.737465"
+  },
+  {
+    "userId": "user_seed_48",
+    "hotelId": 53,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-31T13:46:21.737465"
+  },
+  {
+    "userId": "user_seed_48",
+    "hotelId": 13,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-31T13:18:28.737465"
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 29,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-12T13:38:05.737465"
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 49,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-12T13:24:58.737465"
+  },
+  {
+    "userId": "user_seed_126",
+    "hotelId": 99,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-23T13:33:22.737465"
+  },
+  {
+    "userId": "user_seed_132",
+    "hotelId": 94,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-26T13:46:50.737465"
+  },
+  {
+    "userId": "user_seed_132",
+    "hotelId": 30,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-26T13:50:58.737465"
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 54,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-30T13:35:29.737465"
+  },
+  {
+    "userId": "user_seed_133",
+    "hotelId": 22,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-01T13:51:19.737465"
+  },
+  {
+    "userId": "user_seed_133",
+    "hotelId": 42,
+    "rating": 3,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-01T13:56:15.737465"
+  },
+  {
+    "userId": "user_seed_102",
+    "hotelId": 100,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-23T13:27:34.737465"
+  },
+  {
+    "userId": "user_seed_77",
+    "hotelId": 45,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-06T13:38:13.737465"
+  },
+  {
+    "userId": "user_seed_147",
+    "hotelId": 69,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-11T13:01:52.737465"
+  },
+  {
+    "userId": "user_seed_147",
+    "hotelId": 8,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-11T13:52:11.737465"
+  },
+  {
+    "userId": "user_seed_114",
+    "hotelId": 7,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-19T13:39:24.737465"
+  },
+  {
+    "userId": "user_seed_115",
+    "hotelId": 100,
+    "rating": 1,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-05T13:56:30.737465"
+  },
+  {
+    "userId": "user_seed_71",
+    "hotelId": 68,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-07T13:39:28.737465"
+  },
+  {
+    "userId": "user_seed_83",
+    "hotelId": 39,
+    "rating": 3,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-02T13:43:59.737465"
+  },
+  {
+    "userId": "user_seed_187",
+    "hotelId": 37,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-19T13:03:46.737465"
+  },
+  {
+    "userId": "user_seed_187",
+    "hotelId": 59,
+    "rating": 3,
+    "comment": "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-19T13:32:43.737465"
+  },
+  {
+    "userId": "user_seed_69",
+    "hotelId": 75,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-20T13:13:07.737465"
+  },
+  {
+    "userId": "user_seed_29",
+    "hotelId": 93,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-14T13:46:12.737465"
+  },
+  {
+    "userId": "user_seed_163",
+    "hotelId": 71,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-21T13:43:49.737465"
+  },
+  {
+    "userId": "user_seed_121",
+    "hotelId": 82,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-08T13:29:08.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 66,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-30T13:04:31.737465"
+  },
+  {
+    "userId": "user_seed_9",
+    "hotelId": 57,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-02T13:21:22.737465"
+  },
+  {
+    "userId": "user_seed_71",
+    "hotelId": 57,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-06T13:27:04.737465"
+  },
+  {
+    "userId": "user_seed_176",
+    "hotelId": 45,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-04T13:51:56.737465"
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 33,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-07T12:58:28.737465"
+  },
+  {
+    "userId": "user_seed_91",
+    "hotelId": 18,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-04T13:06:45.737465"
+  },
+  {
+    "userId": "user_seed_51",
+    "hotelId": 14,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-27T13:39:33.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 15,
+    "rating": 1,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-16T13:22:04.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 66,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-29T13:35:36.737465"
+  },
+  {
+    "userId": "user_seed_188",
+    "hotelId": 98,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-21T13:05:04.737465"
+  },
+  {
+    "userId": "user_seed_153",
+    "hotelId": 96,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-08T13:30:03.737465"
+  },
+  {
+    "userId": "user_seed_184",
+    "hotelId": 72,
+    "rating": 3,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-20T13:36:07.737465"
+  },
+  {
+    "userId": "user_seed_117",
+    "hotelId": 88,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-22T13:38:48.737465"
+  },
+  {
+    "userId": "user_seed_195",
+    "hotelId": 54,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-25T13:50:38.737465"
+  },
+  {
+    "userId": "user_seed_57",
+    "hotelId": 73,
+    "rating": 3,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-20T13:40:39.737465"
+  },
+  {
+    "userId": "user_seed_62",
+    "hotelId": 98,
+    "rating": 3,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-08T13:47:32.737465"
+  },
+  {
+    "userId": "user_seed_148",
+    "hotelId": 68,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-20T13:01:44.737465"
+  },
+  {
+    "userId": "user_seed_38",
+    "hotelId": 60,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-25T13:25:06.737465"
+  },
+  {
+    "userId": "user_seed_113",
+    "hotelId": 67,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-08T13:24:16.737465"
+  },
+  {
+    "userId": "user_seed_193",
+    "hotelId": 85,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-15T13:39:20.737465"
+  },
+  {
+    "userId": "user_seed_91",
+    "hotelId": 50,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-08T13:32:22.737465"
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 11,
+    "rating": 3,
+    "comment": "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-08T13:39:00.737465"
+  },
+  {
+    "userId": "user_seed_78",
+    "hotelId": 70,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-08T13:14:35.737465"
+  },
+  {
+    "userId": "user_seed_78",
+    "hotelId": 7,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-08T13:25:17.737465"
+  },
+  {
+    "userId": "user_seed_65",
+    "hotelId": 17,
+    "rating": 1,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-23T13:30:39.737465"
+  },
+  {
+    "userId": "user_seed_52",
+    "hotelId": 24,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-09T13:51:45.737465"
+  },
+  {
+    "userId": "user_seed_181",
+    "hotelId": 96,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-09T13:12:31.737465"
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 2,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-07T13:43:11.737465"
+  },
+  {
+    "userId": "user_seed_167",
+    "hotelId": 17,
+    "rating": 3,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-19T13:33:34.737465"
+  },
+  {
+    "userId": "user_seed_167",
+    "hotelId": 15,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-19T13:29:44.737465"
+  },
+  {
+    "userId": "user_seed_166",
+    "hotelId": 44,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-25T13:35:10.737465"
+  },
+  {
+    "userId": "user_seed_81",
+    "hotelId": 66,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-23T13:15:07.737465"
+  },
+  {
+    "userId": "user_seed_199",
+    "hotelId": 8,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-19T13:04:05.737465"
+  },
+  {
+    "userId": "user_seed_199",
+    "hotelId": 39,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-19T13:36:37.737465"
+  },
+  {
+    "userId": "user_seed_199",
+    "hotelId": 100,
+    "rating": 3,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-19T13:29:19.737465"
+  },
+  {
+    "userId": "user_seed_170",
+    "hotelId": 59,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-09T13:33:07.737465"
+  },
+  {
+    "userId": "user_seed_94",
+    "hotelId": 14,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-05T13:31:36.737465"
+  },
+  {
+    "userId": "user_seed_103",
+    "hotelId": 4,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-12T13:45:27.737465"
+  },
+  {
+    "userId": "user_seed_100",
+    "hotelId": 73,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-29T13:43:43.737465"
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 33,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-27T13:31:50.737465"
+  },
+  {
+    "userId": "user_seed_163",
+    "hotelId": 96,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-17T13:42:33.737465"
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 99,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-01T13:29:27.737465"
+  },
+  {
+    "userId": "user_seed_64",
+    "hotelId": 25,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-27T13:29:16.737465"
+  },
+  {
+    "userId": "user_seed_64",
+    "hotelId": 59,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-27T13:32:59.737465"
+  },
+  {
+    "userId": "user_seed_60",
+    "hotelId": 87,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-06T12:58:57.737465"
+  },
+  {
+    "userId": "user_seed_71",
+    "hotelId": 6,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-06T13:38:01.737465"
+  },
+  {
+    "userId": "user_seed_119",
+    "hotelId": 71,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-12T13:31:10.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 8,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-07T13:54:05.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 52,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-07T13:10:40.737465"
+  },
+  {
+    "userId": "user_seed_200",
+    "hotelId": 1,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-01T13:49:36.737465"
+  },
+  {
+    "userId": "user_seed_191",
+    "hotelId": 93,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-29T13:12:04.737465"
+  },
+  {
+    "userId": "user_seed_163",
+    "hotelId": 72,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-27T13:21:45.737465"
+  },
+  {
+    "userId": "user_seed_145",
+    "hotelId": 24,
+    "rating": 3,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-26T13:03:31.737465"
+  },
+  {
+    "userId": "user_seed_131",
+    "hotelId": 97,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-20T13:54:53.737465"
+  },
+  {
+    "userId": "user_seed_131",
+    "hotelId": 69,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-20T13:18:27.737465"
+  },
+  {
+    "userId": "user_seed_119",
+    "hotelId": 83,
+    "rating": 2,
+    "comment": "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-12T13:44:01.737465"
+  },
+  {
+    "userId": "user_seed_164",
+    "hotelId": 72,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-10T13:54:21.737465"
+  },
+  {
+    "userId": "user_seed_54",
+    "hotelId": 28,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-07T13:21:13.737465"
+  },
+  {
+    "userId": "user_seed_20",
+    "hotelId": 70,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-17T13:40:28.737465"
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 60,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-17T13:16:25.737465"
+  },
+  {
+    "userId": "user_seed_35",
+    "hotelId": 36,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-18T13:30:08.737465"
+  },
+  {
+    "userId": "user_seed_132",
+    "hotelId": 34,
+    "rating": 3,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-18T13:29:04.737465"
+  },
+  {
+    "userId": "user_seed_105",
+    "hotelId": 90,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-30T13:46:26.737465"
+  },
+  {
+    "userId": "user_seed_200",
+    "hotelId": 81,
+    "rating": 2,
+    "comment": "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-06T13:17:33.737465"
+  },
+  {
+    "userId": "user_seed_16",
+    "hotelId": 87,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-07T13:04:40.737465"
+  },
+  {
+    "userId": "user_seed_94",
+    "hotelId": 72,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-12T13:12:22.737465"
+  },
+  {
+    "userId": "user_seed_94",
+    "hotelId": 17,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-12T13:36:04.737465"
+  },
+  {
+    "userId": "user_seed_181",
+    "hotelId": 26,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-04T13:53:24.737465"
+  },
+  {
+    "userId": "user_seed_51",
+    "hotelId": 52,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-11T13:31:13.737465"
+  },
+  {
+    "userId": "user_seed_122",
+    "hotelId": 39,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-12T12:58:28.737465"
+  },
+  {
+    "userId": "user_seed_122",
+    "hotelId": 39,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-12T13:31:37.737465"
+  },
+  {
+    "userId": "user_seed_73",
+    "hotelId": 65,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-08T13:41:06.737465"
+  },
+  {
+    "userId": "user_seed_74",
+    "hotelId": 97,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-26T13:04:31.737465"
+  },
+  {
+    "userId": "user_seed_96",
+    "hotelId": 47,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-21T13:36:42.737465"
+  },
+  {
+    "userId": "user_seed_60",
+    "hotelId": 60,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-29T13:31:23.737465"
+  },
+  {
+    "userId": "user_seed_114",
+    "hotelId": 25,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-20T13:31:15.737465"
+  },
+  {
+    "userId": "user_seed_67",
+    "hotelId": 21,
+    "rating": 3,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-14T13:30:18.737465"
+  },
+  {
+    "userId": "user_seed_159",
+    "hotelId": 58,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-21T13:20:28.737465"
+  },
+  {
+    "userId": "user_seed_97",
+    "hotelId": 65,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-11T13:18:10.737465"
+  },
+  {
+    "userId": "user_seed_67",
+    "hotelId": 61,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-14T13:10:18.737465"
+  },
+  {
+    "userId": "user_seed_36",
+    "hotelId": 52,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-04T13:33:43.737465"
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 23,
+    "rating": 3,
+    "comment": "Vệ sinh chưa sạch, còn bụi bẩn.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-28T13:47:23.737465"
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 95,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-06T13:11:27.737465"
+  },
+  {
+    "userId": "user_seed_14",
+    "hotelId": 78,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-06T13:49:34.737465"
+  },
+  {
+    "userId": "user_seed_55",
+    "hotelId": 89,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-17T13:08:49.737465"
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 44,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-25T13:54:40.737465"
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 90,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-25T13:12:21.737465"
+  },
+  {
+    "userId": "user_seed_43",
+    "hotelId": 5,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-16T13:42:25.737465"
+  },
+  {
+    "userId": "user_seed_43",
+    "hotelId": 38,
+    "rating": 3,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-16T13:03:51.737465"
+  },
+  {
+    "userId": "user_seed_122",
+    "hotelId": 39,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-27T13:42:45.737465"
+  },
+  {
+    "userId": "user_seed_122",
+    "hotelId": 6,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-27T13:14:24.737465"
+  },
+  {
+    "userId": "user_seed_68",
+    "hotelId": 53,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-17T12:59:06.737465"
+  },
+  {
+    "userId": "user_seed_185",
+    "hotelId": 80,
+    "rating": 1,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-21T13:54:32.737465"
+  },
+  {
+    "userId": "user_seed_121",
+    "hotelId": 96,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-22T13:02:35.737465"
+  },
+  {
+    "userId": "user_seed_50",
+    "hotelId": 35,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-14T13:16:00.737465"
+  },
+  {
+    "userId": "user_seed_50",
+    "hotelId": 27,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-14T13:42:35.737465"
+  },
+  {
+    "userId": "user_seed_113",
+    "hotelId": 80,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-13T13:35:58.737465"
+  },
+  {
+    "userId": "user_seed_19",
+    "hotelId": 57,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-28T13:48:45.737465"
+  },
+  {
+    "userId": "user_seed_27",
+    "hotelId": 33,
+    "rating": 3,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-12T13:50:18.737465"
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 18,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-14T13:46:19.737465"
+  },
+  {
+    "userId": "user_seed_80",
+    "hotelId": 49,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-06T13:45:54.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 84,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-07T13:49:49.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 59,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-07T13:48:57.737465"
+  },
+  {
+    "userId": "user_seed_104",
+    "hotelId": 61,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-30T13:04:01.737465"
+  },
+  {
+    "userId": "user_seed_56",
+    "hotelId": 5,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-17T13:17:34.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 75,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-12T13:50:08.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 55,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-12T13:02:36.737465"
+  },
+  {
+    "userId": "user_seed_141",
+    "hotelId": 37,
+    "rating": 3,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-25T13:35:44.737465"
+  },
+  {
+    "userId": "user_seed_141",
+    "hotelId": 36,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-25T13:53:35.737465"
+  },
+  {
+    "userId": "user_seed_136",
+    "hotelId": 15,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-26T13:20:13.737465"
+  },
+  {
+    "userId": "user_seed_106",
+    "hotelId": 27,
+    "rating": 1,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-01T13:41:55.737465"
+  },
+  {
+    "userId": "user_seed_108",
+    "hotelId": 37,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-19T13:30:23.737465"
+  },
+  {
+    "userId": "user_seed_108",
+    "hotelId": 74,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-19T13:25:32.737465"
+  },
+  {
+    "userId": "user_seed_25",
+    "hotelId": 25,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-07T13:06:32.737465"
+  },
+  {
+    "userId": "user_seed_149",
+    "hotelId": 15,
+    "rating": 2,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-28T13:03:25.737465"
+  },
+  {
+    "userId": "user_seed_38",
+    "hotelId": 40,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-18T13:36:21.737465"
+  },
+  {
+    "userId": "user_seed_119",
+    "hotelId": 79,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-20T13:34:43.737465"
+  },
+  {
+    "userId": "user_seed_183",
+    "hotelId": 93,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-24T13:05:53.737465"
+  },
+  {
+    "userId": "user_seed_183",
+    "hotelId": 65,
+    "rating": 3,
+    "comment": "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-24T13:11:37.737465"
+  },
+  {
+    "userId": "user_seed_120",
+    "hotelId": 38,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-18T13:24:20.737465"
+  },
+  {
+    "userId": "user_seed_71",
+    "hotelId": 77,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-19T13:35:09.737465"
+  },
+  {
+    "userId": "user_seed_71",
+    "hotelId": 47,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-19T13:45:06.737465"
+  },
+  {
+    "userId": "user_seed_4",
+    "hotelId": 70,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-15T13:09:05.737465"
+  },
+  {
+    "userId": "user_seed_73",
+    "hotelId": 49,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-08T13:49:21.737465"
+  },
+  {
+    "userId": "user_seed_57",
+    "hotelId": 30,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-17T13:17:33.737465"
+  },
+  {
+    "userId": "user_seed_186",
+    "hotelId": 88,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-19T13:56:01.737465"
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 51,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-29T13:01:46.737465"
+  },
+  {
+    "userId": "user_seed_43",
+    "hotelId": 28,
+    "rating": 2,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-29T13:52:16.737465"
+  },
+  {
+    "userId": "user_seed_133",
+    "hotelId": 15,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-03T13:08:01.737465"
+  },
+  {
+    "userId": "user_seed_116",
+    "hotelId": 44,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-22T13:28:10.737465"
+  },
+  {
+    "userId": "user_seed_134",
+    "hotelId": 79,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-03T13:35:11.737465"
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 4,
+    "rating": 2,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-24T13:35:44.737465"
+  },
+  {
+    "userId": "user_seed_176",
+    "hotelId": 77,
+    "rating": 3,
+    "comment": "Vệ sinh chưa sạch, còn bụi bẩn.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-02T13:29:47.737465"
+  },
+  {
+    "userId": "user_seed_87",
+    "hotelId": 28,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-13T13:40:11.737465"
+  },
+  {
+    "userId": "user_seed_96",
+    "hotelId": 95,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-24T13:36:13.737465"
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 63,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-25T13:53:13.737465"
+  },
+  {
+    "userId": "user_seed_145",
+    "hotelId": 95,
+    "rating": 3,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-22T13:11:57.737465"
+  },
+  {
+    "userId": "user_seed_153",
+    "hotelId": 41,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-24T13:07:45.737465"
+  },
+  {
+    "userId": "user_seed_165",
+    "hotelId": 60,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-19T13:37:25.737465"
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 32,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-25T13:49:19.737465"
+  },
+  {
+    "userId": "user_seed_34",
+    "hotelId": 29,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-16T13:45:13.737465"
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 5,
+    "rating": 2,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-05T13:04:32.737465"
+  },
+  {
+    "userId": "user_seed_1",
+    "hotelId": 67,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-05T13:54:02.737465"
+  },
+  {
+    "userId": "user_seed_41",
+    "hotelId": 58,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-18T13:08:50.737465"
+  },
+  {
+    "userId": "user_seed_141",
+    "hotelId": 91,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-11T13:35:31.737465"
+  },
+  {
+    "userId": "user_seed_141",
+    "hotelId": 46,
+    "rating": 2,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-11T13:44:14.737465"
+  },
+  {
+    "userId": "user_seed_167",
+    "hotelId": 25,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-21T13:37:21.737465"
+  },
+  {
+    "userId": "user_seed_80",
+    "hotelId": 76,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-08T13:15:57.737465"
+  },
+  {
+    "userId": "user_seed_88",
+    "hotelId": 48,
+    "rating": 1,
+    "comment": "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-02T13:55:23.737465"
+  },
+  {
+    "userId": "user_seed_100",
+    "hotelId": 68,
+    "rating": 2,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-03T13:16:32.737465"
+  },
+  {
+    "userId": "user_seed_100",
+    "hotelId": 13,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-03T13:02:00.737465"
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 81,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-12T13:43:57.737465"
+  },
+  {
+    "userId": "user_seed_166",
+    "hotelId": 27,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-18T13:38:51.737465"
+  },
+  {
+    "userId": "user_seed_166",
+    "hotelId": 61,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-18T13:32:06.737465"
+  },
+  {
+    "userId": "user_seed_75",
+    "hotelId": 50,
+    "rating": 2,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-06T13:06:47.737465"
+  },
+  {
+    "userId": "user_seed_75",
+    "hotelId": 81,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-06T13:03:13.737465"
+  },
+  {
+    "userId": "user_seed_75",
+    "hotelId": 32,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-06T13:46:06.737465"
+  },
+  {
+    "userId": "user_seed_112",
+    "hotelId": 72,
+    "rating": 3,
+    "comment": "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-07T13:45:36.737465"
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 91,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-02T13:47:48.737465"
+  },
+  {
+    "userId": "user_seed_81",
+    "hotelId": 94,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-26T13:01:56.737465"
+  },
+  {
+    "userId": "user_seed_81",
+    "hotelId": 91,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-26T13:50:39.737465"
+  },
+  {
+    "userId": "user_seed_129",
+    "hotelId": 31,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-11T13:48:16.737465"
+  },
+  {
+    "userId": "user_seed_111",
+    "hotelId": 93,
+    "rating": 3,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-25T13:41:16.737465"
+  },
+  {
+    "userId": "user_seed_181",
+    "hotelId": 51,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-24T13:04:08.737465"
+  },
+  {
+    "userId": "user_seed_166",
+    "hotelId": 91,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-24T13:56:07.737465"
+  },
+  {
+    "userId": "user_seed_18",
+    "hotelId": 64,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-19T13:46:49.737465"
+  },
+  {
+    "userId": "user_seed_136",
+    "hotelId": 97,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-28T13:22:15.737465"
+  },
+  {
+    "userId": "user_seed_63",
+    "hotelId": 85,
+    "rating": 1,
+    "comment": "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-23T13:30:52.737465"
+  },
+  {
+    "userId": "user_seed_63",
+    "hotelId": 13,
+    "rating": 3,
+    "comment": "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-23T13:56:04.737465"
+  },
+  {
+    "userId": "user_seed_86",
+    "hotelId": 80,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-12T13:33:22.737465"
+  },
+  {
+    "userId": "user_seed_86",
+    "hotelId": 82,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-12T13:57:45.737465"
+  },
+  {
+    "userId": "user_seed_75",
+    "hotelId": 87,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-28T13:54:44.737465"
+  },
+  {
+    "userId": "user_seed_165",
+    "hotelId": 53,
+    "rating": 1,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-13T13:34:34.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 1,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-11T13:14:25.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 75,
+    "rating": 3,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-11T13:41:13.737465"
+  },
+  {
+    "userId": "user_seed_90",
+    "hotelId": 16,
+    "rating": 3,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-09T13:00:01.737465"
+  },
+  {
+    "userId": "user_seed_164",
+    "hotelId": 79,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-17T13:15:25.737465"
+  },
+  {
+    "userId": "user_seed_164",
+    "hotelId": 66,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-17T13:07:56.737465"
+  },
+  {
+    "userId": "user_seed_67",
+    "hotelId": 40,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-14T13:31:42.737465"
+  },
+  {
+    "userId": "user_seed_10",
+    "hotelId": 56,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-06T13:56:45.737465"
+  },
+  {
+    "userId": "user_seed_165",
+    "hotelId": 69,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-29T13:43:23.737465"
+  },
+  {
+    "userId": "user_seed_197",
+    "hotelId": 24,
+    "rating": 2,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-01T13:12:20.737465"
+  },
+  {
+    "userId": "user_seed_170",
+    "hotelId": 23,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-21T13:18:55.737465"
+  },
+  {
+    "userId": "user_seed_108",
+    "hotelId": 87,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-13T13:12:45.737465"
+  },
+  {
+    "userId": "user_seed_127",
+    "hotelId": 70,
+    "rating": 2,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-24T13:32:49.737465"
+  },
+  {
+    "userId": "user_seed_96",
+    "hotelId": 100,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-29T13:54:39.737465"
+  },
+  {
+    "userId": "user_seed_94",
+    "hotelId": 53,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-12T13:23:03.737465"
+  },
+  {
+    "userId": "user_seed_94",
+    "hotelId": 69,
+    "rating": 1,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-12T13:03:19.737465"
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 90,
+    "rating": 2,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-09T13:13:46.737465"
+  },
+  {
+    "userId": "user_seed_41",
+    "hotelId": 44,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-02T13:48:56.737465"
+  },
+  {
+    "userId": "user_seed_168",
+    "hotelId": 68,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-29T13:30:44.737465"
+  },
+  {
+    "userId": "user_seed_200",
+    "hotelId": 13,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-24T13:41:41.737465"
+  },
+  {
+    "userId": "user_seed_112",
+    "hotelId": 32,
+    "rating": 3,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-07T13:32:53.737465"
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 65,
+    "rating": 2,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-22T13:34:08.737465"
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 63,
+    "rating": 3,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-22T13:19:14.737465"
+  },
+  {
+    "userId": "user_seed_72",
+    "hotelId": 48,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-26T13:39:03.737465"
+  },
+  {
+    "userId": "user_seed_5",
+    "hotelId": 78,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-17T13:56:22.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 46,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-29T12:59:55.737465"
+  },
+  {
+    "userId": "user_seed_108",
+    "hotelId": 25,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-20T13:10:39.737465"
+  },
+  {
+    "userId": "user_seed_30",
+    "hotelId": 67,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-04T13:02:21.737465"
+  },
+  {
+    "userId": "user_seed_67",
+    "hotelId": 18,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-01T13:57:20.737465"
+  },
+  {
+    "userId": "user_seed_67",
+    "hotelId": 79,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-01T13:05:15.737465"
+  },
+  {
+    "userId": "user_seed_148",
+    "hotelId": 53,
+    "rating": 3,
+    "comment": "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-24T13:24:23.737465"
+  },
+  {
+    "userId": "user_seed_47",
+    "hotelId": 1,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-17T13:38:18.737465"
+  },
+  {
+    "userId": "user_seed_61",
+    "hotelId": 27,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-24T13:49:44.737465"
+  },
+  {
+    "userId": "user_seed_58",
+    "hotelId": 11,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-14T13:48:57.737465"
+  },
+  {
+    "userId": "user_seed_27",
+    "hotelId": 30,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-06T13:34:57.737465"
+  },
+  {
+    "userId": "user_seed_149",
+    "hotelId": 71,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-29T13:52:07.737465"
+  },
+  {
+    "userId": "user_seed_177",
+    "hotelId": 17,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-04T13:07:41.737465"
+  },
+  {
+    "userId": "user_seed_21",
+    "hotelId": 30,
+    "rating": 4,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-15T13:06:54.737465"
+  },
+  {
+    "userId": "user_seed_137",
+    "hotelId": 88,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-03T13:48:33.737465"
+  },
+  {
+    "userId": "user_seed_137",
+    "hotelId": 100,
+    "rating": 3,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2026-01-03T13:11:14.737465"
+  },
+  {
+    "userId": "user_seed_137",
+    "hotelId": 47,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-03T13:14:30.737465"
+  },
+  {
+    "userId": "user_seed_56",
+    "hotelId": 28,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-13T13:12:07.737465"
+  },
+  {
+    "userId": "user_seed_56",
+    "hotelId": 32,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-13T13:50:48.737465"
+  },
+  {
+    "userId": "user_seed_33",
+    "hotelId": 7,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-27T13:28:48.737465"
+  },
+  {
+    "userId": "user_seed_66",
+    "hotelId": 95,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-26T13:13:57.737465"
+  },
+  {
+    "userId": "user_seed_199",
+    "hotelId": 21,
+    "rating": 1,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-04T13:08:33.737465"
+  },
+  {
+    "userId": "user_seed_175",
+    "hotelId": 86,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-24T13:15:58.737465"
+  },
+  {
+    "userId": "user_seed_125",
+    "hotelId": 7,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-15T13:11:37.737465"
+  },
+  {
+    "userId": "user_seed_22",
+    "hotelId": 93,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-26T13:24:17.737465"
+  },
+  {
+    "userId": "user_seed_147",
+    "hotelId": 19,
+    "rating": 1,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-31T13:19:14.737465"
+  },
+  {
+    "userId": "user_seed_108",
+    "hotelId": 6,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-30T13:53:00.737465"
+  },
+  {
+    "userId": "user_seed_185",
+    "hotelId": 70,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-24T13:27:04.737465"
+  },
+  {
+    "userId": "user_seed_185",
+    "hotelId": 86,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-24T13:04:43.737465"
+  },
+  {
+    "userId": "user_seed_198",
+    "hotelId": 25,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-12T13:17:07.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 63,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-02T13:43:18.737465"
+  },
+  {
+    "userId": "user_seed_168",
+    "hotelId": 65,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-28T13:16:32.737465"
+  },
+  {
+    "userId": "user_seed_168",
+    "hotelId": 23,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-28T13:26:53.737465"
+  },
+  {
+    "userId": "user_seed_145",
+    "hotelId": 42,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-27T13:39:18.737465"
+  },
+  {
+    "userId": "user_seed_84",
+    "hotelId": 23,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-20T13:07:51.737465"
+  },
+  {
+    "userId": "user_seed_168",
+    "hotelId": 53,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-19T13:09:14.737465"
+  },
+  {
+    "userId": "user_seed_172",
+    "hotelId": 71,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-19T13:14:21.737465"
+  },
+  {
+    "userId": "user_seed_195",
+    "hotelId": 85,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-20T13:12:17.737465"
+  },
+  {
+    "userId": "user_seed_166",
+    "hotelId": 12,
+    "rating": 3,
+    "comment": "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-24T13:13:48.737465"
+  },
+  {
+    "userId": "user_seed_41",
+    "hotelId": 34,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-22T13:43:12.737465"
+  },
+  {
+    "userId": "user_seed_41",
+    "hotelId": 13,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-22T13:45:05.737465"
+  },
+  {
+    "userId": "user_seed_41",
+    "hotelId": 76,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-22T13:14:27.737465"
+  },
+  {
+    "userId": "user_seed_153",
+    "hotelId": 89,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-15T13:23:32.737465"
+  },
+  {
+    "userId": "user_seed_84",
+    "hotelId": 24,
+    "rating": 3,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-03T13:40:57.737465"
+  },
+  {
+    "userId": "user_seed_130",
+    "hotelId": 11,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-26T13:19:21.737465"
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 74,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-26T13:19:00.737465"
+  },
+  {
+    "userId": "user_seed_154",
+    "hotelId": 48,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-17T13:26:36.737465"
+  },
+  {
+    "userId": "user_seed_70",
+    "hotelId": 89,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-05T13:14:54.737465"
+  },
+  {
+    "userId": "user_seed_2",
+    "hotelId": 33,
+    "rating": 1,
+    "comment": "Vệ sinh chưa sạch, còn bụi bẩn.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-29T13:42:40.737465"
+  },
+  {
+    "userId": "user_seed_49",
+    "hotelId": 32,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-01T13:40:09.737465"
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 46,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-24T13:36:01.737465"
+  },
+  {
+    "userId": "user_seed_144",
+    "hotelId": 37,
+    "rating": 1,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-15T13:21:17.737465"
+  },
+  {
+    "userId": "user_seed_146",
+    "hotelId": 32,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-31T13:05:29.737465"
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 79,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-08T13:18:18.737465"
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 15,
+    "rating": 4,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-03T13:21:13.737465"
+  },
+  {
+    "userId": "user_seed_61",
+    "hotelId": 8,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-24T13:45:02.737465"
+  },
+  {
+    "userId": "user_seed_24",
+    "hotelId": 34,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-07T13:24:46.737465"
+  },
+  {
+    "userId": "user_seed_169",
+    "hotelId": 17,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-24T13:28:07.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 35,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-10T13:51:58.737465"
+  },
+  {
+    "userId": "user_seed_78",
+    "hotelId": 72,
+    "rating": 4,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-10T13:43:32.737465"
+  },
+  {
+    "userId": "user_seed_102",
+    "hotelId": 26,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-25T13:42:18.737465"
+  },
+  {
+    "userId": "user_seed_13",
+    "hotelId": 99,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-11T13:04:06.737465"
+  },
+  {
+    "userId": "user_seed_164",
+    "hotelId": 53,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-16T13:12:08.737465"
+  },
+  {
+    "userId": "user_seed_153",
+    "hotelId": 34,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-08T13:27:37.737465"
+  },
+  {
+    "userId": "user_seed_89",
+    "hotelId": 45,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-16T12:59:56.737465"
+  },
+  {
+    "userId": "user_seed_69",
+    "hotelId": 44,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-30T13:49:02.737465"
+  },
+  {
+    "userId": "user_seed_110",
+    "hotelId": 99,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-21T13:54:41.737465"
+  },
+  {
+    "userId": "user_seed_15",
+    "hotelId": 70,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-31T13:06:36.737465"
+  },
+  {
+    "userId": "user_seed_31",
+    "hotelId": 68,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-11T13:44:11.737465"
+  },
+  {
+    "userId": "user_seed_191",
+    "hotelId": 54,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-29T13:24:49.737465"
+  },
+  {
+    "userId": "user_seed_116",
+    "hotelId": 2,
+    "rating": 3,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-09-27T13:17:31.737465"
+  },
+  {
+    "userId": "user_seed_120",
+    "hotelId": 2,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-25T13:13:18.737465"
+  },
+  {
+    "userId": "user_seed_165",
+    "hotelId": 25,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-30T13:17:04.737465"
+  },
+  {
+    "userId": "user_seed_165",
+    "hotelId": 9,
+    "rating": 4,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-30T13:15:49.737465"
+  },
+  {
+    "userId": "user_seed_197",
+    "hotelId": 96,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-25T13:12:01.737465"
+  },
+  {
+    "userId": "user_seed_135",
+    "hotelId": 80,
+    "rating": 4,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-27T13:21:34.737465"
+  },
+  {
+    "userId": "user_seed_85",
+    "hotelId": 2,
+    "rating": 3,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-14T13:03:15.737465"
+  },
+  {
+    "userId": "user_seed_162",
+    "hotelId": 59,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-09T13:52:58.737465"
+  },
+  {
+    "userId": "user_seed_140",
+    "hotelId": 27,
+    "rating": 1,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-31T13:31:38.737465"
+  },
+  {
+    "userId": "user_seed_174",
+    "hotelId": 40,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-08T13:13:43.737465"
+  },
+  {
+    "userId": "user_seed_152",
+    "hotelId": 93,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-09T13:33:03.737465"
+  },
+  {
+    "userId": "user_seed_186",
+    "hotelId": 92,
+    "rating": 2,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-21T13:50:12.737465"
+  },
+  {
+    "userId": "user_seed_119",
+    "hotelId": 5,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-09T13:49:27.737465"
+  },
+  {
+    "userId": "user_seed_47",
+    "hotelId": 54,
+    "rating": 1,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-29T13:31:00.737465"
+  },
+  {
+    "userId": "user_seed_195",
+    "hotelId": 80,
+    "rating": 3,
+    "comment": "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-15T13:28:25.737465"
+  },
+  {
+    "userId": "user_seed_104",
+    "hotelId": 70,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-26T13:02:37.737465"
+  },
+  {
+    "userId": "user_seed_104",
+    "hotelId": 9,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-26T13:09:41.737465"
+  },
+  {
+    "userId": "user_seed_118",
+    "hotelId": 37,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-31T13:11:27.737465"
+  },
+  {
+    "userId": "user_seed_126",
+    "hotelId": 50,
+    "rating": 3,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-03T13:55:26.737465"
+  },
+  {
+    "userId": "user_seed_142",
+    "hotelId": 43,
+    "rating": 1,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-21T13:35:07.737465"
+  },
+  {
+    "userId": "user_seed_106",
+    "hotelId": 41,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-17T13:12:14.737465"
+  },
+  {
+    "userId": "user_seed_106",
+    "hotelId": 99,
+    "rating": 3,
+    "comment": "Vệ sinh chưa sạch, còn bụi bẩn.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-17T13:38:23.737465"
+  },
+  {
+    "userId": "user_seed_46",
+    "hotelId": 64,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-19T13:52:10.737465"
+  },
+  {
+    "userId": "user_seed_8",
+    "hotelId": 80,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-01T13:22:19.737465"
+  },
+  {
+    "userId": "user_seed_133",
+    "hotelId": 23,
+    "rating": 5,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-07T13:03:06.737465"
+  },
+  {
+    "userId": "user_seed_143",
+    "hotelId": 6,
+    "rating": 3,
+    "comment": "Wifi yếu, không làm việc được.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-12T13:10:29.737465"
+  },
+  {
+    "userId": "user_seed_161",
+    "hotelId": 4,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-16T13:19:22.737465"
+  },
+  {
+    "userId": "user_seed_126",
+    "hotelId": 51,
+    "rating": 3,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-21T13:47:46.737465"
+  },
+  {
+    "userId": "user_seed_141",
+    "hotelId": 59,
+    "rating": 4,
+    "comment": "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-18T13:35:57.737465"
+  },
+  {
+    "userId": "user_seed_160",
+    "hotelId": 53,
+    "rating": 4,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-23T12:59:40.737465"
+  },
+  {
+    "userId": "user_seed_6",
+    "hotelId": 100,
+    "rating": 5,
+    "comment": "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-08T13:51:14.737465"
+  },
+  {
+    "userId": "user_seed_78",
+    "hotelId": 10,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-27T13:51:58.737465"
+  },
+  {
+    "userId": "user_seed_69",
+    "hotelId": 37,
+    "rating": 3,
+    "comment": "Không có chỗ để xe an toàn, phải gửi ngoài đường.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-07-26T13:34:35.737465"
+  },
+  {
+    "userId": "user_seed_158",
+    "hotelId": 12,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-11T13:55:56.737465"
+  },
+  {
+    "userId": "user_seed_3",
+    "hotelId": 24,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-04T13:23:45.737465"
+  },
+  {
+    "userId": "user_seed_11",
+    "hotelId": 77,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-28T13:17:41.737465"
+  },
+  {
+    "userId": "user_seed_155",
+    "hotelId": 100,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-07T13:55:11.737465"
+  },
+  {
+    "userId": "user_seed_99",
+    "hotelId": 49,
+    "rating": 1,
+    "comment": "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-18T13:30:19.737465"
+  },
+  {
+    "userId": "user_seed_176",
+    "hotelId": 77,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-05T13:44:16.737465"
+  },
+  {
+    "userId": "user_seed_174",
+    "hotelId": 21,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-12T13:07:08.737465"
+  },
+  {
+    "userId": "user_seed_26",
+    "hotelId": 30,
+    "rating": 1,
+    "comment": "Nhân viên lễ tân thái độ chưa tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-08-31T13:54:39.737465"
+  },
+  {
+    "userId": "user_seed_173",
+    "hotelId": 50,
+    "rating": 5,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-24T13:50:20.737465"
+  },
+  {
+    "userId": "user_seed_173",
+    "hotelId": 10,
+    "rating": 5,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-24T13:28:14.737465"
+  },
+  {
+    "userId": "user_seed_166",
+    "hotelId": 51,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-12T13:48:44.737465"
+  },
+  {
+    "userId": "user_seed_134",
+    "hotelId": 27,
+    "rating": 5,
+    "comment": "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-05T13:10:59.737465"
+  },
+  {
+    "userId": "user_seed_55",
+    "hotelId": 21,
+    "rating": 1,
+    "comment": "Vệ sinh chưa sạch, còn bụi bẩn.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-23T13:32:42.737465"
+  },
+  {
+    "userId": "user_seed_55",
+    "hotelId": 90,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-23T13:30:34.737465"
+  },
+  {
+    "userId": "user_seed_93",
+    "hotelId": 96,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-06T13:15:23.737465"
+  },
+  {
+    "userId": "user_seed_48",
+    "hotelId": 21,
+    "rating": 5,
+    "comment": "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-19T13:21:16.737465"
+  },
+  {
+    "userId": "user_seed_159",
+    "hotelId": 61,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2026-01-01T13:01:32.737465"
+  },
+  {
+    "userId": "user_seed_27",
+    "hotelId": 63,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-26T13:50:18.737465"
+  },
+  {
+    "userId": "user_seed_27",
+    "hotelId": 19,
+    "rating": 4,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-26T12:58:51.737465"
+  },
+  {
+    "userId": "user_seed_151",
+    "hotelId": 50,
+    "rating": 4,
+    "comment": "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-30T13:14:32.737465"
+  },
+  {
+    "userId": "user_seed_166",
+    "hotelId": 51,
+    "rating": 1,
+    "comment": "Vệ sinh chưa sạch, còn bụi bẩn.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-27T13:48:13.737465"
+  },
+  {
+    "userId": "user_seed_183",
+    "hotelId": 58,
+    "rating": 5,
+    "comment": "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-29T13:29:49.737465"
+  },
+  {
+    "userId": "user_seed_7",
+    "hotelId": 10,
+    "rating": 1,
+    "comment": "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-09T13:43:52.737465"
+  },
+  {
+    "userId": "user_seed_32",
+    "hotelId": 79,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-11-29T13:33:21.737465"
+  },
+  {
+    "userId": "user_seed_115",
+    "hotelId": 13,
+    "rating": 1,
+    "comment": "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-12-11T13:50:46.737465"
+  },
+  {
+    "userId": "user_seed_115",
+    "hotelId": 79,
+    "rating": 5,
+    "comment": "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-12-11T13:09:59.737465"
+  },
+  {
+    "userId": "user_seed_53",
+    "hotelId": 56,
+    "rating": 3,
+    "comment": "Bữa sáng ít món, không hợp khẩu vị.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-19T13:06:24.737465"
+  },
+  {
+    "userId": "user_seed_199",
+    "hotelId": 9,
+    "rating": 5,
+    "comment": "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-04T13:44:20.737465"
+  },
+  {
+    "userId": "user_seed_64",
+    "hotelId": 16,
+    "rating": 4,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-08-07T13:09:08.737465"
+  },
+  {
+    "userId": "user_seed_140",
+    "hotelId": 72,
+    "rating": 3,
+    "comment": "Phòng hơi cũ, cách âm không tốt.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-10-20T13:45:57.737465"
+  },
+  {
+    "userId": "user_seed_130",
+    "hotelId": 36,
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-07-23T13:46:26.737465"
+  },
+  {
+    "userId": "user_seed_94",
+    "hotelId": 38,
+    "rating": 4,
+    "comment": "Giá cả hợp lý so với chất lượng phục vụ.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-10-25T13:17:01.737465"
+  },
+  {
+    "userId": "user_seed_170",
+    "hotelId": 35,
+    "rating": 5,
+    "comment": "Nhân viên nhiệt tình, địa điểm thuận lợi.",
+    "sentiment": "POSITIVE",
+    "createdAt": "2025-09-08T13:05:14.737465"
+  },
+  {
+    "userId": "user_seed_137",
+    "hotelId": 23,
+    "rating": 1,
+    "comment": "Vị trí hơi xa trung tâm, đi lại bất tiện.",
+    "sentiment": "NEGATIVE",
+    "createdAt": "2025-11-12T13:10:41.737465"
+  }
+]

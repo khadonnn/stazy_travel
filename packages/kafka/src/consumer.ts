@@ -21,6 +21,8 @@ export const createConsumer = (kafka: Kafka, groupId: string) => {
 
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
+        const rawMsg = message.value?.toString();
+        console.log("🔥 [Booking Service] BẮT ĐƯỢC TIN NHẮN:", rawMsg);
         try {
           const topicConfig = topics.find((t) => t.topicName === topic);
           if (topicConfig) {

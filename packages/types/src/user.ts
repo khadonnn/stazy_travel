@@ -22,6 +22,7 @@ export type IUser = {
 };
 
 export type AuthorType = IUser & {
+  data?: any;
   firstName?: string;
   lastName?: string;
   displayName?: string;

@@ -1,25 +1,16 @@
 import { Booking } from "@repo/booking-db";
 import { producer } from "./kafka";
 
-// ⚠️ QUAN TRỌNG: Nếu bạn có truy cập được vào DB Product thì nên import để fallback
-// import { Hotel } from "@repo/product-db";
-
 export const updateBookingStatusToPaid = async (
   bookingId: string,
   paymentData: any
 ) => {
   console.log(`⚡ [Service] Bắt đầu xử lý Booking UUID: ${bookingId}`);
 
-  // 👉 Debug: Log toàn bộ metadata xem Stripe gửi về cái gì
-  console.log(
-    "🔍 [Debug] Raw Metadata received:",
-    JSON.stringify(paymentData.metadata, null, 2)
-  );
-
+  // 1. Parse Metadata
   const meta = paymentData.metadata || {};
-  console.log("🔍 [Debug] Metadata:", JSON.stringify(meta, null, 2));
 
-  // 2. Tính toán ngày (Giữ nguyên logic của bạn)
+  // 2. Tính toán ngày
   const checkInDate = new Date(paymentData.checkInDate || Date.now());
   const checkOutDate = new Date(paymentData.checkOutDate || Date.now());
   const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
@@ -28,23 +19,21 @@ export const updateBookingStatusToPaid = async (
     Math.ceil(timeDiff / (1000 * 3600 * 24))
   );
 
-  // 3. Chuẩn bị dữ liệu để Update
-  // Ưu tiên lấy từ Metadata nếu có, nếu không thì giữ nguyên logic fallback
   const hotelId = Number(meta.hotelId) || 1;
   const stripeHotelName = meta.hotelName;
   const stripeAddress = meta.hotelAddress;
 
   try {
-    // 🔥 BƯỚC QUAN TRỌNG: Tìm Booking trước để xem nó đang lưu cái gì
+    // 🔥 3. Tìm Booking cũ để Merge dữ liệu (Giữ nguyên logic hay của bạn)
     const existingBooking = await Booking.findOne({ bookingId });
 
-    // Logic xác định tên khách sạn cuối cùng:
-    // - Nếu metadata có tên -> Dùng metadata (để sửa sai cho DB).
-    // - Nếu DB đã có tên (và không phải Unknown) -> Giữ nguyên DB.
-    // - Nếu cả 2 đều không có -> Chấp nhận Unknown.
     let finalHotelName = "Unknown Hotel";
     let finalAddress = "Address not provided";
+    let finalSlug = "recovered-booking";
+    let finalImage = meta.hotelImage || "";
+    let finalStars = Number(meta.hotelStars) || 0;
 
+    // Logic ưu tiên: Metadata > DB cũ > Default
     if (stripeHotelName) {
       finalHotelName = stripeHotelName;
     } else if (
@@ -52,32 +41,52 @@ export const updateBookingStatusToPaid = async (
       existingBooking.bookingSnapshot.hotel.name !== "Unknown Hotel"
     ) {
       finalHotelName = existingBooking.bookingSnapshot.hotel.name;
+      // Nếu lấy từ DB cũ thì lấy luôn các trường khác cho đồng bộ
+      finalAddress =
+        existingBooking.bookingSnapshot.hotel.address || finalAddress;
+      finalSlug = existingBooking.bookingSnapshot.hotel.slug || finalSlug;
+      finalImage = existingBooking.bookingSnapshot.hotel.image || finalImage;
+      finalStars = existingBooking.bookingSnapshot.hotel.stars || finalStars;
     }
 
-    if (stripeAddress) {
+    if (stripeAddress && !finalAddress.includes("provided")) {
       finalAddress = stripeAddress;
-    } else if (existingBooking?.bookingSnapshot?.hotel?.address) {
-      finalAddress = existingBooking.bookingSnapshot.hotel.address;
     }
 
-    // Thực hiện Update
+    // 🔥 4. TẠO OBJECT SNAPSHOT HOÀN CHỈNH TẠI ĐÂY (TRÁNH CONFLICT MONGO)
+    const fullSnapshot = {
+      hotel: {
+        id: hotelId,
+        name: finalHotelName,
+        slug: finalSlug,
+        address: finalAddress,
+        image: finalImage,
+        stars: finalStars,
+      },
+      room: {
+        id: hotelId, // Hoặc roomId nếu có
+        name: "Standard Room",
+        priceAtBooking: paymentData.amount,
+      },
+    };
+
+    // 5. Thực hiện Update (Chỉ dùng $set cho snapshot)
     const result = await Booking.findOneAndUpdate(
       { bookingId: bookingId },
       {
-        // ✅ CẬP NHẬT CẢ THÔNG TIN SNAPSHOT VÀO $SET LUÔN
-        // Để dù booking đã tồn tại thì nó vẫn bị ghi đè dữ liệu mới
         $set: {
           status: "CONFIRMED",
           "payment.status": "PAID",
           "payment.stripeSessionId": paymentData.stripeSessionId,
           updatedAt: new Date(),
 
-          // Cập nhật lại snapshot nếu cần thiết
-          "bookingSnapshot.hotel.name": finalHotelName,
-          "bookingSnapshot.hotel.address": finalAddress,
           nights: calculatedNights,
           checkIn: checkInDate,
           checkOut: checkOutDate,
+
+          // ✅ QUAN TRỌNG: Set nguyên cục snapshot vào đây
+          // Nó sẽ hoạt động cho cả trường hợp Insert mới lẫn Update cũ
+          bookingSnapshot: fullSnapshot,
         },
 
         $setOnInsert: {
@@ -85,37 +94,22 @@ export const updateBookingStatusToPaid = async (
           userId: paymentData.userId || "guest_user",
           hotelId: hotelId,
           totalPrice: paymentData.amount,
-          // ... Các trường snapshot đầy đủ khác cho trường hợp tạo mới tinh
-          bookingSnapshot: {
-            hotel: {
-              id: hotelId,
-              name: finalHotelName,
-              slug: "recovered-booking",
-              address: finalAddress,
-              image: meta.hotelImage || "",
-              stars: Number(meta.hotelStars) || 0,
-            },
-            room: {
-              id: hotelId,
-              name: "Standard Room",
-              priceAtBooking: paymentData.amount,
-            },
-          },
+          createdAt: new Date(),
           contactDetails: {
             fullName: paymentData.customerName || "Stripe Customer",
             email: paymentData.customerEmail || "stripe@stazy.com",
             phone: paymentData.customerPhone || "0000000000",
           },
+          // ❌ TUYỆT ĐỐI KHÔNG ĐỂ bookingSnapshot Ở ĐÂY NỮA
         },
       },
       { new: true, upsert: true }
     );
 
     console.log(`✅ [Service] ĐÃ LƯU MONGODB THÀNH CÔNG!`);
-    console.log(`   👉 Nights: ${result.nights}`);
     console.log(`   👉 Hotel: ${result.bookingSnapshot?.hotel?.name}`);
 
-    // ... (Phần bắn Kafka Notification giữ nguyên như cũ) ...
+    // ... (Phần gửi Kafka Notification giữ nguyên) ...
     const notificationPayload = {
       bookingId: result.bookingId,
       customerName: result.contactDetails?.fullName || "Khách hàng",
