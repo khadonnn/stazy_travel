@@ -58,7 +58,10 @@ webhookRoute.post("/stripe", async (c) => {
           session.metadata?.customerName || session.customer_details?.name,
         customerPhone:
           session.metadata?.customerPhone || session.customer_details?.phone,
-
+        // nodemailer
+        email: session.customer_details?.email || session.metadata?.email, // Email người nhận
+        user: session.customer_details?.name || session.metadata?.customerName, // Tên người nhận
+        hotel: session.metadata?.hotelName, // Tên khách sạn (lấy phẳng ra ngoài)
         // Thông tin ngày giờ
         checkInDate: session.metadata?.checkInDate,
         checkOutDate: session.metadata?.checkOutDate,
@@ -73,11 +76,11 @@ webhookRoute.post("/stripe", async (c) => {
         },
       };
 
-      await producer.send("payment.successful", {
+      await producer.send("booking-events", {
         value: kafkaPayload,
       });
 
-      console.log(`✅ [6] Đã gửi Kafka thành công! Topic: payment.successful`);
+      console.log(`✅ [6] Đã gửi Kafka thành công! Topic: booking-events`);
       console.log(
         `    - Payload gửi đi:`,
         JSON.stringify(kafkaPayload, null, 2)

@@ -1,4 +1,3 @@
-// Sửa đường dẫn import cho đúng file vừa sửa ở trên
 import { updateBookingStatusToPaid } from "./booking";
 import { consumer } from "./kafka";
 
@@ -6,42 +5,45 @@ export const runKafkaSubscriptions = async () => {
   try {
     await consumer.subscribe([
       {
-        topicName: "payment.successful",
+        // 🔥 QUAN TRỌNG: Phải khớp với Topic mà Payment Service gửi đi (xem log ảnh của bạn là booking-events)
+        topicName: "booking-events",
         topicHandler: async (message: any) => {
           console.log("\n================================================");
-          console.log("📩 [Kafka] Nhận tín hiệu thanh toán!");
+          console.log("📩 [Kafka Consumer] Nhận tín hiệu thanh toán!");
 
           try {
-            // 1. Parse dữ liệu an toàn
             let paymentData = message;
+
+            // 1. Parse dữ liệu cẩn thận
             if (message && message.value) {
               const rawValue = message.value;
-              if (Buffer.isBuffer(rawValue)) {
-                paymentData = JSON.parse(rawValue.toString());
-              } else if (typeof rawValue === "string") {
-                paymentData = JSON.parse(rawValue);
-              } else {
-                paymentData = rawValue;
+              try {
+                if (Buffer.isBuffer(rawValue)) {
+                  paymentData = JSON.parse(rawValue.toString());
+                } else if (typeof rawValue === "string") {
+                  paymentData = JSON.parse(rawValue);
+                } else {
+                  paymentData = rawValue;
+                }
+              } catch (e) {
+                console.error("❌ Lỗi Parse JSON Kafka:", e);
+                return;
               }
             }
 
-            // Xử lý nested value (nếu có)
-            if (
-              paymentData &&
-              paymentData.value &&
-              paymentData.value.bookingId
-            ) {
+            // Fix trường hợp payload bị lồng nhau (Kafka wrapper đôi khi bọc thêm 1 lớp value)
+            if (paymentData.value && typeof paymentData.value === "object") {
               paymentData = paymentData.value;
             }
 
-            // 2. Kiểm tra ID
+            // 2. Validate ID
             if (!paymentData || !paymentData.bookingId) {
-              console.warn("⚠️ [Skip] Dữ liệu thiếu bookingId");
+              console.warn("⚠️ [Skip] Dữ liệu thiếu bookingId:", paymentData);
               return;
             }
 
             console.log(
-              `🔄 Đang gọi Service update cho ID: ${paymentData.bookingId}`
+              `➡️ Gọi Update Service cho BookingID: ${paymentData.bookingId}`
             );
 
             // 3. Gọi Service
@@ -54,7 +56,9 @@ export const runKafkaSubscriptions = async () => {
     ]);
 
     await consumer.connect();
-    console.log("🚀 Booking Consumer is running...");
+    console.log(
+      "🚀 Booking Consumer is running & listening to 'booking-events'..."
+    );
   } catch (error) {
     console.error("❌ Kafka Connection Error:", error);
   }

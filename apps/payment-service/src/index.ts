@@ -6,11 +6,13 @@ import { cors } from "hono/cors";
 import paymentRoute from "./routes/payment.js";
 import sessionRoute from "./routes/session.route.js";
 import webhookRoute from "./routes/webhooks.route.js";
+// Import producer để gửi tin nhắn, consumer để nhận tin nhắn
 import { consumer, producer } from "./utils/kafka.js";
 import { runKafkaSubscriptions } from "./utils/subscriptions.js";
 
 const app = new Hono();
 
+// 1. Cấu hình CORS (Giữ nguyên của bạn - rất tốt)
 app.use(
   "*",
   cors({
@@ -20,25 +22,24 @@ app.use(
         "http://localhost:3003", // Admin
         "http://localhost:3000", // Backup
       ];
-      // Nếu origin gửi lên nằm trong list cho phép -> Trả về chính nó
-      if (origin && allowedOrigins.includes(origin)) {
-        return origin;
-      }
-      // Fallback (cho postman hoặc server-to-server)
+      if (origin && allowedOrigins.includes(origin)) return origin;
       return allowedOrigins[0];
     },
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     exposeHeaders: ["Content-Length", "X-Kuma-Revision"],
     maxAge: 600,
-    credentials: true, // Bắt buộc true
+    credentials: true,
   })
 );
 
-app.options("*", (c) => {
-  return c.body(null, 204);
-});
+app.options("*", (c) => c.body(null, 204));
 
+// 2. Webhook Route (Quan trọng: Đặt trước Clerk Middleware)
+// Lý do: Webhook Stripe gọi từ Server-to-Server, không có User Token -> Không qua Clerk
+app.route("/webhooks", webhookRoute);
+
+// 3. Middleware Auth (Chỉ áp dụng cho các route bên dưới)
 app.use("*", clerkMiddleware());
 
 app.get("/health", (c) => {
@@ -56,23 +57,31 @@ app.get("/test", shouldBeUser, (c) => {
   });
 });
 
+// 4. Các Route nghiệp vụ
 app.route("/vnpay", paymentRoute);
 app.route("/sessions", sessionRoute);
-app.route("/webhooks", webhookRoute);
 
 // --- START SERVER ---
 const start = async () => {
   try {
-    console.log("🔄 Connecting to Kafka...");
+    console.log("🔄 Connecting to Kafka System...");
+
+    // 5. Kết nối Kafka (Producer & Consumer)
+    // Phải await connect xong thì mới start server để đảm bảo không bị lỗi mất tin nhắn
     await Promise.all([
       producer
         .connect()
-        .catch((e) => console.error("Kafka Producer Error:", e.message)),
+        .then(() =>
+          console.log("✅ Kafka Producer Connected (Ready to send emails)")
+        ),
       consumer
         .connect()
-        .catch((e) => console.error("Kafka Consumer Error:", e.message)),
+        .then(() =>
+          console.log("✅ Kafka Consumer Connected (Ready to create products)")
+        ),
     ]);
 
+    // 6. Chạy Subscription (Lắng nghe Product Service)
     await runKafkaSubscriptions();
 
     const PORT = 8002;
@@ -83,6 +92,7 @@ const start = async () => {
     console.log(`🚀 Payment service is running on http://localhost:${PORT}`);
   } catch (err) {
     console.error("💥 Failed to start Payment Service:", err);
+    // Exit process nếu không kết nối được Kafka (để tránh chạy server lỗi)
     process.exit(1);
   }
 };
