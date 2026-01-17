@@ -27,7 +27,7 @@ import {
   Calendar,
   GalleryVerticalEnd,
 } from "lucide-react";
-
+import { toast } from "sonner";
 import Link from "next/link";
 import { Amenities_demos } from "@/constants/amenities";
 import FiveStar from "@/shared/FiveStar";
@@ -75,6 +75,10 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
   const { date, guests, checkInDate, checkOutDate } = useBookingStore();
   const isDisabled = !checkInDate || !checkOutDate;
 
+  // checking
+  const [isChecking, setIsChecking] = useState(false); // Loading khi đang check
+  const [isAvailable, setIsAvailable] = useState(true); // Mặc định là true để hiện nút
+  const [availabilityMsg, setAvailabilityMsg] = useState("");
   // --- STATE QUẢN LÝ DỮ LIỆU ---
   type ExtendedStayDataType = StayDataType & {
     joinDate?: string;
@@ -119,7 +123,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
           try {
             // Gọi API lấy User: http://localhost:8000/users/:id
             const userRes = await axios.get<AuthorType>(
-              `${API_URL}/users/${hotelData.authorId}`
+              `${API_URL}/users/${hotelData.authorId}`,
             );
             const userData = userRes.data.data;
             console.log("userData:", userData);
@@ -185,6 +189,64 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       }
     };
   }, [stayData?.id]);
+
+  const BOOKING_API_URL =
+    process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || "http://localhost:8001";
+
+  useEffect(() => {
+    const checkAvailability = async () => {
+      // 1. Chỉ check khi đã chọn đủ ngày và có dữ liệu hotel
+      if (!checkInDate || !checkOutDate || !stayData?.id) {
+        return;
+      }
+
+      setIsChecking(true);
+      setAvailabilityMsg("");
+
+      try {
+        // Gọi API kiểm tra (bạn cần tạo endpoint này ở Backend Booking Service như bài trước)
+        // GET /api/check-availability?hotelId=1&checkIn=...&checkOut=...
+        const res = await axios.get(`${BOOKING_API_URL}/check-availability`, {
+          params: {
+            hotelId: stayData.id,
+            checkIn: checkInDate.toISOString(), // Chuyển về string ISO
+            checkOut: checkOutDate.toISOString(),
+          },
+          withCredentials: true,
+        });
+
+        // Backend trả về { available: true/false, message: "..." }
+        if (res.data.available) {
+          setIsAvailable(true);
+        } else {
+          setIsAvailable(false);
+          setAvailabilityMsg(
+            res.data.message || "Phòng đã kín lịch trong ngày này.",
+          );
+        }
+      } catch (error: any) {
+        console.error("Check availability error:", error);
+        // Nếu lỗi 409 (Conflict) nghĩa là trùng lịch
+        if (error.response?.status === 409) {
+          setIsAvailable(false);
+          setAvailabilityMsg("Ngày bạn chọn đã có người đặt.");
+        } else {
+          // Lỗi khác thì tạm thời cho phép hoặc hiện lỗi connection
+          // setIsAvailable(true);
+        }
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    // Debounce nhẹ để tránh gọi API liên tục khi user đang click chọn ngày nhanh
+    const timer = setTimeout(() => {
+      checkAvailability();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [checkInDate, checkOutDate, stayData?.id]);
+
   // --- LOGIC MODAL ---
   const imagesForModal = useMemo(() => {
     if (!modalImageState) return [];
@@ -220,6 +282,10 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       return;
     }
     if (!stayData || isDisabled) return;
+    if (!isAvailable) {
+      toast.error("Phòng này đã có người đặt trong khoảng thời gian bạn chọn!");
+      return;
+    }
     trackInteraction("CLICK_BOOK_NOW", stayData.id);
     // Tính toán lại giá
     const pricePerNight = Number(stayData.price) || 0;
@@ -229,7 +295,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
 
     // Logic kiểm tra
     const isWholeHouse = ["Biệt thự", "Homestay", "Căn hộ", "Nhà gỗ"].includes(
-      categoryName
+      categoryName,
     );
     const roomName = isWholeHouse ? "Nguyên căn" : "Standard Room";
     addItem({
@@ -805,6 +871,11 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
             <div className="text-sm text-neutral-500">
               Tổng khách: <b>{totalGuests}</b>
             </div>
+            {!isAvailable && !isChecking && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600 text-sm">
+                <span className="font-medium">⚠️ {availabilityMsg}</span>
+              </div>
+            )}
           </div>
 
           <TooltipProvider>
@@ -812,18 +883,41 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
               <TooltipTrigger asChild>
                 <span className="w-full inline-block">
                   <Button
-                    className="w-full"
+                    className={`w-full ${!isAvailable ? "bg-neutral-400 hover:bg-neutral-400 cursor-not-allowed" : ""}`}
                     onClick={handleAddToCart}
-                    disabled={isDisabled}
+                    // Disable nút khi:
+                    // 1. Chưa chọn ngày (isDisabled)
+                    // 2. Đang kiểm tra server (isChecking)
+                    // 3. Phòng không trống (!isAvailable)
+                    disabled={isDisabled || isChecking || !isAvailable}
                   >
-                    Đặt phòng ngay
+                    {isChecking ? (
+                      <span className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Đang kiểm tra...
+                      </span>
+                    ) : !isAvailable ? (
+                      "Hết phòng ngày này"
+                    ) : (
+                      "Đặt phòng ngay"
+                    )}
                   </Button>
                 </span>
               </TooltipTrigger>
 
-              {isDisabled && (
-                <TooltipContent side="top" className="bg-yellow-500 text-white">
-                  <p>Vui lòng chọn ngày đặt phòng</p>
+              {/* Tooltip giải thích */}
+              {(isDisabled || !isAvailable) && (
+                <TooltipContent
+                  side="top"
+                  className="bg-neutral-800 text-white"
+                >
+                  <p>
+                    {isDisabled
+                      ? "Vui lòng chọn ngày nhận/trả phòng"
+                      : !isAvailable
+                        ? "Vui lòng chọn ngày khác"
+                        : ""}
+                  </p>
                 </TooltipContent>
               )}
             </Tooltip>

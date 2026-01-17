@@ -14,7 +14,11 @@ interface CreateBookingBody {
     phone: string;
   };
 }
-
+interface CheckAvailabilityQuery {
+  hotelId: string;
+  checkIn: string;
+  checkOut: string;
+}
 // URL của Product Service (Nên để trong .env)
 const PRODUCT_SERVICE_URL =
   process.env.PRODUCT_SERVICE_URL || "http://localhost:8000";
@@ -33,7 +37,7 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
         // A. Gọi Product Service để lấy thông tin Hotel mới nhất
         // (Giả sử Product Service có API: GET /api/hotels/:id)
         const hotelRes = await fetch(
-          `${PRODUCT_SERVICE_URL}/hotels/${hotelId}`
+          `${PRODUCT_SERVICE_URL}/hotels/${hotelId}`,
         );
 
         if (!hotelRes.ok) {
@@ -99,7 +103,7 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
           .status(500)
           .send({ message: "Lỗi hệ thống khi tạo đơn hàng" });
       }
-    }
+    },
   );
 
   // 2. API LẤY LỊCH SỬ CỦA USER
@@ -132,7 +136,7 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
       }));
 
       return reply.send(formattedBookings);
-    }
+    },
   );
 
   // 3. API ADMIN (Xem tất cả)
@@ -142,6 +146,52 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
     async (request, reply) => {
       const bookings = await Booking.find().sort({ createdAt: -1 });
       return reply.send(bookings);
-    }
+    },
+  );
+
+  // 4. API KIỂM TRA TÍNH KHẢ DỤNG (CHECK AVAILABILITY)
+  fastify.get<{ Querystring: CheckAvailabilityQuery }>(
+    "/check-availability",
+    // Không cần middleware auth để ai cũng check được
+    async (request, reply) => {
+      try {
+        const { hotelId, checkIn, checkOut } = request.query;
+
+        // 1. Validate đầu vào
+        if (!hotelId || !checkIn || !checkOut) {
+          return reply.status(400).send({ message: "Thiếu thông tin tra cứu" });
+        }
+
+        const startDate = new Date(checkIn);
+        const endDate = new Date(checkOut);
+
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          return reply.status(400).send({ message: "Ngày tháng không hợp lệ" });
+        }
+
+        // 2. Logic kiểm tra trùng lịch (Overlap)
+        // (StartCũ < EndMới) && (EndCũ > StartMới)
+        const conflictBooking = await Booking.findOne({
+          hotelId: Number(hotelId), // Quan trọng: Convert string -> number
+          checkIn: { $lt: endDate },
+          checkOut: { $gt: startDate },
+          // Các trạng thái được coi là "Đã đặt"
+          status: { $in: ["CONFIRMED", "PENDING", "PAID"] },
+        });
+
+        // 3. Trả về kết quả
+        if (conflictBooking) {
+          return reply.send({
+            available: false,
+            message: "Phòng đã có người đặt trong thời gian này.",
+          });
+        }
+
+        return reply.send({ available: true, message: "Phòng còn trống" });
+      } catch (error) {
+        console.error("Check Availability Error:", error);
+        return reply.status(500).send({ message: "Lỗi server" });
+      }
+    },
   );
 };
