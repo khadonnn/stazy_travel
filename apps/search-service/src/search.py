@@ -11,7 +11,7 @@ def find_top_matches(query_vector, gallery_items, top_k=10):
     q_vec = torch.tensor(query_vector)
 
     for item in gallery_items:
-        i_vec = torch.tensor(item["vector"])
+        i_vec = torch.tensor(item["imageVector"])
         # Tính Cosine Similarity
         score = util.cos_sim(q_vec, i_vec).item()
         results.append({"id": item["id"], "score": score})
