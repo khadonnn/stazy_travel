@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import GallerySlider from "./GallerySlider";
 import Link from "next/link";
 import StartRating from "@/components/StarRating";
@@ -7,8 +8,36 @@ import BtnLikeIcon from "@/components/BtnLikeIcon";
 import SaleOffBadge from "@/components/SaleOffBadge";
 import Badge from "@/components/ui/BadgeCus";
 import { formatPrice } from "@/lib/utils/formatPrice";
-import categories from "@/data/jsons/__category.json";
+import rawCategories from "@/data/jsons/__category.json";
 import { HotelFrontend } from "@repo/types";
+
+// 1. IMPORT MOTION
+import { motion, AnimatePresence } from "motion/react";
+
+// 2. LOGIC ÉP KIỂU CATEGORY (Fix lỗi TypeScript cũ)
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  thumbnail?: string;
+  icon?: string;
+}
+const categories = rawCategories as unknown as Category[];
+
+// 3. HÀM RANDOM MÀU
+const getRandomColor = () => {
+  const colors = [
+    "#FFD700",
+    "#FF6347",
+    "#40E0D0",
+    "#EE82EE",
+    "#98FB98",
+    "#FFB6C1",
+    "#87CEEB",
+  ];
+  return colors[Math.floor(Math.random() * colors.length)] || "#FFD700";
+};
 
 export interface StayCardProps {
   className?: string;
@@ -17,6 +46,10 @@ export interface StayCardProps {
 }
 
 function StayCard({ size = "default", className = "", data }: StayCardProps) {
+  // 4. STATE QUẢN LÝ HOVER VÀ MÀU
+  const [isHovered, setIsHovered] = useState(false);
+  const [hoverColor, setHoverColor] = useState("");
+
   const {
     featuredImage,
     galleryImgs,
@@ -26,8 +59,8 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
     bedrooms,
     slug,
     like,
-    saleOff, // Trường cũ (String)
-    saleOffPercent, // ✅ Trường mới (Int) lấy từ API
+    saleOff,
+    saleOffPercent,
     isAds,
     price,
     reviewStar,
@@ -54,9 +87,6 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
         id={id}
       />
       <BtnLikeIcon isLiked={like} className="absolute right-3 top-3 z-[1]" />
-
-      {/* ✅ LOGIC HIỂN THỊ TAG GIẢM GIÁ ĐÃ SỬA */}
-      {/* Ưu tiên 1: Nếu có % giảm giá dạng số (từ Database) */}
       {saleOffPercent && Number(saleOffPercent) > 0 ? (
         <SaleOffBadge
           className="absolute left-3 top-3"
@@ -127,16 +157,46 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
   );
 
   return (
+    // 5. OUTER WRAPPER: Xử lý hover + Motion
     <div
-      className={`tw-StayCard group relative bg-white dark:bg-neutral-900 ${
-        size === "default"
-          ? "border border-neutral-300 dark:border-neutral-800 "
-          : ""
-      } rounded-2xl overflow-hidden hover:shadow-xl transition-shadow ${className}`}
+      className={`tw-StayCard group relative isolate ${className}`}
+      // 'isolate' để tạo context stacking mới, giúp z-index hoạt động đúng
+      onMouseEnter={() => {
+        setIsHovered(true);
+        setHoverColor(getRandomColor());
+      }}
+      onMouseLeave={() => setIsHovered(false)}
       data-nc-id="StayCard"
     >
-      {renderSliderGallery()}
-      <Link href={`/hotels/${slug}`}>{renderContent()}</Link>
+      {/* 6. LỚP BACKGROUND MOTION */}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.span
+            className="absolute inset-0 -z-10 rounded-2xl"
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{
+              scale: 1.05, // Bung ra lớn hơn card một chút
+              opacity: 0.15, // Màu nhạt
+              backgroundColor: hoverColor,
+            }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* 7. INNER WRAPPER: Chứa giao diện Card gốc */}
+      {/* Đưa bg-white, border, overflow-hidden vào đây để không bị background đè mất */}
+      <div
+        className={`bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow ${
+          size === "default"
+            ? "border border-neutral-300 dark:border-neutral-800"
+            : ""
+        }`}
+      >
+        {renderSliderGallery()}
+        <Link href={`/hotels/${slug}`}>{renderContent()}</Link>
+      </div>
     </div>
   );
 }

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useAuth } from '@clerk/nextjs';
+import { toast } from 'sonner'; // Import Sonner để thông báo đẹp hơn
 import { ProductType } from '@repo/types';
 
 // UI Components (Shadcn)
@@ -22,6 +24,10 @@ import { ChevronLeft, Upload, X, MapPin, BedDouble, Bath, Users, Save, Loader2 }
 import Image from 'next/image';
 import Link from 'next/link';
 
+// --- CẤU HÌNH CLOUDINARY ---
+const CLOUD_NAME = 'dtj7wfwzu';
+const UPLOAD_PRESET = 'stazy_preset';
+
 // --- 1. Zod Schema ---
 const formSchema = z.object({
     title: z.string().min(5, 'Tên khách sạn phải có ít nhất 5 ký tự'),
@@ -30,12 +36,12 @@ const formSchema = z.object({
     price: z.coerce.number().min(0),
     saleOff: z.coerce.number().min(0).max(100).optional(),
     categoryId: z.coerce.number(),
-    // Fix lỗi Type: Cho phép optional, mặc định false
     isAds: z.boolean().default(false).optional(),
     address: z.string().min(5),
     maxGuests: z.coerce.number().min(1),
     bedrooms: z.coerce.number().min(0),
     bathrooms: z.coerce.number().min(0),
+    featuredImage: z.string().min(1, 'Vui lòng upload ảnh đại diện'),
 });
 
 interface EditProductFormProps {
@@ -44,7 +50,9 @@ interface EditProductFormProps {
 
 export default function EditProductForm({ initialData }: EditProductFormProps) {
     const router = useRouter();
+    const { getToken } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false); // State upload ảnh
 
     // --- 2. Setup Form ---
     const form = useForm<z.infer<typeof formSchema>>({
@@ -54,36 +62,92 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
             slug: initialData.slug || '',
             description: initialData.description || '',
             price: initialData.price || 0,
-            saleOff: initialData.saleOffPercent || 0,
+            saleOff: initialData.saleOffPercent || 0, // Lưu ý: Backend trả về saleOffPercent (int)
             categoryId: initialData.categoryId,
             isAds: initialData.isAds || false,
             address: initialData.address || '',
             maxGuests: initialData.maxGuests || 1,
             bedrooms: initialData.bedrooms || 1,
             bathrooms: initialData.bathrooms || 1,
+            featuredImage: initialData.featuredImage || '',
         },
     });
 
-    // --- 3. Handle Submit ---
+    // --- 3. Logic Upload Ảnh Cloudinary ---
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setUploading(true);
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', UPLOAD_PRESET);
+
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await res.json();
+
+            if (data.secure_url) {
+                // Cập nhật giá trị vào form để Zod validate
+                form.setValue('featuredImage', data.secure_url);
+                toast.success('Upload ảnh thành công');
+            } else {
+                console.error('Cloudinary Error:', data);
+                toast.error('Lỗi upload ảnh (kiểm tra Preset)');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Lỗi kết nối Cloudinary');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const removeImage = () => {
+        form.setValue('featuredImage', '');
+    };
+
+    // --- 4. Handle Submit ---
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
             setLoading(true);
-            console.log('Updating hotel:', initialData.id, values);
+            const token = await getToken();
 
-            // Gọi API Update (Bạn tự implement API route này)
+            // Chuẩn bị payload khớp với Backend
+            const payload = {
+                ...values,
+                price: Math.round(values.price), // Làm tròn tiền tệ
+                // Backend mong đợi string "10%" cho saleOff nhưng cũng tự parse int
+                // Tốt nhất gửi theo format backend đã xử lý ở updateHotel
+                saleOff: values.saleOff ? `${values.saleOff}%` : '0%',
+            };
+
+            console.log('Updating hotel:', initialData.id, payload);
+
             const res = await fetch(`${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/hotels/${initialData.id}`, {
-                method: 'PATCH', // hoặc PUT
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(values),
+                method: 'PUT', // Dùng PUT cho khớp với route backend
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // Gửi token xác thực
+                },
+                body: JSON.stringify(payload),
             });
 
-            if (!res.ok) throw new Error('Update failed');
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.message || 'Update failed');
+            }
 
-            router.refresh(); // Refresh Server Component để lấy data mới
-            router.push('/products'); // Quay về danh sách
-        } catch (error) {
+            toast.success('Cập nhật thành công!');
+            router.refresh();
+            router.push('/products');
+        } catch (error: any) {
             console.error(error);
-            // Có thể thêm Toast error tại đây
+            toast.error(`Lỗi: ${error.message}`);
         } finally {
             setLoading(false);
         }
@@ -110,7 +174,7 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                         <Button variant="outline" type="button" onClick={() => router.back()} disabled={loading}>
                             Huỷ bỏ
                         </Button>
-                        <Button type="submit" disabled={loading}>
+                        <Button type="submit" disabled={loading || uploading}>
                             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Lưu thay đổi
                         </Button>
@@ -137,7 +201,7 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                                         <FormItem>
                                             <FormLabel>Tên khách sạn</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Nhập tên khách sạn..." {...field} />
+                                                <Input {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -150,9 +214,8 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                                         <FormItem>
                                             <FormLabel>Slug (URL)</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="ten-khach-san-chuan-seo" {...field} />
+                                                <Input {...field} />
                                             </FormControl>
-                                            <FormDescription>Đường dẫn thân thiện cho SEO.</FormDescription>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -164,11 +227,7 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                                         <FormItem>
                                             <FormLabel>Mô tả chi tiết</FormLabel>
                                             <FormControl>
-                                                <Textarea
-                                                    placeholder="Mô tả về tiện ích, không gian..."
-                                                    className="min-h-[150px]"
-                                                    {...field}
-                                                />
+                                                <Textarea className="min-h-[150px]" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -177,58 +236,65 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                             </CardContent>
                         </Card>
 
-                        {/* Card 2: Hình ảnh */}
+                        {/* Card 2: Hình ảnh - ĐÃ CẬP NHẬT LOGIC UPLOAD */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Hình ảnh</CardTitle>
-                                <CardDescription>Ảnh đại diện và thư viện ảnh.</CardDescription>
+                                <CardDescription>Ảnh đại diện (Main Image).</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="border-muted-foreground/25 hover:bg-accent/50 mb-6 flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed py-10 text-center transition">
-                                    <div className="bg-background mb-3 rounded-full p-4 shadow-sm">
-                                        <Upload className="text-muted-foreground h-6 w-6" />
-                                    </div>
-                                    <div className="text-sm font-medium">Click để tải ảnh lên</div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                                    {/* Ảnh Featured */}
-                                    <div className="group relative aspect-square overflow-hidden rounded-md border">
-                                        <Image
-                                            src={initialData.featuredImage || '/placeholder.jpg'}
-                                            alt="Featured"
-                                            fill
-                                            className="object-cover"
-                                        />
-                                        <div className="absolute top-1 right-1 opacity-0 transition-opacity group-hover:opacity-100">
-                                            <Button size="icon" variant="destructive" className="h-6 w-6 rounded-full">
-                                                <X className="h-3 w-3" />
-                                            </Button>
-                                        </div>
-                                        <span className="absolute bottom-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
-                                            MAIN
-                                        </span>
-                                    </div>
-
-                                    {/* Gallery List */}
-                                    {initialData.galleryImgs?.slice(0, 3).map((img, idx) => (
-                                        <div
-                                            key={idx}
-                                            className="group relative aspect-square overflow-hidden rounded-md border"
-                                        >
-                                            <Image src={img} alt="Gallery" fill className="object-cover" />
-                                            <div className="absolute top-1 right-1 opacity-0 transition-opacity group-hover:opacity-100">
-                                                <Button
-                                                    size="icon"
-                                                    variant="destructive"
-                                                    className="h-6 w-6 rounded-full"
-                                                >
-                                                    <X className="h-3 w-3" />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name="featuredImage"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            {/* Nếu chưa có ảnh -> Hiện nút Upload */}
+                                            {!field.value ? (
+                                                <div className="hover:bg-accent/50 relative flex h-48 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center transition-colors">
+                                                    {uploading ? (
+                                                        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                                                    ) : (
+                                                        <>
+                                                            <Upload className="text-muted-foreground mb-2 h-8 w-8" />
+                                                            <span className="text-muted-foreground text-sm">
+                                                                Click để thay đổi ảnh
+                                                            </span>
+                                                            {/* Input ẩn phủ kín div cha */}
+                                                            <Input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                className="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
+                                                                onChange={handleImageUpload}
+                                                                disabled={uploading}
+                                                                value={undefined} // Uncontrolled
+                                                            />
+                                                        </>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                // Nếu có ảnh -> Hiện Preview + Nút xóa
+                                                <div className="relative h-64 w-full overflow-hidden rounded-lg border bg-gray-100">
+                                                    <Image
+                                                        src={field.value}
+                                                        alt="Featured Preview"
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        variant="destructive"
+                                                        size="icon"
+                                                        className="absolute top-2 right-2 z-10 h-8 w-8 shadow-md"
+                                                        onClick={removeImage}
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            )}
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             </CardContent>
                         </Card>
 
@@ -247,25 +313,22 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                                             <FormControl>
                                                 <div className="relative">
                                                     <MapPin className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
-                                                    <Input
-                                                        className="pl-9"
-                                                        placeholder="Số nhà, đường, thành phố..."
-                                                        {...field}
-                                                    />
+                                                    <Input className="pl-9" placeholder="Số nhà, đường..." {...field} />
                                                 </div>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
+                                {/* Tọa độ (Read-only) */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <FormLabel className="text-muted-foreground text-xs">Latitude</FormLabel>
-                                        <Input value={initialData.map?.lat} disabled className="bg-muted" />
+                                        <div className="text-muted-foreground text-xs">Latitude</div>
+                                        <Input value={initialData.map?.lat || 0} disabled className="bg-muted" />
                                     </div>
                                     <div className="space-y-2">
-                                        <FormLabel className="text-muted-foreground text-xs">Longitude</FormLabel>
-                                        <Input value={initialData.map?.lng} disabled className="bg-muted" />
+                                        <div className="text-muted-foreground text-xs">Longitude</div>
+                                        <Input value={initialData.map?.lng || 0} disabled className="bg-muted" />
                                     </div>
                                 </div>
                             </CardContent>
@@ -274,7 +337,7 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
 
                     {/* === RIGHT COLUMN (Cài đặt & Thông số) === */}
                     <div className="space-y-8">
-                        {/* Card 4: Trạng thái & Phân loại */}
+                        {/* Card 4: Category & Ads */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Phân loại</CardTitle>
@@ -289,7 +352,7 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                                             <Select onValueChange={field.onChange} defaultValue={String(field.value)}>
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Chọn loại hình" />
+                                                        <SelectValue />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
@@ -297,24 +360,20 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                                                     <SelectItem value="2">Homestay</SelectItem>
                                                     <SelectItem value="3">Villa</SelectItem>
                                                     <SelectItem value="4">Resort</SelectItem>
-                                                    <SelectItem value="5">Apartment</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-
                                 <FormField
                                     control={form.control}
                                     name="isAds"
                                     render={({ field }) => (
                                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                                             <div className="space-y-0.5">
-                                                <FormLabel className="font-semibold">Quảng cáo (Ads)</FormLabel>
-                                                <FormDescription className="text-xs">
-                                                    Đẩy bài viết này lên top hiển thị.
-                                                </FormDescription>
+                                                <FormLabel>Quảng cáo (Ads)</FormLabel>
+                                                <FormDescription>Đẩy bài lên top.</FormDescription>
                                             </div>
                                             <FormControl>
                                                 <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -325,7 +384,7 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                             </CardContent>
                         </Card>
 
-                        {/* Card 5: Giá cả */}
+                        {/* Card 5: Price */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Giá phòng</CardTitle>
@@ -360,7 +419,7 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                             </CardContent>
                         </Card>
 
-                        {/* Card 6: Sức chứa */}
+                        {/* Card 6: Capacity */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Sức chứa</CardTitle>
@@ -370,49 +429,41 @@ export default function EditProductForm({ initialData }: EditProductFormProps) {
                                     control={form.control}
                                     name="maxGuests"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <div className="flex items-center justify-between">
-                                                <FormLabel className="flex items-center gap-2 font-normal">
-                                                    <Users className="text-muted-foreground h-4 w-4" /> Khách tối đa
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input type="number" className="w-20 text-right" {...field} />
-                                                </FormControl>
-                                            </div>
+                                        <FormItem className="flex items-center justify-between">
+                                            <FormLabel className="flex gap-2">
+                                                <Users className="h-4 w-4" /> Khách
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input type="number" className="w-20 text-right" {...field} />
+                                            </FormControl>
                                         </FormItem>
                                     )}
                                 />
-                                <Separator />
                                 <FormField
                                     control={form.control}
                                     name="bedrooms"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <div className="flex items-center justify-between">
-                                                <FormLabel className="flex items-center gap-2 font-normal">
-                                                    <BedDouble className="text-muted-foreground h-4 w-4" /> Phòng ngủ
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input type="number" className="w-20 text-right" {...field} />
-                                                </FormControl>
-                                            </div>
+                                        <FormItem className="flex items-center justify-between">
+                                            <FormLabel className="flex gap-2">
+                                                <BedDouble className="h-4 w-4" /> Ngủ
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input type="number" className="w-20 text-right" {...field} />
+                                            </FormControl>
                                         </FormItem>
                                     )}
                                 />
-                                <Separator />
                                 <FormField
                                     control={form.control}
                                     name="bathrooms"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <div className="flex items-center justify-between">
-                                                <FormLabel className="flex items-center gap-2 font-normal">
-                                                    <Bath className="text-muted-foreground h-4 w-4" /> Phòng tắm
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input type="number" className="w-20 text-right" {...field} />
-                                                </FormControl>
-                                            </div>
+                                        <FormItem className="flex items-center justify-between">
+                                            <FormLabel className="flex gap-2">
+                                                <Bath className="h-4 w-4" /> Tắm
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input type="number" className="w-20 text-right" {...field} />
+                                            </FormControl>
                                         </FormItem>
                                     )}
                                 />

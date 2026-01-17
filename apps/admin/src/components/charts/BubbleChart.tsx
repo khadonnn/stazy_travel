@@ -1,3 +1,5 @@
+'use client';
+
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis } from 'recharts';
 
 const mockBubbleData = [
@@ -21,7 +23,7 @@ const BubbleChart = () => (
 
             <Tooltip
                 cursor={{ strokeDasharray: '3 3' }}
-                contentStyle={{ backgroundColor: '#18181B', border: '1px solid #3F3F46', color: '#FAFAFA' }}
+                contentStyle={{ backgroundColor: '#94949b', border: '1px solid #b4b4bd', color: '#FAFAFA' }}
                 // Custom formatter hiển thị cả 3 giá trị
                 formatter={(value: number, name: string, item: any) => {
                     if (name === 'z') return [`Tiện nghi: ${value}`, name];

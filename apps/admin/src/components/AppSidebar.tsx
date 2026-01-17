@@ -77,7 +77,7 @@ const AppSidebar = () => {
     const { unreadCount, increment, setUnreadCount } = useNotificationStore();
     const pathname = usePathname();
 
-    // --- 1. FETCH SỐ TIN NHẮN CHƯA ĐỌC TỪ DB (KHI F5 TRANG) ---
+    // --- 1. FETCH SỐ TIN NHẮN CHƯA ĐỌC TỪ DB ---
     useEffect(() => {
         const fetchInitialUnread = async () => {
             try {
@@ -92,7 +92,6 @@ const AppSidebar = () => {
             }
         };
 
-        // Chỉ gọi khi mới mount
         fetchInitialUnread();
     }, [setUnreadCount]);
 
@@ -111,11 +110,9 @@ const AppSidebar = () => {
         socket.on('receive_message_from_user', (data: any) => {
             console.log('🔔 Tin nhắn mới:', data);
 
-            // Logic: Chỉ tăng số nếu Admin ĐANG KHÔNG Ở trang /message
             if (pathname !== '/message') {
                 increment();
-                // (Optional) Phát âm thanh "Ting"
-                // new Audio('/sounds/notification.mp3').play().catch(() => {});
+                // (Optional) Phát âm thanh thông báo"
             }
         });
 
@@ -128,7 +125,6 @@ const AppSidebar = () => {
     useEffect(() => {
         if (pathname === '/message') {
             setUnreadCount(0);
-            // Lưu ý: Việc đánh dấu "đã đọc" trong DB sẽ do trang /message tự xử lý khi load chat
         }
     }, [pathname, setUnreadCount]);
 
@@ -171,7 +167,7 @@ const AppSidebar = () => {
                                         </Link>
                                     </SidebarMenuButton>
 
-                                    {/* 🔥 BADGE TIN NHẮN MÀU ĐỎ */}
+                                    {/* BADGE TIN NHẮN MÀU ĐỎ */}
                                     {item.title === 'Inbox' && unreadCount > 0 && (
                                         <SidebarMenuBadge className="animate-in zoom-in bg-red-500 font-bold text-white duration-300 hover:bg-red-600">
                                             {unreadCount > 99 ? '99+' : unreadCount}

@@ -13,7 +13,11 @@ const PORT = process.env.PORT || 8000;
 // 1. Cấu hình CORS (Phải đặt đầu tiên để xử lý Preflight OPTIONS request)
 app.use(
   cors({
-    origin: ["http://localhost:3002", "http://localhost:3003"],
+    origin: [
+      "http://localhost:3002",
+      "http://localhost:3003",
+      "http://localhost:3000",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [

@@ -1,3 +1,5 @@
+'use client';
+
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Phân phối tần suất hành vi (Số lượng người dùng có N lượt xem)

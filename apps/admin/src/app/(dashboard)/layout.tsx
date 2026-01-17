@@ -3,7 +3,7 @@ import Navbar from '@/components/Navbar';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { cookies } from 'next/headers';
-
+import { Toaster } from 'sonner';
 export default async function RootLayout({
     children,
 }: Readonly<{
@@ -20,6 +20,7 @@ export default async function RootLayout({
                     <main className="w-full">
                         <Navbar />
                         <div className="px-4"> {children}</div>
+                        <Toaster />
                     </main>
                 </SidebarProvider>
             </ThemeProvider>

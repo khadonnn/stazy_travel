@@ -16,7 +16,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { ProductType } from '@repo/types'; // Import type mới sửa
-
+import { CellAction } from './CellAction';
 // --- MAP CATEGORY ID SANG TÊN ---
 // Trong thực tế, bạn nên fetch cái này từ 1 API categories riêng
 export const CATEGORY_MAP: Record<number, string> = {
@@ -169,30 +169,6 @@ export const columns: ColumnDef<ProductType>[] = [
     // 6. ACTIONS
     {
         id: 'actions',
-        cell: ({ row }) => {
-            const product = row.original;
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.id.toString())}>
-                            Copy Product ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                            <Link href={`/products/${product.id}`}>Edit Details</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">Delete Product</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
-        },
+        cell: ({ row }) => <CellAction data={row.original} />,
     },
 ];

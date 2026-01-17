@@ -1,7 +1,6 @@
-'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-
+import dynamic from 'next/dynamic';
 // === IMPORT RECHARTS COMPONENTS ===
 import AppAreaChart from '@/components/charts/AppAreaChart';
 import AppBarChart from '@/components/charts/AppBarChart';
@@ -12,20 +11,14 @@ import UserGroupComparisonChart from '@/components/charts/UserGroupComparisonCha
 // Dữ liệu Top N được code thành CardList, nên không cần TopNBarChart ở đây
 import CardList from '@/components/CardList'; // Dùng cho Top Recommended/Top Users
 import BubbleChart from '@/components/charts/BubbleChart';
-import WordCloudPlaceholder from '@/components/charts/WordCloudPlaceholder';
 import FunnelChart from '@/components/charts/FunnelChart'; // MỚI
 import HistogramChart from '@/components/charts/HistogramChart'; // MỚI
-
+import SparsityHeatmap from '@/components/charts/SparsityHeatmap';
+import { getInteractionStats } from '../actions/get-interaction-stats';
+import WordCloudChart from '@/components/charts/WordCloudPlaceholder';
+import { getLatestSystemMetric } from '../actions/get-system-metrics';
+import { formatPercent } from '@/lib/utils';
 // Hàm format tiền tệ (Giữ nguyên)
-const formatCurrency = (amount: number) => {
-    const valueInThousands = amount / 1000;
-    const formattedValue = new Intl.NumberFormat('vi-VN', {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    }).format(valueInThousands);
-    return `${formattedValue}K`;
-};
 
 // Dữ liệu giả lập cho KPI (Model Performance)
 const modelKPIs = [
@@ -51,8 +44,38 @@ const KPICard = ({ title, value, description, color }: (typeof modelKPIs)[0]) =>
         </CardContent>
     </Card>
 );
-
-export default function AnalyticsPage() {
+export default async function AnalyticsPage() {
+    const [chartData, latestMetric] = await Promise.all([getInteractionStats(), getLatestSystemMetric()]);
+    const totalViews = chartData.reduce((acc: any, curr: any) => acc + curr.Views, 0);
+    const totalBookings = chartData.reduce((acc: any, curr: any) => acc + curr.Bookings, 0);
+    const totalCancels = chartData.reduce((acc: any, curr: any) => acc + curr.Cancellations, 0);
+    // Nếu chưa có dữ liệu trong DB (lần đầu chạy), dùng số mặc định
+    const metrics = latestMetric || {
+        rmse: 0,
+        precisionAt5: 0,
+        recallAt5: 0,
+        algorithm: 'N/A',
+    };
+    const dynamicKPIs = [
+        {
+            title: 'RMSE (Độ lỗi)',
+            value: metrics.rmse ? metrics.rmse.toFixed(3) : 'N/A',
+            description: `Đánh giá thuật toán ${metrics.algorithm || 'CF'}`,
+            color: 'text-red-500',
+        },
+        {
+            title: 'Precision@5',
+            value: formatPercent(metrics.precisionAt5),
+            description: 'Tỷ lệ gợi ý đúng trong Top 5',
+            color: 'text-green-500',
+        },
+        {
+            title: 'Recall@5',
+            value: formatPercent(metrics.recallAt5),
+            description: 'Độ bao phủ items đã tìm thấy',
+            color: 'text-blue-500',
+        },
+    ];
     return (
         <div className="space-y-6 p-8 pt-6">
             <h2 className="text-3xl font-bold tracking-tight">Analytics & Model Performance</h2>
@@ -66,7 +89,7 @@ export default function AnalyticsPage() {
             {/* HÀNG 1: MODEL PERFORMANCE (KPIs) */}
             <h3 className="mb-3 text-xl font-semibold">🎯 Model Performance & Metrics</h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {modelKPIs.map((kpi, index) => (
+                {dynamicKPIs.map((kpi, index) => (
                     <KPICard key={index} {...kpi} />
                 ))}
             </div>
@@ -74,15 +97,19 @@ export default function AnalyticsPage() {
             <Separator className="my-4" />
 
             {/* HÀNG 2: XU HƯỚNG HÀNH VI CHÍNH (Area Chart - Chiếm Full Width) */}
-            <h3 className="mb-3 text-xl font-semibold">📈 Xu hướng Tương tác Theo Thời gian</h3>
             <div className="grid gap-4 lg:grid-cols-1">
                 <Card className="min-w-0">
                     <CardHeader>
-                        <CardTitle>Xu hướng Tương tác Người dùng (6 tháng)</CardTitle>
-                        <CardDescription>Views, Bookings, và Cancellations theo thời gian.</CardDescription>
+                        <CardTitle>Xu hướng Tương tác (6 tháng qua)</CardTitle>
+                        <CardDescription>
+                            Tổng hợp: <span className="font-bold text-green-500">{totalViews} Views</span> •{' '}
+                            <span className="font-bold text-blue-500">{totalBookings} Bookings</span> •{' '}
+                            <span className="font-bold text-yellow-500">{totalCancels} Hủy</span>
+                        </CardDescription>
                     </CardHeader>
                     <CardContent className="h-[380px]">
-                        <AppAreaChart />
+                        {/* 5. Truyền dữ liệu vào Chart */}
+                        <AppAreaChart data={chartData} />
                     </CardContent>
                 </Card>
             </div>
@@ -187,8 +214,8 @@ export default function AnalyticsPage() {
                         <CardTitle>Data Sparsity (Độ thưa thớt dữ liệu)</CardTitle>
                         <CardDescription>Visualizing User-Item Interaction Matrix.</CardDescription>
                     </CardHeader>
-                    <CardContent className="text-muted-foreground flex h-[250px] items-center justify-center">
-                        <p>Heatmap: User-Item Interaction</p>
+                    <CardContent className="h-[300px]">
+                        <SparsityHeatmap />
                     </CardContent>
                 </Card>
             </div>
@@ -246,7 +273,7 @@ export default function AnalyticsPage() {
                         <CardDescription>Trực quan hóa Explicit Feedback (Comments).</CardDescription>
                     </CardHeader>
                     <CardContent className="flex h-[350px] items-center justify-center">
-                        <WordCloudPlaceholder />
+                        <WordCloudChart />
                     </CardContent>
                 </Card>
             </div>

@@ -1,3 +1,4 @@
+'use client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const data = [
@@ -13,12 +14,12 @@ const UserGroupComparisonChart = () => (
             <CartesianGrid strokeDasharray="3 3" stroke="#444" />
             <XAxis dataKey="name" stroke="#A1A1AA" />
             <YAxis stroke="#A1A1AA" />
-            <Tooltip 
+            <Tooltip
                 contentStyle={{ backgroundColor: '#18181B', border: '1px solid #3F3F46', color: '#FAFAFA' }}
                 formatter={(value: number, name: string) => [value.toLocaleString(), name]}
             />
             <Legend wrapperStyle={{ paddingTop: '10px' }} />
-            
+
             <Bar dataKey="Registered" fill="#3B82F6" name="Người dùng Đăng ký" />
             <Bar dataKey="Guest" fill="#FBBF24" name="Khách Vãng lai (Guest)" />
         </BarChart>

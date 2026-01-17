@@ -164,7 +164,7 @@ export const BentoGridItem = ({
               p-2 rounded-full bg-white text-black
               opacity-0 translate-x-[-6px]
               group-hover:opacity-100 group-hover:translate-x-0
-              transition-all duration-300 ease-out delay-150
+              transition-all duration-150 ease-out delay-150
             "
           >
             <ArrowRight className="w-4 h-4" />

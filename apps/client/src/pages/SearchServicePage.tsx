@@ -114,7 +114,7 @@ export default function SearchServicePage() {
       setIsSearching(true);
       try {
         // Gọi AI Recommend
-        const res = await fetch(`${AI_SERVICE_URL}/recommend/user_fake_1`);
+        const res = await fetch(`${AI_SERVICE_URL}/recommend/user_seed_1`);
         if (res.ok) {
           const matches = await res.json();
           updateUIWithResults(matches);

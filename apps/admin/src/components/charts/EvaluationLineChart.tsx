@@ -1,3 +1,5 @@
+'use client';
+
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 // Dữ liệu giả lập tinh chỉnh K (số lượng láng giềng)

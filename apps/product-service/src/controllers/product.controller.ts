@@ -225,7 +225,7 @@ export const createHotel = async (req: Request, res: Response) => {
         // --- ÉP KIỂU SỐ ĐỂ TRÁNH LỖI ---
         title: data.title,
         description: data.description,
-        price: Number(data.price), // Ép về số
+        price: Math.round(Number(data.price)),
         address: data.address,
         slug: finalSlug,
 

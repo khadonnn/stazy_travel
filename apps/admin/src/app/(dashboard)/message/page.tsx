@@ -13,7 +13,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useNotificationStore } from '@/store/useNotificationStore';
 
 const SOCKET_URL = 'http://localhost:3005';
-const API_URL = process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || 'http://localhost:8001/api/chat';
+const API_URL = process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || 'http://localhost:8001/chat';
 
 type Message = {
     id: string;
