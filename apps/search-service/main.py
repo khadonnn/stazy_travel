@@ -53,7 +53,9 @@ class ChatRequest(BaseModel):
     user_id: str = "guest"
     history: List[Dict[str, str]] = []
 # --- ENDPOINTS ---
-
+class ChatRequest(BaseModel):
+    message: str
+    user_id: str = "guest"
 
 @app.get("/")
 def health_check():
@@ -155,7 +157,7 @@ async def agent_chat(data: ChatRequest):
         print(f"📩 Chat request from {data.user_id}: {data.message}")
         
         # ✅ SỬA LỖI Ở ĐÂY: Gọi hàm run_agent_logic thay vì analyze_user_query
-        response_data = run_agent_logic(data.message, data.user_id, data.history)
+        response_data = run_agent_logic(data.message, data.user_id)
         
         return response_data
 

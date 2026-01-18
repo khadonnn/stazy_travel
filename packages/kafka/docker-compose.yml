@@ -85,7 +85,32 @@ services:
       - "5432:5432"
     networks:
       - stazy-network
+  redis:
+    image: redis:7.2-alpine
+    container_name: stazy-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning # Tự động lưu dữ liệu sau 60s nếu có 1 thay đổi
+    volumes:
+      - redis_data:/data # Mount volume để không mất dữ liệu khi restart container
+    networks:
+      - stazy-network
+  #  Giao diện quản lý Redis (Giống Kafka UI)
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redis-ui
+    restart: always
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+    networks:
+      - stazy-network
 
 networks:
   stazy-network:
     driver: bridge
+volumes:
+  redis_data:
+    driver: local

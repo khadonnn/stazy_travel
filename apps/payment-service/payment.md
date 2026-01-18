@@ -6,3 +6,4 @@ creat new
 > create tsconfig.json
 
 > them vao client: pnpm add --save @stripe/react-stripe-js@^5.0.0 @stripe/stripe-js@^8.0.0
+> https://freeman-semifuturistic-tingly.ngrok-free.dev

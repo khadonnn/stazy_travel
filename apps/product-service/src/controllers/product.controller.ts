@@ -140,29 +140,25 @@ export const getHotels = async (req: Request, res: Response) => {
 // 2. GET SINGLE HOTEL (Chi tiết + Author Info)
 export const getHotel = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // tên param vẫn là `:id` — nhưng thực tế có thể là slug!
+    const { id } = req.params;
 
     if (!id) {
-      return res
-        .status(400)
-        .json({ message: "Thiếu tham số hotel ID hoặc slug." });
+      return res.status(400).json({ message: "Thiếu tham số ID hoặc Slug." });
     }
 
-    // 🔍 Xác định kiểu tìm kiếm: số nguyên → tìm theo ID, chuỗi → tìm theo slug
-    let whereClause: any;
-    if (/^\d+$/.test(id)) {
-      // Là số → tìm theo ID (dành cho API/internal call)
-      whereClause = { id: Number(id) };
-    } else {
-      // Là chuỗi → tìm theo slug (dành cho frontend/public URL)
-      whereClause = { slug: id };
-    }
+    // 🔍 1. Xác định kiểu tìm kiếm
+    // Regex này kiểm tra: Nếu toàn bộ là số -> ID, ngược lại -> Slug
+    const isNumeric = /^\d+$/.test(id);
 
-    // ✅ Cập nhật viewCount + lấy dữ liệu
+    // 🔍 2. Tạo where clause (Prisma WhereUniqueInput)
+    // Nếu là số thì ép kiểu về Number, nếu là chữ thì giữ nguyên
+    const whereClause = isNumeric ? { id: Number(id) } : { slug: id };
+
+    // ✅ 3. Gọi Prisma: Vừa tăng view, vừa lấy dữ liệu
     const hotel = await prisma.hotel.update({
       where: whereClause,
       data: {
-        viewCount: { increment: 1 },
+        viewCount: { increment: 1 }, // Tăng view mỗi lần gọi API
       },
       include: {
         category: true,
@@ -176,25 +172,22 @@ export const getHotel = async (req: Request, res: Response) => {
             createdAt: true,
           },
         },
+        // Nếu bạn có bảng Reviews hoặc Rooms thì include thêm ở đây
+        // reviews: true,
       },
     });
 
-    if (!hotel) {
-      return res.status(404).json({
-        message: "Không tìm thấy khách sạn.",
-      });
-    }
-
-    res.status(200).json(hotel);
+    // 4. Trả về kết quả
+    return res.status(200).json(hotel);
   } catch (error: any) {
     console.error("Get hotel error:", error);
 
-    // Lỗi: không tìm thấy (Prisma P2025)
+    // 🔥 Xử lý lỗi Prisma P2025: Record to update not found
     if (error.code === "P2025") {
-      return res.status(404).json({ message: "Không tìm thấy khách sạn." });
+      return res.status(404).json({ message: "Không tìm thấy khách sạn này." });
     }
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Lỗi server khi lấy thông tin khách sạn.",
       error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });

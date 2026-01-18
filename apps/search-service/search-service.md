@@ -22,7 +22,7 @@ uv pip install --force-reinstall pandas "numpy<2" scikit-surprise
 
 > Remove-Item -Recurse -Force .venv
 > uv venv
-> .venv\Scripts\activate
+> .venv\Scripts\activate (CMD) || .venv\Scripts\Activate.ps1 (PowerShell)
 > uv pip install -r requirements.txt
 
 #
