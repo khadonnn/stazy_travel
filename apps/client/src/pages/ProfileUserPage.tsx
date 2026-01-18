@@ -13,7 +13,6 @@ import {
   Loader2, // Thêm Loader2 cho trạng thái loading
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
-import RandomEnvironmentImage from "@/components/RandomEnvironmentImage";
 import {
   Dialog,
   DialogContent,
@@ -41,14 +40,10 @@ import {
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 
-// Giả định IUser có các field cần thiết
-
 import toast from "react-hot-toast";
 import type { IUser } from "@repo/types";
+import DarkVeil from "@/components/DarkVeil";
 
-// ------------------------------------------------------------------
-// Sub-Component: AvatarFallback (Giữ nguyên)
-// ------------------------------------------------------------------
 const AvatarFallback = ({
   name,
   size,
@@ -72,9 +67,6 @@ const AvatarFallback = ({
   );
 };
 
-// ------------------------------------------------------------------
-// COMPONENT: ProfileUserPage (Logic đã được điều chỉnh)
-// ------------------------------------------------------------------
 const ProfileUserPage = () => {
   // 1. Hook và State
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
@@ -164,9 +156,7 @@ const ProfileUserPage = () => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  // =====================================================================================
-  // 🔥 CHỨC NĂNG MỚI: 5.1. Cập nhật Ảnh Đại diện Độc Lập
-  // =====================================================================================
+  // Cập nhật Ảnh Đại diện Độc Lập
   const handleAvatarSubmit = async () => {
     if (!clerkUser || !selectedFile || isAvatarUpdating) return;
 
@@ -211,9 +201,8 @@ const ProfileUserPage = () => {
     }
   };
 
-  // =====================================================================================
-  // 🔥 CHỨC NĂNG CŨ: 5.2. Cập nhật Thông tin Cá nhân (Chỉ Text Fields)
-  // =====================================================================================
+  // Cập nhật Thông tin Cá nhân (Chỉ Text Fields)
+
   const handleSubmit = async () => {
     if (!profile || isUpdatingProfile) return;
 
@@ -247,7 +236,6 @@ const ProfileUserPage = () => {
       alert("Cập nhật thông tin thất bại.");
     }
   };
-  // =====================================================================================
 
   // 6. Render Logic Avatar (Bao gồm input upload)
   const renderAvatarWithInput = () => {
@@ -346,204 +334,222 @@ const ProfileUserPage = () => {
 
   // 7. Render JSX
   return (
-    <RandomEnvironmentImage>
-      <div className="max-w-2xl mx-auto p-4 min-h-screen mt-14">
-        <div className="bg-gray-900 rounded-xl shadow-md p-6 space-y-8">
-          <div className="flex items-center justify-between">
-            <div className="text-center flex-1">
-              <h1 className="text-2xl font-semibold text-white">
-                Thông tin cá nhân
-              </h1>
-              <p className="mt-2 text-sm text-gray-300">Tài khoản của bạn</p>
-            </div>
+    <div className="relative min-h-screen w-full">
+      <div className="absolute inset-0 z-0">
+        <DarkVeil
+          hueShift={0}
+          noiseIntensity={0.02}
+          scanlineIntensity={0.1}
+          speed={0.3}
+          resolutionScale={1}
+        />
+      </div>
+      <div className="relative z-10">
+        <div className="max-w-2xl mx-auto p-4 min-h-screen mt-14">
+          <div
+            className="bg-black/40 backdrop-blur-lg rounded-xl shadow-xl p-6 space-y-8 border border-white/10  border border-cyan-500/30 
+  shadow-[0_0_15px_2px_rgba(0,255,255,0.4)] 
+  hover:shadow-[0_0_20px_3px_rgba(0,255,255,0.6)] 
+  transition-shadow duration-300 "
+          >
+            <div className="flex items-center justify-between">
+              <div className="text-center flex-1">
+                <h1 className="text-2xl font-semibold text-white">
+                  Thông tin cá nhân
+                </h1>
+                <p className="mt-2 text-sm text-gray-300">Tài khoản của bạn</p>
+              </div>
 
-            {/* Nút Edit (Chỉ còn Edit Text) */}
-            <Dialog open={open} onOpenChange={setOpen}>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <DialogTrigger asChild>
-                      <button className="p-2 rounded-full bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition">
-                        <Edit className="w-5 h-5" />
-                      </button>
-                    </DialogTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="top"
-                    className="bg-green-600 text-white text-xs py-1 px-2 rounded"
-                  >
-                    Chỉnh sửa thông tin
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              {/* Nút Edit (Chỉ còn Edit Text) */}
+              <Dialog open={open} onOpenChange={setOpen}>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DialogTrigger asChild>
+                        <button className="p-2 rounded-full bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition">
+                          <Edit className="w-5 h-5" />
+                        </button>
+                      </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="top"
+                      className="bg-green-600 text-white text-xs py-1 px-2 rounded"
+                    >
+                      Chỉnh sửa thông tin
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
 
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Chỉnh sửa thông tin cá nhân</DialogTitle>
-                </DialogHeader>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Chỉnh sửa thông tin cá nhân</DialogTitle>
+                  </DialogHeader>
 
-                {profile && (
-                  <div className="space-y-4">
-                    {/* Các input thông tin cá nhân (Đã dọn dẹp phần Avatar) */}
-                    <div className="space-y-3">
-                      {/* Name */}
-                      <div>
-                        <Label htmlFor="name">Họ tên</Label>
-                        <Input
-                          name="name"
-                          value={profile.name || ""}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      {/* Nickname */}
-                      <div>
-                        <Label htmlFor="nickname">Nickname</Label>
-                        <Input
-                          name="nickname"
-                          value={profile.nickname || ""}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      {/* DOB */}
-                      <div>
-                        <Label htmlFor="dob">Ngày sinh</Label>
-                        <Input
-                          name="dob"
-                          value={profile.dob || ""}
-                          onChange={handleChange}
-                          type="date"
-                        />
-                      </div>
-                      {/* Email (Readonly) */}
-                      <div>
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          name="email"
-                          value={profile.email || ""}
-                          onChange={handleChange}
-                          readOnly
-                          className="opacity-70 cursor-not-allowed"
-                        />
-                      </div>
-                      {/* Phone */}
-                      <div>
-                        <Label htmlFor="phone">Số điện thoại</Label>
-                        <Input
-                          name="phone"
-                          value={profile.phone || ""}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      {/* Gender */}
-                      <div>
-                        <Label htmlFor="gender">Giới tính</Label>
-                        <Select
-                          value={
-                            profile.gender &&
-                            ["male", "female", "other"].includes(profile.gender)
-                              ? profile.gender
-                              : ""
-                          }
-                          onValueChange={(value) =>
-                            setProfile({
-                              ...profile,
-                              gender: value,
-                            })
-                          }
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Chọn giới tính" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="male">Nam</SelectItem>
-                            <SelectItem value="female">Nữ</SelectItem>
-                            <SelectItem value="other">Khác</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      {/* Address */}
-                      <div>
-                        <Label htmlFor="address">Địa chỉ</Label>
-                        <Input
-                          name="address"
-                          value={profile.address || ""}
-                          onChange={handleChange}
-                        />
+                  {profile && (
+                    <div className="space-y-4">
+                      {/* Các input thông tin cá nhân (Đã dọn dẹp phần Avatar) */}
+                      <div className="space-y-3">
+                        {/* Name */}
+                        <div>
+                          <Label htmlFor="name">Họ tên</Label>
+                          <Input
+                            name="name"
+                            value={profile.name || ""}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        {/* Nickname */}
+                        <div>
+                          <Label htmlFor="nickname">Nickname</Label>
+                          <Input
+                            name="nickname"
+                            value={profile.nickname || ""}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        {/* DOB */}
+                        <div>
+                          <Label htmlFor="dob">Ngày sinh</Label>
+                          <Input
+                            name="dob"
+                            value={profile.dob || ""}
+                            onChange={handleChange}
+                            type="date"
+                          />
+                        </div>
+                        {/* Email (Readonly) */}
+                        <div>
+                          <Label htmlFor="email">Email</Label>
+                          <Input
+                            name="email"
+                            value={profile.email || ""}
+                            onChange={handleChange}
+                            readOnly
+                            className="opacity-70 cursor-not-allowed"
+                          />
+                        </div>
+                        {/* Phone */}
+                        <div>
+                          <Label htmlFor="phone">Số điện thoại</Label>
+                          <Input
+                            name="phone"
+                            value={profile.phone || ""}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        {/* Gender */}
+                        <div>
+                          <Label htmlFor="gender">Giới tính</Label>
+                          <Select
+                            value={
+                              profile.gender &&
+                              ["male", "female", "other"].includes(
+                                profile.gender,
+                              )
+                                ? profile.gender
+                                : ""
+                            }
+                            onValueChange={(value) =>
+                              setProfile({
+                                ...profile,
+                                gender: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Chọn giới tính" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="male">Nam</SelectItem>
+                              <SelectItem value="female">Nữ</SelectItem>
+                              <SelectItem value="other">Khác</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {/* Address */}
+                        <div>
+                          <Label htmlFor="address">Địa chỉ</Label>
+                          <Input
+                            name="address"
+                            value={profile.address || ""}
+                            onChange={handleChange}
+                          />
+                        </div>
                       </div>
                     </div>
+                  )}
+
+                  <DialogFooter>
+                    <Button
+                      onClick={handleSubmit}
+                      className="w-full bg-green-700 text-white"
+                      disabled={isUpdatingProfile || isAvatarUpdating}
+                    >
+                      {isUpdatingProfile
+                        ? "Đang lưu..."
+                        : "Lưu thông tin cá nhân"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {/* VỊ TRÍ MỚI CHO AVATAR VÀ UPLOAD */}
+            <div className="flex flex-col items-center gap-4">
+              {renderAvatarWithInput()}
+            </div>
+
+            {/* Hiển thị thông tin */}
+            <div className="space-y-4">
+              {[
+                {
+                  icon: <User className="w-4 h-4" />,
+                  label: "Họ tên",
+                  value: fullName,
+                },
+                {
+                  icon: <UserCircle className="w-4 h-4" />,
+                  label: "Nickname",
+                  value: profile?.nickname,
+                },
+                {
+                  icon: <Mail className="w-4 h-4" />,
+                  label: "Email",
+                  value: email,
+                },
+                {
+                  icon: <Phone className="w-4 h-4" />,
+                  label: "Số điện thoại",
+                  value: profile?.phone,
+                },
+                {
+                  icon: <MapPin className="w-4 h-4" />,
+                  label: "Địa chỉ",
+                  value: profile?.address,
+                },
+                {
+                  icon: <Calendar className="w-4 h-4" />,
+                  label: "Ngày sinh",
+                  value: profile?.dob,
+                },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="grid grid-cols-[auto_1fr] items-center gap-4"
+                >
+                  <span className="flex items-center gap-2 text-md text-gray-400">
+                    {item.icon} {item.label}
+                  </span>
+                  <div className="p-3 rounded-lg text-lg text-white bg-gray-800">
+                    <span className="ml-2">{item.value || "—"}</span>
                   </div>
-                )}
-
-                <DialogFooter>
-                  <Button
-                    onClick={handleSubmit}
-                    className="w-full bg-green-700 text-white"
-                    disabled={isUpdatingProfile || isAvatarUpdating}
-                  >
-                    {isUpdatingProfile
-                      ? "Đang lưu..."
-                      : "Lưu thông tin cá nhân"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          {/* VỊ TRÍ MỚI CHO AVATAR VÀ UPLOAD */}
-          <div className="flex flex-col items-center gap-4">
-            {renderAvatarWithInput()}
-          </div>
-
-          {/* Hiển thị thông tin */}
-          <div className="space-y-4">
-            {[
-              {
-                icon: <User className="w-4 h-4" />,
-                label: "Họ tên",
-                value: fullName,
-              },
-              {
-                icon: <UserCircle className="w-4 h-4" />,
-                label: "Nickname",
-                value: profile?.nickname,
-              },
-              {
-                icon: <Mail className="w-4 h-4" />,
-                label: "Email",
-                value: email,
-              },
-              {
-                icon: <Phone className="w-4 h-4" />,
-                label: "Số điện thoại",
-                value: profile?.phone,
-              },
-              {
-                icon: <MapPin className="w-4 h-4" />,
-                label: "Địa chỉ",
-                value: profile?.address,
-              },
-              {
-                icon: <Calendar className="w-4 h-4" />,
-                label: "Ngày sinh",
-                value: profile?.dob,
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-[auto_1fr] items-center gap-4"
-              >
-                <span className="flex items-center gap-2 text-md text-gray-400">
-                  {item.icon} {item.label}
-                </span>
-                <div className="p-3 rounded-lg text-lg text-white bg-gray-800">
-                  <span className="ml-2">{item.value || "—"}</span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </RandomEnvironmentImage>
+    </div>
   );
 };
 
