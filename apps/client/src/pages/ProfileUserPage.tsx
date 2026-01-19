@@ -43,6 +43,7 @@ import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import type { IUser } from "@repo/types";
 import DarkVeil from "@/components/DarkVeil";
+import FloatingLines from "@/components/FloatingLines";
 
 const AvatarFallback = ({
   name,
@@ -336,12 +337,16 @@ const ProfileUserPage = () => {
   return (
     <div className="relative min-h-screen w-full">
       <div className="absolute inset-0 z-0">
-        <DarkVeil
-          hueShift={0}
-          noiseIntensity={0.02}
-          scanlineIntensity={0.1}
-          speed={0.3}
-          resolutionScale={1}
+        <FloatingLines
+          enabledWaves={["top", "middle", "bottom"]}
+          // Array - specify line count per wave; Number - same count for all waves
+          lineCount={5}
+          // Array - specify line distance per wave; Number - same distance for all waves
+          lineDistance={5}
+          bendRadius={5}
+          bendStrength={-0.5}
+          interactive={true}
+          parallax={true}
         />
       </div>
       <div className="relative z-10">

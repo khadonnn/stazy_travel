@@ -21,7 +21,7 @@ export const BentoGrid = ({
         "max-w-7xl mx-auto px-4",
         // Chiều cao cố định → layout ổn định, không jump
         "auto-rows-[220px] md:auto-rows-[240px]",
-        className
+        className,
       )}
     >
       {children}
@@ -62,7 +62,7 @@ export const BentoGridItem = ({
         "transition-all duration-300 ease-out",
         "hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/30",
         "will-change-transform",
-        className
+        className,
       )}
     >
       {/* ===== BACKGROUND IMAGE ===== */}
@@ -147,25 +147,35 @@ export const BentoGridItem = ({
         </div>
 
         {/* --- Price & CTA --- */}
+        {/* --- Price & CTA --- */}
         <div className="mt-2 pt-3 border-t border-white/20 flex items-center justify-between">
           <div>
             <p className="text-xs text-gray-400">Giá mỗi đêm</p>
-            <p className="text-lg font-bold text-white">
-              {new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-                maximumFractionDigits: 0,
-              }).format(price)}
-            </p>
+            {/* Bao bọc giá trong container ẩn/mở khi hover */}
+            <div
+              className="
+        max-h-0 opacity-0 overflow-hidden
+        group-hover:max-h-6 group-hover:opacity-100
+        transition-all duration-300 ease-out
+      "
+            >
+              <p className="text-lg font-bold text-white">
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                  maximumFractionDigits: 0,
+                }).format(price)}
+              </p>
+            </div>
           </div>
 
           <div
             className="
-              p-2 rounded-full bg-white text-black
-              opacity-0 translate-x-[-6px]
-              group-hover:opacity-100 group-hover:translate-x-0
-              transition-all duration-150 ease-out delay-150
-            "
+      p-2 rounded-full bg-white text-black
+      opacity-0 translate-x-[-6px]
+      group-hover:opacity-100 group-hover:translate-x-0
+      transition-all duration-150 ease-out delay-50
+    "
           >
             <ArrowRight className="w-4 h-4" />
           </div>

@@ -11,7 +11,7 @@ export default async function PersonalizedSection() {
   if (!items || items.length === 0) return null;
 
   return (
-    <section className="mb-12 px-4 md:px-8 max-w-8xl mx-auto ">
+    <section className="mb-12 px-4 md:px-8 max-w-9xl mx-auto ">
       <div className="mb-8 flex items-center gap-2 ml-18">
         <Sparkles className="w-6 h-6 text-yellow-500 fill-yellow-500 animate-pulse" />
         <h2 className="text-3xl font-bold tracking-tight">

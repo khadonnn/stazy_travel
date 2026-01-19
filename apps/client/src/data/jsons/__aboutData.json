@@ -1,145 +1,159 @@
 {
-    "heroSection": {
-        "title": "Stazy Booking - Quản Lý Khách Sạn Hiện Đại",
-        "description": "Nền tảng quản lý khách sạn hiện đại, mang đến trải nghiệm tuyệt vời cho cả khách hàng và nhà quản lý"
-    },
-    "mission": {
-        "title": "Sứ Mệnh Của Chúng Tôi",
-        "description": "Chúng tôi cam kết xây dựng một nền tảng công nghệ tiên tiến nhất trong lĩnh vực khách sạn, giúp các khách sạn tối ưu hóa hoạt động kinh doanh và mang lại trải nghiệm đặc biệt cho khách hàng. Với sự kết hợp hoàn hảo giữa công nghệ hiện đại và dịch vụ nhân văn, chúng tôi hướng tới mục tiêu trở thành đối tác tin cậy của mọi khách sạn trên toàn thế giới."
-    },
-    "services": {
-        "title": "Hoạt Động & Dịch Vụ",
-        "subtitle": "Chúng tôi cung cấp giải pháp toàn diện cho ngành khách sạn",
-        "items": [
-            {
-                "id": "booking",
-                "title": "Đặt Phòng Trực Tuyến",
-                "description": "Hệ thống đặt phòng thông minh với giao diện thân thiện và quy trình đơn giản"
-            },
-            {
-                "id": "management",
-                "title": "Quản Lý Khách Hàng",
-                "description": "Hệ thống CRM toàn diện giúp theo dõi và chăm sóc khách hàng một cách tốt nhất"
-            },
-            {
-                "id": "security",
-                "title": "Bảo Mật Tuyệt Đối",
-                "description": "Công nghệ bảo mật tiên tiến đảm bảo an toàn thông tin và giao dịch"
-            },
-            {
-                "id": "support",
-                "title": "Hỗ Trợ 24/7",
-                "description": "Đội ngũ hỗ trợ khách hàng luôn sẵn sàng phục vụ mọi lúc, mọi nơi"
-            }
+  "heroSection": {
+    "title": "Stazy Booking - Quản Lý Khách Sạn Hiện Đại",
+    "description": "Nền tảng quản lý khách sạn hiện đại, mang đến trải nghiệm tuyệt vời cho cả khách hàng và nhà quản lý"
+  },
+  "mission": {
+    "title": "Sứ Mệnh Của Chúng Tôi",
+    "description": "Chúng tôi cam kết xây dựng một nền tảng công nghệ tiên tiến nhất trong lĩnh vực khách sạn, giúp các khách sạn tối ưu hóa hoạt động kinh doanh và mang lại trải nghiệm đặc biệt cho khách hàng. Với sự kết hợp hoàn hảo giữa công nghệ hiện đại và dịch vụ nhân văn, chúng tôi hướng tới mục tiêu trở thành đối tác tin cậy của mọi khách sạn trên toàn thế giới."
+  },
+  "services": {
+    "title": "Hoạt Động & Dịch Vụ",
+    "subtitle": "Chúng tôi cung cấp giải pháp toàn diện cho ngành khách sạn",
+    "items": [
+      {
+        "id": "booking",
+        "title": "Đặt Phòng Trực Tuyến",
+        "description": "Hệ thống đặt phòng thông minh với giao diện thân thiện và quy trình đơn giản"
+      },
+      {
+        "id": "management",
+        "title": "Quản Lý Khách Hàng",
+        "description": "Hệ thống CRM toàn diện giúp theo dõi và chăm sóc khách hàng một cách tốt nhất"
+      },
+      {
+        "id": "security",
+        "title": "Bảo Mật Tuyệt Đối",
+        "description": "Công nghệ bảo mật tiên tiến đảm bảo an toàn thông tin và giao dịch"
+      },
+      {
+        "id": "support",
+        "title": "Hỗ Trợ 24/7",
+        "description": "Đội ngũ hỗ trợ khách hàng luôn sẵn sàng phục vụ mọi lúc, mọi nơi"
+      }
+    ]
+  },
+  "team": {
+    "title": "Đội Ngũ Của Chúng Tôi ",
+    "subtitle": "Những con người tài năng và đam mê tạo nên Stazy Booking",
+    "members": [
+      {
+        "id": 1,
+        "name": "Nguyễn Đình Đông Kha",
+        "role": "MSSV: 24210137",
+        "description": "Chuyên gia trong lĩnh vực khách sạn với hơn 15 năm kinh nghiệm quản lý và phát triển thương hiệu.",
+        "avatar": "/khadon.jpg",
+        "email": "kha.nguyen@stazy.com",
+        "phone": "+84 903 456 789",
+        "linkedin": "linkedin.com/in/nguyendinhdongkha",
+        "github": "",
+        "skills": ["Leadership", "Backend Development", "Project Management"]
+      },
+      {
+        "id": 2,
+        "name": "Nguyễn Đình Đông Kha",
+        "role": "MSSV: 24210137",
+        "description": "Kỹ sư phần mềm senior với chuyên môn về hệ thống quản lý khách sạn và công nghệ số.",
+        "avatar": "/khadon.jpg",
+        "email": "kha.nguyen@stazy.com",
+        "phone": "+84 903 456 789",
+        "linkedin": "linkedin.com/in/nguyendinhdongkha",
+        "github": "",
+        "skills": ["Full-stack Development", "Backend Development", "DevOps"]
+      },
+      {
+        "id": 3,
+        "name": "Nguyễn Đình Đông Kha",
+        "role": "MSSV: 24210137",
+        "description": "Chuyên gia vận hành với kinh nghiệm sâu rộng trong việc tối ưu hóa quy trình và dịch vụ khách hàng.",
+        "avatar": "/khadon.jpg",
+        "email": "kha.nguyen@stazy.com",
+        "phone": "+84 903 456 789",
+        "linkedin": "linkedin.com/in/nguyendinhdongkha",
+        "github": "",
+        "skills": [
+          "Frontend Dev",
+          "Full-stack Development",
+          "Process Optimization"
         ]
-    },
-    "team": {
-        "title": "Đội Ngũ Của Chúng Tôi ",
-        "subtitle": "Những con người tài năng và đam mê tạo nên Stazy Booking",
-        "members": [
-            {
-                "id": 1,
-                "name": "Nguyễn Đình Đông Kha",
-                "role": "MSSV: 24210137",
-                "description": "Chuyên gia trong lĩnh vực khách sạn với hơn 15 năm kinh nghiệm quản lý và phát triển thương hiệu.",
-                "avatar": "/kha.png",
-                "email": "kha.nguyen@stazy.com",
-                "phone": "+84 903 456 789",
-                "linkedin": "linkedin.com/in/nguyendinhdongkha",
-                "github": "",
-                "skills": [
-                    "Leadership",
-                    "Backend Development",
-                    "Project Management"
-                ]
-            },
-            {
-                "id": 2,
-                "name": "Nguyễn Đình Đông Kha",
-                "role": "MSSV: 24210137",
-                "description": "Kỹ sư phần mềm senior với chuyên môn về hệ thống quản lý khách sạn và công nghệ số.",
-                "avatar": "/kha.png",
-                "email": "kha.nguyen@stazy.com",
-                "phone": "+84 903 456 789",
-                "linkedin": "linkedin.com/in/nguyendinhdongkha",
-                "github": "",
-                "skills": [
-                    "Full-stack Development",
-                    "Backend Development",
-                    "DevOps"
-                ]
-            },
-            {
-                "id": 3,
-                "name": "Nguyễn Đình Đông Kha",
-                "role": "MSSV: 24210137",
-                "description": "Chuyên gia vận hành với kinh nghiệm sâu rộng trong việc tối ưu hóa quy trình và dịch vụ khách hàng.",
-                "avatar": "/kha.png",
-                "email": "kha.nguyen@stazy.com",
-                "phone": "+84 903 456 789",
-                "linkedin": "linkedin.com/in/nguyendinhdongkha",
-                "github": "",
-                "skills": [
-                    "Frontend Dev",
-                    "Full-stack Development",
-                    "Process Optimization"
-                ]
-            },
-            {
-                "id": 4,
-                "name": "Nguyễn Đình Đông Kha",
-                "role": "MSSV: 24210137",
-                "description": "Chuyên gia marketing số với niềm đam mê tạo ra những chiến dịch sáng tạo và hiệu quả.",
-                "avatar": "/kha.png",
-                "email": "kha.nguyen@stazy.com",
-                "phone": "+84 903 456 789",
-                "linkedin": "linkedin.com/in/nguyendinhdongkha",
-                "github": "",
-                "skills": [
-                    "Backend Developer",
-                    " Document Writer",
-                    "Report Writer"
-                ]
-            },
-            {
-                "id": 5,
-                "name": "Nguyễn Đình Đông Kha",
-                "role": "MSSV: 24210137",
-                "description": "Chuyên gia trải nghiệm khách hàng với sứ mệnh mang lại sự hài lòng tuyệt đối cho mọi khách hàng.",
-                "avatar": "/kha.png",
-                "email": "kha.nguyen@stazy.com",
-                "phone": "+84 903 456 789",
-                "linkedin": "linkedin.com/in/nguyendinhdongkha",
-                "github": "",
-                "skills": [
-                    "Backend Developer",
-                    " Tech Writer",
-                    "Customer Experience"
-                ]
-            }
-        ]
-    },
-    "values": {
-        "title": "Giá Trị Cốt Lõi",
-        "items": [
-            {
-                "id": "quality",
-                "title": "Chất Lượng",
-                "description": "Cam kết mang đến sản phẩm và dịch vụ chất lượng cao nhất",
-                "color": "blue"
-            },
-            {
-                "id": "customer",
-                "title": "Khách Hàng",
-                "description": "Đặt lợi ích và trải nghiệm khách hàng lên hàng đầu trong mọi quyết định",
-                "color": "purple"
-            },
-            {
-                "id": "innovation",
-                "title": "Đổi Mới",
-                "description": "Không ngừng cải tiến và áp dụng công nghệ tiên tiến nhất",
-                "color": "green"
-            }
-        ]
-    }
+      },
+      {
+        "id": 4,
+        "name": "Nguyễn Đình Đông Kha",
+        "role": "MSSV: 24210137",
+        "description": "Chuyên gia marketing số với niềm đam mê tạo ra những chiến dịch sáng tạo và hiệu quả.",
+        "avatar": "/khadon.jpg",
+        "email": "kha.nguyen@stazy.com",
+        "phone": "+84 903 456 789",
+        "linkedin": "linkedin.com/in/nguyendinhdongkha",
+        "github": "",
+        "skills": ["Backend Developer", " Document Writer", "Report Writer"]
+      },
+      {
+        "id": 5,
+        "name": "Nguyễn Đình Đông Kha",
+        "role": "MSSV: 24210137",
+        "description": "Chuyên gia trải nghiệm khách hàng với sứ mệnh mang lại sự hài lòng tuyệt đối cho mọi khách hàng.",
+        "avatar": "/khadon.jpg",
+        "email": "kha.nguyen@stazy.com",
+        "phone": "+84 903 456 789",
+        "linkedin": "linkedin.com/in/nguyendinhdongkha",
+        "github": "",
+        "skills": ["Backend Developer", " Tech Writer", "Customer Experience"]
+      }
+    ]
+  },
+  "values": {
+    "title": "Giá Trị Cốt Lõi",
+    "items": [
+      {
+        "id": "quality",
+        "title": "Chất Lượng",
+        "description": "Cam kết sản phẩm và dịch vụ tốt nhất",
+        "color": "blue"
+      },
+      {
+        "id": "customer",
+        "title": "Khách Hàng Là Trung Tâm",
+        "description": "Đặt trải nghiệm khách hàng lên hàng đầu",
+        "color": "purple"
+      },
+      {
+        "id": "innovation",
+        "title": "Đổi Mới Sáng Tạo",
+        "description": "Không ngừng cải tiến công nghệ",
+        "color": "green"
+      },
+      {
+        "id": "passion",
+        "title": "Đam Mê Du Lịch",
+        "description": "Kết nối mọi người và khám phá thế giới",
+        "color": "red"
+      },
+      {
+        "id": "speed",
+        "title": "Tốc Độ",
+        "description": "Phản hồi nhanh, giải quyết hiệu quả",
+        "color": "yellow"
+      },
+      {
+        "id": "trust",
+        "title": "Tin Cậy",
+        "description": "Bảo mật và minh bạch tuyệt đối",
+        "color": "indigo"
+      },
+      {
+        "id": "support",
+        "title": "Hỗ Trợ 24/7",
+        "description": "Luôn sẵn sàng phục vụ mọi lúc, mọi nơi",
+        "color": "teal"
+      },
+      {
+        "id": "prestige",
+        "title": "Uy Tín",
+        "description": "Xây dựng niềm tin qua từng dịch vụ chất lượng",
+        "color": "violet"
+      }
+    ]
+  }
 }

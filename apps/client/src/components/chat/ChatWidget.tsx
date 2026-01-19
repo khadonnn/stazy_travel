@@ -1,13 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation"; // ✅ Bổ sung: Import hook lấy đường dẫn
 import { BotMessageSquare, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import ChatBox from "./ChatBox";
-import { motion, AnimatePresence } from "motion/react"; // ✅ Đúng theo docs
+import { motion, AnimatePresence } from "motion/react";
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+
+  // ✅ Bổ sung: Lấy đường dẫn hiện tại
+  const pathname = usePathname();
+
+  // ✅ Bổ sung: Danh sách các route muốn ẩn ChatWidget
+  const disabledRoutes = ["/about", "/login", "/register"];
+
+  // ✅ Bổ sung: Kiểm tra logic - Nếu route hiện tại nằm trong danh sách đen -> không render gì cả
+  if (pathname && disabledRoutes.includes(pathname)) {
+    return null;
+  }
 
   const WIDGET_WIDTH = "w-96";
   const WIDGET_HEIGHT = "h-[500px]";
