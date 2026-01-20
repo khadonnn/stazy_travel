@@ -31,7 +31,8 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { Amenities_demos } from "@/constants/amenities";
 import FiveStar from "@/shared/FiveStar";
-import CommentListing from "@/components/Comments";
+import CommentListClient from "@/components/comment/CommentListClient";
+import AddCommentForm from "@/components/comment/AddCommentForm";
 import StartRating from "@/components/StarRating";
 import LikeSaveBtns from "@/shared/LikeSaveBtn";
 import StayDatesRangeInput from "@/components/StayDatesRangeInput";
@@ -71,7 +72,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
   const searchParams = useSearchParams();
   const modal = searchParams?.get("modal");
 
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn, isLoaded, user } = useUser();
   const { date, guests, checkInDate, checkOutDate } = useBookingStore();
   const isDisabled = !checkInDate || !checkOutDate;
 
@@ -101,6 +102,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
   } | null>(null);
 
   const [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false);
+  const [refreshComments, setRefreshComments] = useState(0);
   const addItem = useCartStore((state) => state.addItem);
 
   // --- 1. FETCH DỮ LIỆU TỪ BACKEND ---
@@ -723,6 +725,8 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
   };
 
   const renderSection6 = () => {
+    if (!stayData) return null;
+
     return (
       <div className="listingSection__wrap">
         <h2 className="text-2xl font-semibold">
@@ -732,30 +736,41 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
 
         <div className="space-y-5">
           <FiveStar iconClass="w-6 h-6" className="space-x-0.5" />
-          <div className="relative">
-            <Input
-              placeholder="Chia sẻ cảm nhận của bạn..."
-              className="h-16 rounded-3xl"
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-12 w-12"
-              onClick={() => {}}
-            >
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-          </div>
         </div>
 
         <div className="divide-y divide-neutral-200 dark:divide-neutral-800 mt-6">
-          <CommentListing />
+          {/* Danh sách bình luận */}
+          <CommentListClient
+            hotelId={stayData.id}
+            refreshKey={refreshComments}
+          />
 
-          <div className="pt-8">
-            <Button variant="outline" asChild>
-              <Link href="#">Xem thêm đánh giá</Link>
-            </Button>
-          </div>
+          {/* Form thêm bình luận */}
+          {isSignedIn && isLoaded && user?.id ? (
+            <AddCommentForm
+              hotelId={stayData.id}
+              userId={user.id}
+              hotelSlug={slug}
+              onSuccess={() => setRefreshComments((prev) => prev + 1)}
+            />
+          ) : (
+            <div className="text-center py-8 border rounded-lg bg-gray-50 mt-6">
+              <p className="text-neutral-500">
+                Vui lòng{" "}
+                <Button
+                  variant="link"
+                  className="p-0 h-auto"
+                  onClick={() => {
+                    const redirectUrl = encodeURIComponent(pathname || "/");
+                    router.push(`/sign-in?redirect_url=${redirectUrl}`);
+                  }}
+                >
+                  đăng nhập
+                </Button>{" "}
+                để viết đánh giá
+              </p>
+            </div>
+          )}
         </div>
       </div>
     );

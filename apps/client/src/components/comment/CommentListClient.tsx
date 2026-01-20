@@ -1,4 +1,6 @@
-// ❌ TUYỆT ĐỐI KHÔNG ĐỂ 'use client' Ở ĐÂY
+"use client";
+
+import { useEffect, useState } from "react";
 import AvatarCus from "@/shared/AvartarCus";
 import { Star } from "lucide-react";
 import { format } from "date-fns";
@@ -40,14 +42,44 @@ const CommentListing = ({ data }: { data: any }) => {
   );
 };
 
-// ✅ SERVER COMPONENT (Async được phép)
-export default async function CommentList({ hotelId }: { hotelId: number }) {
-  // Gọi Database trực tiếp (Nhanh & Không lỗi vòng lặp)
-  const reviews = await getReviews(hotelId);
+// ✅ CLIENT COMPONENT với useEffect để fetch data
+export default function CommentListClient({
+  hotelId,
+  refreshKey,
+}: {
+  hotelId: number;
+  refreshKey?: number;
+}) {
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadReviews() {
+      setLoading(true);
+      try {
+        const data = await getReviews(hotelId);
+        setReviews(data);
+      } catch (error) {
+        console.error("Error loading reviews:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (hotelId) {
+      loadReviews();
+    }
+  }, [hotelId, refreshKey]);
+
+  if (loading) {
+    return (
+      <div className="text-neutral-500 italic py-4">Đang tải bình luận...</div>
+    );
+  }
 
   if (!reviews || reviews.length === 0) {
     return (
-      <div className="text-neutral-500 italic">Chưa có bình luận nào.</div>
+      <div className="text-neutral-500 italic py-4">Chưa có bình luận nào.</div>
     );
   }
 
