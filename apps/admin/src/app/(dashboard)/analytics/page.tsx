@@ -18,6 +18,7 @@ import { getInteractionStats } from '../actions/get-interaction-stats';
 import WordCloudChart from '@/components/charts/WordCloudPlaceholder';
 import { getLatestSystemMetric } from '../actions/get-system-metrics';
 import { formatPercent } from '@/lib/utils';
+import TodayStats from '@/components/dashboard/TodayStats';
 // Hàm format tiền tệ (Giữ nguyên)
 
 // Dữ liệu giả lập cho KPI (Model Performance)
@@ -97,8 +98,9 @@ export default async function AnalyticsPage() {
             <Separator className="my-4" />
 
             {/* HÀNG 2: XU HƯỚNG HÀNH VI CHÍNH (Area Chart - Chiếm Full Width) */}
-            <div className="grid gap-4 lg:grid-cols-1">
-                <Card className="min-w-0">
+            <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+                {/* 1. BIỂU ĐỒ (Chiếm 2/3 chiều rộng -> col-span-2) */}
+                <Card className="min-w-0 lg:col-span-2">
                     <CardHeader>
                         <CardTitle>Xu hướng Tương tác (6 tháng qua)</CardTitle>
                         <CardDescription>
@@ -108,10 +110,18 @@ export default async function AnalyticsPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="h-[380px]">
-                        {/* 5. Truyền dữ liệu vào Chart */}
                         <AppAreaChart data={chartData} />
                     </CardContent>
                 </Card>
+
+                {/* 2. TODAY STATS (Chiếm 1/3 chiều rộng còn lại) */}
+                <div className="flex flex-col gap-4">
+                    {/* Tiêu đề nhỏ cho phần này nếu thích */}
+                    <h3 className="text-lg font-semibold lg:hidden">Thống kê hôm nay</h3>
+
+                    {/* 🔥 Truyền class grid-cols-1 để các thẻ xếp chồng lên nhau (dọc) */}
+                    <TodayStats className="grid-cols-1 md:grid-cols-1 lg:grid-cols-1" />
+                </div>
             </div>
 
             <Separator className="my-4" />

@@ -77,6 +77,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.6
         version: 1.2.8(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@repo/booking-db':
+        specifier: workspace:*
+        version: link:../../packages/booking-db
       '@repo/product-db':
         specifier: workspace:*
         version: link:../../packages/product-db
@@ -213,12 +216,18 @@ importers:
       '@repo/kafka':
         specifier: workspace:*
         version: link:../../packages/kafka
+      '@repo/product-db':
+        specifier: workspace:*
+        version: link:../../packages/product-db
       fastify:
         specifier: ^5.5.0
         version: 5.6.2
       ioredis:
         specifier: ^5.9.2
         version: 5.9.2
+      node-cron:
+        specifier: ^4.2.1
+        version: 4.2.1
       redlock:
         specifier: 5.0.0-beta.2
         version: 5.0.0-beta.2
@@ -232,6 +241,9 @@ importers:
       '@types/node':
         specifier: ^20
         version: 20.19.25
+      '@types/node-cron':
+        specifier: ^3.0.11
+        version: 3.0.11
       '@types/redlock':
         specifier: ^4.0.8
         version: 4.0.8
@@ -2505,6 +2517,9 @@ packages:
   '@types/lodash@4.17.21':
     resolution: {integrity: sha512-FOvQ0YPD5NOfPgMzJihoT+Za5pdkDJWcbpuj1DjaKZIr/gxodQjY/uWEFlTNqW2ugXHUiL8lRQgw63dzKHZdeQ==}
 
+  '@types/node-cron@3.0.11':
+    resolution: {integrity: sha512-0ikrnug3/IyneSHqCBeslAhlK2aBfYek1fGo4bP4QnZPmiqSGRK+Oy7ZMisLWkesffJvQ1cqAcBnJC+8+nxIAg==}
+
   '@types/node@20.19.25':
     resolution: {integrity: sha512-ZsJzA5thDQMSQO788d7IocwwQbI8B5OPzmqNvpf3NY/+MHDAS759Wo0gd2WQeXYt5AAAQjzcrTVC6SKCuYgoCQ==}
 
@@ -4053,6 +4068,10 @@ packages:
 
   node-abort-controller@3.1.1:
     resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
+
+  node-cron@4.2.1:
+    resolution: {integrity: sha512-lgimEHPE/QDgFlywTd8yTR61ptugX3Qer29efeyWw2rv259HtGBNn1vZVmp8lB9uo9wC0t/AT4iGqXxia+CJFg==}
+    engines: {node: '>=6.0.0'}
 
   node-fetch-native@1.6.7:
     resolution: {integrity: sha512-g9yhqoedzIUm0nTnTqAQvueMPVOuIY16bqgAJJC8XOOubYFNwz6IER9qs0Gq2Xd0+CecCKFjtdDTMA4u4xG06Q==}
@@ -7731,6 +7750,8 @@ snapshots:
 
   '@types/lodash@4.17.21': {}
 
+  '@types/node-cron@3.0.11': {}
+
   '@types/node@20.19.25':
     dependencies:
       undici-types: 6.21.0
@@ -9529,6 +9550,8 @@ snapshots:
       - babel-plugin-macros
 
   node-abort-controller@3.1.1: {}
+
+  node-cron@4.2.1: {}
 
   node-fetch-native@1.6.7: {}
 
