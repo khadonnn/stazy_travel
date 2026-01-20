@@ -1,112 +1,692 @@
-# Turborepo starter
+# 🏨 STAZY - Hệ thống đặt phòng khách sạn Microservices
 
-This Turborepo starter is maintained by the Turborepo core team.
+> Nền tảng đặt phòng khách sạn hiện đại với kiến trúc microservices, AI recommendation và real-time notifications
 
-## Using this example
+## 📋 Mục lục
 
-Run the following command:
+- [Tổng quan](#-tổng-quan)
+- [Công nghệ sử dụng](#-công-nghệ-sử-dụng)
+- [Kiến trúc hệ thống](#-kiến-trúc-hệ-thống)
+- [Yêu cầu hệ thống](#-yêu-cầu-hệ-thống)
+- [Cài đặt và Setup](#-cài-đặt-và-setup)
+- [Chạy dự án](#-chạy-dự-án)
+- [Cấu trúc thư mục](#-cấu-trúc-thư-mục)
+- [API Routes](#-api-routes)
+- [Services và Ports](#-services-và-ports)
 
-```sh
-npx create-turbo@latest
+## 🎯 Tổng quan
+
+STAZY là một hệ thống đặt phòng khách sạn được xây dựng theo kiến trúc microservices với các tính năng:
+
+- ✨ Tìm kiếm và đặt phòng thông minh
+- 🤖 AI recommendation sử dụng machine learning
+- 💳 Tích hợp thanh toán Stripe & VNPay
+- 🔔 Thông báo real-time với Socket.io
+- 📊 Dashboard quản trị với analytics
+- 📧 Email automation
+- 🔄 Event-driven architecture với Kafka
+
+## 🛠 Công nghệ sử dụng
+
+### Frontend Applications
+
+- **Client** (Next.js 16 + React 19)
+  - Port: `3002`
+  - Framework: Next.js với Turbopack
+  - UI: Radix UI, Tailwind CSS 4
+  - State: TanStack Query, Zustand
+  - Authentication: Clerk
+
+- **Admin** (Next.js 16 + React 19)
+  - Port: `3003`
+  - Framework: Next.js với Turbopack
+  - UI: Radix UI, Tailwind CSS 4
+  - Charts: D3.js
+  - Authentication: Clerk
+
+### Backend Services
+
+#### 1. **Product Service** (Express.js)
+
+- Port: `8000`
+- Framework: Express 5
+- Features: Quản lý sản phẩm, khách sạn, phòng
+- Auth: Clerk Express
+
+#### 2. **Booking Service** (Fastify)
+
+- Port: `8001`
+- Framework: Fastify 5
+- Features: Đặt phòng, quản lý booking, cron jobs
+- Database: PostgreSQL (Prisma)
+- Cache: Redis + Redlock
+
+#### 3. **Payment Service** (Hono)
+
+- Port: `8002`
+- Framework: Hono
+- Features: Thanh toán Stripe, VNPay, webhooks
+- **⚠️ Quan trọng**: Cần expose qua ngrok để nhận webhook từ Stripe
+- Auth: Hono Clerk
+
+#### 4. **Search Service** (FastAPI - Python)
+
+- Port: `8008`
+- Framework: FastAPI
+- Features: AI recommendation, semantic search
+- ML: Scikit-learn, Transformers, Sentence-Transformers
+- Vector DB: PostgreSQL với pgvector
+
+#### 5. **Socket Service** (Fastify + Socket.io)
+
+- Port: `3005`
+- Framework: Fastify 5 + Socket.io
+- Features: Real-time chat, notifications
+- Database: MongoDB (Messages)
+
+#### 6. **Email Service** (Node.js)
+
+- Framework: Node.js standalone
+- Features: Send emails với Nodemailer
+- Integration: Kafka consumer
+
+### Shared Packages
+
+- `@repo/product-db`: Prisma schema & client cho PostgreSQL
+- `@repo/booking-db`: Prisma schema & client cho MongoDB
+- `@repo/kafka`: Kafka client configuration
+- `@repo/types`: Shared TypeScript types
+- `@repo/typescript-config`: Shared tsconfig
+- `@repo/eslint-config`: Shared ESLint config
+
+### Infrastructure
+
+- **Kafka**: Event streaming (3 brokers + Kafka UI)
+  - Ports: `9094`, `9095`, `9096`, `8080`
+- **PostgreSQL**: Main database với pgvector
+  - Port: `5432`
+- **Redis**: Caching & distributed locks
+  - Port: `6379`
+- **MongoDB**: Messages & chat data
+- **Docker**: Container orchestration
+
+## 🏗 Kiến trúc hệ thống
+
+```
+┌─────────────┐         ┌─────────────┐
+│   Client    │         │    Admin    │
+│  (Next.js)  │         │  (Next.js)  │
+│   :3002     │         │   :3003     │
+└──────┬──────┘         └──────┬──────┘
+       │                       │
+       ├───────────────────────┤
+       │                       │
+┌──────▼───────────────────────▼──────┐
+│         API Gateway Layer           │
+└──────┬──────┬──────┬──────┬─────────┘
+       │      │      │      │
+   ┌───▼──┐┌──▼──┐┌──▼──┐┌──▼───┐
+   │Product││Booking││Payment││Search│
+   │:8000  ││:8001 ││:8002││:8008 │
+   └───┬──┘└──┬──┘└──┬──┘└──┬───┘
+       │      │      │      │
+       └──────┴──┬───┴──────┘
+                 │
+         ┌───────▼────────┐
+         │  Kafka Cluster │
+         │   :9094-9096   │
+         └───────┬────────┘
+                 │
+    ┌────────────┼────────────┐
+    │            │            │
+┌───▼───┐   ┌───▼────┐  ┌───▼────┐
+│Socket │   │Email   │  │ Other  │
+│:3005  │   │Service │  │Services│
+└───────┘   └────────┘  └────────┘
 ```
 
-## What's inside?
+## 💻 Yêu cầu hệ thống
 
-This Turborepo includes the following packages/apps:
+### Phần mềm cần cài đặt:
 
-### Apps and Packages
+1. **Node.js** >= 18
+2. **pnpm** 9.0.0 (Package manager)
+3. **Docker Desktop** (Bắt buộc cho Kafka, PostgreSQL, Redis)
+4. **Python** 3.10+ (Cho search-service)
+5. **ngrok** (Cho payment webhook)
+6. **Git**
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Tài khoản cần thiết:
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- Clerk Account (Authentication)
+- Stripe Account (Payment)
+- Cloudinary Account (Image hosting)
 
-### Utilities
+## 🚀 Cài đặt và Setup
 
-This Turborepo has some additional tools already setup for you:
+### 1. Clone Repository
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+```bash
+git clone <repository-url>
+cd stazy
+```
 
-### Build
+### 2. Cài đặt Dependencies
 
-To build all apps and packages, run the following command:
+```bash
+# Cài đặt pnpm nếu chưa có
+npm install -g pnpm@9.0.0
+
+# Cài đặt tất cả dependencies
+pnpm install
+```
+
+### 3. Setup Docker Services
+
+**Yêu cầu**: Docker Desktop phải được cài đặt và đang chạy
+
+```bash
+# Di chuyển vào thư mục kafka
+cd packages/kafka
+
+# Khởi động tất cả services (Kafka, PostgreSQL, Redis)
+docker compose up -d
+
+# Kiểm tra services đang chạy
+docker ps
+```
+
+**Services được khởi động**:
+
+- 3 Kafka Brokers (ports: 9094, 9095, 9096)
+- Kafka UI (port: 8080) - http://localhost:8080
+- PostgreSQL với pgvector (port: 5432)
+- Redis (port: 6379)
+- Redis Insight (port: 8001)
+
+### 4. Setup Database
+
+```bash
+# Quay lại root folder
+cd ../..
+
+# Generate Prisma Client cho product-db
+cd packages/product-db
+pnpm prisma generate
+pnpm prisma db push
+
+# Generate Prisma Client cho booking-db
+cd ../booking-db
+pnpm prisma generate
+pnpm prisma db push
+
+cd ../..
+```
+
+### 5. Setup Python Environment (Search Service)
+
+```bash
+cd apps/search-service
+
+# Tạo virtual environment
+python -m venv venv
+
+# Kích hoạt virtual environment
+# Windows:
+venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
+
+# Cài đặt dependencies
+pip install -r requirements.txt
+
+cd ../..
+```
+
+### 6. Setup ngrok cho Payment Webhook
+
+**⚠️ Quan trọng**: Payment service cần expose ra internet để nhận webhook từ Stripe
+
+```bash
+# Cài đặt ngrok (nếu chưa có)
+# Windows: choco install ngrok
+# Mac: brew install ngrok
+
+# Expose port 8002
+ngrok http 8002
+```
+
+**Lưu ý**: Copy URL từ ngrok (ví dụ: `https://abc123.ngrok.io`) và cập nhật vào Stripe Dashboard > Webhooks
+
+### 7. Cấu hình Environment Variables
+
+Tạo file `.env` cho từng service:
+
+#### **apps/client/.env**
+
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxx
+CLERK_SECRET_KEY=sk_test_xxx
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+DATABASE_URL=postgresql://admin:123456@localhost:5432/products
+NEXT_PUBLIC_PRODUCT_SERVICE_URL=http://localhost:8000
+NEXT_PUBLIC_BOOKING_SERVICE_URL=http://localhost:8001
+NEXT_PUBLIC_PAYMENT_SERVICE_URL=http://localhost:8002
+NEXT_PUBLIC_SEARCH_SERVICE_URL=http://localhost:8008
+NEXT_PUBLIC_SOCKET_SERVICE_URL=http://localhost:3005
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+```
+
+#### **apps/admin/.env**
+
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxx
+CLERK_SECRET_KEY=sk_test_xxx
+DATABASE_URL=postgresql://admin:123456@localhost:5432/products
+NEXT_PUBLIC_PRODUCT_SERVICE_URL=http://localhost:8000
+NEXT_PUBLIC_BOOKING_SERVICE_URL=http://localhost:8001
+```
+
+#### **apps/product-service/.env**
+
+```env
+PORT=8000
+DATABASE_URL=postgresql://admin:123456@localhost:5432/products
+CLERK_PUBLISHABLE_KEY=pk_test_xxx
+CLERK_SECRET_KEY=sk_test_xxx
+KAFKA_BROKERS=localhost:9094,localhost:9095,localhost:9096
+```
+
+#### **apps/booking-service/.env**
+
+```env
+PORT=8001
+MONGODB_URI=mongodb://localhost:27017/bookings
+DATABASE_URL=postgresql://admin:123456@localhost:5432/products
+REDIS_HOST=localhost
+REDIS_PORT=6379
+CLERK_PUBLISHABLE_KEY=pk_test_xxx
+KAFKA_BROKERS=localhost:9094,localhost:9095,localhost:9096
+```
+
+#### **apps/payment-service/.env**
+
+```env
+PORT=8002
+STRIPE_SECRET_KEY=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+VNPAY_TMN_CODE=xxx
+VNPAY_HASH_SECRET=xxx
+KAFKA_BROKERS=localhost:9094,localhost:9095,localhost:9096
+DATABASE_URL=postgresql://admin:123456@localhost:5432/products
+CLERK_PUBLISHABLE_KEY=pk_test_xxx
+```
+
+#### **apps/socket-service/.env**
+
+```env
+PORT=3005
+MONGODB_URI=mongodb://localhost:27017/bookings
+KAFKA_BROKERS=localhost:9094,localhost:9095,localhost:9096
+```
+
+#### **apps/search-service/.env**
+
+```env
+PORT=8008
+DATABASE_URL=postgresql://admin:123456@localhost:5432/products
+CLOUDINARY_CLOUD_NAME=xxx
+CLOUDINARY_API_KEY=xxx
+CLOUDINARY_API_SECRET=xxx
+```
+
+## ▶️ Chạy dự án
+
+### Chạy tất cả services (Development)
+
+```bash
+# Từ root directory
+pnpm dev
+```
+
+### Chạy từng service riêng lẻ
+
+```bash
+# Client
+pnpm --filter client dev
+
+# Admin
+pnpm --filter admin dev
+
+# Product Service
+pnpm --filter product-service dev
+
+# Booking Service
+pnpm --filter booking-service dev
+
+# Payment Service
+pnpm --filter payment-service dev
+
+# Socket Service
+pnpm --filter socket-service dev
+
+# Search Service (Python)
+cd apps/search-service
+# Kích hoạt venv trước
+venv\Scripts\activate  # Windows
+source venv/bin/activate  # Linux/Mac
+python main.py
+```
+
+### Build Production
+
+```bash
+# Build tất cả
+pnpm build
+
+# Build service cụ thể
+pnpm --filter client build
+pnpm --filter admin build
+```
+
+## 📁 Cấu trúc thư mục
 
 ```
+stazy/
+├── apps/                          # Applications
+│   ├── client/                    # Next.js Client (Port 3002)
+│   │   ├── src/
+│   │   │   ├── app/              # App Router pages
+│   │   │   ├── components/       # React components
+│   │   │   ├── hooks/            # Custom hooks
+│   │   │   └── lib/              # Utilities
+│   │   └── package.json
+│   │
+│   ├── admin/                     # Next.js Admin (Port 3003)
+│   │   ├── src/
+│   │   │   ├── app/              # App Router pages
+│   │   │   ├── components/       # React components
+│   │   │   └── lib/              # Utilities
+│   │   └── package.json
+│   │
+│   ├── product-service/           # Express API (Port 8000)
+│   │   ├── src/
+│   │   │   ├── routes/           # API routes
+│   │   │   ├── middleware/       # Express middleware
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   ├── booking-service/           # Fastify API (Port 8001)
+│   │   ├── src/
+│   │   │   ├── routes/           # API routes
+│   │   │   ├── cron/             # Cron jobs
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   ├── payment-service/           # Hono API (Port 8002)
+│   │   ├── src/
+│   │   │   ├── routes/           # Payment routes
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   ├── search-service/            # FastAPI Python (Port 8008)
+│   │   ├── main.py               # FastAPI app
+│   │   ├── requirements.txt
+│   │   └── *.py                  # ML & AI modules
+│   │
+│   ├── socket-service/            # Fastify + Socket.io (Port 3005)
+│   │   ├── src/
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   └── email-service/             # Email Worker
+│       ├── src/
+│       └── package.json
+│
+├── packages/                      # Shared packages
+│   ├── product-db/               # Prisma PostgreSQL
+│   ├── booking-db/               # Prisma MongoDB
+│   ├── kafka/                    # Kafka config + Docker
+│   ├── types/                    # Shared types
+│   ├── typescript-config/        # Shared tsconfig
+│   └── eslint-config/            # Shared ESLint
+│
+├── package.json                   # Root package.json
+├── pnpm-workspace.yaml           # PNPM workspace config
+└── turbo.json                    # Turborepo config
+```
+
+## 🌐 API Routes
+
+### Client Routes (Port 3002)
+
+#### Public Routes
+
+- `/` - Trang chủ
+- `/hotels` - Danh sách khách sạn
+- `/hotels/[id]` - Chi tiết khách sạn
+- `/search` - Tìm kiếm khách sạn
+- `/about` - Về chúng tôi
+
+#### Authenticated Routes
+
+- `/profile` - Thông tin người dùng
+- `/my-bookings` - Lịch sử đặt phòng
+- `/cart` - Giỏ hàng
+- `/checkout` - Thanh toán
+- `/host` - Đăng ký làm host
+- `/host/dashboard` - Dashboard cho host
+
+#### Auth Routes
+
+- `/sign-in` - Đăng nhập
+- `/sign-up` - Đăng ký
+
+### Admin Routes (Port 3003)
+
+#### Dashboard
+
+- `/` - Tổng quan dashboard
+- `/analytics` - Phân tích thống kê
+
+#### Management
+
+- `/products` - Quản lý sản phẩm/khách sạn
+- `/products/create` - Tạo sản phẩm mới
+- `/products/[id]` - Chi tiết/Sửa sản phẩm
+- `/bookings` - Quản lý đặt phòng
+- `/bookings/[id]` - Chi tiết booking
+- `/users` - Quản lý người dùng
+- `/notifications` - Thông báo
+- `/message` - Tin nhắn/Chat support
+
+## 📡 Services và Ports
+
+| Service             | Technology          | Port   | Description                            |
+| ------------------- | ------------------- | ------ | -------------------------------------- |
+| **Client**          | Next.js 16          | `3002` | Ứng dụng khách hàng                    |
+| **Admin**           | Next.js 16          | `3003` | Ứng dụng quản trị                      |
+| **Product Service** | Express 5           | `8000` | API quản lý sản phẩm, khách sạn        |
+| **Booking Service** | Fastify 5           | `8001` | API đặt phòng, booking                 |
+| **Payment Service** | Hono                | `8002` | API thanh toán, webhook (⚠️ Cần ngrok) |
+| **Socket Service**  | Fastify + Socket.io | `3005` | WebSocket, real-time chat              |
+| **Search Service**  | FastAPI (Python)    | `8008` | AI recommendation, search              |
+| **Kafka UI**        | -                   | `8080` | Giao diện quản lý Kafka                |
+| **PostgreSQL**      | pgvector/pg16       | `5432` | Database chính                         |
+| **Redis**           | Redis 7.2           | `6379` | Cache & locks                          |
+| **Redis Insight**   | -                   | `8001` | Giao diện quản lý Redis                |
+| **Kafka Broker 1**  | Apache Kafka        | `9094` | Event streaming                        |
+| **Kafka Broker 2**  | Apache Kafka        | `9095` | Event streaming                        |
+| **Kafka Broker 3**  | Apache Kafka        | `9096` | Event streaming                        |
+
+## 🔧 Lệnh hữu ích
+
+### Docker Commands
+
+```bash
+# Kiểm tra containers đang chạy
+docker ps
+
+# Xem logs của service
+docker logs kafka-broker-1
+docker logs stazy-db
+docker logs stazy-redis
+
+# Dừng tất cả services
+cd packages/kafka
+docker compose down
+
+# Dừng và xóa volumes (⚠️ Mất dữ liệu)
+docker compose down -v
+
+# Restart một service cụ thể
+docker restart stazy-db
+```
+
+### Database Commands
+
+```bash
+# Prisma Studio (GUI database)
+cd packages/product-db
+pnpm prisma studio
+
+# Reset database
+pnpm prisma migrate reset
+
+# Tạo migration mới
+pnpm prisma migrate dev --name your_migration_name
+```
+
+### Development Commands
+
+```bash
+# Kiểm tra type errors
+pnpm check-types
+
+# Format code
+pnpm format
+
+# Lint code
+pnpm lint
+
+# Build tất cả
+pnpm build
+
+# Clean và reinstall
+rm -rf node_modules
+pnpm install
+```
+
+## 🐛 Troubleshooting
+
+### 1. Docker services không khởi động được
+
+```bash
+# Kiểm tra Docker Desktop đã chạy chưa
+docker --version
+
+# Xóa và tạo lại containers
+cd packages/kafka
+docker compose down -v
+docker compose up -d
+```
+
+### 2. Port đã được sử dụng
+
+```bash
+# Windows: Tìm process đang dùng port
+netstat -ano | findstr :3002
+
+# Kill process
+taskkill /PID <process_id> /F
+
+# Linux/Mac
+lsof -ti:3002 | xargs kill -9
+```
+
+### 3. Prisma Client không tìm thấy
+
+```bash
+cd packages/product-db
+pnpm prisma generate
+
+cd ../booking-db
+pnpm prisma generate
+```
+
+### 4. Kafka connection failed
+
+```bash
+# Kiểm tra Kafka đang chạy
+docker ps | grep kafka
+
+# Restart Kafka
+cd packages/kafka
+docker compose restart
+```
+
+### 5. Python dependencies lỗi
+
+```bash
+cd apps/search-service
+
+# Xóa venv cũ
+rm -rf venv
+
+# Tạo lại
+python -m venv venv
+venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+```
+
+## 🔐 Security Notes
+
+⚠️ **Quan trọng**:
+
+1. **KHÔNG commit file `.env`** vào Git
+2. Thay đổi các credentials mặc định trong production:
+   - PostgreSQL password
+   - Redis password (nếu có)
+   - Kafka credentials
+3. Sử dụng ngrok authenticated cho production webhooks
+4. Luôn validate input từ client
+5. Enable CORS chỉ cho trusted domains
+
+## 📚 Tài liệu tham khảo
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Turborepo Documentation](https://turbo.build/repo/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Fastify Documentation](https://fastify.dev/)
+- [Hono Documentation](https://hono.dev/)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Socket.io Documentation](https://socket.io/docs/)
+- [Kafka Documentation](https://kafka.apache.org/documentation/)
+
+## 👥 Contributors
+
+- **Developer Team** - STAZY Project
+
+## 📝 License
+
+This project is licensed under the ISC License.
+
+---
+
+**Made with ❤️ by STAZY Team**
 cd my-turborepo
 
 # With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
 turbo login
 
 # Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+
 npx turbo login
 yarn exec turbo login
 pnpm exec turbo login
+
 ```
 
 This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
@@ -114,13 +694,17 @@ This will authenticate the Turborepo CLI with your [Vercel account](https://verc
 Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
 
 ```
+
 # With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+
 turbo link
 
 # Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+
 npx turbo link
 yarn exec turbo link
 pnpm exec turbo link
+
 ```
 
 ## Useful Links
@@ -133,3 +717,4 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
 - [Configuration Options](https://turborepo.com/docs/reference/configuration)
 - [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+```
