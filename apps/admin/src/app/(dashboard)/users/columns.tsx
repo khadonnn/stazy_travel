@@ -101,8 +101,10 @@ export const columns: ColumnDef<User>[] = [
                     className={cn(
                         `w-max rounded-md p-1 text-xs font-medium`,
                         role === 'ADMIN' && 'bg-red-500/40 text-red-700 dark:bg-red-500/30 dark:text-red-400',
-                        role === 'HOST' && 'bg-purple-500/40 text-purple-700 dark:bg-purple-500/30 dark:text-purple-400',
-                        role === 'AUTHOR' && 'bg-purple-500/40 text-purple-700 dark:bg-purple-500/30 dark:text-purple-400',
+                        role === 'HOST' &&
+                            'bg-purple-500/40 text-purple-700 dark:bg-purple-500/30 dark:text-purple-400',
+                        role === 'AUTHOR' &&
+                            'bg-purple-500/40 text-purple-700 dark:bg-purple-500/30 dark:text-purple-400',
                         role === 'USER' && 'bg-green-500/40 text-green-700 dark:bg-green-500/30 dark:text-green-400',
                     )}
                 >
