@@ -4,6 +4,7 @@ import { shouldBeUser } from "./middleware/authMiddleware.js";
 import { connectBookingDB } from "@repo/booking-db";
 import { bookingRoute } from "./routes/booking.js";
 import { messageRoute } from "./routes/message.js";
+import availabilityRoutes from "./routes/availability.js";
 import { producer, consumer } from "./utils/kafka.js"; // Import cả consumer để disconnect
 import { runKafkaSubscriptions } from "./utils/subscriptions.js";
 import cors from "@fastify/cors";
@@ -47,6 +48,7 @@ fastify.get("/test", { preHandler: shouldBeUser }, (request, reply) => {
 // Đăng ký Routes
 fastify.register(bookingRoute);
 fastify.register(messageRoute);
+fastify.register(availabilityRoutes);
 
 const start = async () => {
   try {
