@@ -170,7 +170,9 @@ export default function CreateHotelForm() {
         throw new Error(errData.message || "Lỗi tạo khách sạn");
       }
 
-      toast.success("🎉 Gửi khách sạn thành công! Khách sạn của bạn đang chờ admin duyệt.");
+      toast.success(
+        "🎉 Gửi khách sạn thành công! Khách sạn của bạn đang chờ admin duyệt.",
+      );
       setTimeout(() => {
         router.push("/my-hotels");
       }, 2000);

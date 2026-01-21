@@ -46,9 +46,7 @@ export async function getPendingHotels() {
 /**
  * Approve hotel (Admin only)
  */
-export async function approveHotel(
-    hotelId: number,
-): Promise<{ success: boolean; message: string }> {
+export async function approveHotel(hotelId: number): Promise<{ success: boolean; message: string }> {
     try {
         const { userId } = await auth();
         if (!userId) {
@@ -80,10 +78,7 @@ export async function approveHotel(
 /**
  * Reject hotel (Admin only)
  */
-export async function rejectHotel(
-    hotelId: number,
-    reason: string,
-): Promise<{ success: boolean; message: string }> {
+export async function rejectHotel(hotelId: number, reason: string): Promise<{ success: boolean; message: string }> {
     try {
         const { userId } = await auth();
         if (!userId) {

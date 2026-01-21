@@ -1,0 +1,30 @@
+/* Custom styles cho badge notifications */
+
+/* Badge trên icon khi sidebar collapsed */
+.sidebar-icon-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    display: none;
+    height: 16px;
+    min-width: 16px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: #ef4444; /* red-500 */
+    padding: 0 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+}
+
+/* Hiện badge khi sidebar collapsed */
+[data-collapsible='icon'] .sidebar-icon-badge {
+    display: flex;
+}
+
+/* Ẩn badge bên cạnh khi sidebar collapsed */
+[data-collapsible='icon'] .sidebar-text-badge {
+    display: none;
+}

@@ -501,6 +501,139 @@ stazy/
 - `/notifications` - Thông báo
 - `/message` - Tin nhắn/Chat support
 
+---
+
+### Backend API Routes
+
+#### Product Service (Port 8000)
+
+**Base URL**: `http://localhost:8000`
+
+##### Health & Test
+
+- `GET /health` - Health check
+- `GET /test` - Test authentication (🔐 Requires Auth)
+
+##### Hotels
+
+- `GET /hotels` - Lấy danh sách khách sạn (filter, search, pagination)
+- `GET /hotels/:id` - Xem chi tiết khách sạn + thông tin tác giả
+- `GET /hotels/:id/related` - Lấy khách sạn liên quan
+- `GET /hotels/my-hotels` - Lấy khách sạn của tác giả (🔐 Requires Auth)
+- `GET /hotels/admin-view/:id` - Xem chi tiết cho admin (🔐 Requires Admin)
+- `POST /hotels` - Tạo khách sạn mới (🔐 Requires Auth)
+- `PUT /hotels/:id` - Cập nhật khách sạn (🔐 Requires Admin)
+- `DELETE /hotels/:id` - Xóa khách sạn (🔐 Requires Admin)
+
+##### Categories
+
+- `GET /categories` - Lấy danh sách categories
+- `POST /categories` - Tạo category mới (🔐 Requires Admin)
+- `PUT /categories/:id` - Cập nhật category (🔐 Requires Admin)
+- `DELETE /categories/:id` - Xóa category (🔐 Requires Admin)
+
+##### Users
+
+- `GET /users` - Lấy danh sách người dùng
+- `GET /users/:id` - Xem chi tiết người dùng
+- `POST /users` - Tạo người dùng mới
+- `PATCH /users/:id` - Cập nhật thông tin người dùng
+- `DELETE /users/:id` - Xóa người dùng
+
+#### Booking Service (Port 8001)
+
+**Base URL**: `http://localhost:8001`
+
+##### Health & Test
+
+- `GET /health` - Health check
+- `GET /test` - Test authentication (🔐 Requires Auth)
+
+##### Bookings
+
+- `POST /` - Tạo booking mới (🔐 Requires Auth)
+  - Body: `{ hotelId, checkIn, checkOut, contactDetails }`
+  - Response: Booking với Redis lock để tránh race condition
+- `GET /user-bookings` - Lấy lịch sử đặt phòng của user (🔐 Requires Auth)
+- `GET /bookings` - Lấy tất cả bookings (🔐 Requires Admin)
+- `GET /check-availability` - Kiểm tra tính khả dụng
+  - Query: `?hotelId=1&checkIn=2025-01-20&checkOut=2025-01-25`
+
+##### Messages
+
+- `GET /messages/:userId` - Lấy tin nhắn của một user
+- `GET /conversations` - Lấy danh sách cuộc hội thoại (🔐 Requires Admin)
+- `POST /messages/mark-read` - Đánh dấu đã đọc (🔐 Requires Admin)
+  - Body: `{ userId }`
+- `GET /messages/unread-count` - Lấy tổng số tin nhắn chưa đọc (🔐 Requires Admin)
+
+#### Payment Service (Port 8002)
+
+**Base URL**: `http://localhost:8002`
+
+##### Health & Test
+
+- `GET /health` - Health check
+- `GET /test` - Test authentication (🔐 Requires Auth)
+
+##### Stripe Sessions
+
+- `POST /sessions/create-checkout-session` - Tạo Stripe checkout session (🔐 Requires Auth)
+  - Body: `FullPaymentData` (items, user, checkInDate, checkOutDate)
+  - Response: `{ clientSecret, bookingId }`
+- `GET /sessions/:session_id` - Lấy thông tin session
+- `GET /sessions/my-bookings` - Lấy lịch sử thanh toán (🔐 Requires Auth)
+
+##### VNPay
+
+- `POST /vnpay/create-qr` - Tạo link thanh toán VNPay
+  - Body: `{ amount, orderId, bankCode }`
+  - Response: `{ url }`
+
+##### Webhooks
+
+- `POST /webhooks/stripe` - Webhook nhận event từ Stripe
+  - Event: `checkout.session.completed`
+  - Action: Gửi tin nhắn qua Kafka để tạo booking
+
+#### Search Service (Port 8008)
+
+**Base URL**: `http://localhost:8008`
+
+##### Health
+
+- `GET /` - Health check + số lượng vectors đã load
+
+##### AI Search
+
+- `POST /search-by-base64` - Tìm kiếm bằng ảnh (base64)
+  - Body: `{ image: "data:image/png;base64,..." }`
+- `POST /search-by-text` - Tìm kiếm bằng mô tả văn bản
+  - Body: `{ description: "villa ven biển có hồ bơi" }`
+- `POST /search-by-image-url` - Tìm kiếm bằng URL ảnh
+  - Body: `{ image_url: "https://..." }`
+
+##### AI Recommendation
+
+- `GET /recommend/:user_id` - Gợi ý khách sạn cho user dựa trên hành vi
+
+##### AI Agent Chat
+
+- `POST /agent/chat` - Chat thông minh với AI agent
+  - Body: `{ message: "...", user_id: "...", history: [] }`
+
+#### Socket Service (Port 3005)
+
+**Base URL**: `http://localhost:3005`
+
+##### WebSocket Events
+
+- `connection` - Kết nối Socket.io client
+- `message` - Gửi/nhận tin nhắn real-time
+- `notification` - Nhận thông báo real-time
+- `typing` - Hiển thị trạng thái đang gõ
+- `disconnect` - Ngắt kết nối
+
 ## 📡 Services và Ports
 
 | Service             | Technology          | Port   | Description                            |

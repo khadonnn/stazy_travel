@@ -22,24 +22,26 @@
 
 ## 📊 Hotel Status
 
-| Status | Ý nghĩa | Ai thấy được? |
-|--------|---------|---------------|
-| `DRAFT` | Nháp, chưa gửi | Chỉ author |
-| `PENDING` | Chờ duyệt | Chỉ author & admin |
-| `APPROVED` | Đã duyệt | **Công khai cho tất cả** |
-| `REJECTED` | Bị từ chối | Chỉ author (có lý do) |
-| `SUSPENDED` | Tạm ngưng | Chỉ author & admin |
+| Status      | Ý nghĩa        | Ai thấy được?            |
+| ----------- | -------------- | ------------------------ |
+| `DRAFT`     | Nháp, chưa gửi | Chỉ author               |
+| `PENDING`   | Chờ duyệt      | Chỉ author & admin       |
+| `APPROVED`  | Đã duyệt       | **Công khai cho tất cả** |
+| `REJECTED`  | Bị từ chối     | Chỉ author (có lý do)    |
+| `SUSPENDED` | Tạm ngưng      | Chỉ author & admin       |
 
 ## 🎯 Files đã tạo/sửa
 
 ### Admin App
-- ✅ [actions/hotelAdminActions.ts](d:\it\_1doan_totnghiep\stazy\apps\admin\src\actions\hotelAdminActions.ts) - Actions để approve/reject
-- ✅ [app/hotel-approvals/page.tsx](d:\it\_1doan_totnghiep\stazy\apps\admin\src\app\hotel-approvals\page.tsx) - Trang admin duyệt hotel
-- ✅ [components/AppSidebar.tsx](d:\it\_1doan_totnghiep\stazy\apps\admin\src\components\AppSidebar.tsx) - Thêm menu "Hotel Approvals"
 
-### Client App  
-- ✅ [components/CreateHotelForm.tsx](d:\it\_1doan_totnghiep\stazy\apps\client\src\components\CreateHotelForm.tsx) - Đã có `status: "PENDING"`
-- ✅ [components/HotelStatusBadge.tsx](d:\it\_1doan_totnghiep\stazy\apps\client\src\components\HotelStatusBadge.tsx) - Component hiển thị status
+- ✅ [actions/hotelAdminActions.ts](d:\it_1doan_totnghiep\stazy\apps\admin\src\actions\hotelAdminActions.ts) - Actions để approve/reject
+- ✅ [app/hotel-approvals/page.tsx](d:\it_1doan_totnghiep\stazy\apps\admin\src\app\hotel-approvals\page.tsx) - Trang admin duyệt hotel
+- ✅ [components/AppSidebar.tsx](d:\it_1doan_totnghiep\stazy\apps\admin\src\components\AppSidebar.tsx) - Thêm menu "Hotel Approvals"
+
+### Client App
+
+- ✅ [components/CreateHotelForm.tsx](d:\it_1doan_totnghiep\stazy\apps\client\src\components\CreateHotelForm.tsx) - Đã có `status: "PENDING"`
+- ✅ [components/HotelStatusBadge.tsx](d:\it_1doan_totnghiep\stazy\apps\client\src\components\HotelStatusBadge.tsx) - Component hiển thị status
 
 ## 💡 Cách sử dụng
 
@@ -76,11 +78,11 @@ import { HotelStatusBadge } from "@/components/HotelStatusBadge";
 
 // Trong table cell:
 <TableCell>
-  <HotelStatusBadge 
-    status={hotel.status} 
+  <HotelStatusBadge
+    status={hotel.status}
     rejectionReason={hotel.rejectionReason}
   />
-</TableCell>
+</TableCell>;
 ```
 
 ### 2. Filter hotels công khai
@@ -92,7 +94,7 @@ const hotels = await prisma.hotel.findMany({
   where: {
     status: "APPROVED", // Chỉ lấy hotels đã duyệt
     // ...other filters
-  }
+  },
 });
 ```
 
@@ -103,7 +105,7 @@ const hotels = await prisma.hotel.findMany({
 await sendNotification({
   userId: hotel.authorId,
   type: "HOTEL_APPROVED",
-  message: `Khách sạn "${hotel.title}" đã được duyệt!`
+  message: `Khách sạn "${hotel.title}" đã được duyệt!`,
 });
 ```
 

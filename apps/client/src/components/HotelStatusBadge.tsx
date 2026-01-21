@@ -45,7 +45,10 @@ const statusConfig = {
   },
 };
 
-export function HotelStatusBadge({ status, rejectionReason }: HotelStatusBadgeProps) {
+export function HotelStatusBadge({
+  status,
+  rejectionReason,
+}: HotelStatusBadgeProps) {
   const config = statusConfig[status];
   const Icon = config.icon;
 
@@ -55,20 +58,20 @@ export function HotelStatusBadge({ status, rejectionReason }: HotelStatusBadgePr
         <Icon className="h-3 w-3" />
         {config.label}
       </Badge>
-      
+
       {status === "PENDING" && (
         <p className="text-xs text-muted-foreground">
           ⏳ Khách sạn đang chờ admin xem xét
         </p>
       )}
-      
+
       {status === "REJECTED" && rejectionReason && (
         <div className="mt-2 p-2 bg-destructive/10 border border-destructive/20 rounded text-sm">
           <p className="font-medium text-destructive">Lý do từ chối:</p>
           <p className="text-muted-foreground mt-1">{rejectionReason}</p>
         </div>
       )}
-      
+
       {status === "APPROVED" && (
         <p className="text-xs text-green-600">
           ✅ Khách sạn đang hiển thị công khai

@@ -80,6 +80,8 @@ export async function approveAuthorRequest(requestId: string): Promise<{ success
         // Đồng bộ role lên Clerk metadata
         await syncRoleToClerk(request.userId, 'AUTHOR');
 
+        // Note: Frontend sẽ tự động giảm count khi reload
+
         return {
             success: true,
             message: 'Đã duyệt yêu cầu thành công',

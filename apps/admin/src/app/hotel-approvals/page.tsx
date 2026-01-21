@@ -2,14 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { getPendingHotels, approveHotel, rejectHotel } from '@/actions/hotelAdminActions';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { useNotificationStore } from '@/store/useNotificationStore';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -51,6 +45,7 @@ export default function HotelApprovalsPage() {
     const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
     const [rejectionReason, setRejectionReason] = useState('');
     const [processing, setProcessing] = useState(false);
+    const { setPendingHotelApprovals } = useNotificationStore();
 
     useEffect(() => {
         loadHotels();
@@ -60,6 +55,7 @@ export default function HotelApprovalsPage() {
         setLoading(true);
         const data = await getPendingHotels();
         setHotels(data as any);
+        setPendingHotelApprovals(data.length); // Cập nhật badge count
         setLoading(false);
     };
 
@@ -106,14 +102,14 @@ export default function HotelApprovalsPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
+            <div className="flex min-h-screen items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="container mx-auto py-8 px-4">
+        <div className="container mx-auto px-4 py-8">
             <div className="mb-6">
                 <h1 className="text-3xl font-bold">Phê duyệt Khách sạn</h1>
                 <p className="text-muted-foreground mt-2">
@@ -122,7 +118,7 @@ export default function HotelApprovalsPage() {
             </div>
 
             {hotels.length === 0 ? (
-                <div className="text-center py-12 bg-muted/50 rounded-lg">
+                <div className="bg-muted/50 rounded-lg py-12 text-center">
                     <p className="text-muted-foreground">Không có khách sạn nào đang chờ duyệt</p>
                 </div>
             ) : (
@@ -154,7 +150,7 @@ export default function HotelApprovalsPage() {
                                     <TableCell>
                                         <div>
                                             <p className="font-medium">{hotel.title}</p>
-                                            <p className="text-sm text-muted-foreground">{hotel.slug}</p>
+                                            <p className="text-muted-foreground text-sm">{hotel.slug}</p>
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -163,12 +159,10 @@ export default function HotelApprovalsPage() {
                                     <TableCell>
                                         <div>
                                             <p className="text-sm font-medium">{hotel.author.name}</p>
-                                            <p className="text-xs text-muted-foreground">{hotel.author.email}</p>
+                                            <p className="text-muted-foreground text-xs">{hotel.author.email}</p>
                                         </div>
                                     </TableCell>
-                                    <TableCell>
-                                        ${Number(hotel.price).toLocaleString()}
-                                    </TableCell>
+                                    <TableCell>${Number(hotel.price).toLocaleString()}</TableCell>
                                     <TableCell>
                                         {hotel.submittedAt
                                             ? new Date(hotel.submittedAt).toLocaleDateString('vi-VN')
@@ -176,11 +170,7 @@ export default function HotelApprovalsPage() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                asChild
-                                            >
+                                            <Button size="sm" variant="outline" asChild>
                                                 <Link href={`/products/${hotel.id}`}>
                                                     <Eye className="h-4 w-4" />
                                                 </Link>
@@ -191,7 +181,7 @@ export default function HotelApprovalsPage() {
                                                 onClick={() => handleApprove(hotel)}
                                                 disabled={processing}
                                             >
-                                                <Check className="h-4 w-4 mr-1" />
+                                                <Check className="mr-1 h-4 w-4" />
                                                 Duyệt
                                             </Button>
                                             <Button
@@ -200,7 +190,7 @@ export default function HotelApprovalsPage() {
                                                 onClick={() => openRejectDialog(hotel)}
                                                 disabled={processing}
                                             >
-                                                <X className="h-4 w-4 mr-1" />
+                                                <X className="mr-1 h-4 w-4" />
                                                 Từ chối
                                             </Button>
                                         </div>
@@ -230,21 +220,13 @@ export default function HotelApprovalsPage() {
                         />
                     </div>
                     <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => setRejectDialogOpen(false)}
-                            disabled={processing}
-                        >
+                        <Button variant="outline" onClick={() => setRejectDialogOpen(false)} disabled={processing}>
                             Hủy
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={handleReject}
-                            disabled={processing}
-                        >
+                        <Button variant="destructive" onClick={handleReject} disabled={processing}>
                             {processing ? (
                                 <>
-                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Đang xử lý...
                                 </>
                             ) : (

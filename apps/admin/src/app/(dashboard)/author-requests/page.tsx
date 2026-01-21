@@ -18,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { IAuthorRequest } from '@repo/types';
 import { getAllAuthorRequests, approveAuthorRequest, rejectAuthorRequest } from '@/actions/authorAdminActions';
 import { toast } from 'sonner';
+import { useNotificationStore } from '@/store/useNotificationStore';
 
 export default function AuthorRequestsPage() {
     const [requests, setRequests] = useState<IAuthorRequest[]>([]);
@@ -27,6 +28,7 @@ export default function AuthorRequestsPage() {
     const [rejectionReason, setRejectionReason] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
     const [activeTab, setActiveTab] = useState('pending');
+    const { setPendingAuthorRequests } = useNotificationStore();
 
     useEffect(() => {
         loadRequests();
@@ -36,6 +38,11 @@ export default function AuthorRequestsPage() {
         setLoading(true);
         const data = await getAllAuthorRequests();
         setRequests(data);
+
+        // Cập nhật badge count cho pending requests
+        const pendingCount = data.filter((r: IAuthorRequest) => r.status === 'PENDING').length;
+        setPendingAuthorRequests(pendingCount);
+
         setLoading(false);
     };
 
@@ -84,14 +91,24 @@ export default function AuthorRequestsPage() {
 
     const getStatusBadge = (status: string) => {
         const config = {
-            PENDING: { variant: 'default' as const, icon: <Clock className="h-3 w-3" />, label: 'Chờ duyệt', className: '' },
+            PENDING: {
+                variant: 'default' as const,
+                icon: <Clock className="h-3 w-3" />,
+                label: 'Chờ duyệt',
+                className: '',
+            },
             APPROVED: {
                 variant: 'default' as const,
                 icon: <CheckCircle className="h-3 w-3" />,
                 label: 'Đã duyệt',
                 className: 'bg-green-500',
             },
-            REJECTED: { variant: 'destructive' as const, icon: <XCircle className="h-3 w-3" />, label: 'Từ chối', className: '' },
+            REJECTED: {
+                variant: 'destructive' as const,
+                icon: <XCircle className="h-3 w-3" />,
+                label: 'Từ chối',
+                className: '',
+            },
         };
 
         const s = config[status as keyof typeof config];

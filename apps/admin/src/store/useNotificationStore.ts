@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export interface NotificationItem {
     id: string;
@@ -6,36 +7,81 @@ export interface NotificationItem {
     message: string;
     isRead: boolean;
     createdAt: Date;
-    link?: string; // ✅ Thêm trường này để biết click vào đi đâu
+    link?: string;
 }
 
 interface NotificationState {
+    // Notifications
     notifications: NotificationItem[];
     addNotification: (item: NotificationItem) => void;
     markAsRead: (id: string) => void;
     resetCount: () => void;
+
+    // Inbox (Messages)
     unreadCount: number;
-    increment: () => void;
     setUnreadCount: (count: number) => void;
+    increment: () => void;
+    decrement: () => void;
+    reset: () => void;
+
+    // Author Requests
+    pendingAuthorRequests: number;
+    setPendingAuthorRequests: (count: number) => void;
+    incrementAuthorRequests: () => void;
+    decrementAuthorRequests: () => void;
+
+    // Hotel Approvals
+    pendingHotelApprovals: number;
+    setPendingHotelApprovals: (count: number) => void;
+    incrementHotelApprovals: () => void;
+    decrementHotelApprovals: () => void;
 }
 
-export const useNotificationStore = create<NotificationState>((set) => ({
-    unreadCount: 0,
-    notifications: [],
-    increment: () => set((state) => ({ unreadCount: state.unreadCount + 1 })),
-    setUnreadCount: (count) => set({ unreadCount: count }),
-    addNotification: (item) =>
-        set((state) => ({
-            notifications: [item, ...state.notifications],
-            unreadCount: state.unreadCount + 1,
-        })),
+export const useNotificationStore = create<NotificationState>()(
+    persist(
+        (set) => ({
+            // Notifications
+            notifications: [],
+            addNotification: (item) =>
+                set((state) => ({
+                    notifications: [item, ...state.notifications],
+                })),
+            markAsRead: (id) =>
+                set((state) => ({
+                    notifications: state.notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+                })),
+            resetCount: () => set({ unreadCount: 0 }),
 
-    markAsRead: (id) =>
-        set((state) => ({
-            notifications: state.notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
-            // Logic giảm count tùy bạn xử lý
-            unreadCount: state.unreadCount, // Thường thì click vào xem mới giảm count tổng
-        })),
+            // Inbox
+            unreadCount: 0,
+            setUnreadCount: (count) => set({ unreadCount: count }),
+            increment: () => set((state) => ({ unreadCount: state.unreadCount + 1 })),
+            decrement: () => set((state) => ({ unreadCount: Math.max(0, state.unreadCount - 1) })),
+            reset: () => set({ unreadCount: 0 }),
 
-    resetCount: () => set({ unreadCount: 0 }),
-}));
+            // Author Requests
+            pendingAuthorRequests: 0,
+            setPendingAuthorRequests: (count) => set({ pendingAuthorRequests: count }),
+            incrementAuthorRequests: () => set((state) => ({ pendingAuthorRequests: state.pendingAuthorRequests + 1 })),
+            decrementAuthorRequests: () =>
+                set((state) => ({ pendingAuthorRequests: Math.max(0, state.pendingAuthorRequests - 1) })),
+
+            // Hotel Approvals
+            pendingHotelApprovals: 0,
+            setPendingHotelApprovals: (count) => set({ pendingHotelApprovals: count }),
+            incrementHotelApprovals: () => set((state) => ({ pendingHotelApprovals: state.pendingHotelApprovals + 1 })),
+            decrementHotelApprovals: () =>
+                set((state) => ({ pendingHotelApprovals: Math.max(0, state.pendingHotelApprovals - 1) })),
+        }),
+        {
+            name: 'notification-storage', // Tên key trong localStorage
+            storage: createJSONStorage(() => localStorage),
+            // Chỉ persist các count, không persist notifications array (tránh lưu quá nhiều data)
+            partialize: (state) => ({
+                unreadCount: state.unreadCount,
+                pendingAuthorRequests: state.pendingAuthorRequests,
+                pendingHotelApprovals: state.pendingHotelApprovals,
+            }),
+        },
+    ),
+);

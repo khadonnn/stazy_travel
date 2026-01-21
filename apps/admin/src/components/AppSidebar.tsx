@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { io } from 'socket.io-client';
-import { useNotificationStore } from '@/store/useNotificationStore'; // Đảm bảo đường dẫn đúng store của bạn
+import { useNotificationStore } from '@/store/useNotificationStore';
+import { getAllPendingCounts } from '@/actions/statsActions';
 
 import {
     Home,
@@ -26,6 +27,7 @@ import {
     LogOut,
     UserCheck,
     Building2,
+    HousePlus,
 } from 'lucide-react';
 
 import {
@@ -71,7 +73,7 @@ const items = [
     { title: 'Analytics', url: '/analytics', icon: ChartSpline },
     { title: 'Inbox', url: '/message', icon: Inbox }, // Quan trọng: URL phải khớp logic check pathname
     { title: 'Author Requests', url: '/author-requests', icon: UserCheck },
-    { title: 'Hotel Approvals', url: '/hotel-approvals', icon: Building2 },
+    { title: 'Hotel Approvals', url: '/hotel-approvals', icon: HousePlus },
     { title: 'Notifications', url: '/notifications', icon: Bell },
     { title: 'Calendar', url: '#', icon: Calendar },
     { title: 'Search', url: '#', icon: Search },
@@ -79,26 +81,43 @@ const items = [
 ];
 
 const AppSidebar = () => {
-    const { unreadCount, increment, setUnreadCount } = useNotificationStore();
+    const {
+        unreadCount,
+        increment,
+        setUnreadCount,
+        pendingAuthorRequests,
+        setPendingAuthorRequests,
+        pendingHotelApprovals,
+        setPendingHotelApprovals,
+    } = useNotificationStore();
     const pathname = usePathname();
 
-    // --- 1. FETCH SỐ TIN NHẮN CHƯA ĐỌC TỪ DB ---
+    // --- 1. FETCH TẤT CẢ STATS BAN ĐẦU ---
     useEffect(() => {
-        const fetchInitialUnread = async () => {
+        const fetchAllStats = async () => {
             try {
-                // Gọi API đếm số tin isRead: false từ MongoDB
-                const res = await fetch(`${API_URL}/messages/stats/unread`);
-                if (res.ok) {
-                    const data = await res.json();
+                // Fetch messages từ MongoDB
+                const messagesRes = await fetch(`${API_URL}/messages/stats/unread`);
+                if (messagesRes.ok) {
+                    const data = await messagesRes.json();
                     setUnreadCount(data.count || 0);
                 }
+
+                // Fetch pending counts từ PostgreSQL
+                const counts = await getAllPendingCounts();
+                setPendingAuthorRequests(counts.authorRequests);
+                setPendingHotelApprovals(counts.hotels);
             } catch (error) {
-                console.error('⚠️ Lỗi lấy số tin nhắn chưa đọc:', error);
+                console.error('⚠️ Lỗi lấy thống kê:', error);
             }
         };
 
-        fetchInitialUnread();
-    }, [setUnreadCount]);
+        fetchAllStats();
+
+        // Refresh mỗi 30 giây để cập nhật số liệu
+        const interval = setInterval(fetchAllStats, 30000);
+        return () => clearInterval(interval);
+    }, [setUnreadCount, setPendingAuthorRequests, setPendingHotelApprovals]);
 
     // --- 2. LẮNG NGHE SOCKET REALTIME ---
     useEffect(() => {
@@ -125,13 +144,6 @@ const AppSidebar = () => {
             socket.disconnect();
         };
     }, [pathname, increment]);
-
-    // --- 3. RESET SỐ KHI VÀO TRANG INBOX ---
-    useEffect(() => {
-        if (pathname === '/message') {
-            setUnreadCount(0);
-        }
-    }, [pathname, setUnreadCount]);
 
     return (
         <Sidebar collapsible="icon">
@@ -163,23 +175,39 @@ const AppSidebar = () => {
                     <SidebarGroupLabel>Application</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild tooltip={item.title}>
-                                        <Link href={item.url}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
+                            {items.map((item) => {
+                                // Xác định badge count cho từng item
+                                let badgeCount = 0;
+                                if (item.title === 'Inbox') badgeCount = unreadCount;
+                                else if (item.title === 'Author Requests') badgeCount = pendingAuthorRequests;
+                                else if (item.title === 'Hotel Approvals') badgeCount = pendingHotelApprovals;
 
-                                    {/* BADGE TIN NHẮN MÀU ĐỎ */}
-                                    {item.title === 'Inbox' && unreadCount > 0 && (
-                                        <SidebarMenuBadge className="animate-in zoom-in bg-red-500 font-bold text-white duration-300 hover:bg-red-600">
-                                            {unreadCount > 99 ? '99+' : unreadCount}
-                                        </SidebarMenuBadge>
-                                    )}
-                                </SidebarMenuItem>
-                            ))}
+                                return (
+                                    <SidebarMenuItem key={item.title} className="relative">
+                                        <SidebarMenuButton asChild tooltip={item.title}>
+                                            <Link href={item.url} className="relative">
+                                                <div className="relative">
+                                                    <item.icon className="h-4 w-4" />
+                                                    {/* Badge ở góc phải trên của icon khi sidebar collapsed */}
+                                                    {badgeCount > 0 && (
+                                                        <span className="absolute -top-1 -right-1 hidden h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white group-data-[collapsible=icon]:flex">
+                                                            {badgeCount > 9 ? '9+' : badgeCount}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <span>{item.title}</span>
+                                            </Link>
+                                        </SidebarMenuButton>
+
+                                        {/* Badge bên cạnh khi sidebar expanded */}
+                                        {badgeCount > 0 && (
+                                            <SidebarMenuBadge className="animate-in zoom-in bg-red-500 font-bold text-white duration-300 group-data-[collapsible=icon]:hidden hover:bg-red-600">
+                                                {badgeCount > 99 ? '99+' : badgeCount}
+                                            </SidebarMenuBadge>
+                                        )}
+                                    </SidebarMenuItem>
+                                );
+                            })}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
