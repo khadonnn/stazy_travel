@@ -1,27 +1,57 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
-import { debounce, filter } from 'lodash'; // Import các hàm cần thiết từ lodash
-import { columns, User } from './columns'; // Import columns và type Payment
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { debounce } from 'lodash';
+import { columns, User } from './columns';
 import { DataTable } from './data-table';
-import { Search } from 'lucide-react';
-// Giả định bạn có component Input của riêng mình (ví dụ từ shadcn/ui)
-// import { Input } from '@/components/ui/input';
+import { Search, Loader2 } from 'lucide-react';
+import { useAuth } from '@clerk/nextjs';
 
-interface UsersTableWrapperProps {
-    initialData: User[];
-}
+const PRODUCT_API = process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL;
 
-export function UsersTableWrapper({ initialData }: UsersTableWrapperProps) {
+export function UsersTableWrapper() {
+    const { getToken } = useAuth();
+    const [users, setUsers] = useState<User[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [searchText, setSearchText] = useState('');
 
-    // --- 1. Debounce cho chức năng tìm kiếm ---
-    // Sử dụng useMemo để đảm bảo debounce function chỉ tạo một lần
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                setIsLoading(true);
+                const token = await getToken();
+                // Fetch tất cả users với limit = 1000 (max từ API là 100 per request)
+                // Hoặc có thể fetch nhiều pages nếu cần
+                const response = await fetch(`${PRODUCT_API}/users?limit=100&page=1`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    cache: 'no-store',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch users');
+                }
+
+                const result = await response.json();
+                console.log('Fetched users:', result.data?.length, 'Total:', result.pagination?.total);
+                setUsers(result.data || []);
+            } catch (error) {
+                console.error('Failed to fetch users:', error);
+                setUsers([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUsers();
+    }, [getToken]);
+
     const debouncedSearch = useMemo(
         () =>
             debounce((value: string) => {
                 setSearchText(value.toLowerCase().trim());
-            }, 300), // Delay 300ms
+            }, 300),
         [],
     );
 
@@ -32,24 +62,35 @@ export function UsersTableWrapper({ initialData }: UsersTableWrapperProps) {
         [debouncedSearch],
     );
 
-    // --- 2. Logic lọc dữ liệu với Lodash ---
     const filteredData = useMemo(() => {
         if (!searchText) {
-            return initialData;
+            return users;
         }
 
         const searchLower = searchText;
 
-        // Kiểm tra fullName hoặc email có chứa chuỗi tìm kiếm không
-        return filter(initialData, (item) => {
-            return item.fullName.toLowerCase().includes(searchLower) || item.email.toLowerCase().includes(searchLower);
+        return users.filter((item) => {
+            return (
+                item.name.toLowerCase().includes(searchLower) ||
+                item.email.toLowerCase().includes(searchLower) ||
+                (item.nickname && item.nickname.toLowerCase().includes(searchLower))
+            );
         });
-    }, [initialData, searchText]);
+    }, [users, searchText]);
+
+    if (isLoading) {
+        return (
+            <div className="flex h-96 items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin" />
+                <span className="ml-2">Loading users...</span>
+            </div>
+        );
+    }
 
     return (
         <div className="">
             <div className="bg-secondary mb-4 flex items-center justify-between rounded-md px-1 py-1">
-                <h1 className="px-2 font-semibold">All Payments</h1>
+                <h1 className="px-2 font-semibold">All Users</h1>
                 {/*  Ô TÌM KIẾM */}
                 <div className="relative w-1/3">
                     <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -62,7 +103,7 @@ export function UsersTableWrapper({ initialData }: UsersTableWrapperProps) {
                 </div>
             </div>
 
-            <DataTable columns={columns} data={filteredData} />
+            <DataTable<User, any> columns={columns} data={filteredData} />
         </div>
     );
 }

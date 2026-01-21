@@ -2,12 +2,23 @@
 import { cn } from '@/lib/utils';
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
+
 export type User = {
     id: string;
-    avatar: string;
-    fullName: string;
     email: string;
-    status: 'active' | 'inactive';
+    name: string;
+    nickname?: string | null;
+    phone?: string | null;
+    gender?: string | null;
+    dob?: Date | null;
+    address?: string | null;
+    avatar?: string | null;
+    bgImage?: string | null;
+    jobName?: string | null;
+    desc?: string | null;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
 };
 import { Button } from '@/components/ui/button';
 import {
@@ -46,12 +57,12 @@ export const columns: ColumnDef<User>[] = [
         accessorKey: 'avatar',
         header: 'Avatar',
         cell: ({ row }) => {
-            const user = row.original; // Lấy toàn bộ dữ liệu hàng
+            const user = row.original;
             return (
                 <div className="relative h-9 w-9">
                     <Image
-                        src={user.avatar}
-                        alt={user.fullName}
+                        src={user.avatar || '/assets/default-avatar.png'}
+                        alt={user.name}
                         layout="fill"
                         objectFit="cover"
                         className="rounded-full object-cover"
@@ -61,7 +72,7 @@ export const columns: ColumnDef<User>[] = [
         },
     },
     {
-        accessorKey: 'fullName',
+        accessorKey: 'name',
         header: 'User',
     },
     {
@@ -80,20 +91,22 @@ export const columns: ColumnDef<User>[] = [
         },
     },
     {
-        accessorKey: 'status',
-        header: 'Status',
+        accessorKey: 'role',
+        header: 'Role',
         cell: ({ row }) => {
-            const status = row.getValue('status');
+            const role = row.getValue('role');
 
             return (
                 <div
                     className={cn(
-                        `w-max rounded-md p-1 text-xs`,
-                        status === 'active' && 'bg-green-500/40',
-                        status === 'inactive' && 'bg-red-500/40',
+                        `w-max rounded-md p-1 text-xs font-medium`,
+                        role === 'ADMIN' && 'bg-red-500/40 text-red-700 dark:bg-red-500/30 dark:text-red-400',
+                        role === 'HOST' && 'bg-purple-500/40 text-purple-700 dark:bg-purple-500/30 dark:text-purple-400',
+                        role === 'AUTHOR' && 'bg-purple-500/40 text-purple-700 dark:bg-purple-500/30 dark:text-purple-400',
+                        role === 'USER' && 'bg-green-500/40 text-green-700 dark:bg-green-500/30 dark:text-green-400',
                     )}
                 >
-                    {status as string}
+                    {role as string}
                 </div>
             );
         },

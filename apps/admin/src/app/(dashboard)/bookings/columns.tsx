@@ -2,15 +2,28 @@
 import { cn } from '@/lib/utils';
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
-export type Payment = {
+import Image from 'next/image';
+
+// Type cho Booking data từ API
+export type Booking = {
     id: string;
-    amount: number;
-    status: 'pending' | 'processing' | 'success' | 'failed';
-    email: string;
-    fullName: string;
     userId: string;
-    avatarUrl?: string;
+    userName: string;
+    userEmail: string;
+    userPhone: string;
+    hotelId: number;
+    hotelName: string;
+    hotelImage: string;
+    hotelAddress: string;
+    checkIn: string;
+    checkOut: string;
+    nights: number;
+    totalPrice: number;
+    status: 'pending' | 'confirmed' | 'cancelled' | 'paid';
+    paymentMethod: 'stripe' | 'visa' | 'vnpay' | 'momo' | 'pending';
+    createdAt: string;
 };
+
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -22,9 +35,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
-// Thêm vào phần imports
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-export const columns: ColumnDef<Payment>[] = [
+
+export const columns: ColumnDef<Booking>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -44,92 +57,141 @@ export const columns: ColumnDef<Payment>[] = [
         enableSorting: false,
         enableHiding: false,
     },
+    // COLUMN 1: USER
     {
-        accessorKey: 'fullName',
+        accessorKey: 'userName',
         header: 'User',
-        // THAY ĐỔI: Sử dụng 'cell' để render tùy chỉnh
         cell: ({ row }) => {
-            const payment = row.original; // Lấy toàn bộ dữ liệu hàng
-            const initial = payment.fullName.charAt(0).toUpperCase(); // Lấy chữ cái đầu
+            const booking = row.original;
+            const initial = booking.userName.charAt(0).toUpperCase();
 
             return (
-                <div className="flex items-center space-x-2">
-                    {/* 1. Component Avatar */}
-                    <Avatar className="h-8 w-8">
-                        {/* Giả định: Sử dụng avatarUrl nếu có */}
-                        <AvatarImage src={payment.avatarUrl} alt={payment.fullName} />
-                        {/* Fallback là chữ cái đầu nếu không có ảnh */}
-                        <AvatarFallback>{initial}</AvatarFallback>
+                <div className="flex items-center space-x-3">
+                    <Avatar className="h-9 w-9">
+                        <AvatarFallback className="bg-primary/10 text-primary">{initial}</AvatarFallback>
                     </Avatar>
-
-                    {/* 2. Tên người dùng */}
-                    <span>{payment.fullName}</span>
+                    <div className="flex flex-col">
+                        <span className="font-medium">{booking.userName}</span>
+                        <span className="text-muted-foreground text-xs">{booking.userEmail}</span>
+                    </div>
                 </div>
             );
         },
     },
+    // COLUMN 2: PRODUCT (HOTEL)
     {
-        accessorKey: 'email',
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                    Email
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
-    },
-    {
-        accessorKey: 'status',
-        header: 'Status',
+        accessorKey: 'hotelName',
+        header: 'Product',
         cell: ({ row }) => {
-            const status = row.getValue('status');
+            const booking = row.original;
 
             return (
-                <div
-                    className={cn(
-                        `w-max rounded-md p-1 text-xs`,
-                        status === 'pending' && 'bg-yellow-500/40',
-                        status === 'success' && 'bg-green-500/40',
-                        status === 'failed' && 'bg-red-500/40',
+                <div className="flex items-center space-x-3">
+                    {booking.hotelImage && (
+                        <div className="relative h-10 w-14 overflow-hidden rounded">
+                            <Image src={booking.hotelImage} alt={booking.hotelName} fill className="object-cover" />
+                        </div>
                     )}
-                >
-                    {status as string}
+                    <div className="flex flex-col">
+                        <span className="font-medium">{booking.hotelName}</span>
+                        <span className="text-muted-foreground text-xs">
+                            {booking.nights} nights • {new Date(booking.checkIn).toLocaleDateString('vi-VN')}
+                        </span>
+                    </div>
                 </div>
             );
         },
     },
+    // COLUMN 3: PRICE
     {
-        accessorKey: 'amount',
-        // Cập nhật để căn phải nội dung của nút sắp xếp
+        accessorKey: 'totalPrice',
         header: ({ column }) => {
             return (
-                // 💡 THAY ĐỔI: Thêm flex và justify-end vào div bọc
                 <div className="flex justify-end text-right">
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                        className="hover:bg-transparents ml-2 flex justify-end p-0"
+                        className="ml-2 flex justify-end p-0 hover:bg-transparent"
                     >
-                        Amount
+                        Price
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 </div>
             );
         },
         cell: ({ row }) => {
-            const amount = parseFloat(row.getValue('amount'));
+            const price = parseFloat(row.getValue('totalPrice'));
             const formatted = new Intl.NumberFormat('vi-VN', {
                 currency: 'VND',
-            }).format(amount);
+            }).format(price);
 
-            return <div className="mr-12 text-right font-medium">{formatted + 'K Đ'}</div>;
+            return <div className="mr-4 text-right font-semibold">{formatted} đ</div>;
         },
     },
+    // COLUMN 4: STATUS
+    {
+        accessorKey: 'status',
+        header: () => <div className="text-center">Status</div>,
+        cell: ({ row }) => {
+            const status = row.getValue('status');
+
+            return (
+                <div className="flex justify-center">
+                    <div
+                        className={cn(
+                            'w-max rounded-full px-3 py-1 text-xs font-medium',
+                            status === 'pending' && 'bg-yellow-500/20 text-yellow-700',
+                            status === 'confirmed' && 'bg-blue-500/20 text-blue-700',
+                            status === 'paid' && 'bg-green-500/20 text-green-700',
+                            status === 'cancelled' && 'bg-red-500/20 text-red-700',
+                        )}
+                    >
+                        {(status as string).toUpperCase()}
+                    </div>
+                </div>
+            );
+        },
+    },
+    // COLUMN 5: PAYMENT METHOD
+    {
+        accessorKey: 'paymentMethod',
+        header: () => <div className="text-center">Payment Method</div>,
+        cell: ({ row }) => {
+            const method = row.getValue('paymentMethod') as string;
+            const methodColors = {
+                stripe: 'bg-purple-100 text-purple-700',
+                visa: 'bg-blue-100 text-blue-700',
+                vnpay: 'bg-orange-100 text-orange-700',
+                momo: 'bg-pink-100 text-pink-700',
+                pending: 'bg-gray-100 text-gray-700',
+            };
+            const methodIcons = {
+                stripe: '',
+                visa: '',
+                vnpay: '',
+                momo: '',
+                pending: '',
+            };
+            return (
+                <div className="flex justify-center">
+                    <span
+                        className={cn(
+                            'inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium',
+                            methodColors[method as keyof typeof methodColors] || 'bg-gray-100 text-gray-700',
+                        )}
+                    >
+                        <span>{methodIcons[method as keyof typeof methodIcons] || ''}</span>
+                        <span className="capitalize">{method}</span>
+                    </span>
+                </div>
+            );
+        },
+    },
+    // COLUMN 6: ACTIONS
     {
         id: 'actions',
         cell: ({ row }) => {
-            const payment = row.original;
+            const booking = row.original;
 
             return (
                 <DropdownMenu>
@@ -141,14 +203,22 @@ export const columns: ColumnDef<Payment>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
-                            Copy payment ID
+                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(booking.id)}>
+                            Copy booking ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                            <Link href={`/users/${payment.userId}`}>View user profile</Link>
+                            <Link href={`/bookings/${booking.id}`}> View booking details</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>View payment details</DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Link href={`/products/${booking.hotelId}`}> View hotel details</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Link href={`/users/${booking.userId}`}> View customer profile</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-blue-600"> Mark as Completed</DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600"> Cancel booking</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

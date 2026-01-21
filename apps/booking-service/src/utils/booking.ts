@@ -204,6 +204,7 @@ export const updateBookingStatusToPaid = async (
           "payment.status": "PAID",
           "payment.stripeSessionId":
             paymentData.stripeSessionId || meta.stripeSessionId,
+          paymentMethod: "stripe", // Thêm field paymentMethod
           updatedAt: new Date(),
           nights: calculatedNights,
           checkIn: checkInDate,
