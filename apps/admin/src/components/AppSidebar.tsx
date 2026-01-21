@@ -24,6 +24,8 @@ import {
     MapPinned,
     Bell,
     LogOut,
+    UserCheck,
+    Building2,
 } from 'lucide-react';
 
 import {
@@ -57,6 +59,7 @@ import AddOrder from '@/components/AddOrder';
 import AddProduct from '@/components/AddProduct';
 import AddCategory from '@/components/AddCategory';
 import AddUser from '@/components/AddUser';
+import { title } from 'process';
 
 // --- CẤU HÌNH URL ---
 const SOCKET_URL = 'http://localhost:3005';
@@ -67,6 +70,8 @@ const items = [
     { title: 'Home', url: '/', icon: Home },
     { title: 'Analytics', url: '/analytics', icon: ChartSpline },
     { title: 'Inbox', url: '/message', icon: Inbox }, // Quan trọng: URL phải khớp logic check pathname
+    { title: 'Author Requests', url: '/author-requests', icon: UserCheck },
+    { title: 'Hotel Approvals', url: '/hotel-approvals', icon: Building2 },
     { title: 'Notifications', url: '/notifications', icon: Bell },
     { title: 'Calendar', url: '#', icon: Calendar },
     { title: 'Search', url: '#', icon: Search },

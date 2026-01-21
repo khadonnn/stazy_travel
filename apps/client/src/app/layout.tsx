@@ -47,11 +47,11 @@ export default async function RootLayout({
     >
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
         >
           <Navbar />
 
-          <main className="mt-10">
+          <main className="mt-10 flex-1">
             <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/20" />
               <BackgroundWave />
@@ -59,9 +59,9 @@ export default async function RootLayout({
             <Providers>{children}</Providers>
             <OnboardingModal />
           </main>
-          <footer className="shrink-0">
+          <div className="shrink-0">
             <Footer />
-          </footer>
+          </div>
           <div className="fixed bottom-4 right-4 z-9999">
             <ChatWidget />
           </div>

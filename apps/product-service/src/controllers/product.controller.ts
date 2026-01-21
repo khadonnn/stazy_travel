@@ -466,3 +466,36 @@ export const getHotelForAdmin = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Lỗi server." });
   }
 };
+interface AuthRequest extends Request {
+  auth?: {
+    userId: string;
+    // thêm các field khác nếu cần (sessionId, orgId...)
+  };
+}
+// 8. GET MY HOTELS (Author lấy khách sạn của mình)
+export const getMyHotels = async (req: AuthRequest, res: Response) => {
+  try {
+    const authorId = req.auth?.userId; // Lấy từ Clerk middleware
+
+    if (!authorId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const hotels = await prisma.hotel.findMany({
+      where: {
+        authorId: authorId,
+      },
+      include: {
+        category: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.status(200).json(hotels);
+  } catch (error: any) {
+    console.error("Get my hotels error:", error);
+    res.status(500).json({ message: "Lỗi server." });
+  }
+};

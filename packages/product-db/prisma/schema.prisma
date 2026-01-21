@@ -46,6 +46,7 @@ model User {
   interactions  Interaction[]
   bookings      Booking[]
   reviews      Review[]
+  authorRequests AuthorRequest[] // User có thể gửi nhiều request nếu bị reject
   // Quan hệ 1-1: Sở thích người dùng (Tách riêng để bảng User đỡ nặng)
   preference    UserPreference?
   recommendation Recommendation?
@@ -54,6 +55,46 @@ model User {
   searchLogs    SearchQueryLog[]
 
   @@map("users")
+}
+
+model AuthorRequest {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Thông tin đăng ký
+  businessName    String   // Tên doanh nghiệp/cá nhân
+  businessType    String   // "INDIVIDUAL" hoặc "COMPANY"
+  taxCode         String?  // Mã số thuế (nếu là công ty)
+  phone           String
+  email           String
+  address         String
+  identityCard    String   // CMND/CCCD
+  identityImages  String[] // Ảnh CMND/CCCD, giấy phép KD
+  
+  // Lý do & Mô tả
+  reason          String?  @db.Text
+  
+  // Trạng thái
+  status          AuthorRequestStatus @default(PENDING)
+  
+  // Admin xử lý
+  reviewedBy      String?  // Admin ID
+  reviewedAt      DateTime?
+  rejectionReason String?  @db.Text
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("author_requests")
+}
+
+enum AuthorRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model UserPreference {
@@ -82,6 +123,14 @@ enum Role {
   USER
   AUTHOR
   ADMIN
+}
+
+enum HotelStatus {
+  DRAFT       // Author đang soạn, chưa gửi
+  PENDING     // Đang chờ Admin duyệt
+  APPROVED    // Đã được duyệt, hiển thị công khai
+  REJECTED    // Bị từ chối
+  SUSPENDED   // Bị tạm ngưng (vi phạm chính sách)
 }
 
 // =========================================
@@ -138,6 +187,15 @@ model Hotel {
   like          Boolean  @default(false) // Cờ tạm (nên cân nhắc bỏ nếu dùng interaction)
   isAds         Boolean  @default(false)
 
+  // --- APPROVAL WORKFLOW ---
+  status        HotelStatus @default(DRAFT)
+  
+  // Thông tin phê duyệt
+  submittedAt   DateTime?   // Khi author submit để admin duyệt
+  approvedBy    String?     // Admin ID người duyệt
+  approvedAt    DateTime?   // Thời điểm duyệt
+  rejectionReason String?   @db.Text // Lý do từ chối (nếu bị reject)
+
   // --- AI / VECTOR FIELDS ---
   // Embedding cho hình ảnh (Visual search)
   imageVector   Unsupported("vector(512)")? 
@@ -153,6 +211,9 @@ model Hotel {
   interactions  Interaction[]
   bookings      Booking[]
   reviews      Review[]
+  
+  @@index([status])
+  @@index([authorId, status])
   @@map("hotels")
 }
 

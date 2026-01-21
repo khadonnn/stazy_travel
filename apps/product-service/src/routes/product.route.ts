@@ -7,6 +7,7 @@ import {
   updateHotel,
   deleteHotel,
   getHotelForAdmin,
+  getMyHotels,
 } from "../controllers/product.controller";
 import { shouldBeAdmin } from "../middleware/authMiddleware";
 
@@ -24,6 +25,7 @@ router.get("/test", (req, res) => {
 // // --- PROTECTED ROUTES (Host/Author) ---
 router.post("/", createHotel);
 router.get("/", getHotels);
+router.get("/my-hotels", getMyHotels); // Author lấy khách sạn của mình
 router.get("/admin-view/:id", getHotelForAdmin);
 router.get("/:id", getHotel);
 router.get("/:id/related", getRelatedHotels);

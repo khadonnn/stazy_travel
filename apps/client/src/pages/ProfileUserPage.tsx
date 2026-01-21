@@ -10,7 +10,11 @@ import {
   MapPin,
   Calendar,
   UserCircle,
-  Loader2, // Thêm Loader2 cho trạng thái loading
+  Loader2,
+  Building2,
+  CheckCircle,
+  XCircle,
+  Clock,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import {
@@ -41,9 +45,14 @@ import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 
 import toast from "react-hot-toast";
-import type { IUser } from "@repo/types";
+import type { IUser, IAuthorRequest, IAuthorRequestInput } from "@repo/types";
 import DarkVeil from "@/components/DarkVeil";
 import FloatingLines from "@/components/FloatingLines";
+import {
+  submitAuthorRequest,
+  getMyAuthorRequest,
+} from "@/actions/authorActions";
+import { Textarea } from "@/components/ui/textarea";
 
 const AvatarFallback = ({
   name,
@@ -83,6 +92,25 @@ const ProfileUserPage = () => {
   const [profile, setProfile] = useState<IUser | null>(null);
   const [showFallback, setShowFallback] = useState(false);
 
+  // State quản lý Author Request
+  const [authorRequest, setAuthorRequest] = useState<IAuthorRequest | null>(
+    null,
+  );
+  const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);
+  const [isSubmittingAuthorRequest, setIsSubmittingAuthorRequest] =
+    useState(false);
+  const [authorFormData, setAuthorFormData] = useState<IAuthorRequestInput>({
+    businessName: "",
+    businessType: "INDIVIDUAL",
+    taxCode: "",
+    phone: profile?.phone || "",
+    email: profile?.email || "",
+    address: profile?.address || "",
+    identityCard: "",
+    identityImages: [],
+    reason: "",
+  });
+
   // Dữ liệu hiển thị
   const fullName = profile?.name || clerkUser?.fullName || "";
   const email =
@@ -117,6 +145,18 @@ const ProfileUserPage = () => {
       setProfile(fallbackProfile);
     }
   }, [authUser, clerkUser, clerkLoaded]);
+
+  // Load Author Request status
+  useEffect(() => {
+    const loadAuthorRequest = async () => {
+      const request = await getMyAuthorRequest();
+      setAuthorRequest(request);
+    };
+
+    if (clerkUser) {
+      loadAuthorRequest();
+    }
+  }, [clerkUser]);
 
   // 3. Logic Lấy Ảnh (Cập nhật để ưu tiên selectedImg/clerkUser.imageUrl)
   const getImageSrc = useCallback(() => {
@@ -236,6 +276,75 @@ const ProfileUserPage = () => {
       console.error("Profile Update failed:", error);
       alert("Cập nhật thông tin thất bại.");
     }
+  };
+
+  // Handle Submit Author Request
+  const handleAuthorRequestSubmit = async () => {
+    setIsSubmittingAuthorRequest(true);
+
+    try {
+      const result = await submitAuthorRequest(authorFormData);
+
+      if (result.success) {
+        toast.success(result.message);
+        setAuthorRequest(result.data || null);
+        setIsAuthorDialogOpen(false);
+
+        // Reset form
+        setAuthorFormData({
+          businessName: "",
+          businessType: "INDIVIDUAL",
+          taxCode: "",
+          phone: profile?.phone || "",
+          email: profile?.email || "",
+          address: profile?.address || "",
+          identityCard: "",
+          identityImages: [],
+          reason: "",
+        });
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error submitting author request:", error);
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại.");
+    } finally {
+      setIsSubmittingAuthorRequest(false);
+    }
+  };
+
+  // Render Author Request Status Badge
+  const renderAuthorStatus = () => {
+    if (!authorRequest) return null;
+
+    const statusConfig = {
+      PENDING: {
+        icon: <Clock className="w-4 h-4" />,
+        text: "Đang chờ duyệt",
+        color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
+      },
+      APPROVED: {
+        icon: <CheckCircle className="w-4 h-4" />,
+        text: "Đã được duyệt",
+        color: "bg-green-500/20 text-green-400 border-green-500/50",
+      },
+      REJECTED: {
+        icon: <XCircle className="w-4 h-4" />,
+        text: "Bị từ chối",
+        color: "bg-red-500/20 text-red-400 border-red-500/50",
+      },
+    };
+
+    const status = statusConfig[authorRequest.status];
+
+    return (
+      <div
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${status.color}`}
+      >
+        {status.icon}
+        <span className="text-sm font-medium">{status.text}</span>
+      </div>
+    );
   };
 
   // 6. Render Logic Avatar (Bao gồm input upload)
@@ -502,6 +611,243 @@ const ProfileUserPage = () => {
             {/* VỊ TRÍ MỚI CHO AVATAR VÀ UPLOAD */}
             <div className="flex flex-col items-center gap-4">
               {renderAvatarWithInput()}
+            </div>
+
+            {/* SECTION: Author Request */}
+            <div className="border-t border-gray-700 pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <Building2 className="w-5 h-5 text-cyan-400" />
+                  <h2 className="text-lg font-semibold text-white">
+                    Trở thành Chủ khách sạn (Author)
+                  </h2>
+                </div>
+                {renderAuthorStatus()}
+              </div>
+
+              {!authorRequest && (
+                <div className="bg-gray-800/50 rounded-lg p-4 space-y-3">
+                  <p className="text-sm text-gray-300">
+                    Đăng ký trở thành chủ khách sạn để có thể đăng và quản lý
+                    khách sạn của riêng bạn trên nền tảng.
+                  </p>
+
+                  <Dialog
+                    open={isAuthorDialogOpen}
+                    onOpenChange={setIsAuthorDialogOpen}
+                  >
+                    <DialogTrigger asChild>
+                      <Button className="w-full bg-cyan-600 hover:bg-cyan-700 text-white">
+                        Đăng ký ngay
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>Đăng ký trở thành Author</DialogTitle>
+                      </DialogHeader>
+
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Loại hình kinh doanh *</Label>
+                          <Select
+                            value={authorFormData.businessType}
+                            onValueChange={(value: "INDIVIDUAL" | "COMPANY") =>
+                              setAuthorFormData({
+                                ...authorFormData,
+                                businessType: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="INDIVIDUAL">
+                                Cá nhân
+                              </SelectItem>
+                              <SelectItem value="COMPANY">Công ty</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <Label>Tên doanh nghiệp/cá nhân *</Label>
+                          <Input
+                            value={authorFormData.businessName}
+                            onChange={(e) =>
+                              setAuthorFormData({
+                                ...authorFormData,
+                                businessName: e.target.value,
+                              })
+                            }
+                            placeholder="VD: Công ty TNHH ABC hoặc Nguyễn Văn A"
+                          />
+                        </div>
+
+                        {authorFormData.businessType === "COMPANY" && (
+                          <div>
+                            <Label>Mã số thuế</Label>
+                            <Input
+                              value={authorFormData.taxCode || ""}
+                              onChange={(e) =>
+                                setAuthorFormData({
+                                  ...authorFormData,
+                                  taxCode: e.target.value,
+                                })
+                              }
+                              placeholder="0123456789"
+                            />
+                          </div>
+                        )}
+
+                        <div>
+                          <Label>Số điện thoại *</Label>
+                          <Input
+                            value={authorFormData.phone}
+                            onChange={(e) =>
+                              setAuthorFormData({
+                                ...authorFormData,
+                                phone: e.target.value,
+                              })
+                            }
+                            placeholder="0901234567"
+                          />
+                        </div>
+
+                        <div>
+                          <Label>Email *</Label>
+                          <Input
+                            value={authorFormData.email}
+                            onChange={(e) =>
+                              setAuthorFormData({
+                                ...authorFormData,
+                                email: e.target.value,
+                              })
+                            }
+                            placeholder="email@example.com"
+                            type="email"
+                          />
+                        </div>
+
+                        <div>
+                          <Label>Địa chỉ *</Label>
+                          <Input
+                            value={authorFormData.address}
+                            onChange={(e) =>
+                              setAuthorFormData({
+                                ...authorFormData,
+                                address: e.target.value,
+                              })
+                            }
+                            placeholder="123 Đường ABC, Quận XYZ, TP HCM"
+                          />
+                        </div>
+
+                        <div>
+                          <Label>Số CMND/CCCD *</Label>
+                          <Input
+                            value={authorFormData.identityCard}
+                            onChange={(e) =>
+                              setAuthorFormData({
+                                ...authorFormData,
+                                identityCard: e.target.value,
+                              })
+                            }
+                            placeholder="001234567890"
+                          />
+                        </div>
+
+                        <div>
+                          <Label>Lý do đăng ký (Tùy chọn)</Label>
+                          <Textarea
+                            value={authorFormData.reason || ""}
+                            onChange={(e) =>
+                              setAuthorFormData({
+                                ...authorFormData,
+                                reason: e.target.value,
+                              })
+                            }
+                            placeholder="Tôi muốn chia sẻ khách sạn của mình với mọi người..."
+                            rows={3}
+                          />
+                        </div>
+
+                        <p className="text-xs text-gray-500">
+                          * Các trường bắt buộc. Thông tin của bạn sẽ được bảo
+                          mật và chỉ dùng để xác minh.
+                        </p>
+                      </div>
+
+                      <DialogFooter>
+                        <Button
+                          onClick={handleAuthorRequestSubmit}
+                          disabled={
+                            isSubmittingAuthorRequest ||
+                            !authorFormData.businessName ||
+                            !authorFormData.phone ||
+                            !authorFormData.email ||
+                            !authorFormData.address ||
+                            !authorFormData.identityCard
+                          }
+                          className="w-full bg-cyan-600 hover:bg-cyan-700"
+                        >
+                          {isSubmittingAuthorRequest
+                            ? "Đang gửi..."
+                            : "Gửi yêu cầu"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              )}
+
+              {authorRequest && authorRequest.status === "PENDING" && (
+                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                  <p className="text-sm text-yellow-300">
+                    Yêu cầu của bạn đang được xem xét. Chúng tôi sẽ thông báo
+                    kết quả qua email trong 1-2 ngày.
+                  </p>
+                </div>
+              )}
+
+              {authorRequest && authorRequest.status === "APPROVED" && (
+                <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+                  <p className="text-sm text-green-300 mb-2">
+                    🎉 Chúc mừng! Bạn đã trở thành Author. Bạn có thể bắt đầu
+                    đăng khách sạn của mình.
+                  </p>
+                  <Button
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    onClick={() => (window.location.href = "/create-hotel")}
+                  >
+                    Đăng khách sạn đầu tiên
+                  </Button>
+                </div>
+              )}
+
+              {authorRequest && authorRequest.status === "REJECTED" && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 space-y-3">
+                  <p className="text-sm text-red-300">
+                    Yêu cầu của bạn đã bị từ chối.
+                  </p>
+                  {authorRequest.rejectionReason && (
+                    <div className="bg-red-500/5 rounded p-3">
+                      <p className="text-xs text-gray-400 mb-1">Lý do:</p>
+                      <p className="text-sm text-red-200">
+                        {authorRequest.rejectionReason}
+                      </p>
+                    </div>
+                  )}
+                  <Button
+                    onClick={() => setIsAuthorDialogOpen(true)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Gửi lại yêu cầu
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Hiển thị thông tin */}

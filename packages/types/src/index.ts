@@ -5,3 +5,4 @@ export * from "./booking";
 export * from "./chart";
 export * from "./user";
 export * from "./hotel-frontend";
+export * from "./author";
