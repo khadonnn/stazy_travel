@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="apps/client/public/logo.png" alt="STAZY Logo" width="200">
+</p>
+
 # 🏨 STAZY - Hệ thống đặt phòng khách sạn Microservices
 
 > Nền tảng đặt phòng khách sạn hiện đại với kiến trúc microservices, AI recommendation và real-time notifications
@@ -20,7 +24,7 @@ STAZY là một hệ thống đặt phòng khách sạn được xây dựng the
 
 - ✨ Tìm kiếm và đặt phòng thông minh
 - 🤖 AI recommendation sử dụng machine learning
-- 💳 Tích hợp thanh toán Stripe & VNPay
+- 💳 Tích hợp thanh toán Stripe
 - 🔔 Thông báo real-time với Socket.io
 - 📊 Dashboard quản trị với analytics
 - 📧 Email automation
@@ -65,7 +69,7 @@ STAZY là một hệ thống đặt phòng khách sạn được xây dựng the
 
 - Port: `8002`
 - Framework: Hono
-- Features: Thanh toán Stripe, VNPay, webhooks
+- Features: Thanh toán Stripe, webhooks
 - **⚠️ Quan trọng**: Cần expose qua ngrok để nhận webhook từ Stripe
 - Auth: Hono Clerk
 
@@ -177,9 +181,12 @@ cd stazy
 # Cài đặt pnpm nếu chưa có
 npm install -g pnpm@9.0.0
 
-# Cài đặt tất cả dependencies
+# Cài đặt tất cả dependencies cho TOÀN BỘ workspace
+# (bao gồm tất cả apps và packages)
 pnpm install
 ```
+
+**Lưu ý**: Chỉ cần chạy `pnpm install` **một lần** ở thư mục gốc, pnpm workspace sẽ tự động cài dependencies cho tất cả services. **KHÔNG cần** vào từng thư mục apps/packages để cài riêng lẻ.
 
 ### 3. Setup Docker Services
 
@@ -316,8 +323,6 @@ KAFKA_BROKERS=localhost:9094,localhost:9095,localhost:9096
 PORT=8002
 STRIPE_SECRET_KEY=sk_test_xxx
 STRIPE_WEBHOOK_SECRET=whsec_xxx
-VNPAY_TMN_CODE=xxx
-VNPAY_HASH_SECRET=xxx
 KAFKA_BROKERS=localhost:9094,localhost:9095,localhost:9096
 DATABASE_URL=postgresql://admin:123456@localhost:5432/products
 CLERK_PUBLISHABLE_KEY=pk_test_xxx
@@ -347,7 +352,7 @@ CLOUDINARY_API_SECRET=xxx
 
 ```bash
 # Từ root directory
-pnpm dev
+turbo dev
 ```
 
 ### Chạy từng service riêng lẻ
@@ -583,12 +588,6 @@ stazy/
   - Response: `{ clientSecret, bookingId }`
 - `GET /sessions/:session_id` - Lấy thông tin session
 - `GET /sessions/my-bookings` - Lấy lịch sử thanh toán (🔐 Requires Auth)
-
-##### VNPay
-
-- `POST /vnpay/create-qr` - Tạo link thanh toán VNPay
-  - Body: `{ amount, orderId, bankCode }`
-  - Response: `{ url }`
 
 ##### Webhooks
 
