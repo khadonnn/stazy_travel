@@ -1,11 +1,11 @@
 // app/api/interactions/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@repo/product-db"; // Instance Prisma của bạn
-import { useAuth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = useAuth(); // Xác thực người dùng
+    const { userId } = await auth(); // Xác thực người dùng
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

@@ -84,6 +84,9 @@ const LatestTransactions = () => {
     const { data: realTransactions, isLoading } = useQuery({
         queryKey: ['latest-transactions'], // Key này sẽ được reload khi bấm nút ở Navbar
         queryFn: async () => await getLatestTransactions(),
+        refetchInterval: 10000, // Auto-refresh mỗi 10 giây
+        staleTime: 3000, // Data cũ sau 3 giây
+        refetchOnWindowFocus: true, // Refetch khi user quay lại tab
     });
 
     // --- 3. LOGIC CHỌN DATA (QUAN TRỌNG) ---
@@ -105,7 +108,7 @@ const LatestTransactions = () => {
             </div>
 
             <ScrollArea className="h-[400px] w-full pr-4">
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
                     {displayData.map((item: any) => {
                         const statusClass = getStatusClasses(item.status);
                         const variant = statusClass === 'destructive' ? 'destructive' : 'secondary';
@@ -115,31 +118,41 @@ const LatestTransactions = () => {
                         return (
                             <Card
                                 key={item.id}
-                                className="hover:bg-accent/50 flex flex-row items-center justify-between gap-4 p-3 transition-colors"
+                                className="hover:bg-accent/50 flex flex-row items-center justify-between gap-1.5 p-2 transition-colors"
                             >
                                 {/* Avatar & Info */}
-                                <div className="flex min-w-0 items-center gap-4">
-                                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border">
+                                <div className="flex w-[145px] min-w-0 items-center gap-1.5">
+                                    <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border">
                                         <Image
                                             src={item.customerAvatar}
                                             alt={item.customerName}
                                             fill
                                             className="object-cover"
-                                            sizes="40px"
+                                            sizes="32px"
                                         />
                                     </div>
-                                    <div className="flex min-w-0 flex-col">
-                                        <CardTitle className="truncate text-sm font-medium">
+                                    <div className="flex min-w-0 flex-1 flex-col">
+                                        <CardTitle className="truncate text-sm font-medium" title={item.customerName}>
                                             {item.customerName}
                                         </CardTitle>
-                                        <div className="text-muted-foreground truncate text-xs">{item.hotelTitle}</div>
+                                        <div
+                                            className="text-muted-foreground truncate text-xs leading-tight"
+                                            title={item.hotelTitle}
+                                        >
+                                            {item.hotelTitle}
+                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Amount & Status */}
-                                <div className="flex shrink-0 flex-col items-end gap-1">
-                                    <span className="text-sm font-semibold">{formatCurrency(item.amount)}</span>
-                                    <Badge variant={variant} className={`h-auto px-2 py-0.5 text-[10px] ${className}`}>
+                                <div className="flex w-[115px] shrink-0 flex-col items-end gap-0.5">
+                                    <span className="text-sm font-semibold whitespace-nowrap">
+                                        {formatCurrency(item.amount)}
+                                    </span>
+                                    <Badge
+                                        variant={variant}
+                                        className={`h-auto px-1.5 py-0.5 text-[10px] whitespace-nowrap ${className}`}
+                                    >
                                         {item.status}
                                     </Badge>
                                 </div>

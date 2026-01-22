@@ -39,5 +39,36 @@ export async function saveUserInterests(categories: string[]) {
     },
   });
 
+  // 🔥 Track interaction để AI biết user thích những category nào
+  // Lấy 3-5 hotels mẫu từ mỗi category để tạo implicit signal
+  for (const categorySlug of categories) {
+    // Tìm category ID
+    const category = await prisma.category.findUnique({
+      where: { slug: categorySlug },
+    });
+
+    if (category) {
+      // Lấy 3 hotels đầu tiên của category này
+      const sampleHotels = await prisma.hotel.findMany({
+        where: { categoryId: category.id, status: "APPROVED" },
+        take: 3,
+        select: { id: true },
+      });
+
+      // Tạo interaction VIEW cho mỗi hotel (implicit feedback)
+      for (const hotel of sampleHotels) {
+        await prisma.interaction.create({
+          data: {
+            userId: user.id,
+            hotelId: hotel.id,
+            type: "VIEW",
+            metadata: { source: "onboarding_preference" },
+          },
+        });
+      }
+    }
+  }
+
+  revalidatePath("/");
   return { success: true };
 }

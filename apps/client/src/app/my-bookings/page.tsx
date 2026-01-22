@@ -119,7 +119,7 @@ const MyBooking: React.FC = () => {
       const token = await getToken();
 
       // --- 3. Gọi API trực tiếp với Header Authorization ---
-      const res = await fetch(`${BOOKING_API_URL}/user-bookings`, {
+      const res = await fetch(`${BOOKING_API_URL}/bookings/user-bookings`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

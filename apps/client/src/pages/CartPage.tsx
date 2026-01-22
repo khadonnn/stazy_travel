@@ -40,7 +40,7 @@ const CartPage = () => {
   const totalAmount = items
     ? items.reduce(
         (sum, item) => sum + (item.price || 0) * (item.nights || 1),
-        0
+        0,
       )
     : 0;
 
@@ -245,7 +245,7 @@ const CartPage = () => {
                 <div className="flex justify-between items-end">
                   <span className="text-lg font-semibold">Tổng cộng</span>
                   <span className="text-2xl font-bold text-primary">
-                    {formatPrice(totalAmount)}đ
+                    {formatPrice(totalAmount)}
                   </span>
                 </div>
 

@@ -5,79 +5,22 @@ import { debounce, filter } from 'lodash';
 import { columns, Booking } from './columns';
 import { DataTable } from '@/app/(dashboard)/bookings/data-table';
 import { Search, Loader2 } from 'lucide-react';
-import { useAuth } from '@clerk/nextjs';
+import { getAllBookingsFromPostgres } from '@/app/(dashboard)/actions/get-all-bookings-postgres';
 
 export function PaymentsTableWrapper() {
-    const { getToken } = useAuth();
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchText, setSearchText] = useState('');
 
-    // Fetch bookings data với auth token
+    // 🔥 Fetch bookings từ PostgreSQL
     useEffect(() => {
         const fetchBookings = async () => {
             try {
                 setIsLoading(true);
-                const token = await getToken();
-                const BOOKING_API = process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || 'http://localhost:8001';
-
-                const response = await fetch(`${BOOKING_API}/bookings`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                    cache: 'no-store',
-                });
-
-                if (!response.ok) {
-                    console.error('Failed to fetch bookings:', response.statusText);
-                    setBookings([]);
-                    return;
-                }
-
-                const data = await response.json();
-
-                // Transform data
-                const transformedBookings: Booking[] = data.map((booking: any) => {
-                    // Logic xác định payment method:
-                    // 1. Nếu có field paymentMethod trong DB -> dùng nó
-                    // 2. Nếu không có nhưng có stripeSessionId -> 'stripe'
-                    // 3. Nếu status là CONFIRMED/PAID nhưng không có info -> 'stripe' (legacy data)
-                    // 4. Còn lại -> 'pending'
-                    let paymentMethod = 'pending';
-                    if (booking.paymentMethod) {
-                        paymentMethod = booking.paymentMethod.toLowerCase();
-                    } else if (booking.payment?.stripeSessionId) {
-                        paymentMethod = 'stripe';
-                    } else if (
-                        booking.status?.toLowerCase() === 'confirmed' ||
-                        booking.status?.toLowerCase() === 'paid'
-                    ) {
-                        paymentMethod = 'stripe'; // Legacy bookings trước khi có field paymentMethod
-                    }
-
-                    return {
-                        id: booking._id,
-                        userId: booking.userId,
-                        userName: booking.contactDetails?.fullName || 'N/A',
-                        userEmail: booking.contactDetails?.email || 'N/A',
-                        userPhone: booking.contactDetails?.phone || 'N/A',
-                        hotelId: booking.hotelId,
-                        hotelName: booking.bookingSnapshot?.hotel?.name || 'Unknown Hotel',
-                        hotelImage: booking.bookingSnapshot?.hotel?.image || '',
-                        hotelAddress: booking.bookingSnapshot?.hotel?.address || '',
-                        checkIn: booking.checkIn,
-                        checkOut: booking.checkOut,
-                        nights: booking.nights,
-                        totalPrice: booking.totalPrice,
-                        status: booking.status.toLowerCase(),
-                        paymentMethod: paymentMethod,
-                        createdAt: booking.createdAt,
-                    };
-                });
-
-                setBookings(transformedBookings);
-            } catch (error) {
-                console.error('Error fetching bookings:', error);
+                const data = await getAllBookingsFromPostgres();
+                setBookings(data);
+            } catch (error: any) {
+                console.error('❌ Error fetching bookings from PostgreSQL:', error);
                 setBookings([]);
             } finally {
                 setIsLoading(false);
@@ -85,7 +28,7 @@ export function PaymentsTableWrapper() {
         };
 
         fetchBookings();
-    }, [getToken]);
+    }, []);
 
     // Debounce search
     const debouncedSearch = useMemo(

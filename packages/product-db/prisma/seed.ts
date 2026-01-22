@@ -202,7 +202,7 @@ async function main() {
   console.log(`✨ Đang xử lý ${interactionsData.length} Interactions...`);
 
   const existingUserIds = new Set(
-    (await prisma.user.findMany({ select: { id: true } })).map((u) => u.id)
+    (await prisma.user.findMany({ select: { id: true } })).map((u) => u.id),
   );
 
   for (const interaction of interactionsData) {
@@ -231,13 +231,17 @@ async function main() {
         const checkInDate = new Date(timestamp);
         const checkOutDate = new Date(checkInDate);
         checkOutDate.setDate(checkOutDate.getDate() + 2);
-        const totalPrice = metadata?.totalPrice || 2000000;
+        const totalPrice = metadata?.amount || 2000000;
 
         const realUser = userMap.get(userId);
         const guestName = realUser ? realUser.name : "Guest Unknown";
         const guestEmail = realUser ? realUser.email : `${userId}@example.com`;
         const guestPhone = realUser ? realUser.phone : "0909000000";
-
+        // Random chọn phương thức thanh toán
+        const methods = Object.values(PaymentMethod);
+        const randomIndex = Math.floor(Math.random() * methods.length);
+        const randomPaymentMethod =
+          methods[randomIndex] || PaymentMethod.STRIPE;
         // Random trạng thái thanh toán
         const rand = Math.random();
         let status: BookingStatus = BookingStatus.COMPLETED;
@@ -270,7 +274,7 @@ async function main() {
             totalAmount: totalPrice,
             status: status,
             paymentStatus: paymentStatus,
-            paymentMethod: PaymentMethod.STRIPE,
+            paymentMethod: randomPaymentMethod,
             createdAt: new Date(timestamp),
             // Nếu bảng Booking của bạn có cột sessionId, hãy thêm vào đây:
             // sessionId: sessionId

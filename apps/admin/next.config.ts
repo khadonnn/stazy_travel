@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
     devIndicators: {
         position: 'bottom-right', // ẩn icon build ở góc trái dưới
     },
+    //  FIX: Exclude Prisma khỏi bundling để tránh warning spam
+    serverExternalPackages: ['@prisma/client', '@prisma/engines'],
+    // Tắt source maps để tránh warning với mongoose
+    productionBrowserSourceMaps: false,
     images: {
         remotePatterns: [
             {

@@ -19,8 +19,8 @@ export type Booking = {
     checkOut: string;
     nights: number;
     totalPrice: number;
-    status: 'pending' | 'confirmed' | 'cancelled' | 'paid';
-    paymentMethod: 'stripe' | 'visa' | 'vnpay' | 'momo' | 'pending';
+    status: 'pending' | 'confirmed' | 'cancelled' | 'completed'; // ✅ Match BookingStatus enum
+    paymentMethod: 'stripe' | 'paypal' | 'vnpay' | 'bank_transfer' | 'cash_on_checkin' | 'pending'; // ✅ Match PaymentMethod enum (lowercase)
     createdAt: string;
 };
 
@@ -133,7 +133,7 @@ export const columns: ColumnDef<Booking>[] = [
         accessorKey: 'status',
         header: () => <div className="text-center">Status</div>,
         cell: ({ row }) => {
-            const status = row.getValue('status');
+            const status = row.getValue('status') as string;
 
             return (
                 <div className="flex justify-center">
@@ -142,11 +142,11 @@ export const columns: ColumnDef<Booking>[] = [
                             'w-max rounded-full px-3 py-1 text-xs font-medium',
                             status === 'pending' && 'bg-yellow-500/20 text-yellow-700',
                             status === 'confirmed' && 'bg-blue-500/20 text-blue-700',
-                            status === 'paid' && 'bg-green-500/20 text-green-700',
+                            status === 'completed' && 'bg-green-500/20 text-green-700',
                             status === 'cancelled' && 'bg-red-500/20 text-red-700',
                         )}
                     >
-                        {(status as string).toUpperCase()}
+                        {status.toUpperCase()}
                     </div>
                 </div>
             );
@@ -158,30 +158,25 @@ export const columns: ColumnDef<Booking>[] = [
         header: () => <div className="text-center">Payment Method</div>,
         cell: ({ row }) => {
             const method = row.getValue('paymentMethod') as string;
+
             const methodColors = {
                 stripe: 'bg-purple-100 text-purple-700',
-                visa: 'bg-blue-100 text-blue-700',
+                paypal: 'bg-blue-100 text-blue-700',
                 vnpay: 'bg-orange-100 text-orange-700',
-                momo: 'bg-pink-100 text-pink-700',
-                pending: 'bg-gray-100 text-gray-700',
+                bank_transfer: 'bg-green-100 text-green-700',
+                cash_on_checkin: 'bg-gray-100 text-gray-700',
+                pending: 'bg-yellow-100 text-yellow-700',
             };
-            const methodIcons = {
-                stripe: '',
-                visa: '',
-                vnpay: '',
-                momo: '',
-                pending: '',
-            };
+
             return (
                 <div className="flex justify-center">
                     <span
                         className={cn(
-                            'inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium',
+                            'rounded-full px-3 py-1 text-xs font-medium',
                             methodColors[method as keyof typeof methodColors] || 'bg-gray-100 text-gray-700',
                         )}
                     >
-                        <span>{methodIcons[method as keyof typeof methodIcons] || ''}</span>
-                        <span className="capitalize">{method}</span>
+                        {method.replace(/_/g, ' ').toUpperCase()}
                     </span>
                 </div>
             );

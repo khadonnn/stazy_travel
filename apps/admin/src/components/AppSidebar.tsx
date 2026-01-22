@@ -68,6 +68,46 @@ const SOCKET_URL = 'http://localhost:3005';
 // URL API của Booking Service (8001) để lấy số liệu ban đầu
 const API_URL = process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || 'http://localhost:8001';
 
+// --- HELPER: FETCH VỚI TIMEOUT & RETRY ---
+const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeout = 5000) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
+    try {
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal,
+        });
+        clearTimeout(id);
+        return response;
+    } catch (error) {
+        clearTimeout(id);
+        throw error;
+    }
+};
+
+const fetchWithRetry = async (url: string, retries = 3, timeout = 5000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetchWithTimeout(url, {}, timeout);
+            if (response.ok) {
+                return response;
+            }
+            // Nếu không ok, thử lại
+            if (i < retries - 1) {
+                await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
+            }
+        } catch (error) {
+            if (i === retries - 1) {
+                throw error; // Throw ở lần cuối
+            }
+            // Retry với backoff
+            await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
+        }
+    }
+    throw new Error('Max retries reached');
+};
+
 const items = [
     { title: 'Home', url: '/', icon: Home },
     { title: 'Analytics', url: '/analytics', icon: ChartSpline },
@@ -96,19 +136,26 @@ const AppSidebar = () => {
     useEffect(() => {
         const fetchAllStats = async () => {
             try {
-                // Fetch messages từ MongoDB
-                const messagesRes = await fetch(`${API_URL}/messages/stats/unread`);
-                if (messagesRes.ok) {
+                // Fetch messages từ MongoDB với timeout & retry
+                try {
+                    const messagesRes = await fetchWithRetry(`${API_URL}/messages/stats/unread`, 3, 5000);
                     const data = await messagesRes.json();
                     setUnreadCount(data.count || 0);
+                } catch (msgError) {
+                    console.warn('⚠️ Không thể kết nối booking-service (messages), giữ nguyên giá trị cũ');
+                    // Không set 0 để tránh reset badge
                 }
 
                 // Fetch pending counts từ PostgreSQL
-                const counts = await getAllPendingCounts();
-                setPendingAuthorRequests(counts.authorRequests);
-                setPendingHotelApprovals(counts.hotels);
+                try {
+                    const counts = await getAllPendingCounts();
+                    setPendingAuthorRequests(counts.authorRequests);
+                    setPendingHotelApprovals(counts.hotels);
+                } catch (pgError) {
+                    console.warn('⚠️ Không thể lấy pending counts từ PostgreSQL');
+                }
             } catch (error) {
-                console.error('⚠️ Lỗi lấy thống kê:', error);
+                console.error('⚠️ Lỗi tổng thể khi lấy thống kê:', error);
             }
         };
 

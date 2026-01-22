@@ -19,14 +19,14 @@ app.use(
       "http://localhost:3000",
     ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
       "Authorization",
       "X-Requested-With",
       "clerk-db-auth-token", // Thêm nếu dùng Clerk
     ],
-  })
+  }),
 );
 
 // 2. Middleware cơ bản

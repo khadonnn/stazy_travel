@@ -30,14 +30,13 @@ app.use(
     exposeHeaders: ["Content-Length", "X-Kuma-Revision"],
     maxAge: 600,
     credentials: true,
-  })
+  }),
 );
 
 app.options("*", (c) => c.body(null, 204));
 
-// 2. Webhook Route (Quan trọng: Đặt trước Clerk Middleware)
-// Lý do: Webhook Stripe gọi từ Server-to-Server, không có User Token -> Không qua Clerk
-app.route("/webhooks", webhookRoute);
+// 2. Public Routes (Đặt trước Clerk Middleware)
+app.route("/webhooks", webhookRoute); // Webhook Stripe không cần auth
 
 // 3. Middleware Auth (Chỉ áp dụng cho các route bên dưới)
 app.use("*", clerkMiddleware());
@@ -57,9 +56,9 @@ app.get("/test", shouldBeUser, (c) => {
   });
 });
 
-// 4. Các Route nghiệp vụ
+// 4. Protected Routes (Cần auth)
+app.route("/sessions", sessionRoute); // Session cần userId từ Clerk
 app.route("/vnpay", paymentRoute);
-app.route("/sessions", sessionRoute);
 
 // --- START SERVER ---
 const start = async () => {
@@ -72,12 +71,12 @@ const start = async () => {
       producer
         .connect()
         .then(() =>
-          console.log("✅ Kafka Producer Connected (Ready to send emails)")
+          console.log("✅ Kafka Producer Connected (Ready to send emails)"),
         ),
       consumer
         .connect()
         .then(() =>
-          console.log("✅ Kafka Consumer Connected (Ready to create products)")
+          console.log("✅ Kafka Consumer Connected (Ready to create products)"),
         ),
     ]);
 

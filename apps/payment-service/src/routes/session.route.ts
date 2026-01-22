@@ -11,6 +11,7 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
   try {
     // Ép kiểu body theo FullPaymentData
     const body = (await c.req.json()) as FullPaymentData;
+    console.log("📝 Received payment request:", { userId: c.get("userId"), items: body.items?.length });
     const { items, user, checkInDate, checkOutDate } = body;
     const userId = c.get("userId");
 

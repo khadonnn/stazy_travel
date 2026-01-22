@@ -13,11 +13,11 @@ import { getDailyStats } from '@/app/(dashboard)/actions/get-daily-stats';
 const chartConfig = {
     bookings: {
         label: 'Đơn thành công',
-        color: 'hsl(var(--chart-2))', // Màu xanh (Cyan/Teal)
+        color: '#10b981', // Màu xanh lá emerald-500
     },
     cancels: {
         label: 'Đơn hủy',
-        color: 'hsl(var(--destructive))', // Màu đỏ
+        color: '#ef4444', // Màu đỏ red-500
     },
 } satisfies ChartConfig;
 
@@ -75,13 +75,13 @@ export function AppAreaChart() {
                     <defs>
                         {/* Gradient cho Bookings */}
                         <linearGradient id="fillBookings" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="var(--color-bookings)" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="var(--color-bookings)" stopOpacity={0.1} />
+                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.9} />
+                            <stop offset="95%" stopColor="#10b981" stopOpacity={0.2} />
                         </linearGradient>
                         {/* Gradient cho Cancels */}
                         <linearGradient id="fillCancels" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="var(--color-cancels)" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="var(--color-cancels)" stopOpacity={0.1} />
+                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.9} />
+                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0.2} />
                         </linearGradient>
                     </defs>
 
@@ -90,8 +90,9 @@ export function AppAreaChart() {
                         dataKey="bookings"
                         type="natural"
                         fill="url(#fillBookings)"
-                        fillOpacity={0.4}
-                        stroke="var(--color-bookings)"
+                        fillOpacity={0.6}
+                        stroke="#10b981"
+                        strokeWidth={2}
                         stackId="1"
                     />
 
@@ -100,8 +101,9 @@ export function AppAreaChart() {
                         dataKey="cancels"
                         type="natural"
                         fill="url(#fillCancels)"
-                        fillOpacity={0.4}
-                        stroke="var(--color-cancels)"
+                        fillOpacity={0.6}
+                        stroke="#ef4444"
+                        strokeWidth={2}
                         stackId="2"
                     />
                 </AreaChart>

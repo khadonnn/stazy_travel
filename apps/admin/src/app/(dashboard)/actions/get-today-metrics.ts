@@ -1,13 +1,16 @@
 'use server';
 
 // 1. Import MongoDB Model (để lấy doanh thu)
-import { Booking } from '@repo/booking-db';
+import { Booking, connectBookingDB } from '@repo/booking-db';
 // 2. Import Prisma & Enum (để lấy views từ Postgres)
 import { prisma, InteractionType } from '@repo/product-db';
 import { startOfDay, endOfDay } from 'date-fns';
 
 export async function getTodayMetrics() {
     try {
+        // Connect to MongoDB first
+        await connectBookingDB();
+        
         const start = startOfDay(new Date()); // 00:00 hôm nay
         const end = endOfDay(new Date()); // 23:59 hôm nay
 

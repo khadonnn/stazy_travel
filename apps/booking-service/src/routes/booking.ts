@@ -142,11 +142,23 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
 
   // 3. API ADMIN (Xem tất cả)
   fastify.get(
-    "/bookings",
+    "/", // 🔥 Đổi từ "/bookings" thành "/" vì đã có prefix /bookings ở index.ts
     { preHandler: shouldBeAdmin }, // Nhớ bật lại auth admin
     async (request, reply) => {
       const bookings = await Booking.find().sort({ createdAt: -1 });
       return reply.send(bookings);
+    },
+  );
+
+  // 3.5 API LẤY 5 BOOKING MỚI NHẤT (For Recent Bookings Widget)
+  fastify.get(
+    "/recent",
+    // Không cần auth vì đây là public stats
+    async (request, reply) => {
+      const recentBookings = await Booking.find()
+        .sort({ createdAt: -1 })
+        .limit(5);
+      return reply.send(recentBookings);
     },
   );
 

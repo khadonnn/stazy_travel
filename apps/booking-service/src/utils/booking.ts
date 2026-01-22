@@ -3,6 +3,95 @@ import { producer } from "./kafka";
 // 🔥 1. Import Redlock từ file cấu hình ở bước trước
 import { redlock } from "../utils/redis";
 import crypto from "crypto";
+import { prisma } from "@repo/product-db"; // Thêm Prisma để sync PostgreSQL
+
+// =========================================================
+// 🔥 HÀM SYNC BOOKING SANG POSTGRESQL
+// =========================================================
+const syncBookingToPostgres = async (mongoBooking: any) => {
+  try {
+    const userId = mongoBooking.userId;
+    const hotelId = Number(mongoBooking.hotelId);
+    const contactDetails = mongoBooking.contactDetails || {};
+    const guestCount = mongoBooking.guestCount || {};
+    const totalPrice = Number(mongoBooking.totalPrice || 0);
+    const nights = Number(mongoBooking.nights || 1);
+    const basePrice = nights > 0 ? totalPrice / nights : totalPrice;
+
+    // Map status từ MongoDB sang PostgreSQL enum
+    let pgStatus: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" =
+      "PENDING";
+    if (
+      mongoBooking.status === "CONFIRMED" ||
+      mongoBooking.payment?.status === "PAID"
+    ) {
+      pgStatus = "CONFIRMED";
+    } else if (mongoBooking.status === "CANCELLED") {
+      pgStatus = "CANCELLED";
+    } else if (mongoBooking.status === "COMPLETED") {
+      pgStatus = "COMPLETED";
+    }
+
+    // Map paymentStatus enum (PENDING, SUCCEEDED, FAILED, REFUNDED)
+    let pgPaymentStatus: "PENDING" | "SUCCEEDED" | "FAILED" | "REFUNDED" =
+      "PENDING";
+    if (mongoBooking.payment?.status === "PAID") {
+      pgPaymentStatus = "SUCCEEDED";
+    }
+
+    // Upsert vào PostgreSQL
+    await prisma.booking.upsert({
+      where: { id: mongoBooking.bookingId },
+      create: {
+        id: mongoBooking.bookingId,
+        userId: userId,
+        hotelId: hotelId,
+        guestName: contactDetails.fullName || "Guest",
+        guestEmail: contactDetails.email || "guest@example.com",
+        guestPhone: contactDetails.phone || "",
+        adults: Number(guestCount.adults || 1),
+        children: Number(guestCount.children || 0),
+        checkIn: new Date(mongoBooking.checkIn),
+        checkOut: new Date(mongoBooking.checkOut),
+        nights: nights,
+        basePrice: basePrice,
+        discount: 0,
+        totalAmount: totalPrice,
+        currency: "VND",
+        paymentMethod: "STRIPE",
+        paymentStatus: pgPaymentStatus,
+        paymentIntentId:
+          mongoBooking.payment?.paymentIntentId ||
+          mongoBooking.payment?.stripeSessionId ||
+          null,
+        status: pgStatus,
+      },
+      update: {
+        status: pgStatus,
+        paymentStatus: pgPaymentStatus,
+        guestName: contactDetails.fullName || "Guest",
+        guestEmail: contactDetails.email || "guest@example.com",
+        guestPhone: contactDetails.phone || "",
+        adults: Number(guestCount.adults || 1),
+        children: Number(guestCount.children || 0),
+        nights: nights,
+        basePrice: basePrice,
+        totalAmount: totalPrice,
+        paymentIntentId:
+          mongoBooking.payment?.paymentIntentId ||
+          mongoBooking.payment?.stripeSessionId ||
+          null,
+        updatedAt: new Date(),
+      },
+    });
+
+    console.log(`🔄 Synced booking ${mongoBooking.bookingId} to PostgreSQL`);
+  } catch (error: any) {
+    console.error("❌ Sync to PostgreSQL failed:", error.message);
+    throw error;
+  }
+};
+
 // =========================================================
 // 🔥 HÀM MỚI: TẠO BOOKING (CÓ REDIS LOCK)
 // Gọi hàm này ở Controller khi User bấm "Đặt phòng"
@@ -63,6 +152,17 @@ export const createBooking = async (userId: string, bookingData: any) => {
       email: "test@example.com", // Hoặc lấy từ user info
       amount: totalAmount,
     });
+
+    // 🔥 AUTO-SYNC SANG POSTGRESQL NGAY KHI TẠO BOOKING (PENDING)
+    try {
+      await syncBookingToPostgres(newBooking);
+      console.log(
+        `🔄 Auto-synced PENDING booking ${newBooking.bookingId} to PostgreSQL`,
+      );
+    } catch (syncError: any) {
+      console.error("⚠️ Auto-sync failed:", syncError.message);
+      // Không throw để không fail booking creation
+    }
 
     return newBooking;
   } catch (error: any) {
@@ -228,6 +328,15 @@ export const updateBookingStatusToPaid = async (
     );
 
     console.log(`✅ [Service] ĐÃ LƯU MONGODB THÀNH CÔNG!`);
+
+    // 🔥 SYNC SANG POSTGRESQL (Quan trọng để hiển thị Recent Bookings trên Admin)
+    try {
+      await syncBookingToPostgres(result);
+      console.log(`✅ [Service] ĐÃ SYNC SANG POSTGRESQL!`);
+    } catch (syncError: any) {
+      console.error("⚠️ [Service] Lỗi sync PostgreSQL:", syncError.message);
+      // Không throw error để không fail toàn bộ quá trình
+    }
 
     return result;
   } catch (error: any) {

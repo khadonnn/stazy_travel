@@ -81,11 +81,18 @@ const StripePaymentForm = ({ bookingInfo }: StripePaymentFormProps) => {
         body: JSON.stringify(payload),
       }
     );
+    
     if (!res.ok) {
-      const errorData = await res.json();
-      console.error("Backend Error:", errorData);
-      // Throw lỗi để Stripe Provider biết mà dừng lại, hoặc return null
-      throw new Error(errorData.error || "Failed to create session");
+      const contentType = res.headers.get("content-type");
+      if (contentType?.includes("application/json")) {
+        const errorData = await res.json();
+        console.error("Backend Error:", errorData);
+        throw new Error(errorData.error || "Failed to create session");
+      } else {
+        const errorText = await res.text();
+        console.error("Backend Error (non-JSON):", errorText);
+        throw new Error(`Payment service error: ${res.status} ${res.statusText}`);
+      }
     }
 
     const data = await res.json();

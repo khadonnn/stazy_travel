@@ -46,8 +46,8 @@ fastify.get("/test", { preHandler: shouldBeUser }, (request, reply) => {
 });
 
 // Đăng ký Routes
-fastify.register(bookingRoute);
-fastify.register(messageRoute);
+fastify.register(bookingRoute, { prefix: "/bookings" }); // 🔥 Thêm prefix
+fastify.register(messageRoute, { prefix: "/messages" });
 fastify.register(availabilityRoutes);
 
 const start = async () => {

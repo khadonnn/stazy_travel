@@ -6,46 +6,35 @@ import { columns, User } from './columns';
 import { DataTable } from './data-table';
 import { Search, Loader2 } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
+import { useQuery } from '@tanstack/react-query';
 
 const PRODUCT_API = process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL;
 
 export function UsersTableWrapper() {
     const { getToken } = useAuth();
-    const [users, setUsers] = useState<User[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [searchText, setSearchText] = useState('');
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                setIsLoading(true);
-                const token = await getToken();
-                // Fetch tất cả users với limit = 1000 (max từ API là 100 per request)
-                // Hoặc có thể fetch nhiều pages nếu cần
-                const response = await fetch(`${PRODUCT_API}/users?limit=100&page=1`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                    cache: 'no-store',
-                });
+    const { data: users = [], isLoading } = useQuery<User[]>({
+        queryKey: ['users'], // Add queryKey for invalidation
+        queryFn: async () => {
+            const token = await getToken();
+            const response = await fetch(`${PRODUCT_API}/users?limit=100&page=1`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                cache: 'no-store',
+            });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch users');
-                }
-
-                const result = await response.json();
-                console.log('Fetched users:', result.data?.length, 'Total:', result.pagination?.total);
-                setUsers(result.data || []);
-            } catch (error) {
-                console.error('Failed to fetch users:', error);
-                setUsers([]);
-            } finally {
-                setIsLoading(false);
+            if (!response.ok) {
+                throw new Error('Failed to fetch users');
             }
-        };
 
-        fetchUsers();
-    }, [getToken]);
+            const result = await response.json();
+            console.log('Fetched users:', result.data?.length, 'Total:', result.pagination?.total);
+            return result.data || [];
+        },
+        staleTime: 30000, // Cache for 30s
+    });
 
     const debouncedSearch = useMemo(
         () =>

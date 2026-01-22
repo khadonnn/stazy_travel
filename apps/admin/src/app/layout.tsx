@@ -6,6 +6,7 @@ import { viVN } from '@clerk/localizations';
 import { ClerkProvider } from '@clerk/nextjs';
 import QueryProvider from './providers';
 import AdminSocketListener from '@/components/socket/AdminSocketListener';
+import { Toaster } from '@/components/ui/sonner';
 const geistSans = Geist({
     variable: '--font-geist-sans',
     subsets: ['latin'],
@@ -41,6 +42,7 @@ export default async function RootLayout({
                     <QueryProvider>
                         <AdminSocketListener />
                         {children}
+                        <Toaster position="top-right" richColors />
                     </QueryProvider>
                 </body>
             </html>

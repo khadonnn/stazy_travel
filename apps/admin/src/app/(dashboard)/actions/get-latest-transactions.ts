@@ -1,42 +1,40 @@
 'use server';
 
-import { prisma } from '@repo/product-db';
+import { unstable_noStore as noStore } from 'next/cache';
+
+// 🔥 Fetch từ MongoDB qua Booking Service API
+const BOOKING_API = process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || 'http://localhost:8001';
 
 export async function getLatestTransactions() {
+    noStore(); // Disable Next.js cache để luôn lấy data mới nhất
+
     try {
-        const bookings = await prisma.booking.findMany({
-            take: 5, // Lấy 5 giao dịch gần nhất
-            orderBy: {
-                createdAt: 'desc',
-            },
-            include: {
-                user: {
-                    select: {
-                        name: true,
-                        avatar: true,
-                    },
-                },
-                hotel: {
-                    select: {
-                        roomName: true,
-                    },
-                },
+        // Fetch từ MongoDB (real-time bookings)
+        const response = await fetch(`${BOOKING_API}/bookings/recent`, {
+            cache: 'no-store',
+            headers: {
+                'Content-Type': 'application/json',
             },
         });
 
-        // Map dữ liệu từ Prisma sang format mà UI của bạn đang dùng
-        return bookings.map((b) => ({
-            id: b.id,
-            hotelTitle: b.hotel ? b.hotel.roomName : 'Unknown Hotel',
-            customerName: b.user ? b.user.name : 'Anonymous',
-            customerAvatar: b.user && b.user.avatar ? b.user.avatar : 'https://github.com/shadcn.png',
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
 
-            amount: Number(b.totalAmount),
+        const bookings = await response.json();
+
+        // Map dữ liệu từ MongoDB sang format UI
+        return bookings.slice(0, 5).map((b: any) => ({
+            id: b._id || b.bookingId,
+            hotelTitle: b.bookingSnapshot?.hotel?.name || 'Unknown Hotel',
+            customerName: b.contactDetails?.fullName || 'Anonymous',
+            customerAvatar: 'https://github.com/shadcn.png', // MongoDB không lưu avatar
+            amount: Number(b.totalPrice),
             status: mapStatus(b.status),
         }));
     } catch (error) {
-        console.error('Error fetching transactions:', error);
-        return []; // Trả về mảng rỗng nếu lỗi để kích hoạt mock data
+        console.error('⚠️ Error fetching recent transactions from MongoDB:', error);
+        return []; // Trả về mảng rỗng để kích hoạt mock data
     }
 }
 

@@ -8,28 +8,50 @@ import { CheckCircle, XCircle, Loader2, ArrowRight } from "lucide-react";
 export default function ReturnPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams?.get("session_id");
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading",
+  );
   const [customerEmail, setCustomerEmail] = useState("");
 
   useEffect(() => {
     if (!sessionId) {
+      console.error("❌ No session_id in URL");
       setStatus("error");
       return;
     }
 
+    const paymentServiceUrl =
+      process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL || "http://localhost:8002";
+    const apiUrl = `${paymentServiceUrl}/sessions/${sessionId}`;
+    console.log("🔍 Fetching session from:", apiUrl);
+    console.log("📌 ENV check:", {
+      NEXT_PUBLIC_PAYMENT_SERVICE_URL:
+        process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL,
+      paymentServiceUrl,
+      sessionId,
+    });
+
     // Gọi Backend để kiểm tra trạng thái Session
-    fetch(`${process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL}/sessions/${sessionId}`)
-      .then((res) => res.json())
+    fetch(apiUrl)
+      .then((res) => {
+        console.log("📡 Response status:", res.status);
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        return res.json();
+      })
       .then((data) => {
+        console.log("✅ Session data received:", data);
         if (data.status === "complete" || data.paymentStatus === "paid") {
           setStatus("success");
           setCustomerEmail(data.customer_email);
         } else {
+          console.warn("⚠️ Payment not complete:", data);
           setStatus("error");
         }
       })
       .catch((err) => {
-        console.error("Error fetching session:", err);
+        console.error("❌ Error fetching session:", err);
         setStatus("error");
       });
   }, [sessionId]);
@@ -50,21 +72,23 @@ export default function ReturnPage() {
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Thanh toán thành công!</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Thanh toán thành công!
+          </h1>
           <p className="text-gray-600 mb-6">
             Cảm ơn bạn đã đặt phòng. Hóa đơn điện tử đã được gửi tới: <br />
             <span className="font-semibold text-gray-800">{customerEmail}</span>
           </p>
-          
+
           <div className="space-y-3">
-            <Link 
-              href="/my-bookings" 
+            <Link
+              href="/my-bookings"
               className="block w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
             >
               Xem lịch sử đặt phòng <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="block w-full text-gray-600 font-medium py-3 hover:bg-gray-50 rounded-lg transition"
             >
               Về trang chủ
@@ -81,12 +105,15 @@ export default function ReturnPage() {
         <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <XCircle className="w-10 h-10 text-red-600" />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Thanh toán thất bại</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          Thanh toán thất bại
+        </h1>
         <p className="text-gray-600 mb-6">
-          Rất tiếc, chúng tôi không thể xác thực giao dịch này hoặc đã xảy ra lỗi.
+          Rất tiếc, chúng tôi không thể xác thực giao dịch này hoặc đã xảy ra
+          lỗi.
         </p>
-        <Link 
-          href="/cart" 
+        <Link
+          href="/cart"
           className="block w-full bg-gray-900 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-800 transition"
         >
           Quay lại giỏ hàng

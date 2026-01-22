@@ -235,8 +235,8 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1
       redlock:
-        specifier: 5.0.0-beta.2
-        version: 5.0.0-beta.2
+        specifier: ^4.2.0
+        version: 4.2.0
     devDependencies:
       '@repo/types':
         specifier: workspace:*
@@ -2754,6 +2754,9 @@ packages:
     resolution: {integrity: sha512-lGe34o6EHj9y3Kts9R4ZYs/Gr+6N7MCaMlIFA3F1R2O5/m7K06AxfSeO5530PEERE6/WyEg3lsuyw4GHlPZHog==}
     engines: {node: ^4.5.0 || >= 5.9}
 
+  bluebird@3.7.2:
+    resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
+
   body-parser@2.2.1:
     resolution: {integrity: sha512-nfDwkulwiZYQIGwxdy0RUmowMhKcFVcYXUU7m4QlKYim1rUtg83xm2yjZ40QjDuc291AJjjeSc9b++AWHSgSHw==}
     engines: {node: '>=18'}
@@ -4085,9 +4088,6 @@ packages:
       sass:
         optional: true
 
-  node-abort-controller@3.1.1:
-    resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
-
   node-cron@4.2.1:
     resolution: {integrity: sha512-lgimEHPE/QDgFlywTd8yTR61ptugX3Qer29efeyWw2rv259HtGBNn1vZVmp8lB9uo9wC0t/AT4iGqXxia+CJFg==}
     engines: {node: '>=6.0.0'}
@@ -4557,9 +4557,9 @@ packages:
     resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
     engines: {node: '>=4'}
 
-  redlock@5.0.0-beta.2:
-    resolution: {integrity: sha512-2RDWXg5jgRptDrB1w9O/JgSZC0j7y4SlaXnor93H/UJm/QyDiFgBKNtrh0TI6oCXqYSaSoXxFh6Sd3VtYfhRXw==}
-    engines: {node: '>=12'}
+  redlock@4.2.0:
+    resolution: {integrity: sha512-j+oQlG+dOwcetUt2WJWttu4CZVeRzUrcVcISFmEmfyuwCVSJ93rDT7YSgg7H7rnxwoRyk/jU46kycVka5tW7jA==}
+    engines: {node: '>=8.0.0'}
 
   reflect.getprototypeof@1.0.10:
     resolution: {integrity: sha512-00o4I+DVrefhv+nX0ulyi3biSHCPDe+yLv5o/p6d/UVlirijB8E16FtfwSAi4g3tcqrQ4lRAqQSoFEZJehYEcw==}
@@ -8088,6 +8088,8 @@ snapshots:
 
   base64id@2.0.0: {}
 
+  bluebird@3.7.2: {}
+
   body-parser@2.2.1:
     dependencies:
       bytes: 3.1.2
@@ -9590,8 +9592,6 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  node-abort-controller@3.1.1: {}
-
   node-cron@4.2.1: {}
 
   node-fetch-native@1.6.7: {}
@@ -10050,9 +10050,9 @@ snapshots:
     dependencies:
       redis-errors: 1.2.0
 
-  redlock@5.0.0-beta.2:
+  redlock@4.2.0:
     dependencies:
-      node-abort-controller: 3.1.1
+      bluebird: 3.7.2
 
   reflect.getprototypeof@1.0.10:
     dependencies:
