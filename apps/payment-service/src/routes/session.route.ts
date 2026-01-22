@@ -11,7 +11,10 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
   try {
     // Ép kiểu body theo FullPaymentData
     const body = (await c.req.json()) as FullPaymentData;
-    console.log("📝 Received payment request:", { userId: c.get("userId"), items: body.items?.length });
+    console.log("📝 Received payment request:", {
+      userId: c.get("userId"),
+      items: body.items?.length,
+    });
     const { items, user, checkInDate, checkOutDate } = body;
     const userId = c.get("userId");
 
@@ -124,7 +127,7 @@ sessionRoute.get("/my-bookings", shouldBeUser, async (c) => {
     });
     const userBookings = sessions.data.filter(
       (session) =>
-        session.metadata?.userId === userId && session.status === "complete"
+        session.metadata?.userId === userId && session.status === "complete",
     );
     const formattedData = userBookings.map((session) => {
       const item = session.line_items?.data[0];

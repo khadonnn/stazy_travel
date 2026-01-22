@@ -18,7 +18,7 @@ import {
 // Khởi tạo Stripe Promise (Nên để key trong .env)
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
-    "pk_test_51SkJmRGhV6hFSq0deC4vKHdq8fcEjA2XmNZE2KtE3rsJEGnOh4up0LeZnSZuczBFyTd4X0KIfyA1XhmeLYyGmtWB00M6JAwwPA"
+    "pk_test_51SkJmRGhV6hFSq0deC4vKHdq8fcEjA2XmNZE2KtE3rsJEGnOh4up0LeZnSZuczBFyTd4X0KIfyA1XhmeLYyGmtWB00M6JAwwPA",
 );
 
 interface StripePaymentFormProps {
@@ -51,7 +51,7 @@ const StripePaymentForm = ({ bookingInfo }: StripePaymentFormProps) => {
       paymentData: {} as PaymentFormInputs,
       totalAmount: items.reduce(
         (sum, item) => sum + item.price * (item.nights || 1),
-        0
+        0,
       ),
       checkInDate: checkInDate
         ? checkInDate.toString()
@@ -79,9 +79,9 @@ const StripePaymentForm = ({ bookingInfo }: StripePaymentFormProps) => {
           Authorization: `Bearer ${token}`, // Gửi token Clerk để backend check 'shouldBeUser'
         },
         body: JSON.stringify(payload),
-      }
+      },
     );
-    
+
     if (!res.ok) {
       const contentType = res.headers.get("content-type");
       if (contentType?.includes("application/json")) {
@@ -91,7 +91,9 @@ const StripePaymentForm = ({ bookingInfo }: StripePaymentFormProps) => {
       } else {
         const errorText = await res.text();
         console.error("Backend Error (non-JSON):", errorText);
-        throw new Error(`Payment service error: ${res.status} ${res.statusText}`);
+        throw new Error(
+          `Payment service error: ${res.status} ${res.statusText}`,
+        );
       }
     }
 

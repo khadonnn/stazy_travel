@@ -10,7 +10,7 @@ export async function getTodayMetrics() {
     try {
         // Connect to MongoDB first
         await connectBookingDB();
-        
+
         const start = startOfDay(new Date()); // 00:00 hôm nay
         const end = endOfDay(new Date()); // 23:59 hôm nay
 
