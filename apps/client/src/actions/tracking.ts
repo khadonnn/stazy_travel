@@ -1,20 +1,23 @@
 "use server";
 
 import { InteractionType, prisma } from "@repo/product-db";
-import { useAuth } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function trackInteraction(
   hotelId: number,
   type: InteractionType,
-  metadata?: any
+  metadata?: any,
 ) {
   try {
-    const { userId } = await useAuth();
-    if (!userId) return;
+    const user = await currentUser();
+    if (!user) {
+      console.log("⚠️ No user, skip tracking");
+      return { success: false };
+    }
 
     await prisma.interaction.create({
       data: {
-        userId,
+        userId: user.id,
         hotelId,
         type,
         metadata: metadata || {},
@@ -22,9 +25,18 @@ export async function trackInteraction(
       },
     });
 
-    // ⚠️ QUAN TRỌNG: Không được return gì cả hoặc return plain object.
-    // ❌ TUYỆT ĐỐI KHÔNG GỌI: revalidatePath("/")
+    // Invalidate AI recommendations cache để update ngay
+    await prisma.recommendation.updateMany({
+      where: { userId: user.id },
+      data: { updatedAt: new Date(0) }, // Set về epoch time để force refresh
+    });
+
+    console.log(
+      `✅ Tracked ${type} interaction for hotel ${hotelId} by user ${user.id}`,
+    );
+    return { success: true };
   } catch (error) {
-    console.error("Tracking error:", error);
+    console.error("❌ Tracking error:", error);
+    return { success: false };
   }
 }

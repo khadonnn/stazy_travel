@@ -10,7 +10,7 @@ export default function HeroSection() {
   const router = useRouter();
 
   return (
-    <div className="mb-20 md:px-0 2xl:px-10 relative mt-20 mx-auto ">
+    <div className="mb-20 md:px-0 2xl:px-10 relative mt-10 mx-auto ">
       <div className="relative overflow-hidden rounded-3xl">
         {/* Background image */}
         <div className="aspect-video relative w-full">

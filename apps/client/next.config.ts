@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Tắt source map warnings trong dev
+  productionBrowserSourceMaps: false,
+
   images: {
     remotePatterns: [
       {

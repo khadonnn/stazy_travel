@@ -4,9 +4,12 @@ import { shouldBeUser } from "./middleware/authMiddleware.js";
 import { connectBookingDB } from "@repo/booking-db";
 import { bookingRoute } from "./routes/booking.js";
 import { messageRoute } from "./routes/message.js";
+import { adminRoute } from "./routes/admin.js";
 import availabilityRoutes from "./routes/availability.js";
 import { producer, consumer } from "./utils/kafka.js"; // Import cả consumer để disconnect
 import { runKafkaSubscriptions } from "./utils/subscriptions.js";
+import { startCronJobs } from "./cron/analyticsJob.js";
+import { startAITrainingJob } from "./cron/aiTrainingJob.js";
 import cors from "@fastify/cors";
 const fastify = Fastify({ logger: true });
 await fastify.register(cors, {
@@ -48,6 +51,7 @@ fastify.get("/test", { preHandler: shouldBeUser }, (request, reply) => {
 // Đăng ký Routes
 fastify.register(bookingRoute, { prefix: "/bookings" }); // 🔥 Thêm prefix
 fastify.register(messageRoute, { prefix: "/messages" });
+fastify.register(adminRoute, { prefix: "/admin" });
 fastify.register(availabilityRoutes);
 
 const start = async () => {
@@ -59,7 +63,11 @@ const start = async () => {
     // 2. Kích hoạt Consumer lắng nghe tin nhắn
     await runKafkaSubscriptions();
 
-    // 3. Start Server
+    // 🔥 3. Start Cron Jobs (Analytics & AI Training)
+    startCronJobs(); // Analytics: Mỗi ngày 00:00
+    startAITrainingJob(); // AI Training: Mỗi ngày 02:00
+
+    // 4. Start Server
     // Quan trọng: host '0.0.0.0' để chạy được trong Docker Container
     const PORT = parseInt(process.env.PORT || "8001");
     await fastify.listen({ port: PORT, host: "0.0.0.0" });

@@ -10,8 +10,10 @@ import type {
 } from "@/types/profile";
 import { IUser } from "@repo/types";
 
-// Cấu hình axios base (nếu chưa có ở nơi khác)
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL || "/api";
+// Tạo axios instance riêng cho auth (không ảnh hưởng global axios)
+const authApi = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "/api",
+});
 
 interface AuthState {
   authUser: IUser | null;
@@ -38,7 +40,7 @@ export const useAuthStore = create<AuthState>()(
       // nhưng nếu bạn cần sync với backend (ví dụ: JWT trong header), bạn có thể dùng:
       checkAuth: async () => {
         try {
-          const res = await axios.get<{ user: IUser }>("/auth/me");
+          const res = await authApi.get<{ user: IUser }>("/auth/me");
           set({ authUser: res.data.user });
         } catch (error) {
           set({ authUser: null });
@@ -48,7 +50,10 @@ export const useAuthStore = create<AuthState>()(
       login: async (payload) => {
         set({ isLoggingIn: true });
         try {
-          const res = await axios.post<{ user: IUser }>("/auth/login", payload);
+          const res = await authApi.post<{ user: IUser }>(
+            "/auth/login",
+            payload,
+          );
           set({ authUser: res.data.user, isLoggingIn: false });
           toast.success("Đăng nhập thành công");
         } catch (err: any) {
@@ -60,9 +65,9 @@ export const useAuthStore = create<AuthState>()(
       signup: async (payload) => {
         set({ isSigningUp: true });
         try {
-          const res = await axios.post<{ user: IUser }>(
+          const res = await authApi.post<{ user: IUser }>(
             "/auth/signup",
-            payload
+            payload,
           );
           set({ authUser: res.data.user, isSigningUp: false });
           toast.success("Đăng ký thành công");
@@ -75,9 +80,9 @@ export const useAuthStore = create<AuthState>()(
       updateProfile: async (payload) => {
         set({ isUpdatingProfile: true });
         try {
-          const res = await axios.patch<{ user: IUser }>(
+          const res = await authApi.patch<{ user: IUser }>(
             "/auth/profile",
-            payload
+            payload,
           );
           set({ authUser: res.data.user, isUpdatingProfile: false });
           toast.success("Cập nhật thành công");
@@ -89,7 +94,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try {
-          await axios.post("/auth/logout");
+          await authApi.post("/auth/logout");
           set({ authUser: null });
         } catch {
           // Dù lỗi, vẫn reset local state để đảm bảo logout
@@ -101,6 +106,6 @@ export const useAuthStore = create<AuthState>()(
       name: "lusxe-auth-storage",
       // Optional: chỉ lưu `authUser` nếu cần (tránh lưu trạng thái loading)
       // partialize: (state) => ({ authUser: state.authUser }),
-    }
-  )
+    },
+  ),
 );

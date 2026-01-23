@@ -1,16 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '@clerk/nextjs';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon, Plus, Trash2 } from 'lucide-react'; // Thêm icon
+import { CalendarIcon, Plus, Trash2, Brain, Loader2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input'; // Cần thêm component Input
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils'; // Utility mặc định của shadcn
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+import { trainAIModel, getTrainingStatus } from '@/actions/aiActions';
 
 // Định nghĩa kiểu dữ liệu cho Todo
 type TodoItem = {
@@ -20,9 +25,12 @@ type TodoItem = {
 };
 
 const TodoList = () => {
+    const { getToken } = useAuth();
     const [date, setDate] = React.useState<Date | undefined>(new Date());
     const [open, setOpen] = React.useState(false);
     const [inputValue, setInputValue] = useState('');
+    const [isTraining, setIsTraining] = useState(false);
+    const [trainingStatus, setTrainingStatus] = useState<any>(null);
 
     // Dữ liệu mẫu ban đầu (hoặc lấy từ API)
     const [todos, setTodos] = useState<TodoItem[]>([
@@ -57,6 +65,42 @@ const TodoList = () => {
         if (e.key === 'Enter') addTodo();
     };
 
+    // Fetch training status khi mount
+    useEffect(() => {
+        const fetchStatus = async () => {
+            const token = await getToken();
+            if (!token) return;
+            const status = await getTrainingStatus(token);
+            setTrainingStatus(status);
+        };
+        fetchStatus();
+    }, [getToken]);
+
+    // Hàm train AI model
+    const handleTrainAI = async () => {
+        setIsTraining(true);
+        const token = await getToken();
+        if (!token) {
+            toast.error('Unauthorized');
+            setIsTraining(false);
+            return;
+        }
+
+        const result = await trainAIModel(token);
+        setIsTraining(false);
+
+        if (result.success) {
+            toast.success(result.data.message, {
+                description: `Interactions: ${result.data.data.totalInteractions}`,
+            });
+            // Refresh status
+            const status = await getTrainingStatus(token);
+            setTrainingStatus(status);
+        } else {
+            toast.error(result.error || 'Training failed');
+        }
+    };
+
     return (
         <div className="flex h-full flex-col">
             <div className="mb-4 flex items-center justify-between">
@@ -81,6 +125,54 @@ const TodoList = () => {
                     </PopoverContent>
                 </Popover>
             </div>
+
+            {/* AI Training Section */}
+            <Card className="mb-4 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 p-4 dark:border-purple-800 dark:from-purple-950/20 dark:to-blue-950/20">
+                <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                        <div className="mb-2 flex items-center gap-2">
+                            <Brain className="h-5 w-5 text-purple-600" />
+                            <h3 className="text-sm font-semibold">AI Recommendation Model</h3>
+                        </div>
+                        {trainingStatus && (
+                            <div className="text-muted-foreground space-y-1 text-xs">
+                                <div className="flex items-center gap-2">
+                                    <Info className="h-3 w-3" />
+                                    <span>
+                                        Total interactions:{' '}
+                                        <Badge variant="secondary">{trainingStatus.totalInteractions}</Badge>
+                                    </span>
+                                </div>
+                                {trainingStatus.lastTrained && (
+                                    <p className="text-[11px]">
+                                        Last trained: {format(new Date(trainingStatus.lastTrained), 'PPp')}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    <Button
+                        size="sm"
+                        onClick={handleTrainAI}
+                        disabled={isTraining}
+                        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                    >
+                        {isTraining ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Training...
+                            </>
+                        ) : (
+                            <>
+                                <Brain className="mr-2 h-4 w-4" />
+                                Train Now
+                            </>
+                        )}
+                    </Button>
+                </div>
+            </Card>
+
+            <Separator className="mb-4" />
 
             {/* Input thêm việc mới */}
             <div className="mb-4 flex gap-2">

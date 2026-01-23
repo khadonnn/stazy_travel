@@ -7,7 +7,7 @@ import { Sparkles } from "lucide-react";
 export default async function PersonalizedSection() {
   const items = await getPersonalizedHotels();
 
-  // Đảm bảo có ít nhất 1 item, nếu không đủ 7 thì grid vẫn tự xếp được nhưng đẹp nhất là đủ 7
+  // Đảm bảo có ít nhất 1 item
   if (!items || items.length === 0) return null;
 
   return (
@@ -15,7 +15,7 @@ export default async function PersonalizedSection() {
       <div className="mb-8 flex items-center gap-2 ml-18">
         <Sparkles className="w-6 h-6 text-yellow-500 fill-yellow-500 animate-pulse" />
         <h2 className="text-3xl font-bold tracking-tight">
-          Gợi ý dành riêng cho bạn
+          Dành riêng cho bạn
         </h2>
       </div>
 

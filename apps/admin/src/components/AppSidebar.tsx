@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { io } from 'socket.io-client';
+import { useAuth } from '@clerk/nextjs';
 import { useNotificationStore } from '@/store/useNotificationStore';
 import { getAllPendingCounts } from '@/actions/statsActions';
 
@@ -86,10 +87,11 @@ const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeout 
     }
 };
 
-const fetchWithRetry = async (url: string, retries = 3, timeout = 5000) => {
+const fetchWithRetry = async (url: string, retries = 3, timeout = 5000, token?: string) => {
     for (let i = 0; i < retries; i++) {
         try {
-            const response = await fetchWithTimeout(url, {}, timeout);
+            const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+            const response = await fetchWithTimeout(url, { headers }, timeout);
             if (response.ok) {
                 return response;
             }
@@ -131,6 +133,7 @@ const AppSidebar = () => {
         setPendingHotelApprovals,
     } = useNotificationStore();
     const pathname = usePathname();
+    const { getToken } = useAuth();
 
     // --- 1. FETCH TẤT CẢ STATS BAN ĐẦU ---
     useEffect(() => {
@@ -138,7 +141,13 @@ const AppSidebar = () => {
             try {
                 // Fetch messages từ MongoDB với timeout & retry
                 try {
-                    const messagesRes = await fetchWithRetry(`${API_URL}/messages/stats/unread`, 3, 5000);
+                    const token = await getToken();
+                    if (!token) {
+                        console.warn('⚠️ Chưa có token, bỏ qua fetch messages');
+                        return;
+                    }
+
+                    const messagesRes = await fetchWithRetry(`${API_URL}/messages/stats/unread`, 3, 5000, token);
                     const data = await messagesRes.json();
                     setUnreadCount(data.count || 0);
                 } catch (msgError) {
@@ -164,7 +173,7 @@ const AppSidebar = () => {
         // Refresh mỗi 30 giây để cập nhật số liệu
         const interval = setInterval(fetchAllStats, 30000);
         return () => clearInterval(interval);
-    }, [setUnreadCount, setPendingAuthorRequests, setPendingHotelApprovals]);
+    }, [setUnreadCount, setPendingAuthorRequests, setPendingHotelApprovals, getToken]);
 
     // --- 2. LẮNG NGHE SOCKET REALTIME ---
     useEffect(() => {

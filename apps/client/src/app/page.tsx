@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 import HeroSection from "@/components/home/hero-section";
 import PersonalizedSection from "@/components/home/personalized-section";
+import AIRecommendationsSection from "@/components/home/ai-recommendations-section";
 import { ExplorePlace } from "@/components/ExplorePlace";
 import StayListing from "@/components/StayListings";
 // Import component FadeIn mới cập nhật
@@ -13,6 +14,7 @@ export default function HomePage() {
       {/* Hero Section: Hiện ngay, không cần delay */}
       <HeroSection />
 
+      {/* Personalized Section: Dựa trên sở thích user (Content-based) */}
       <Suspense
         fallback={
           <FadeIn>
@@ -20,11 +22,17 @@ export default function HomePage() {
           </FadeIn>
         }
       >
-        {/* Section này khá dài, nên dùng threshold thấp (0.2) */}
         <FadeIn threshold={0.2} delay={100}>
           <Suspense fallback={<PersonalizedSkeleton />}>
             <PersonalizedSection />
           </Suspense>
+        </FadeIn>
+      </Suspense>
+
+      {/* AI Recommendations Section: Collaborative Filtering (Chỉ hiện cho user có đủ interactions) */}
+      <Suspense fallback={null}>
+        <FadeIn threshold={0.2} delay={150}>
+          <AIRecommendationsSection />
         </FadeIn>
       </Suspense>
 

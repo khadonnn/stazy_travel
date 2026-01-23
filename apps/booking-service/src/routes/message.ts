@@ -7,7 +7,7 @@ import { Message } from "@repo/booking-db"; // Nhớ export Message model từ b
 export const messageRoute = async (fastify: FastifyInstance) => {
   // 1. API LẤY TIN NHẮN CỦA MỘT USER (Cho cả Admin và User tự xem)
   fastify.get<{ Params: { userId: string } }>(
-    "/messages/:userId",
+    "/:userId",
     async (request, reply) => {
       const { userId } = request.params;
 
@@ -28,7 +28,7 @@ export const messageRoute = async (fastify: FastifyInstance) => {
         return reply.send([]);
       }
       return reply.send(messages);
-    }
+    },
   );
 
   // 2. API ADMIN: LẤY DANH SÁCH USER ĐANG CHAT (Sidebar Admin)
@@ -77,28 +77,28 @@ export const messageRoute = async (fastify: FastifyInstance) => {
       }));
 
       return reply.send(formatted);
-    }
+    },
   );
 
   // 3. API ĐÁNH DẤU ĐÃ ĐỌC (Khi Admin bấm vào chat)
   fastify.post<{ Body: { userId: string } }>(
-    "/messages/mark-read",
+    "/mark-read",
     { preHandler: shouldBeAdmin },
     async (request, reply) => {
       const { userId } = request.body;
 
       await Message.updateMany(
         { userId: userId, sender: "user", isRead: false },
-        { $set: { isRead: true } }
+        { $set: { isRead: true } },
       );
 
       return reply.send({ success: true });
-    }
+    },
   );
 
   // 4. API LẤY TỔNG SỐ TIN NHẮN CHƯA ĐỌC (Badge đỏ ở Menu Admin)
   fastify.get(
-    "/messages/stats/unread",
+    "/stats/unread",
     { preHandler: shouldBeAdmin },
     async (request, reply) => {
       const count = await Message.countDocuments({
@@ -106,6 +106,6 @@ export const messageRoute = async (fastify: FastifyInstance) => {
         isRead: false,
       });
       return reply.send({ count });
-    }
+    },
   );
 };
