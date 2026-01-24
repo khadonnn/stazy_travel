@@ -1,14 +1,11 @@
 import nodemailer from "nodemailer";
 
-// 1. Cấu hình Transporter
+// 1. Cấu hình Transporter với App Password
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    type: "OAuth2",
-    user: process.env.EMAIL_USER, // 🔥 Nên để trong .env (vd: stoppingwave@gmail.com)
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+    user: process.env.EMAIL_USER || "stoppingwave@gmail.com",
+    pass: process.env.GOOGLE_APP_PASSWORD, // App Password từ Google
   },
 });
 

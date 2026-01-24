@@ -6,6 +6,14 @@ import { producer } from "../utils/kafka";
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 const webhookRoute = new Hono();
 
+// Test route để verify webhook endpoint
+webhookRoute.get("/test", (c) => {
+  return c.json({
+    message: "Webhook endpoint is working!",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 webhookRoute.post("/stripe", async (c) => {
   console.log("------------------------------------------------");
   console.log("🔵 [1] Webhook: Có tín hiệu từ Stripe gửi tới!");
@@ -35,7 +43,7 @@ webhookRoute.post("/stripe", async (c) => {
 
     if (!bookingId) {
       console.error(
-        "❌ [LỖI NGHIÊM TRỌNG] Không tìm thấy bookingId trong metadata. Dừng xử lý!"
+        "❌ [LỖI NGHIÊM TRỌNG] Không tìm thấy bookingId trong metadata. Dừng xử lý!",
       );
       return c.json({ received: true });
     }
@@ -76,14 +84,12 @@ webhookRoute.post("/stripe", async (c) => {
         },
       };
 
-      await producer.send("booking-events", {
-        value: kafkaPayload,
-      });
+      await producer.send("booking-events", kafkaPayload);
 
       console.log(`✅ [6] Đã gửi Kafka thành công! Topic: booking-events`);
       console.log(
         `    - Payload gửi đi:`,
-        JSON.stringify(kafkaPayload, null, 2)
+        JSON.stringify(kafkaPayload, null, 2),
       );
     } catch (kafkaError) {
       console.error("❌ [LỖI] Không gửi được Kafka:", kafkaError);

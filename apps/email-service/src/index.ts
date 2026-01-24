@@ -15,7 +15,7 @@ const start = async () => {
       {
         topicName: "user.created",
         topicHandler: async (message) => {
-          const { email, username } = message.value;
+          const { email, username } = message;
           if (email) {
             await sendMail({
               to: email,
@@ -36,14 +36,39 @@ const start = async () => {
       {
         topicName: "booking-events",
         topicHandler: async (message) => {
+          console.log("\n" + "=".repeat(70));
+          console.log("🔔 [KAFKA] Nhận message từ topic: booking-events");
+          console.log("=".repeat(70));
+          console.log("📦 Payload:", JSON.stringify(message, null, 2));
+          console.log("=".repeat(70));
+
           const { email, user, hotel, amount, checkInDate, checkOutDate } =
-            message.value;
+            message;
 
           if (email) {
+            // Format giá tiền
             const formattedPrice = new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
             }).format(amount);
+
+            // Format ngày tháng theo chuẩn Việt Nam
+            const formatDate = (dateString: string) => {
+              try {
+                const date = new Date(dateString);
+                return new Intl.DateTimeFormat("vi-VN", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                }).format(date);
+              } catch (error) {
+                return dateString; // Fallback nếu lỗi
+              }
+            };
+
+            const formattedCheckIn = formatDate(checkInDate);
+            const formattedCheckOut = formatDate(checkOutDate);
 
             await sendMail({
               to: email,
@@ -72,12 +97,12 @@ const start = async () => {
                       <td style="padding: 12px; border: 1px solid #e5e7eb; font-weight: bold; color: #111827;">${hotel}</td>
                     </tr>
                     <tr>
-                      <td style="padding: 12px; border: 1px solid #e5e7eb; color: #374151;">📅 Ngày nhận</td>
-                      <td style="padding: 12px; border: 1px solid #e5e7eb;">${checkInDate}</td>
+                      <td style="padding: 12px; border: 1px solid #e5e7eb; color: #374151;">📅 Ngày nhận phòng</td>
+                      <td style="padding: 12px; border: 1px solid #e5e7eb;">${formattedCheckIn}</td>
                     </tr>
                     <tr>
-                      <td style="padding: 12px; border: 1px solid #e5e7eb; color: #374151;">📅 Ngày trả</td>
-                      <td style="padding: 12px; border: 1px solid #e5e7eb;">${checkOutDate}</td>
+                      <td style="padding: 12px; border: 1px solid #e5e7eb; color: #374151;">📅 Ngày trả phòng</td>
+                      <td style="padding: 12px; border: 1px solid #e5e7eb;">${formattedCheckOut}</td>
                     </tr>
                     <tr style="background-color: #ecfdf5;">
                       <td style="padding: 12px; border: 1px solid #e5e7eb; color: #059669; font-weight: bold;">💰 Tổng tiền</td>
@@ -99,7 +124,14 @@ const start = async () => {
                 </div>
               `,
             });
-            console.log(`📧 Đã gửi mail confirm cho ${email} (kèm Logo)`);
+            console.log("\n✅ [EMAIL SENT] Đã gửi email xác nhận booking");
+            console.log(`   📧 To: ${email}`);
+            console.log(`   🏨 Hotel: ${hotel}`);
+            console.log(`   💰 Amount: ${formattedPrice}`);
+            console.log("=".repeat(70) + "\n");
+          } else {
+            console.warn("⚠️  [WARNING] Không có email để gửi!");
+            console.log("   Payload:", JSON.stringify(message, null, 2));
           }
         },
       },
