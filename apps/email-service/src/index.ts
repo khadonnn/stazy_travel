@@ -3,8 +3,6 @@ import { createConsumer, createKafkaClient } from "@repo/kafka";
 
 const kafka = createKafkaClient("email-service");
 const consumer = createConsumer(kafka, "email-service");
-
-// 🔥 LOGO CỦA BẠN (Đã cập nhật)
 const LOGO_URL =
   "https://res.cloudinary.com/dtj7wfwzu/image/upload/v1768450033/logo_4_ueg3y8.png";
 

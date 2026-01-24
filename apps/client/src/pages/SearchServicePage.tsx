@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 
 // --- 1. ĐỊNH NGHĨA TYPE (Theo yêu cầu của bạn) ---
 export type LocationMap = {
@@ -93,7 +94,7 @@ export default function SearchServicePage() {
           : data.data || [];
         console.log(
           `✅ Đã tải ${hotels.length} khách sạn từ Database.`,
-          hotels
+          hotels,
         );
         setAllHotels(hotels);
       } catch (error) {
@@ -123,7 +124,7 @@ export default function SearchServicePage() {
         console.log("⚠️ Server AI chưa bật, hiển thị data mặc định");
         // Fallback: Lấy 6 cái đầu tiên từ API
         updateUIWithResults(
-          allHotels.slice(0, 6).map((s) => ({ id: s.id, score: 0.9 }))
+          allHotels.slice(0, 6).map((s) => ({ id: s.id, score: 0.9 })),
         );
       } finally {
         setIsSearching(false);
@@ -151,17 +152,17 @@ export default function SearchServicePage() {
     const matchIds = matches.map((m: any) => String(m.id));
     console.log("2. Danh sách ID cần tìm:", matchIds);
     const foundCount = allHotels.filter((h) =>
-      matchIds.includes(String(h.id))
+      matchIds.includes(String(h.id)),
     ).length;
     console.log(
-      `3. Tìm thấy ${foundCount}/${matchIds.length} ID khớp trong Database.`
+      `3. Tìm thấy ${foundCount}/${matchIds.length} ID khớp trong Database.`,
     );
 
     const filteredResults = allHotels
       .filter((stay) => matchIds.includes(String(stay.id)))
       .map((stay) => {
         const matchInfo = matches.find(
-          (m: any) => String(m.id) === String(stay.id)
+          (m: any) => String(m.id) === String(stay.id),
         );
         return {
           id: stay.id,
@@ -179,7 +180,7 @@ export default function SearchServicePage() {
 
     if (filteredResults.length === 0 && matches.length > 0) {
       alert(
-        `LỖI: AI tìm ra ID [${matchIds.slice(0, 3)}...] nhưng Database không có các ID này. Hãy kiểm tra lại Seed!`
+        `LỖI: AI tìm ra ID [${matchIds.slice(0, 3)}...] nhưng Database không có các ID này. Hãy kiểm tra lại Seed!`,
       );
     }
 
@@ -213,7 +214,7 @@ export default function SearchServicePage() {
       // Lọc từ allHotels (đã fetch từ API)
       const localResults = allHotels
         .filter((stay) =>
-          stay.amenities?.some((a) => targetAmenities.includes(a))
+          stay.amenities?.some((a) => targetAmenities.includes(a)),
         )
         .map((stay) => ({
           id: stay.id,
@@ -356,7 +357,7 @@ export default function SearchServicePage() {
     for (const hotel of searchResults) {
       if (
         hotel.amenities?.some((a: string) =>
-          ["beach-view", "sea-view"].includes(a)
+          ["beach-view", "sea-view"].includes(a),
         )
       )
         relevant.add("beach");
@@ -371,21 +372,14 @@ export default function SearchServicePage() {
 
   // --- RENDER UI ---
   return (
-    <div
-      className="min-h-screen text-white p-4 md:p-8"
-      style={{
-        backgroundImage: "url('/assets/AIbg.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-neutral-950 text-white p-4 md:p-8 relative">
+      <BackgroundBeams />
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* === CỘT TRÁI (SEARCH TOOLS) === */}
           <div className="lg:col-span-2 space-y-6 lg:sticky lg:top-8 lg:self-start">
             {/* 1. VISUAL SEARCH CARD */}
-            <div className="bg-gray-800/50 backdrop-blur-md rounded-2xl p-6 border border-gray-700 shadow-2xl">
+            <div className="bg-gray-900/20 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-2xl">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <Upload className="text-blue-400" /> AI Visual Search
               </h2>
@@ -448,13 +442,13 @@ export default function SearchServicePage() {
             </div>
 
             {/* 2. TEXT SEARCH CARD */}
-            <div className="bg-gray-800/50 backdrop-blur-md rounded-2xl p-6 border border-gray-700 shadow-2xl">
+            <div className="bg-gray-900/20 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-2xl">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <Search className="text-purple-400" /> Tìm bằng mô tả
               </h2>
 
               {/* Tags suggestion */}
-              <div className="bg-gray-800/30 rounded-2xl p-6 border border-gray-800 shadow-inner">
+              <div className="bg-gray-800/10 backdrop-blur-md rounded-2xl p-6 border border-gray-700/30 shadow-inner">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <Tag size={16} /> Gợi ý chủ đề nhanh
                 </h3>
@@ -494,7 +488,7 @@ export default function SearchServicePage() {
                     value={searchDescription}
                     onChange={(e) => setSearchDescription(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                    className="w-full px-4 py-3.5 bg-gray-900/50 border border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                    className="w-full px-4 py-3.5 bg-gray-900/20 backdrop-blur-sm border border-gray-700/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none text-white placeholder:text-gray-400"
                     disabled={isLoadingData}
                   />
                   <Sparkles

@@ -47,7 +47,6 @@ import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import type { IUser, IAuthorRequest, IAuthorRequestInput } from "@repo/types";
 import DarkVeil from "@/components/DarkVeil";
-import FloatingLines from "@/components/FloatingLines";
 import {
   submitAuthorRequest,
   getMyAuthorRequest,
@@ -445,19 +444,7 @@ const ProfileUserPage = () => {
   // 7. Render JSX
   return (
     <div className="relative min-h-screen w-full">
-      <div className="absolute inset-0 z-0">
-        <FloatingLines
-          enabledWaves={["top", "middle", "bottom"]}
-          // Array - specify line count per wave; Number - same count for all waves
-          lineCount={5}
-          // Array - specify line distance per wave; Number - same distance for all waves
-          lineDistance={5}
-          bendRadius={5}
-          bendStrength={-0.5}
-          interactive={true}
-          parallax={true}
-        />
-      </div>
+      <div className="absolute inset-0 z-0"></div>
       <div className="relative z-10">
         <div className="max-w-2xl mx-auto p-4 min-h-screen mt-14">
           <div
@@ -613,6 +600,53 @@ const ProfileUserPage = () => {
               {renderAvatarWithInput()}
             </div>
 
+            {/* Hiển thị thông tin */}
+            <div className="space-y-4">
+              {[
+                {
+                  icon: <User className="w-4 h-4" />,
+                  label: "Họ tên",
+                  value: fullName,
+                },
+                {
+                  icon: <UserCircle className="w-4 h-4" />,
+                  label: "Nickname",
+                  value: profile?.nickname,
+                },
+                {
+                  icon: <Mail className="w-4 h-4" />,
+                  label: "Email",
+                  value: email,
+                },
+                {
+                  icon: <Phone className="w-4 h-4" />,
+                  label: "Số điện thoại",
+                  value: profile?.phone,
+                },
+                {
+                  icon: <MapPin className="w-4 h-4" />,
+                  label: "Địa chỉ",
+                  value: profile?.address,
+                },
+                {
+                  icon: <Calendar className="w-4 h-4" />,
+                  label: "Ngày sinh",
+                  value: profile?.dob,
+                },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="grid grid-cols-[auto_1fr] items-center gap-4"
+                >
+                  <span className="flex items-center gap-2 text-md text-gray-400">
+                    {item.icon} {item.label}
+                  </span>
+                  <div className="p-3 rounded-lg text-lg text-white bg-gray-800">
+                    <span className="ml-2">{item.value || "—"}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
             {/* SECTION: Author Request */}
             <div className="border-t border-gray-700 pt-6">
               <div className="flex items-center justify-between mb-4">
@@ -848,54 +882,6 @@ const ProfileUserPage = () => {
                   </Button>
                 </div>
               )}
-            </div>
-
-            {/* Hiển thị thông tin */}
-            <div className="space-y-4">
-              {[
-                {
-                  icon: <User className="w-4 h-4" />,
-                  label: "Họ tên",
-                  value: fullName,
-                },
-                {
-                  icon: <UserCircle className="w-4 h-4" />,
-                  label: "Nickname",
-                  value: profile?.nickname,
-                },
-                {
-                  icon: <Mail className="w-4 h-4" />,
-                  label: "Email",
-                  value: email,
-                },
-                {
-                  icon: <Phone className="w-4 h-4" />,
-                  label: "Số điện thoại",
-                  value: profile?.phone,
-                },
-                {
-                  icon: <MapPin className="w-4 h-4" />,
-                  label: "Địa chỉ",
-                  value: profile?.address,
-                },
-                {
-                  icon: <Calendar className="w-4 h-4" />,
-                  label: "Ngày sinh",
-                  value: profile?.dob,
-                },
-              ].map((item, index) => (
-                <div
-                  key={index}
-                  className="grid grid-cols-[auto_1fr] items-center gap-4"
-                >
-                  <span className="flex items-center gap-2 text-md text-gray-400">
-                    {item.icon} {item.label}
-                  </span>
-                  <div className="p-3 rounded-lg text-lg text-white bg-gray-800">
-                    <span className="ml-2">{item.value || "—"}</span>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>

@@ -17,8 +17,7 @@ import {
 
 // Khởi tạo Stripe Promise (Nên để key trong .env)
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
-    "pk_test_51SkJmRGhV6hFSq0deC4vKHdq8fcEjA2XmNZE2KtE3rsJEGnOh4up0LeZnSZuczBFyTd4X0KIfyA1XhmeLYyGmtWB00M6JAwwPA",
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
 );
 
 interface StripePaymentFormProps {
