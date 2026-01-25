@@ -16,10 +16,13 @@ import {
   Calendar,
   HousePlus,
   GalleryVerticalEnd,
+  Map,
+  BaggageClaim,
 } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs"; //  Clerk hooks
 import Link from "next/link";
 import { useIsAuthor } from "@/hooks/useRole";
+import { SitemapSheet } from "@/components/sitemap/SitemapSheet";
 
 export default function UserSetting() {
   const { user } = useUser(); // Clerk user object
@@ -52,10 +55,17 @@ export default function UserSetting() {
             href={`/profile/${user.id}`} //  dùng user.id từ Clerk
             className="flex items-center gap-2"
           >
-            <User className="h-4 w-4" /> Profile
+            <User className="h-4 w-4" /> Hồ sơ
           </Link>
         </DropdownMenuItem>
-
+        <DropdownMenuItem asChild>
+          <Link
+            href={`/cart`} //  dùng user.id từ Clerk
+            className="flex items-center gap-2"
+          >
+            <BaggageClaim className="h-4 w-4" /> Giỏ hàng
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/my-bookings" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" /> Phòng đã đặt
@@ -78,9 +88,15 @@ export default function UserSetting() {
           </>
         )}
 
-        <DropdownMenuItem>
+        {/* <DropdownMenuItem>
           <Settings className="h-4 w-4" /> Settings
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
+
+        <SitemapSheet trigger="custom">
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <Map className="h-4 w-4" /> Sitemap
+          </DropdownMenuItem>
+        </SitemapSheet>
 
         <DropdownMenuItem
           className="text-destructive"

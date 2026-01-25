@@ -718,7 +718,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
 
         <Separator className="my-6" />
         <Button variant="outline" asChild>
-          <Link href="#">Xem hồ sơ chủ nhà</Link>
+          <Link href={`/host/${author?.id}`}>Xem hồ sơ chủ nhà</Link>
         </Button>
       </div>
     );

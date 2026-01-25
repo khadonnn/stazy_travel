@@ -1,7 +1,7 @@
 "use client";
 import SearchBar from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
-import { BadgeInfo, Bell, Plane } from "lucide-react";
+import { BadgeInfo, Bell, Plane, Map } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -12,6 +12,7 @@ import UserSetting from "@/components/UserSetting";
 import Image from "next/image";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
+import { SitemapSheet } from "@/components/sitemap/SitemapSheet";
 // TEMP
 const Navbar = () => {
   const { isSignedIn, user, isLoaded } = useUser();
@@ -74,6 +75,21 @@ const Navbar = () => {
               <p>Khám phá</p>
             </TooltipContent>
           </Tooltip>
+
+          {/* Sitemap */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <SitemapSheet trigger="custom">
+                <button className="hover:bg-accent rounded-md p-2 transition-colors">
+                  <Map className="w-5 h-5 text-gray-600" />
+                </button>
+              </SitemapSheet>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Sitemap</p>
+            </TooltipContent>
+          </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Bell className="w-5! h-5! text-gray-600" />

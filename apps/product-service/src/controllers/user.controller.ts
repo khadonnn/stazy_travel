@@ -177,6 +177,9 @@ export const getUserById = async (req: Request, res: Response) => {
       });
     }
 
+    console.log("🔍 getUserById - userId:", id);
+    console.log("🔍 includeHotels query:", req.query.includeHotels);
+
     // 🔍 Lấy user — không cần validate định dạng UUID nữa
     const user = await prisma.user.findUnique({
       where: { id: id.trim() }, // trim() phòng trường hợp space thừa
@@ -204,15 +207,31 @@ export const getUserById = async (req: Request, res: Response) => {
             ? {
                 select: {
                   id: true,
+                  slug: true,
                   title: true,
                   address: true,
                   price: true,
+                  featuredImage: true,
+                  reviewStar: true,
+                  reviewCount: true,
+                  maxGuests: true,
+                  bedrooms: true,
+                  status: true,
                 },
-                take: 20,
+                // TẠM BỎ FILTER APPROVED ĐỂ TEST
+                // where: {
+                //   status: "APPROVED",
+                // },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 50, // Giới hạn tối đa 50 hotels
               }
             : false,
       },
     });
+
+    console.log("🏨 Hotels found:", user?.hotels?.length || 0);
 
     if (!user) {
       return res.status(404).json({

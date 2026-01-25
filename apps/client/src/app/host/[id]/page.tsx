@@ -1,47 +1,43 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Briefcase, Calendar, Mail, Phone, Star } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { getRandomBorderColor } from "@/lib/randomColor";
 
-// Giả lập dữ liệu (bạn thay bằng data thật từ API)
-const hostData = {
-  id: "user_seed_1",
-  name: "Kha Don Dev",
-  nickname: "khadon",
-  email: "khadondev@gmail.com",
-  phone: "0999999999",
-  address: "Số 290, Đường Hùng Vương, Huyện Hòa Vang, Long An",
-  avatar: "/khadon.jpg",
-  bgImage:
-    "https://images.unsplash.com/photo-1613339027986-b94d85708995?q=80&w=1074&auto=format&fit=crop",
-  jobName: "Kỹ sư giám sát",
-  desc: "Xin chào, tôi là Kha Don Dev. Yêu thích du lịch và khám phá những vùng đất mới. Rất vui được đón tiếp các bạn tại homestay của tôi.",
-  createdAt: "2026-01-06T11:38:00.205309",
-  hotels: [
-    {
-      id: "hotel_1",
-      name: "Hạnh Nguyễn Homestay - View Núi",
-      image:
-        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800",
-      price: 500000,
-      rating: 4.8,
-      address: "Đà Lạt, Lâm Đồng",
-    },
-    {
-      id: "hotel_2",
-      name: "Căn hộ Studio trung tâm",
-      image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
-      price: 850000,
-      rating: 4.5,
-      address: "Quận 1, TP.HCM",
-    },
-  ],
-};
+const API_URL =
+  process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL || "http://localhost:8000";
+
+interface Hotel {
+  id: number;
+  title: string;
+  address: string;
+  price: number;
+  featuredImage?: string;
+  reviewStar?: number;
+  slug?: string;
+}
+
+interface HostData {
+  id: string;
+  name: string;
+  nickname?: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  avatar?: string;
+  bgImage?: string;
+  jobName?: string;
+  desc?: string;
+  createdAt: string;
+  hotels?: Hotel[];
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -57,17 +53,91 @@ const itemVariants = {
 };
 
 export default function HostProfilePage() {
+  const params = useParams();
+  const userId = params?.id as string;
+
+  const [hostData, setHostData] = useState<HostData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchHostData = async () => {
+      if (!userId) return;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Gọi API lấy user info kèm hotels
+        const response = await axios.get(
+          `${API_URL}/users/${userId}?includeHotels=true`,
+        );
+
+        console.log("🔍 API Response:", response.data);
+        console.log("🏨 Hotels data:", response.data.data?.hotels);
+
+        if (response.data.success) {
+          setHostData(response.data.data);
+        } else {
+          setError("Không tìm thấy thông tin chủ nhà");
+        }
+      } catch (err: any) {
+        console.error("❌ Fetch host error:", err);
+        console.error("❌ Error response:", err.response?.data);
+        setError(
+          err.response?.data?.message || "Lỗi khi tải thông tin chủ nhà",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHostData();
+  }, [userId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-4 h-4 rounded-full bg-primary animate-bounce"></div>
+          <div className="w-4 h-4 rounded-full bg-primary animate-bounce delay-75"></div>
+          <div className="w-4 h-4 rounded-full bg-primary animate-bounce delay-150"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !hostData) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h3 className="text-xl font-semibold mb-2">Không tìm thấy chủ nhà</h3>
+          <p className="text-muted-foreground mb-4">
+            {error || "Vui lòng thử lại sau"}
+          </p>
+          <Button asChild>
+            <Link href="/">Về trang chủ</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const joinDate = new Date(hostData.createdAt).toLocaleDateString("vi-VN", {
     month: "long",
     year: "numeric",
   });
+
+  const defaultBg =
+    "https://images.unsplash.com/photo-1613339027986-b94d85708995?q=80&w=1074&auto=format&fit=crop";
+  const defaultAvatar = "/assets/user2.avif";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* ==================== HERO SECTION ==================== */}
       <div className="relative h-[380px] md:h-[480px] w-full overflow-hidden">
         <img
-          src={hostData.bgImage}
+          src={hostData.bgImage || defaultBg}
           alt="Cover"
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -89,7 +159,7 @@ export default function HostProfilePage() {
             >
               <div className="relative">
                 <img
-                  src={hostData.avatar}
+                  src={hostData.avatar || defaultAvatar}
                   alt={hostData.name}
                   className="w-32 h-32 md:w-44 md:h-44 rounded-full border-4 border-white shadow-2xl object-cover bg-white ring-2 ring-white/40"
                 />
@@ -105,7 +175,7 @@ export default function HostProfilePage() {
                 {hostData.name}
               </h1>
               <p className="text-lg md:text-xl mt-1 opacity-90 font-medium">
-                {hostData.jobName}
+                {hostData.jobName || "Chủ nhà"}
               </p>
             </div>
 
@@ -138,17 +208,19 @@ export default function HostProfilePage() {
                 <CardContent className="p-6">
                   <h2 className="text-2xl font-bold mb-4">Giới thiệu</h2>
                   <p className="text-gray-700 leading-relaxed mb-6">
-                    {hostData.desc}
+                    {hostData.desc || "Chưa có mô tả về chủ nhà."}
                   </p>
 
                   <div className="space-y-4 text-sm">
-                    <div className="flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-muted-foreground" />
-                      <span>{hostData.address}</span>
-                    </div>
+                    {hostData.address && (
+                      <div className="flex items-center gap-3">
+                        <MapPin className="w-5 h-5 text-muted-foreground" />
+                        <span>{hostData.address}</span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-3">
                       <Briefcase className="w-5 h-5 text-muted-foreground" />
-                      <span>{hostData.jobName}</span>
+                      <span>{hostData.jobName || "Chủ nhà"}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Calendar className="w-5 h-5 text-muted-foreground" />
@@ -166,16 +238,16 @@ export default function HostProfilePage() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 text-green-600">
                       <Mail className="w-5 h-5" />
-                      <span className="font-medium">
-                        Email : {hostData.email}
+                      <span className="font-medium text-sm truncate">
+                        {hostData.email}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 text-green-600">
-                      <Phone className="w-5 h-5" />
-                      <span className="font-medium">
-                        Số điện thoại : {hostData.phone}
-                      </span>
-                    </div>
+                    {hostData.phone && (
+                      <div className="flex items-center gap-3 text-green-600">
+                        <Phone className="w-5 h-5" />
+                        <span className="font-medium">{hostData.phone}</span>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -192,58 +264,77 @@ export default function HostProfilePage() {
                 Chỗ nghỉ của chủ nhà
               </h2>
               <Badge variant="secondary" className="text-base px-4 py-1.5">
-                {hostData.hotels.length} chỗ nghỉ
+                {hostData.hotels?.length || 0} chỗ nghỉ
               </Badge>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-              {hostData.hotels.map((hotel) => (
-                <motion.div
-                  key={hotel.id}
-                  variants={itemVariants}
-                  whileHover={{ y: 0, transition: { duration: 0.3 } }}
-                >
-                  <Link href={`/hotels/${hotel.id}`} className="block group">
-                    <Card className="overflow-hidden border-none shadow-md hover:shadow-xl transition-shadow duration-300">
-                      <div className="relative aspect-[4/3] overflow-hidden">
-                        <img
-                          src={hotel.image}
-                          alt={hotel.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <div className="absolute top-3 right-3">
-                          <Badge
-                            variant="secondary"
-                            className="bg-white/90 backdrop-blur-sm flex items-center gap-1 px-2.5 py-1 text-sm font-semibold"
-                          >
-                            <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
-                            {hotel.rating}
-                          </Badge>
-                        </div>
-                      </div>
+            {hostData.hotels && hostData.hotels.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                {hostData.hotels.map((hotel) => {
+                  const borderColor = getRandomBorderColor();
+                  return (
+                    <motion.div
+                      key={hotel.id}
+                      variants={itemVariants}
+                      whileHover={{ y: 0, transition: { duration: 0.3 } }}
+                    >
+                      <Link
+                        href={`/hotels/${hotel.slug || hotel.id}`}
+                        className="block group"
+                      >
+                        <Card
+                          className="overflow-hidden border-8 shadow-md hover:shadow-xl transition-all duration-200"
+                          style={{
+                            borderColor: "transparent",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = `${borderColor}40`;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = "transparent";
+                          }}
+                        >
+                          <div className="relative aspect-[4/3] overflow-hidden">
+                            <img
+                              src={hotel.featuredImage || "/placeholder.jpg"}
+                              alt={hotel.title}
+                              className="w-full h-full object-cover"
+                            />
+                            {hotel.reviewStar && (
+                              <div className="absolute top-3 right-3">
+                                <Badge
+                                  variant="secondary"
+                                  className="bg-white/90 backdrop-blur-sm flex items-center gap-1 px-2.5 py-1 text-sm font-semibold"
+                                >
+                                  <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
+                                  {hotel.reviewStar}
+                                </Badge>
+                              </div>
+                            )}
+                          </div>
 
-                      <CardContent className="p-5">
-                        <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors line-clamp-1">
-                          {hotel.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mb-3">
-                          {hotel.address}
-                        </p>
-                        <div className="font-bold text-xl">
-                          {hotel.price.toLocaleString("vi-VN")}
-                          <span className="text-sm font-normal text-muted-foreground">
-                            {" "}
-                            / đêm
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-
-            {hostData.hotels.length === 0 && (
+                          <CardContent className="p-5">
+                            <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors line-clamp-1">
+                              {hotel.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              {hotel.address}
+                            </p>
+                            <div className="font-bold text-xl">
+                              {Number(hotel.price).toLocaleString("vi-VN")}
+                              <span className="text-sm font-normal text-muted-foreground">
+                                {" "}
+                                / đêm
+                              </span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            ) : (
               <div className="text-center py-16 bg-muted/40 rounded-xl border border-dashed">
                 <p className="text-muted-foreground text-lg">
                   Chủ nhà này hiện chưa có chỗ nghỉ nào được đăng tải.
