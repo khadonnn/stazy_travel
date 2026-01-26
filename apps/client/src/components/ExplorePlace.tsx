@@ -114,7 +114,10 @@ export function ExplorePlace() {
                 </div>
                 <CardContent className="p-3">
                   <h3 className="text-base font-semibold">{place.name}</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p
+                    className="text-sm text-muted-foreground"
+                    suppressHydrationWarning
+                  >
                     {place.count.toLocaleString()}+ phòng
                   </p>
                 </CardContent>

@@ -155,13 +155,30 @@ export default function ChatBox() {
     // B. Gửi cho AI (Python API)
     setIsLoading(true);
     try {
+      // 🔥 Format history để include thông tin hotels
+      const formattedHistory = messages.map((m) => {
+        // Nếu AI message có data.hotels, thêm vào text để AI nhớ context
+        if (m.sender === "ai" && m.data?.hotels && m.data.hotels.length > 0) {
+          const hotelList = m.data.hotels
+            .map(
+              (h, idx) => `${idx + 1}. ${h.title} - ${h.price}đ (${h.address})`,
+            )
+            .join("\n");
+          return {
+            sender: m.sender,
+            text: `${m.text}\n\n[Đã gợi ý các khách sạn:\n${hotelList}]`,
+          };
+        }
+        return { sender: m.sender, text: m.text };
+      });
+
       const res = await fetch(`${AI_SERVICE_URL}/agent/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: trimmedMessage,
           user_id: currentUserId,
-          history: messages.map((m) => ({ sender: m.sender, text: m.text })),
+          history: formattedHistory,
         }),
       });
 

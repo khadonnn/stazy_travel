@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { prisma, Prisma } from "@repo/product-db"; // Giả sử db chung
 import { producer } from "../utils/kafka";
 import { StripeProductType } from "@repo/types";
+import { ensureUserExists } from "../utils/ensure-user";
 
 // 1. GET HOTELS (Lọc nâng cao: Giá, Search, Category, Bedroom, Sort)
 export const getHotels = async (req: Request, res: Response) => {
@@ -197,6 +198,13 @@ export const getHotel = async (req: Request, res: Response) => {
 export const createHotel = async (req: Request, res: Response) => {
   try {
     const data = req.body;
+
+    // 🔥 Ensure user exists before creating hotel
+    if (!data.authorId) {
+      return res.status(400).json({ message: "authorId is required" });
+    }
+
+    await ensureUserExists(data.authorId);
 
     // 1. Lấy User ID từ Token (Giả sử bạn có middleware gán user vào req)
     // const userId = req.user?.id;

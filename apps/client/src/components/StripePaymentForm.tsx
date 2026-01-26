@@ -35,13 +35,24 @@ const StripePaymentForm = ({ bookingInfo }: StripePaymentFormProps) => {
   const fetchClientSecret = useCallback(async () => {
     const token = await getToken();
     const firstItem = items[0];
+
+    // 🔥 Validate email trước khi gửi
+    const userEmail =
+      bookingInfo.email ||
+      user?.primaryEmailAddress?.emailAddress ||
+      user?.emailAddresses?.[0]?.emailAddress;
+
+    if (!userEmail) {
+      console.error("❌ No valid email found!");
+      throw new Error("Vui lòng đăng nhập hoặc nhập email hợp lệ");
+    }
+
     // 1. Chuẩn bị dữ liệu FullPaymentData để gửi lên Backend
     const payload: FullPaymentData = {
       user: {
         id: user?.id, // Có thể undefined nếu là khách vãng lai
-        email:
-          bookingInfo.email || user?.primaryEmailAddress?.emailAddress || "",
-        name: bookingInfo.name || user?.fullName || "",
+        email: userEmail,
+        name: bookingInfo.name || user?.fullName || "Khách hàng",
         phone: bookingInfo.phone || "",
         address: `${bookingInfo.address}, ${bookingInfo.city || ""}`,
       },

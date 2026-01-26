@@ -3,18 +3,22 @@
 import { prisma } from "@repo/product-db";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { ensureUserExists } from "@/lib/auth/ensure-user";
 
 // 1. Kiểm tra user đã có sở thích chưa
 export async function checkUserOnboarding() {
   const user = await currentUser();
   if (!user) return { isOnboarded: true }; // Không login thì coi như xong
 
+  // 🔥 Đảm bảo user tồn tại trong DB
+  await ensureUserExists();
+
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
     include: { preference: true },
   });
 
-  // Nếu user chưa tồn tại trong DB (lỗi sync) hoặc chưa có preference
+  // 🔥 FIX: Nếu user chưa có trong DB → chưa onboard
   if (!dbUser) return { isOnboarded: false };
 
   const hasCategories =
@@ -26,8 +30,23 @@ export async function checkUserOnboarding() {
 
 // 2. Lưu sở thích
 export async function saveUserInterests(categories: string[]) {
+  console.log("🚀 [saveUserInterests] Starting...");
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
+
+  console.log("🔑 [saveUserInterests] Clerk user ID:", user.id);
+
+  // 🔥 Đảm bảo User tồn tại trong DB (dùng helper)
+  console.log("⏳ [saveUserInterests] Calling ensureUserExists...");
+  const dbUser = await ensureUserExists();
+  console.log("📦 [saveUserInterests] ensureUserExists returned:", dbUser);
+
+  if (!dbUser) {
+    console.error("❌ [saveUserInterests] ensureUserExists returned null!");
+    throw new Error("Failed to create user in database");
+  }
+
+  console.log("✅ [saveUserInterests] User exists in DB:", dbUser.id);
 
   await prisma.userPreference.upsert({
     where: { userId: user.id },

@@ -24,36 +24,67 @@ export default function ReturnPage() {
       process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL || "http://localhost:8002";
     const apiUrl = `${paymentServiceUrl}/sessions/${sessionId}`;
     console.log("🔍 Fetching session from:", apiUrl);
-    console.log("📌 ENV check:", {
-      NEXT_PUBLIC_PAYMENT_SERVICE_URL:
-        process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL,
-      paymentServiceUrl,
-      sessionId,
-    });
 
-    // Gọi Backend để kiểm tra trạng thái Session
-    fetch(apiUrl)
-      .then((res) => {
-        console.log("📡 Response status:", res.status);
+    // 🔥 RETRY LOGIC: Thử check 5 lần, mỗi lần cách 2s
+    let retryCount = 0;
+    const maxRetries = 5;
+    const retryDelay = 2000; // 2 seconds
+
+    const checkPaymentStatus = async () => {
+      try {
+        const res = await fetch(apiUrl, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        console.log(
+          `📡 Attempt ${retryCount + 1}/${maxRetries} - Status:`,
+          res.status,
+        );
+
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         }
-        return res.json();
-      })
-      .then((data) => {
-        console.log("✅ Session data received:", data);
+
+        const data = await res.json();
+        console.log("✅ Session data:", data);
+
+        // Check nếu thanh toán thành công
         if (data.status === "complete" || data.paymentStatus === "paid") {
           setStatus("success");
           setCustomerEmail(data.customer_email);
+          return true; // Thành công, dừng retry
+        }
+
+        // Nếu vẫn đang pending và chưa hết retry
+        if (retryCount < maxRetries - 1) {
+          console.log(
+            `⏳ Payment still processing, retrying in ${retryDelay / 1000}s...`,
+          );
+          retryCount++;
+          setTimeout(checkPaymentStatus, retryDelay);
+          return false;
         } else {
-          console.warn("⚠️ Payment not complete:", data);
+          // Hết retry vẫn chưa thành công
+          console.warn("⚠️ Max retries reached, payment not confirmed");
+          setStatus("error");
+          return false;
+        }
+      } catch (err) {
+        console.error(`❌ Error on attempt ${retryCount + 1}:`, err);
+
+        if (retryCount < maxRetries - 1) {
+          retryCount++;
+          setTimeout(checkPaymentStatus, retryDelay);
+        } else {
+          console.error("🔍 Check if payment service is running on port 8002");
           setStatus("error");
         }
-      })
-      .catch((err) => {
-        console.error("❌ Error fetching session:", err);
-        setStatus("error");
-      });
+      }
+    };
+
+    // Bắt đầu check
+    checkPaymentStatus();
   }, [sessionId]);
 
   if (status === "loading") {

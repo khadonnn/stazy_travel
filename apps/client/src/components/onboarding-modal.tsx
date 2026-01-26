@@ -72,13 +72,19 @@ export function OnboardingModal() {
 
   // 2. Xử lý chọn/bỏ chọn
   const toggleSelection = (id: string) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    console.log("🎯 Category clicked:", id);
+    setSelected((prev) => {
+      const newSelection = prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id];
+      console.log("✅ New selection:", newSelection);
+      return newSelection;
+    });
   };
 
   // 3. Xử lý lưu
   const handleSubmit = async () => {
+    console.log("💾 Submitting with selection:", selected);
     if (selected.length === 0) {
       return toast.warning("Hãy chọn ít nhất 1 sở thích nhé!");
     }
@@ -90,6 +96,7 @@ export function OnboardingModal() {
       setOpen(false);
       window.location.reload(); // Reload để AI tính toán lại
     } catch (error) {
+      console.error("❌ Save error:", error);
       toast.error("Có lỗi xảy ra, thử lại sau!");
     } finally {
       setLoading(false);
@@ -129,7 +136,7 @@ export function OnboardingModal() {
                   "cursor-pointer rounded-xl border-2 p-4 flex flex-col items-center justify-center gap-3 transition-all duration-200 hover:scale-105",
                   isSelected
                     ? "border-primary bg-primary/5 text-primary"
-                    : "border-muted hover:border-primary/50 text-muted-foreground"
+                    : "border-muted hover:border-primary/50 text-muted-foreground",
                 )}
               >
                 <Icon

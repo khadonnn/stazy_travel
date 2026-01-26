@@ -36,10 +36,20 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuSubContent,
 } from '@/components/ui/dropdown-menu';
-import { ArrowUpDown, MoreHorizontal, Shield } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal, Shield, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 // Thêm vào phần imports
 import Image from 'next/image';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 export const columns: ColumnDef<User>[] = [
     {
         id: 'select',
@@ -128,6 +138,8 @@ export const columns: ColumnDef<User>[] = [
             const { getToken } = useAuth();
             const queryClient = useQueryClient();
             const [isUpdating, setIsUpdating] = useState(false);
+            const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+            const [isDeleting, setIsDeleting] = useState(false);
 
             const handleRoleChange = async (newRole: string) => {
                 if (isUpdating) return;
@@ -179,55 +191,125 @@ export const columns: ColumnDef<User>[] = [
                 }
             };
 
+            const handleDeleteUser = async () => {
+                setIsDeleting(true);
+                try {
+                    const token = await getToken();
+                    const apiUrl = `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/users/${user.id}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.message || 'Failed to delete user');
+                    }
+
+                    toast.success('User deleted successfully', {
+                        description: `${user.name} has been removed`,
+                        duration: 3000,
+                    });
+
+                    // Refresh data
+                    queryClient.invalidateQueries({ queryKey: ['users'] });
+                    setShowDeleteDialog(false);
+                } catch (error) {
+                    console.error('❌ Error deleting user:', error);
+                    toast.error('Failed to delete user', {
+                        description: error instanceof Error ? error.message : 'Please try again',
+                        duration: 4000,
+                    });
+                } finally {
+                    setIsDeleting(false);
+                }
+            };
+
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0" disabled={isUpdating}>
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id)}>
-                            Copy User ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                <>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0" disabled={isUpdating || isDeleting}>
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id)}>
+                                Copy User ID
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
 
-                        <DropdownMenuSub>
-                            <DropdownMenuSubTrigger>
-                                <Shield className="mr-2 h-4 w-4" />
-                                Change Role
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent>
-                                <DropdownMenuItem
-                                    onClick={() => handleRoleChange('USER')}
-                                    disabled={user.role === 'USER' || isUpdating}
-                                >
-                                    USER
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => handleRoleChange('AUTHOR')}
-                                    disabled={user.role === 'AUTHOR' || isUpdating}
-                                >
-                                    AUTHOR
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => handleRoleChange('ADMIN')}
-                                    disabled={user.role === 'ADMIN' || isUpdating}
-                                    className="text-red-600"
-                                >
-                                    ADMIN
-                                </DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                        </DropdownMenuSub>
+                            <DropdownMenuSub>
+                                <DropdownMenuSubTrigger>
+                                    <Shield className="mr-2 h-4 w-4" />
+                                    Change Role
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuSubContent>
+                                    <DropdownMenuItem
+                                        onClick={() => handleRoleChange('USER')}
+                                        disabled={user.role === 'USER' || isUpdating}
+                                    >
+                                        USER
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => handleRoleChange('AUTHOR')}
+                                        disabled={user.role === 'AUTHOR' || isUpdating}
+                                    >
+                                        AUTHOR
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => handleRoleChange('ADMIN')}
+                                        disabled={user.role === 'ADMIN' || isUpdating}
+                                        className="text-red-600"
+                                    >
+                                        ADMIN
+                                    </DropdownMenuItem>
+                                </DropdownMenuSubContent>
+                            </DropdownMenuSub>
 
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                            <Link href={`/users/${user.id}`}>View user profile</Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <Link href={`/users/${user.id}`}>View user profile</Link>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                onClick={() => setShowDeleteDialog(true)}
+                                className="text-red-600 focus:bg-red-50 focus:text-red-700"
+                            >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete User
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This will permanently delete <strong>{user.name}</strong> ({user.email}) and all
+                                    associated data. This action cannot be undone.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={handleDeleteUser}
+                                    disabled={isDeleting}
+                                    className="bg-red-600 hover:bg-red-700"
+                                >
+                                    {isDeleting ? 'Deleting...' : 'Delete'}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </>
             );
         },
     },

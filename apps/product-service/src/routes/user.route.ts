@@ -74,7 +74,58 @@ router.patch("/:id/role", async (req, res) => {
   }
 });
 
-// Other routes (/:id MUST be after /:id/role)
+// --- HOST STATS: Get statistics for host dashboard ---
+router.get("/:id/stats", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { prisma } = await import("@repo/product-db");
+
+    // Count hotels by status
+    const [totalHotels, approvedHotels, pendingHotels, draftHotels] =
+      await Promise.all([
+        prisma.hotel.count({ where: { authorId: id } }),
+        prisma.hotel.count({ where: { authorId: id, status: "APPROVED" } }),
+        prisma.hotel.count({ where: { authorId: id, status: "PENDING" } }),
+        prisma.hotel.count({ where: { authorId: id, status: "DRAFT" } }),
+      ]);
+
+    // Get total views (sum of viewCount from all hotels)
+    const hotels = await prisma.hotel.findMany({
+      where: { authorId: id },
+      select: { viewCount: true },
+    });
+
+    const totalViews = hotels.reduce((sum, hotel) => sum + hotel.viewCount, 0);
+
+    // TODO: Get bookings and revenue from booking-service
+    // For now, return mock data
+    const totalBookings = 0;
+    const totalRevenue = 0;
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalHotels,
+        approvedHotels,
+        pendingHotels,
+        draftHotels,
+        totalViews,
+        totalBookings,
+        totalRevenue,
+      },
+    });
+  } catch (error: any) {
+    console.error("Get user stats error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user stats",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
+// Other routes (/:id MUST be after /:id/role and /:id/stats)
 router.get("/:id", getUserById);
 router.delete("/:id", deleteUser);
 router.patch("/:id", updateUser);
