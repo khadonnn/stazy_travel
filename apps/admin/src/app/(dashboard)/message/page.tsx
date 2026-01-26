@@ -52,11 +52,15 @@ export default function AdminSupportChat() {
                 const token = await getToken();
                 if (!token) return;
 
-                const res = await fetch(`${API_URL}/conversations`, {
+                const res = await fetch(`${API_URL}/messages/conversations`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                if (!res.ok) throw new Error('Failed to fetch conversations');
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    console.error('❌ API Error:', res.status, errorText);
+                    throw new Error(`Failed to fetch conversations: ${res.status}`);
+                }
                 const data = await res.json();
 
                 const formattedSessions: ChatSession[] = data.map((c: any) => ({
@@ -72,6 +76,8 @@ export default function AdminSupportChat() {
                 setSessions(formattedSessions);
             } catch (error) {
                 console.error('Lỗi tải danh sách chat:', error);
+                console.log('🔍 API URL:', API_URL);
+                console.log('🔍 Endpoint:', `${API_URL}/conversations`);
             }
         };
 
@@ -89,7 +95,7 @@ export default function AdminSupportChat() {
                 const token = await getToken();
 
                 // 1. Lấy tin nhắn
-                const res = await fetch(`${API_URL}/messages/${selectedUserId}`, {
+                const res = await fetch(`${API_URL}/messages/messages/${selectedUserId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                     signal: controller.signal, // 🔥 Gắn signal
                 });
@@ -120,7 +126,7 @@ export default function AdminSupportChat() {
                 }
 
                 // 3. Đánh dấu đã đọc & Update Badge Sidebar
-                await fetch(`${API_URL}/messages/mark-read`, {
+                await fetch(`${API_URL}/messages/messages/mark-read`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -130,7 +136,7 @@ export default function AdminSupportChat() {
                     signal: controller.signal,
                 });
 
-                const statsRes = await fetch(`${API_URL}/messages/stats/unread`, {
+                const statsRes = await fetch(`${API_URL}/messages/messages/stats/unread`, {
                     headers: { Authorization: `Bearer ${token}` },
                     signal: controller.signal,
                 });

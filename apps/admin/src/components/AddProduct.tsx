@@ -158,7 +158,7 @@ const AddProduct = () => {
                 <SheetDescription>Điền thông tin chi tiết để tạo mới một địa điểm lưu trú.</SheetDescription>
             </SheetHeader>
 
-            <ScrollArea className="mt-4 h-[calc(100vh-120px)] pr-4">
+            <ScrollArea className="mx-4 mt-4 h-[calc(100vh-120px)] pr-4">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pb-6">
                         {/* --- NHÓM 1: THÔNG TIN CƠ BẢN --- */}

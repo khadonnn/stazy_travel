@@ -233,11 +233,7 @@ pnpm prisma generate
 pnpm prisma db push
 
 # Generate Prisma Client cho booking-db
-cd ../booking-db
-pnpm prisma generate
-pnpm prisma db push
-
-cd ../..
+create account Mongodb
 ```
 
 ### 5. Setup Python Environment (Search Service)

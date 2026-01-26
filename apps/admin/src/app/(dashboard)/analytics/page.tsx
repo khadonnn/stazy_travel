@@ -17,6 +17,7 @@ import SparsityHeatmap from '@/components/charts/SparsityHeatmap';
 import { getInteractionStats } from '../actions/get-interaction-stats';
 import WordCloudChart from '@/components/charts/WordCloudPlaceholder';
 import { getLatestSystemMetric } from '../actions/get-system-metrics';
+import { getBubbleChartData } from './actions/get-bubble-data';
 import { formatPercent } from '@/lib/utils';
 import TodayStats from '@/components/dashboard/TodayStats';
 // Hàm format tiền tệ (Giữ nguyên)
@@ -46,7 +47,11 @@ const KPICard = ({ title, value, description, color }: (typeof modelKPIs)[0]) =>
     </Card>
 );
 export default async function AnalyticsPage() {
-    const [chartData, latestMetric] = await Promise.all([getInteractionStats(), getLatestSystemMetric()]);
+    const [chartData, latestMetric, bubbleData] = await Promise.all([
+        getInteractionStats(),
+        getLatestSystemMetric(),
+        getBubbleChartData(),
+    ]);
     const totalViews = chartData.reduce((acc: any, curr: any) => acc + curr.Views, 0);
     const totalBookings = chartData.reduce((acc: any, curr: any) => acc + curr.Bookings, 0);
     const totalCancels = chartData.reduce((acc: any, curr: any) => acc + curr.Cancellations, 0);
@@ -88,7 +93,9 @@ export default async function AnalyticsPage() {
             <Separator className="my-4" />
 
             {/* HÀNG 1: MODEL PERFORMANCE (KPIs) */}
-            <h3 className="mb-3 text-xl font-semibold">🎯 Model Performance & Metrics</h3>
+            <h3 className="mb-3 text-xl font-semibold">
+                🎯 Chỉ số Hiệu suất Mô hình (Model Performance & Metrics KPIs)
+            </h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {dynamicKPIs.map((kpi, index) => (
                     <KPICard key={index} {...kpi} />
@@ -194,7 +201,7 @@ export default async function AnalyticsPage() {
             <Separator className="my-4" />
 
             {/* HÀNG 5: CORE RECOMMENDATION INSIGHTS (Giống giao diện ảnh ban đầu: List + Sparsity) */}
-            <h3 className="mb-3 text-xl font-semibold">🔍 Recommendation Insights & Data Input</h3>
+            <h3 className="mb-3 text-xl font-semibold">🔍 Giám sát dữ liệu Gợi ý: Sparsity & Top Contributors</h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {/* 5.1 Top Items được Gợi ý (Sử dụng CardList) */}
                 <Card className="min-w-0 lg:col-span-1">
@@ -263,7 +270,7 @@ export default async function AnalyticsPage() {
             <Separator className="my-4" />
 
             {/* HÀNG 7: ADVANCED INSIGHTS (Bubble & Word Cloud) */}
-            <h3 className="mb-3 text-xl font-semibold">🌟 Advanced Item/Feature Insights</h3>
+            <h3 className="mb-3 text-xl font-semibold">🌟 Item Feature Analysis & Sentiment Insights</h3>
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
                 {/* 7.1 Bubble Chart: Item Feature Analysis (2 cột) */}
                 <Card className="min-w-0 lg:col-span-2">
@@ -272,7 +279,7 @@ export default async function AnalyticsPage() {
                         <CardDescription>Bookings (X), Rating (Y), Tiện nghi (Size).</CardDescription>
                     </CardHeader>
                     <CardContent className="h-[350px]">
-                        <BubbleChart />
+                        <BubbleChart data={bubbleData} />
                     </CardContent>
                 </Card>
 
