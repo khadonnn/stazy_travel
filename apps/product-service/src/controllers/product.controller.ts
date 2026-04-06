@@ -103,7 +103,7 @@ export const getHotels = async (req: Request, res: Response) => {
       prisma.hotel.count({ where }),
     ]);
 
-    // 🔥 5. QUAN TRỌNG: CHUYỂN ĐỔI DECIMAL -> NUMBER
+    //  5. QUAN TRỌNG: CHUYỂN ĐỔI DECIMAL -> NUMBER
     // Đây là bước fix lỗi 500 Serialization
     const sanitizedHotels = hotels.map((hotel) => {
       return {
@@ -183,7 +183,7 @@ export const getHotel = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error("Get hotel error:", error);
 
-    // 🔥 Xử lý lỗi Prisma P2025: Record to update not found
+    //  Xử lý lỗi Prisma P2025: Record to update not found
     if (error.code === "P2025") {
       return res.status(404).json({ message: "Không tìm thấy khách sạn này." });
     }
@@ -199,7 +199,7 @@ export const createHotel = async (req: Request, res: Response) => {
   try {
     const data = req.body;
 
-    // 🔥 Ensure user exists before creating hotel
+    //  Ensure user exists before creating hotel
     if (!data.authorId) {
       return res.status(400).json({ message: "authorId is required" });
     }
@@ -294,7 +294,7 @@ export const updateHotel = async (req: Request, res: Response) => {
   const { id } = req.params;
   let data = req.body;
 
-  // 🔥 Loại bỏ các field không được phép update
+  //  Loại bỏ các field không được phép update
   const { id: _id, date: _date, ...safeData } = data; // dùng destructuring để loại bỏ
 
   // Nếu bạn CẦN update `date`, hãy chuẩn hóa nó → ISO

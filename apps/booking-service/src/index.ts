@@ -49,7 +49,7 @@ fastify.get("/test", { preHandler: shouldBeUser }, (request, reply) => {
 });
 
 // Đăng ký Routes
-fastify.register(bookingRoute, { prefix: "/bookings" }); // 🔥 Thêm prefix
+fastify.register(bookingRoute, { prefix: "/bookings" }); //  Thêm prefix
 fastify.register(messageRoute, { prefix: "/messages" });
 fastify.register(adminRoute, { prefix: "/admin" });
 fastify.register(availabilityRoutes);
@@ -63,7 +63,7 @@ const start = async () => {
     // 2. Kích hoạt Consumer lắng nghe tin nhắn
     await runKafkaSubscriptions();
 
-    // 🔥 3. Start Cron Jobs (Analytics & AI Training)
+    //  3. Start Cron Jobs (Analytics & AI Training)
     startCronJobs(); // Analytics: Mỗi ngày 00:00
     startAITrainingJob(); // AI Training: Mỗi ngày 02:00
 

@@ -43,7 +43,7 @@ export const messageRoute = async (fastify: FastifyInstance) => {
             _id: "$userId",
             lastMessage: { $first: "$text" },
             lastTimestamp: { $first: "$createdAt" },
-            // 🔥 CẬP NHẬT: Lấy userName từ metadata của tin nhắn gần nhất
+            //  CẬP NHẬT: Lấy userName từ metadata của tin nhắn gần nhất
             // Nếu không có metadata.userName thì fallback về null
             userName: { $first: "$metadata.userName" },
 
@@ -69,7 +69,7 @@ export const messageRoute = async (fastify: FastifyInstance) => {
       // Map lại dữ liệu trả về
       const formatted = conversations.map((c) => ({
         userId: c._id,
-        // 🔥 Ưu tiên dùng tên lấy được từ DB, nếu không có mới dùng ID
+        //  Ưu tiên dùng tên lấy được từ DB, nếu không có mới dùng ID
         userName: c.userName || `Khách hàng (${c._id.slice(-4)})`,
         lastMessage: c.lastMessage,
         lastTimestamp: c.lastTimestamp,

@@ -72,7 +72,7 @@ const PaymentStatusBadge: React.FC<{ status: string }> = ({ status }) => {
   return (
     <span
       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getBadgeColor(
-        status
+        status,
       )}`}
     >
       {getStatusText(status)}
@@ -107,7 +107,7 @@ const MyBooking: React.FC = () => {
     if (booking.payments && booking.payments.length > 0) {
       const latestPayment = booking.payments.sort(
         (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       )[0];
       return latestPayment?.status === "completed"
         ? "paid"
@@ -151,7 +151,7 @@ const MyBooking: React.FC = () => {
       }
     } catch (err: unknown) {
       setError(
-        err instanceof Error ? err.message : "Không thể tải lịch sử đặt phòng"
+        err instanceof Error ? err.message : "Không thể tải lịch sử đặt phòng",
       );
     } finally {
       setLoading(false);
@@ -163,7 +163,7 @@ const MyBooking: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser?.id]);
 
-  // 🔥 FIX 1: Logic chuyển trang dùng Slug (ưu tiên) hoặc ID
+  //  FIX 1: Logic chuyển trang dùng Slug (ưu tiên) hoặc ID
   const handleViewHotel = (hotel: UserBooking["hotel"], fallbackId: number) => {
     if (hotel && hotel.slug) {
       router.push(`/hotels/${hotel.slug}`);
@@ -294,7 +294,7 @@ const MyBooking: React.FC = () => {
                       </div>
                     </td>
 
-                    {/* 🔥 FIX 2: Hiển thị đúng tên và địa chỉ khách sạn */}
+                    {/*  FIX 2: Hiển thị đúng tên và địa chỉ khách sạn */}
                     <td className="px-6 py-4">
                       <div className="flex flex-col max-w-[200px]">
                         <div
@@ -352,7 +352,7 @@ const MyBooking: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
-                        // 🔥 FIX 1: Gọi hàm xử lý Slug
+                        //  FIX 1: Gọi hàm xử lý Slug
                         onClick={() =>
                           handleViewHotel(booking.hotel, booking.hotel_id)
                         }

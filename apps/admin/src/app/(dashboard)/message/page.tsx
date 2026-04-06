@@ -88,7 +88,7 @@ export default function AdminSupportChat() {
     useEffect(() => {
         if (!selectedUserId) return;
 
-        const controller = new AbortController(); // 🔥 Tạo bộ ngắt request
+        const controller = new AbortController(); //  Tạo bộ ngắt request
         const fetchHistory = async () => {
             setIsLoadingHistory(true);
             try {
@@ -97,7 +97,7 @@ export default function AdminSupportChat() {
                 // 1. Lấy tin nhắn
                 const res = await fetch(`${API_URL}/messages/messages/${selectedUserId}`, {
                     headers: { Authorization: `Bearer ${token}` },
-                    signal: controller.signal, // 🔥 Gắn signal
+                    signal: controller.signal, //  Gắn signal
                 });
 
                 if (!res.ok) return; // Silent fail hoặc xử lý lỗi
@@ -162,7 +162,7 @@ export default function AdminSupportChat() {
             setIsLoadingHistory(false);
         }
 
-        return () => controller.abort(); // 🔥 Hủy request cũ khi user đổi sang người khác
+        return () => controller.abort(); //  Hủy request cũ khi user đổi sang người khác
     }, [selectedUserId, getToken, setUnreadCount]); // Bỏ 'sessions' khỏi dependency để tránh vòng lặp
 
     // --- 3. SOCKET REALTIME ---

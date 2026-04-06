@@ -52,7 +52,7 @@ export default function ChatBox() {
   const [isLoading, setIsLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // 🔥 STATE MỚI: Chế độ hỗ trợ
+  //  STATE MỚI: Chế độ hỗ trợ
   const [isSupportMode, setIsSupportMode] = useState(false);
   const socketRef = useRef<Socket | null>(null);
 
@@ -155,7 +155,7 @@ export default function ChatBox() {
     // B. Gửi cho AI (Python API)
     setIsLoading(true);
     try {
-      // 🔥 Format history để include thông tin hotels
+      //  Format history để include thông tin hotels
       const formattedHistory = messages.map((m) => {
         // Nếu AI message có data.hotels, thêm vào text để AI nhớ context
         if (m.sender === "ai" && m.data?.hotels && m.data.hotels.length > 0) {
@@ -255,7 +255,7 @@ export default function ChatBox() {
           </div>
         </div>
 
-        {/* 🔥 NÚT TRIGGER CHUYỂN ĐỔI */}
+        {/*  NÚT TRIGGER CHUYỂN ĐỔI */}
         <Button
           variant="outline"
           size="sm"

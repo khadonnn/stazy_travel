@@ -123,7 +123,7 @@ const WordCloudChart = () => {
             ref={containerRef}
             className="relative flex h-full w-full flex-col items-center justify-center rounded-lg border border-[#27272A] bg-[#18181B] p-2"
         >
-            <h3 className="mb-2 w-full px-2 text-sm font-semibold text-white">🔥 Từ khóa nổi bật (Sentiment)</h3>
+            <h3 className="mb-2 w-full px-2 text-sm font-semibold text-white"> Từ khóa nổi bật (Sentiment)</h3>
 
             <div className="relative flex h-[300px] w-full items-center justify-center overflow-hidden">
                 <svg

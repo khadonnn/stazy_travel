@@ -57,7 +57,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onMethodSelect }) => {
     handleSubmit,
     setValue,
     control,
-    getValues, // 🔥 1. Thêm cái này để lấy dữ liệu mà không cần validate
+    getValues, //  1. Thêm cái này để lấy dữ liệu mà không cần validate
     formState: { errors },
   } = useForm<z.infer<typeof paymentFormSchema>>({
     resolver: zodResolver(paymentFormSchema as any),
@@ -71,7 +71,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onMethodSelect }) => {
     defaultValue: PaymentMethod.CreditCard,
   });
 
-  // 🔥 2. Hàm xử lý riêng cho nút bấm (Bypass Validation khi chọn Stripe)
+  //  2. Hàm xử lý riêng cho nút bấm (Bypass Validation khi chọn Stripe)
   const handleButtonClick = (e: React.MouseEvent) => {
     const currentMethod = getValues("paymentMethod");
 
@@ -226,7 +226,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onMethodSelect }) => {
 
       <button
         type="submit"
-        onClick={handleButtonClick} // 🔥 3. Gắn hàm xử lý sự kiện vào đây
+        onClick={handleButtonClick} //  3. Gắn hàm xử lý sự kiện vào đây
         className="w-full bg-green-600 hover:bg-green-700 transition-all text-white p-3 rounded-lg flex items-center justify-center gap-2 font-medium cursor-pointer mt-2"
       >
         {selectedMethod === PaymentMethod.STRIPE

@@ -82,7 +82,7 @@ async function callConversationalService(text: string) {
 
 // Gọi SmartSearchService (Vector Search/Image Analysis)
 async function callSmartSearchService(urlOrText: string) {
-    // API call tới SmartSearchService (sử dụng Milvus/Vector Embedding)
+    // API call tới SmartSearchService (sử dụng Prisma + pgvector/Vector Embedding)
     return [
         { id: 'R101', name: 'Deluxe Ocean View', matchScore: '98%' },
         { id: 'R203', name: 'Premium Balcony', matchScore: '85%' },

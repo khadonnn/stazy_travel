@@ -259,7 +259,7 @@ export default function SearchServicePage() {
             body: JSON.stringify({ image: base64Image }),
           });
           const matches = await res.json();
-          console.log("🔥 AI trả về matches:", matches);
+          console.log(" AI trả về matches:", matches);
           updateUIWithResults(matches);
         } catch (e) {
           console.error(e);

@@ -28,7 +28,7 @@
 //           console.log("🔍 Đang gọi Search Service với:", description);
 
 //           try {
-//             // 🔥 Gọi trực tiếp API Search Service của bạn (Python backend)
+//             //  Gọi trực tiếp API Search Service của bạn (Python backend)
 //             const res = await fetch("http://localhost:8008/search-by-text", {
 //               method: "POST",
 //               headers: { "Content-Type": "application/json" },

@@ -17,7 +17,7 @@ export async function getAIRecommendations() {
   }
 
   try {
-    // 🔥 KIỂM TRA SỐ LƯỢNG INTERACTIONS TRƯỚC
+    //  KIỂM TRA SỐ LƯỢNG INTERACTIONS TRƯỚC
     const interactionCount = await prisma.interaction.count({
       where: {
         userId: user.id,

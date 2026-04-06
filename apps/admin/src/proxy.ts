@@ -9,8 +9,8 @@ const isPublicRoute = createRouteMatcher([
     '/api/uploadthing(.*)',
 ]);
 
-// 2. Các trang cần QUYỀN ADMIN (Tất cả trừ trang public)
-const isAdminRoute = createRouteMatcher(['/((?!sign-in|sign-up|unauthorized|api).*)']);
+// 2. Các trang cần QUYỀN ADMIN (Tất cả trừ trang public và /docs)
+const isAdminRoute = createRouteMatcher(['/((?!sign-in|sign-up|unauthorized|api|docs).*)']);
 
 export default clerkMiddleware(async (auth, req) => {
     // A. Bỏ qua kiểm tra đối với file tĩnh (CSS, Font, Image, JS)

@@ -6,7 +6,7 @@ import { Booking } from "@repo/booking-db";
  * Route kiểm tra availability cho Collaborative Filtering Use Case
  * Endpoint: GET /check-availability
  *
- * 🔒 REDIS LOCK STRATEGY:
+ *  REDIS LOCK STRATEGY:
  * - Sử dụng shared lock (read lock) để cho phép nhiều user check đồng thời
  * - Chỉ block khi có user đang trong quá trình CREATE booking
  * - Lock key: `locks:hotel:${hotelId}:${checkIn}` (giống với createBooking)

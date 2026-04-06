@@ -6,10 +6,10 @@ import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { useQuery } from '@tanstack/react-query';
 
-// 🔥 Import action mới vừa tạo
+//  Import action mới vừa tạo
 import { getDailyStats } from '@/app/(dashboard)/actions/get-daily-stats';
 
-// 🔥 1. Cấu hình lại: Xóa desktop/mobile, thêm bookings/cancels
+//  1. Cấu hình lại: Xóa desktop/mobile, thêm bookings/cancels
 const chartConfig = {
     bookings: {
         label: 'Đơn thành công',
@@ -22,7 +22,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function AppAreaChart() {
-    // 🔥 2. Gọi Server Action qua React Query
+    //  2. Gọi Server Action qua React Query
     const { data, isLoading, isError } = useQuery({
         queryKey: ['daily-stats'],
         queryFn: async () => await getDailyStats(),
@@ -59,7 +59,7 @@ export function AppAreaChart() {
                     <CartesianGrid vertical={false} />
 
                     <XAxis
-                        dataKey="date" // 🔥 Dùng trường 'date' mới
+                        dataKey="date" //  Dùng trường 'date' mới
                         tickLine={false}
                         axisLine={false}
                         tickMargin={8}
@@ -85,7 +85,7 @@ export function AppAreaChart() {
                         </linearGradient>
                     </defs>
 
-                    {/* 🔥 3. Vẽ Area cho Bookings */}
+                    {/*  3. Vẽ Area cho Bookings */}
                     <Area
                         dataKey="bookings"
                         type="natural"
@@ -96,7 +96,7 @@ export function AppAreaChart() {
                         stackId="1"
                     />
 
-                    {/* 🔥 4. Vẽ Area cho Cancels */}
+                    {/*  4. Vẽ Area cho Cancels */}
                     <Area
                         dataKey="cancels"
                         type="natural"

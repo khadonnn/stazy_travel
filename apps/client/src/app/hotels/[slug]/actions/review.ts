@@ -30,7 +30,7 @@ export async function submitReview(formData: FormData) {
     const userId = String(formData.get("userId"));
     const rating = Number(formData.get("rating"));
     const comment = String(formData.get("comment"));
-    // 🔥 1. Lấy thêm Slug từ FormData để revalidate đúng đường dẫn
+    //  1. Lấy thêm Slug từ FormData để revalidate đúng đường dẫn
     const hotelSlug = String(formData.get("hotelSlug"));
 
     if (!userId || !hotelId || !rating) {
@@ -55,7 +55,7 @@ export async function submitReview(formData: FormData) {
       },
     });
 
-    // C. 🔥 Sửa lại đường dẫn Revalidate cho đúng với URL thực tế
+    // C.  Sửa lại đường dẫn Revalidate cho đúng với URL thực tế
     // Nếu URL web là: /hotels/grand-hotel-nha-trang
     if (hotelSlug && hotelSlug !== "null") {
       revalidatePath(`/hotels/${hotelSlug}`);

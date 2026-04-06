@@ -71,7 +71,7 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
           checkIn: startDate, // Truyền Date object luôn
           checkOut: endDate,
           totalAmount: totalPrice,
-          // 🔥 Truyền thêm các dữ liệu phụ trợ để hàm utils lưu vào DB
+          //  Truyền thêm các dữ liệu phụ trợ để hàm utils lưu vào DB
           nights,
           contactDetails,
           bookingSnapshot: {
@@ -142,7 +142,7 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
 
   // 3. API ADMIN (Xem tất cả)
   fastify.get(
-    "/", // 🔥 Đổi từ "/bookings" thành "/" vì đã có prefix /bookings ở index.ts
+    "/", //  Đổi từ "/bookings" thành "/" vì đã có prefix /bookings ở index.ts
     { preHandler: shouldBeAdmin }, // Nhớ bật lại auth admin
     async (request, reply) => {
       const bookings = await Booking.find().sort({ createdAt: -1 });

@@ -75,7 +75,7 @@ export const useBookingStore = create<BookingState>()(
       name: "booking-storage", // Tên key trong LocalStorage
       storage: createJSONStorage(() => localStorage),
 
-      // 🔥 QUAN TRỌNG: Tự động chuyển chuỗi JSON thành Date Object khi load lại trang
+      //  QUAN TRỌNG: Tự động chuyển chuỗi JSON thành Date Object khi load lại trang
       onRehydrateStorage: () => (state) => {
         if (!state) return;
 
@@ -92,6 +92,6 @@ export const useBookingStore = create<BookingState>()(
           state.checkOutDate = new Date(state.checkOutDate);
         }
       },
-    }
-  )
+    },
+  ),
 );

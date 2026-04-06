@@ -310,7 +310,7 @@ export const updateUser = async (req: Request, res: Response) => {
       updateData.role = data.role;
     }
 
-    // 🔒 Cập nhật password — cần hash (ở đây chỉ demo, KHÔNG lưu plain text!)
+    //  Cập nhật password — cần hash (ở đây chỉ demo, KHÔNG lưu plain text!)
     if (data.password !== undefined) {
       if (!data.currentPassword) {
         return res.status(400).json({

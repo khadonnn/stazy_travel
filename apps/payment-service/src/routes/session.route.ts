@@ -25,7 +25,7 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
     const bookingId = uuidv4();
     const mainItem = items[0]; // Lấy item đầu tiên làm đại diện
 
-    // 🔥 Check an toàn
+    //  Check an toàn
     if (!mainItem) {
       return c.json({ error: "Dữ liệu phòng không hợp lệ" }, 400);
     }

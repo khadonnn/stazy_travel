@@ -3,7 +3,7 @@ import socketioServer from "fastify-socket.io";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
 import cors from "@fastify/cors";
-// 🔥 1. IMPORT DB & MODEL (Từ shared package của bạn)
+//  1. IMPORT DB & MODEL (Từ shared package của bạn)
 import { connectBookingDB, Message } from "@repo/booking-db";
 // import { producer, consumer } from "./utils/kafka"; // Giữ lại nếu bạn có dùng Kafka
 
@@ -34,7 +34,7 @@ fastify.register(socketioServer, {
 
 const startServer = async () => {
   try {
-    // 🔥 2. KẾT NỐI MONGODB
+    //  2. KẾT NỐI MONGODB
     await connectBookingDB();
     fastify.log.info("✅ Socket Service connected to MongoDB");
 
@@ -50,7 +50,7 @@ const startServer = async () => {
 
       // Log kết nối để debug
       console.log(
-        `🔌 Connected: ${socket.id} | Role: ${role || "unknown"} | ID: ${userId || "guest"}`
+        `🔌 Connected: ${socket.id} | Role: ${role || "unknown"} | ID: ${userId || "guest"}`,
       );
 
       // --- JOIN ROOMS ---

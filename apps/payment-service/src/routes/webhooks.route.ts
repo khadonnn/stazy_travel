@@ -51,7 +51,7 @@ webhookRoute.post("/stripe", async (c) => {
     try {
       console.log(`🚀 [5] Đang chuẩn bị gửi tin nhắn sang Kafka...`);
 
-      // 🔥 CẬP NHẬT PAYLOAD: Lấy thêm thông tin Hotel & Customer từ Metadata
+      //  CẬP NHẬT PAYLOAD: Lấy thêm thông tin Hotel & Customer từ Metadata
       const kafkaPayload = {
         bookingId: bookingId,
         userId: session.metadata?.userId || session.client_reference_id,

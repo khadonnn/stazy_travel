@@ -5,7 +5,7 @@ export const runKafkaSubscriptions = async () => {
   try {
     await consumer.subscribe([
       {
-        // 🔥 QUAN TRỌNG: Nghe tin từ Booking Service (đã confirm DB)
+        //  QUAN TRỌNG: Nghe tin từ Booking Service (đã confirm DB)
         topicName: "booking.confirmed",
         topicHandler: async (message) => {
           console.log("\n================================================");

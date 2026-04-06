@@ -9,7 +9,7 @@ const redisClient = new Redis({
 
 // 2. Cấu hình Redlock
 const redlock = new Redlock(
-  // 🔥 FIX LỖI TẠI ĐÂY: Thêm "as any"
+  //  FIX LỖI TẠI ĐÂY: Thêm "as any"
   // Lý do: Type definition của ioredis v5 và redlock bị lệch nhau ở hàm eval,
   // nhưng logic chạy thực tế vẫn đúng.
   [redisClient as any],

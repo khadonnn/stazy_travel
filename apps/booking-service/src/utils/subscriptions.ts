@@ -5,7 +5,7 @@ export const runKafkaSubscriptions = async () => {
   try {
     await consumer.subscribe([
       {
-        // 🔥 QUAN TRỌNG: Phải khớp với Topic mà Payment Service gửi đi (xem log ảnh của bạn là booking-events)
+        //  QUAN TRỌNG: Phải khớp với Topic mà Payment Service gửi đi (xem log ảnh của bạn là booking-events)
         topicName: "booking-events",
         topicHandler: async (message: any) => {
           console.log("\n================================================");
@@ -43,7 +43,7 @@ export const runKafkaSubscriptions = async () => {
             }
 
             console.log(
-              `➡️ Gọi Update Service cho BookingID: ${paymentData.bookingId}`
+              `➡️ Gọi Update Service cho BookingID: ${paymentData.bookingId}`,
             );
 
             // 3. Gọi Service
@@ -57,7 +57,7 @@ export const runKafkaSubscriptions = async () => {
 
     await consumer.connect();
     console.log(
-      "🚀 Booking Consumer is running & listening to 'booking-events'..."
+      "🚀 Booking Consumer is running & listening to 'booking-events'...",
     );
   } catch (error) {
     console.error("❌ Kafka Connection Error:", error);

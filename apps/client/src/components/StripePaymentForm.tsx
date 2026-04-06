@@ -30,13 +30,13 @@ const StripePaymentForm = ({ bookingInfo }: StripePaymentFormProps) => {
   const { items } = useCartStore();
   const { checkInDate, checkOutDate } = useBookingStore();
 
-  // 🔥 Hàm này tương đương với đoạn fetch trong ví dụ của bạn
+  //  Hàm này tương đương với đoạn fetch trong ví dụ của bạn
   // Stripe sẽ tự gọi hàm này khi component mount để lấy secret
   const fetchClientSecret = useCallback(async () => {
     const token = await getToken();
     const firstItem = items[0];
 
-    // 🔥 Validate email trước khi gửi
+    //  Validate email trước khi gửi
     const userEmail =
       bookingInfo.email ||
       user?.primaryEmailAddress?.emailAddress ||

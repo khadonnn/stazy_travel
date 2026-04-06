@@ -42,7 +42,7 @@ export default function CheckoutPage() {
       }
 
       try {
-        // 🔥 SỬA QUAN TRỌNG: Dùng đường dẫn tương đối, không hardcode localhost:3000
+        //  SỬA QUAN TRỌNG: Dùng đường dẫn tương đối, không hardcode localhost:3000
         const res = await fetch(`/api/hotels/${hotelId}`);
 
         if (!res.ok) {

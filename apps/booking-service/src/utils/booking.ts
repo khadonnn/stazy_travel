@@ -1,12 +1,12 @@
 import { Booking } from "@repo/booking-db";
 import { producer } from "./kafka";
-// 🔥 1. Import Redlock từ file cấu hình ở bước trước
+// 1. Import Redlock từ file cấu hình ở bước trước
 import { redlock } from "../utils/redis";
 import crypto from "crypto";
 import { prisma } from "@repo/product-db"; // Thêm Prisma để sync PostgreSQL
 
 // =========================================================
-// 🔥 HÀM SYNC BOOKING SANG POSTGRESQL
+// HÀM SYNC BOOKING SANG POSTGRESQL
 // =========================================================
 const syncBookingToPostgres = async (mongoBooking: any) => {
   try {
@@ -93,7 +93,7 @@ const syncBookingToPostgres = async (mongoBooking: any) => {
 };
 
 // =========================================================
-// 🔥 HÀM MỚI: TẠO BOOKING (CÓ REDIS LOCK)
+// HÀM MỚI: TẠO BOOKING (CÓ REDIS LOCK)
 // Gọi hàm này ở Controller khi User bấm "Đặt phòng"
 // =========================================================
 export const createBooking = async (userId: string, bookingData: any) => {
@@ -113,7 +113,7 @@ export const createBooking = async (userId: string, bookingData: any) => {
 
   try {
     lock = await redlock.acquire([resource], ttl);
-    console.log(`🔒 Đã khóa tài nguyên: ${resource}`);
+    console.log(` Đã khóa tài nguyên: ${resource}`);
 
     const conflict = await Booking.findOne({
       hotelId: Number(hotelId),
@@ -144,7 +144,7 @@ export const createBooking = async (userId: string, bookingData: any) => {
       updatedAt: new Date(),
     });
 
-    // 🔥 GỬI KAFKA NOTIFICATION (Đã thêm)
+    // GỬI KAFKA NOTIFICATION (Đã thêm)
     // Gửi sự kiện để Email Service gửi mail "Đơn hàng đã được tạo, vui lòng thanh toán"
     await producer.send("booking-events", {
       event: "BOOKING_CREATED",
@@ -153,7 +153,7 @@ export const createBooking = async (userId: string, bookingData: any) => {
       amount: totalAmount,
     });
 
-    // 🔥 AUTO-SYNC SANG POSTGRESQL NGAY KHI TẠO BOOKING (PENDING)
+    // AUTO-SYNC SANG POSTGRESQL NGAY KHI TẠO BOOKING (PENDING)
     try {
       await syncBookingToPostgres(newBooking);
       console.log(
@@ -329,7 +329,7 @@ export const updateBookingStatusToPaid = async (
 
     console.log(`✅ [Service] ĐÃ LƯU MONGODB THÀNH CÔNG!`);
 
-    // 🔥 SYNC SANG POSTGRESQL (Quan trọng để hiển thị Recent Bookings trên Admin)
+    // SYNC SANG POSTGRESQL (Quan trọng để hiển thị Recent Bookings trên Admin)
     try {
       await syncBookingToPostgres(result);
       console.log(`✅ [Service] ĐÃ SYNC SANG POSTGRESQL!`);

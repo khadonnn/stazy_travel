@@ -305,7 +305,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       hotelId: stayData.id,
       id: stayData.id, // Room ID (Dùng để làm key xóa trong giỏ hàng)
 
-      // 2. 🔥 MAP TÊN KHÁCH SẠN (Quan trọng nhất để fix lỗi Unknown Hotel)
+      // 2.  MAP TÊN KHÁCH SẠN (Quan trọng nhất để fix lỗi Unknown Hotel)
       title: stayData.title, // Bắt buộc phải có trường này
 
       // 3. MAP TÊN PHÒNG

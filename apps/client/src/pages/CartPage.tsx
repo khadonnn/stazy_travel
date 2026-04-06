@@ -15,7 +15,7 @@ import type { BookingFormInputs } from "@/types/cart";
 import { formatPrice } from "@/lib/utils/formatPrice";
 import StripePaymentForm from "@/components/StripePaymentForm";
 
-// 🔥 CẬP NHẬT: THÊM BƯỚC 4 VÀO MẢNG STEPS
+//  CẬP NHẬT: THÊM BƯỚC 4 VÀO MẢNG STEPS
 const steps = [
   { id: 1, title: "Đặt phòng" },
   { id: 2, title: "Thông tin khách hàng" },

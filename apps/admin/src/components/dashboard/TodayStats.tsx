@@ -11,9 +11,9 @@ export default async function TodayStats({ className }: { className?: string }) 
     const metrics = await getTodayMetrics();
 
     return (
-        // 🔥 Sửa: md:grid-cols-4 để chứa đủ 4 thẻ
+        //  Sửa: md:grid-cols-4 để chứa đủ 4 thẻ
         <div className={cn('grid gap-4 md:grid-cols-2 lg:grid-cols-4', className)}>
-            {/* 3. 🔥 THÊM MỚI: Lượt truy cập */}
+            {/* 3.  THÊM MỚI: Lượt truy cập */}
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Truy cập</CardTitle>

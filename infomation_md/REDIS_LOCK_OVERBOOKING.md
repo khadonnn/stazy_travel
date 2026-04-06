@@ -1,4 +1,4 @@
-# 🔒 REDIS DISTRIBUTED LOCK - CHỐNG OVERBOOKING
+# REDIS DISTRIBUTED LOCK - CHỐNG OVERBOOKING
 
 > Giải pháp ngăn chặn Race Condition và Double Booking trong hệ thống đặt phòng phân tán
 
@@ -152,9 +152,9 @@ export const createBooking = async (userId: string, bookingData: any) => {
   let lock;
 
   try {
-    // 🔒 BƯỚC 2: Acquire Lock (BLOCKING)
+    //  BƯỚC 2: Acquire Lock (BLOCKING)
     lock = await redlock.acquire([resource], ttl);
-    console.log(`🔒 Đã khóa: ${resource}`);
+    console.log(` Đã khóa: ${resource}`);
 
     // ─────────────────────────────────────────────────────
     // 🛡️ CRITICAL SECTION - CHỈ 1 REQUEST ĐƯỢC VÀO ĐÂY
@@ -221,7 +221,7 @@ export const createBooking = async (userId: string, bookingData: any) => {
 ```mermaid
 graph TD
     A[User click Đặt phòng] --> B[Try acquire lock]
-    B -->|Success| C[🔒 Lock acquired]
+    B -->|Success| C[ Lock acquired]
     B -->|Failed after 3 retries| D[Throw ExecutionError]
 
     C --> E[Check DB trong lock]
@@ -368,7 +368,7 @@ sequenceDiagram
     API->>Redis: Acquire lock:hotel:15:2026-01-20
     Redis->>API: ✅ Lock granted
 
-    Note over API: 🔒 CRITICAL SECTION
+    Note over API:  CRITICAL SECTION
     API->>DB: Check availability
     DB->>API: ✅ Available
     API->>DB: Create booking A
@@ -383,7 +383,7 @@ sequenceDiagram
     API->>Redis: Acquire lock:hotel:15:2026-01-20
     Redis->>API: ✅ Lock granted
 
-    Note over API: 🔒 CRITICAL SECTION
+    Note over API:  CRITICAL SECTION
     API->>DB: Check availability
     DB->>API: ❌ Conflict (Booking A exists)
     Note over API: 🔓 END CRITICAL SECTION

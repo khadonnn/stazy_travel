@@ -12,7 +12,7 @@ export function PaymentsTableWrapper() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchText, setSearchText] = useState('');
 
-    // 🔥 Fetch bookings từ PostgreSQL
+    //  Fetch bookings từ PostgreSQL
     useEffect(() => {
         const fetchBookings = async () => {
             try {

@@ -25,7 +25,7 @@ export default function ReturnPage() {
     const apiUrl = `${paymentServiceUrl}/sessions/${sessionId}`;
     console.log("🔍 Fetching session from:", apiUrl);
 
-    // 🔥 RETRY LOGIC: Thử check 5 lần, mỗi lần cách 2s
+    //  RETRY LOGIC: Thử check 5 lần, mỗi lần cách 2s
     let retryCount = 0;
     const maxRetries = 5;
     const retryDelay = 2000; // 2 seconds

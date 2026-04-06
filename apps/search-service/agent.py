@@ -1,7 +1,7 @@
 import os
 import json
 import psycopg2
-import traceback # 🔥 In lỗi chi tiết để debug
+import traceback #  In lỗi chi tiết để debug
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
 from groq import Groq
@@ -72,7 +72,7 @@ class BookingIntent(BaseModel):
     price_max: Optional[int] = Field(None, description="Ngân sách tối đa")
     dates: Optional[DateRange] = Field(None, description="Thời gian")
     
-    # 🔥 QUAN TRỌNG: Để None để code biết đường hỏi lại nếu thiếu
+    #  QUAN TRỌNG: Để None để code biết đường hỏi lại nếu thiếu
     guests_adults: Optional[int] = Field(None, description="Số người lớn") 
     
     semantic_query: Optional[str] = Field(None, description="Từ khóa cảm xúc (VD: hồ bơi, view đẹp)")
@@ -255,11 +255,11 @@ def run_agent_logic(user_text: str, user_id: str) -> Dict[str, Any]:
             missing_info.append("số lượng người")
 
         if missing_info:
-            # 🔥 NẾU THIẾU -> HỎI LẠI NGAY
+            #  NẾU THIẾU -> HỎI LẠI NGAY
             missing_str = " và ".join(missing_info)
             response["agent_response"] = f"Để mình đặt phòng giúp bạn, bạn cho mình biết **{missing_str}** với nhé?"
         else:
-            # 🔥 ĐỦ THÔNG TIN -> TẠO LINK
+            #  ĐỦ THÔNG TIN -> TẠO LINK
             found_hotels = search_hotels_rag(intent)
             
             if found_hotels:

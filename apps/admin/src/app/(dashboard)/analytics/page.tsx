@@ -126,7 +126,7 @@ export default async function AnalyticsPage() {
                     {/* Tiêu đề nhỏ cho phần này nếu thích */}
                     <h3 className="text-lg font-semibold lg:hidden">Thống kê hôm nay</h3>
 
-                    {/* 🔥 Truyền class grid-cols-1 để các thẻ xếp chồng lên nhau (dọc) */}
+                    {/*  Truyền class grid-cols-1 để các thẻ xếp chồng lên nhau (dọc) */}
                     <TodayStats className="grid-cols-1 md:grid-cols-1 lg:grid-cols-1" />
                 </div>
             </div>

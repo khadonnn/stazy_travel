@@ -14,7 +14,7 @@ interface SendMailParams {
   to: string; // Đổi tên 'email' thành 'to' cho chuẩn Nodemailer
   subject: string;
   text?: string; // Text thô (fallback)
-  html?: string; // 🔥 Quan trọng: Để gửi giao diện đẹp
+  html?: string; //  Quan trọng: Để gửi giao diện đẹp
 }
 
 const sendMail = async ({ to, subject, text, html }: SendMailParams) => {

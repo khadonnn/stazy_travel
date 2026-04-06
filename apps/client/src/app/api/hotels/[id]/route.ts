@@ -9,7 +9,7 @@ export async function GET(
     const params = await props.params;
     const { id } = params;
 
-    console.log("🔥 API Received ID/Slug:", id);
+    console.log(" API Received ID/Slug:", id);
 
     if (!id) {
       return NextResponse.json({ error: "Missing ID" }, { status: 400 });
@@ -33,7 +33,7 @@ export async function GET(
     // 4. Trả về kết quả
     return NextResponse.json(hotel);
   } catch (error) {
-    console.error("🔥 API Internal Error:", error);
+    console.error(" API Internal Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

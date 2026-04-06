@@ -68,7 +68,7 @@ export async function getTodayMetrics() {
             revenue: result.revenue, // Từ Mongo
             bookings: result.bookings, // Từ Mongo
             cancels: result.cancels, // Từ Mongo
-            views: totalViews, // Từ Postgres (Prisma) 🔥
+            views: totalViews, // Từ Postgres (Prisma)
         };
     } catch (error) {
         console.error('❌ Lỗi getTodayMetrics:', error);

@@ -2,7 +2,7 @@
 
 import { unstable_noStore as noStore } from 'next/cache';
 
-// 🔥 Fetch từ MongoDB qua Booking Service API
+//  Fetch từ MongoDB qua Booking Service API
 const BOOKING_API = process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || 'http://localhost:8001';
 
 export async function getLatestTransactions() {
