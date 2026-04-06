@@ -3,25 +3,44 @@
 
 import { usePathname } from "next/navigation";
 
-const EXCLUDED_PATHS = [
-  "/search-service",
-  "/chat",
-  "/booking",
-  "/admin",
-  "/api-docs",
-  "/hotels",
-  "/cart",
-  // Thêm route bạn muốn ẩn wave vào đây
+type BackgroundRule = {
+  pattern: RegExp;
+  svg: string | null;
+};
+
+const DEFAULT_SVG = "/assets/svg/seaside-booking-wave.svg";
+
+// Quy tắc ưu tiên từ trên xuống dưới.
+// - svg: null => Ẩn background
+// - svg: "..." => Dùng SVG tương ứng cho route đó
+const BACKGROUND_RULES: BackgroundRule[] = [
+  // Ẩn riêng cho profile chi tiết: /profile/:id
+  { pattern: /^\/profile\/[^/]+$/, svg: null },
+
+  // Các trang muốn ẩn background
+  { pattern: /^\/search-service(\/|$)/, svg: null },
+  { pattern: /^\/chat(\/|$)/, svg: null },
+  { pattern: /^\/booking(\/|$)/, svg: null },
+  { pattern: /^\/admin(\/|$)/, svg: null },
+  { pattern: /^\/api-docs(\/|$)/, svg: null },
+  { pattern: /^\/hotels(\/|$)/, svg: null },
+  { pattern: /^\/cart(\/|$)/, svg: null },
+
+  // Ví dụ dùng SVG khác cho 1 trang cụ thể:
+  // { pattern: /^\/about(\/|$)/, svg: "/assets/svg/paper-plane-trail.svg" },
 ];
+
+function getSvgForPath(pathname: string): string | null {
+  const matched = BACKGROUND_RULES.find((rule) => rule.pattern.test(pathname));
+  return matched ? matched.svg : DEFAULT_SVG;
+}
 
 export default function BackgroundWave() {
   const pathname = usePathname();
   if (!pathname) return null;
-  const shouldHide = EXCLUDED_PATHS.some(
-    (path) => pathname === path || pathname.startsWith(`${path}/`)
-  );
 
-  if (shouldHide) {
+  const svgPath = getSvgForPath(pathname);
+  if (!svgPath) {
     return null;
   }
 
@@ -33,14 +52,14 @@ export default function BackgroundWave() {
       {/* Wave background */}
       <div
         className="
-          absolute top-0 left-0 w-full h-full mt-20 -z-10
-          bg-[url('/assets/svg/line2.svg')]
+          absolute top-0 left-0 w-full h-full -z-10 bg-white
           bg-no-repeat
           bg-top
-          bg-[length:100%_100%]
+          bg-size-[100%_100%]
           opacity-70
           pointer-events-none
         "
+        style={{ backgroundImage: `url('${svgPath}')` }}
       />
     </div>
   );
