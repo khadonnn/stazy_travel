@@ -441,6 +441,11 @@ stazy/
 │   │   │   └── index.ts
 │   │   └── package.json
 │   │
+│   ├── gateway/                   # API Gateway
+│   │   ├── src/
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
 │   ├── search-service/            # FastAPI Python (Port 8008)
 │   │   ├── main.py               # FastAPI app
 │   │   ├── requirements.txt

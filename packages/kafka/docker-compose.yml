@@ -9,19 +9,22 @@ services:
       - KAFKA_NODE_ID=1
       - KAFKA_PROCESS_ROLES=broker,controller
       - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://0.0.0.0:9094
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-broker-1:9092,EXTERNAL://<IP_CỦA_VPS>:9094 # Sửa localhost thành IP VPS của bạn
-      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka-broker-1:9093 # Chỉ còn 1 node
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-broker-1:9092,EXTERNAL://<IP_VPS_CỦA_BẠN>:9094
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka-broker-1:9093
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - KAFKA_CLUSTER_ID=xK9mQr2sLpVbN8hTcYwEzA
       - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
-      # Giới hạn RAM cho Kafka (Rất quan trọng cho VPS 2GB)
-      - KAFKA_HEAP_OPTS=-Xmx512m -Xms256m
+      - KAFKA_HEAP_OPTS=-Xmx400m -Xms256m # Ép JVM chỉ lấy max 400MB
     ports:
       - "9094:9094"
     networks:
       - stazy-network
+    deploy:
+      resources:
+        limits:
+          memory: 700M # Hard limit của Docker container
 
   postgres:
     image: pgvector/pgvector:pg16
@@ -33,8 +36,16 @@ services:
       - POSTGRES_DB=products
     ports:
       - "5432:5432"
+    command: >
+      postgres
+      -c shared_buffers=128MB
+      -c max_connections=20
     networks:
       - stazy-network
+    deploy:
+      resources:
+        limits:
+          memory: 300M
 
   redis:
     image: redis:7.2-alpine
@@ -47,31 +58,10 @@ services:
       - redis_data:/data
     networks:
       - stazy-network
-
-# ⚠️ MÌNH ĐÃ COMMENT LẠI CÁC GIAO DIỆN UI ĐỂ TIẾT KIỆM RAM
-# Nếu muốn debug, bạn có thể uncomment để bật lên, dùng xong nên tắt đi (docker stop)
-#  kafka-ui:
-#    image: provectuslabs/kafka-ui:latest
-#    container_name: kafka-ui
-#    environment:
-#      KAFKA_CLUSTERS_0_NAME: local-cluster
-#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-broker-1:9092
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - kafka-broker-1
-#    networks:
-#      - stazy-network
-
-#  redis-insight:
-#    image: redis/redisinsight:latest
-#    container_name: redis-ui
-#    ports:
-#      - "5540:5540"
-#    depends_on:
-#      - redis
-#    networks:
-#      - stazy-network
+    deploy:
+      resources:
+        limits:
+          memory: 150M
 
 networks:
   stazy-network:

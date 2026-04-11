@@ -1,0 +1,96 @@
+# ==================================================
+# Multi-stage Dockerfile for Booking Service
+# Using turbo prune --docker for Turborepo projects
+# Safe for 2GB RAM VPS (won't waste RAM on unneeded deps)
+# Build: docker build -t stazy-booking-service -f Dockerfile.booking-service .
+# ==================================================
+
+# ==================================================
+# Stage 1: Pruner (Analyze & extract needed code)
+# ==================================================
+FROM node:20-alpine AS pruner
+
+RUN apk add --no-cache libc6-compat
+RUN npm install -g pnpm@9.0.0 turbo
+
+WORKDIR /app
+
+# Copy entire monorepo to let turbo analyze dependencies
+COPY . .
+
+# Turbo prune automatically extracts only booking-service
+# and its dependencies (e.g., @repo/booking-db, @repo/types, @repo/kafka)
+# Result goes to out/ folder
+RUN turbo prune booking-service --docker
+
+# ==================================================
+# Stage 2: Installer (Install only needed packages)
+# ==================================================
+FROM node:20-alpine AS installer
+
+RUN apk add --no-cache libc6-compat
+# Use corepack (Node.js native) for pnpm management (better than npm install -g)
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+
+WORKDIR /app
+
+# Copy only pruned JSON files (turbo prune already includes pnpm-lock.yaml)
+# The out/json/ directory contains all necessary package.json and lock files
+COPY --from=pruner /app/out/json/ .
+
+# Install dependencies - ONLY for booking-service
+# This is much lighter than installing everything (no React, Tailwind, etc.)
+RUN pnpm install --frozen-lockfile
+
+# ==================================================
+# Stage 3: Builder (Generate Prisma & build code)
+# ==================================================
+FROM node:20-alpine AS builder
+
+RUN apk add --no-cache libc6-compat
+RUN npm install -g pnpm@9.0.0 turbo
+
+WORKDIR /app
+
+# Copy everything needed for build
+COPY --from=installer /app/ .
+COPY --from=pruner /app/out/full/ .
+COPY turbo.json turbo.json
+
+# Generate Prisma client if booking-db is used
+RUN pnpm dlx prisma generate --schema=packages/booking-db/prisma/schema.prisma 2>/dev/null || true
+
+# Build booking-service and its workspace dependencies
+RUN pnpm turbo run build --filter=booking-service...
+
+# ==================================================
+# Stage 4: Runtime (Final production image)
+# ==================================================
+FROM node:20-alpine AS runtime
+
+RUN apk add --no-cache libc6-compat dumb-init
+RUN npm install -g pnpm@9.0.0
+
+WORKDIR /app
+
+# Copy built application and dependencies
+COPY --from=builder /app/ .
+
+# Environment
+ENV NODE_ENV=production
+ENV PORT=8001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:8001/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})" || exit 1
+
+# Navigate to booking service
+WORKDIR /app/apps/booking-service
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["/usr/sbin/dumb-init", "--"]
+
+# Start application
+CMD ["node", "dist/index.js"]
+
+EXPOSE 8001
