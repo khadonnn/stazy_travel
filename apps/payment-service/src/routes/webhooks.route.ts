@@ -32,12 +32,12 @@ webhookRoute.post("/stripe", async (c) => {
   }
 
   // Lấy metadata
-  const session = event.data.object as Stripe.Checkout.Session;
-  const bookingId = session.metadata?.bookingId;
-
   console.log(`ℹ️  [3] Event Type: ${event.type}`);
 
   if (event.type === "checkout.session.completed") {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const bookingId = session.metadata?.bookingId;
+
     console.log(`🔍 [4] Kiểm tra Metadata...`);
     console.log(`    - Booking ID: ${bookingId ? bookingId : "NULL ❌"}`);
 
@@ -53,6 +53,7 @@ webhookRoute.post("/stripe", async (c) => {
 
       //  CẬP NHẬT PAYLOAD: Lấy thêm thông tin Hotel & Customer từ Metadata
       const kafkaPayload = {
+        event: "PAYMENT_PROCESSED",
         bookingId: bookingId,
         userId: session.metadata?.userId || session.client_reference_id,
         stripeSessionId: session.id,
@@ -93,6 +94,45 @@ webhookRoute.post("/stripe", async (c) => {
       );
     } catch (kafkaError) {
       console.error("❌ [LỖI] Không gửi được Kafka:", kafkaError);
+    }
+  } else if (event.type === "payment_intent.payment_failed") {
+    const paymentIntent = event.data.object as Stripe.PaymentIntent;
+    const bookingId = paymentIntent.metadata?.bookingId;
+
+    console.log(`🔍 [4] Kiểm tra PaymentIntent...`);
+    console.log(`    - Booking ID: ${bookingId ? bookingId : "NULL ❌"}`);
+
+    if (!bookingId) {
+      console.error(
+        "❌ [LỖI NGHIÊM TRỌNG] Không tìm thấy bookingId trong payment_intent metadata.",
+      );
+      return c.json({ received: true });
+    }
+
+    try {
+      const kafkaPayload = {
+        event: "PAYMENT_FAILED",
+        bookingId,
+        userId: paymentIntent.metadata?.userId,
+        paymentIntentId: paymentIntent.id,
+        reason:
+          paymentIntent.last_payment_error?.message ||
+          paymentIntent.last_payment_error?.code ||
+          "payment_intent.payment_failed",
+      };
+
+      await producer.send("payment-events", kafkaPayload);
+
+      console.log(`✅ [6] Đã gửi Kafka thành công! Topic: payment-events`);
+      console.log(
+        `    - Payload gửi đi:`,
+        JSON.stringify(kafkaPayload, null, 2),
+      );
+    } catch (kafkaError) {
+      console.error(
+        "❌ [LỖI] Không gửi được Kafka payment-events:",
+        kafkaError,
+      );
     }
   } else {
     console.log("⚠️ [SKIP] Event này không phải là checkout.session.completed");

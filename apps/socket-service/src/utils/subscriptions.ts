@@ -1,5 +1,10 @@
 import { consumer } from "./kafka";
-import { notifyAdmin, notifyUserSuccess } from "./socket";
+import {
+  createSocketEventsQueue,
+  enqueueSocketEvent,
+} from "../queues/socket-events.queue.js";
+
+const socketEventsQueue = createSocketEventsQueue();
 
 export const runKafkaSubscriptions = async () => {
   try {
@@ -20,10 +25,19 @@ export const runKafkaSubscriptions = async () => {
             }
             if (typeof data === "string") data = JSON.parse(data);
 
-            // 2. Gọi Service Socket để bắn tin
-            // Không cần await vì bắn socket là fire-and-forget
-            notifyAdmin(data);
-            notifyUserSuccess(data.bookingId, data);
+            const eventId = data?.eventId;
+            if (!eventId || !data?.bookingId) {
+              console.warn(
+                "⚠️ [Socket Consumer] Missing eventId/bookingId, skipping",
+              );
+              return;
+            }
+
+            await enqueueSocketEvent(socketEventsQueue, {
+              eventId,
+              bookingId: data.bookingId,
+              payload: data,
+            });
           } catch (err) {
             console.error("❌ [Socket Consumer Error]", err);
           }

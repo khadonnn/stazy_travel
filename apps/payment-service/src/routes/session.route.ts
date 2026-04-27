@@ -67,6 +67,23 @@ sessionRoute.post("/create-checkout-session", shouldBeUser, async (c) => {
       client_reference_id: userId,
       customer_email: user.email,
 
+      payment_intent_data: {
+        metadata: {
+          bookingId,
+          userId,
+          checkInDate: String(checkInDate),
+          checkOutDate: String(checkOutDate),
+          customerName: user.name,
+          customerPhone: user.phone || "",
+          hotelId: String(mainItem.hotelId),
+          hotelName: mainItem.title,
+          hotelSlug: mainItem.slug,
+          hotelImage: mainItem.featuredImage,
+          hotelStars: String(mainItem.reviewStar || 0),
+          hotelAddress: mainItem.address || "Vietnam",
+        },
+      },
+
       // 👇 3. Metadata (Quan trọng nhất để gửi về Booking Service)
       metadata: {
         bookingId: bookingId,

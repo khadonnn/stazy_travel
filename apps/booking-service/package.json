@@ -22,6 +22,7 @@
   "dependencies": {
     "@clerk/fastify": "^2.6.9",
     "@fastify/cors": "^11.2.0",
+    "@repo/bullmq": "workspace:*",
     "@repo/booking-db": "workspace:*",
     "@repo/kafka": "workspace:*",
     "@repo/product-db": "workspace:*",

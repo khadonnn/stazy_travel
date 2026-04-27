@@ -245,45 +245,93 @@ model Category {
 // =========================================
 
 model Booking {
-  id            String   @id @default(uuid())
+  id                String        @id @default(uuid())
+  bookingId         String?       @db.VarChar(255)  // Business ID từ MongoDB (optional for existing records)
   
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
+  userId            String
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  hotelId       Int
-  hotel         Hotel    @relation(fields: [hotelId], references: [id])
+  hotelId           Int
+  hotel             Hotel         @relation(fields: [hotelId], references: [id], onDelete: Cascade)
 
   // Guest Info (Snapshot tại thời điểm đặt - hỗ trợ auto-fill lần sau)
-  guestName     String
-  guestEmail    String
-  guestPhone    String
-  adults        Int      @default(1)
-  children      Int      @default(0)
+  guestName         String
+  guestEmail        String
+  guestPhone        String
+  adults            Int           @default(1)
+  children          Int           @default(0)
+  
+  // Booking Snapshot (Lưu trữ thông tin hotel & room at booking time)
+  bookingSnapshot   Json?
+  
+  // Contact Details (JSON để giữ nguyên structure từ MongoDB)
+  contactDetails    Json?
 
   // Schedule
-  checkIn       DateTime
-  checkOut      DateTime
-  nights        Int      // Computed in logic
+  checkIn           DateTime
+  checkOut          DateTime
+  nights            Int           // Computed in logic
 
   // Payment Info
-  basePrice     Decimal  @db.Decimal(12, 2)
-  discount      Decimal  @db.Decimal(12, 2) @default(0)
-  totalAmount   Decimal  @db.Decimal(12, 2)
-  currency      String   @default("VND")
+  basePrice         Decimal       @db.Decimal(12, 2)
+  discount          Decimal       @db.Decimal(12, 2) @default(0)
+  totalAmount       Decimal       @db.Decimal(12, 2)
+  currency          String        @default("VND")
 
-  paymentMethod PaymentMethod
-  paymentStatus PaymentStatus @default(PENDING)
-  paymentIntentId String?     // Stripe/VNPAY ID
+  // Payment Details (Lưu trữ Stripe/Payment Provider)
+  paymentMethod     PaymentMethod @default(STRIPE)
+  paymentStatus     PaymentStatus @default(PENDING)
+  paymentIntentId   String?       @db.VarChar(255)    // Stripe Payment Intent ID
+  stripeSessionId   String?       @db.VarChar(255)    // Stripe Checkout Session ID
+  paymentFailureReason String?    @db.Text            // Lý do thanh toán thất bại (for compensating)
 
   // Status
-  status        BookingStatus @default(PENDING)
+  status            BookingStatus @default(PENDING)
   
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   @@index([userId])
   @@index([hotelId])
+  @@index([status])
   @@map("bookings")
+}
+
+enum OutboxStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
+}
+
+model OutboxMessage {
+  id            String       @id @default(uuid())
+  dedupKey      String       @unique
+  aggregateType String
+  aggregateId   String
+  eventType     String
+  topic         String
+  payload       Json
+  status        OutboxStatus @default(PENDING)
+  attempts      Int          @default(0)
+  availableAt   DateTime     @default(now())
+  processedAt   DateTime?
+  lastError     String?      @db.Text
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([status, availableAt])
+  @@index([aggregateType, aggregateId])
+  @@map("outbox_messages")
+}
+
+model ProcessedEvent {
+  eventId   String   @id
+  topic     String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("processed_events")
 }
 
 enum BookingStatus {
@@ -393,7 +441,7 @@ model SystemMetric {
 }
 model Review {
   id        String   @id @default(uuid())
-  
+  bookingId         String        @unique @db.VarChar(255)  // Business ID từ MongoDB
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   

@@ -1,102 +1,21 @@
-import { Booking } from "@repo/booking-db";
-import { producer } from "./kafka";
-// 1. Import Redlock từ file cấu hình ở bước trước
 import { redlock } from "../utils/redis";
 import crypto from "crypto";
-import { prisma } from "@repo/product-db"; // Thêm Prisma để sync PostgreSQL
+import { prisma } from "@repo/product-db";
+import type { Prisma } from "@repo/product-db";
+import type { Queue } from "@repo/bullmq";
+import type { SagaTimeoutJobData } from "../queues/saga-timeout.queue.js";
+
+type BookingDbClient = Prisma.TransactionClient | typeof prisma;
 
 // =========================================================
-// HÀM SYNC BOOKING SANG POSTGRESQL
-// =========================================================
-const syncBookingToPostgres = async (mongoBooking: any) => {
-  try {
-    const userId = mongoBooking.userId;
-    const hotelId = Number(mongoBooking.hotelId);
-    const contactDetails = mongoBooking.contactDetails || {};
-    const guestCount = mongoBooking.guestCount || {};
-    const totalPrice = Number(mongoBooking.totalPrice || 0);
-    const nights = Number(mongoBooking.nights || 1);
-    const basePrice = nights > 0 ? totalPrice / nights : totalPrice;
-
-    // Map status từ MongoDB sang PostgreSQL enum
-    let pgStatus: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" =
-      "PENDING";
-    if (
-      mongoBooking.status === "CONFIRMED" ||
-      mongoBooking.payment?.status === "PAID"
-    ) {
-      pgStatus = "CONFIRMED";
-    } else if (mongoBooking.status === "CANCELLED") {
-      pgStatus = "CANCELLED";
-    } else if (mongoBooking.status === "COMPLETED") {
-      pgStatus = "COMPLETED";
-    }
-
-    // Map paymentStatus enum (PENDING, SUCCEEDED, FAILED, REFUNDED)
-    let pgPaymentStatus: "PENDING" | "SUCCEEDED" | "FAILED" | "REFUNDED" =
-      "PENDING";
-    if (mongoBooking.payment?.status === "PAID") {
-      pgPaymentStatus = "SUCCEEDED";
-    }
-
-    // Upsert vào PostgreSQL
-    await prisma.booking.upsert({
-      where: { id: mongoBooking.bookingId },
-      create: {
-        id: mongoBooking.bookingId,
-        userId: userId,
-        hotelId: hotelId,
-        guestName: contactDetails.fullName || "Guest",
-        guestEmail: contactDetails.email || "guest@example.com",
-        guestPhone: contactDetails.phone || "",
-        adults: Number(guestCount.adults || 1),
-        children: Number(guestCount.children || 0),
-        checkIn: new Date(mongoBooking.checkIn),
-        checkOut: new Date(mongoBooking.checkOut),
-        nights: nights,
-        basePrice: basePrice,
-        discount: 0,
-        totalAmount: totalPrice,
-        currency: "VND",
-        paymentMethod: "STRIPE",
-        paymentStatus: pgPaymentStatus,
-        paymentIntentId:
-          mongoBooking.payment?.paymentIntentId ||
-          mongoBooking.payment?.stripeSessionId ||
-          null,
-        status: pgStatus,
-      },
-      update: {
-        status: pgStatus,
-        paymentStatus: pgPaymentStatus,
-        guestName: contactDetails.fullName || "Guest",
-        guestEmail: contactDetails.email || "guest@example.com",
-        guestPhone: contactDetails.phone || "",
-        adults: Number(guestCount.adults || 1),
-        children: Number(guestCount.children || 0),
-        nights: nights,
-        basePrice: basePrice,
-        totalAmount: totalPrice,
-        paymentIntentId:
-          mongoBooking.payment?.paymentIntentId ||
-          mongoBooking.payment?.stripeSessionId ||
-          null,
-        updatedAt: new Date(),
-      },
-    });
-
-    console.log(`🔄 Synced booking ${mongoBooking.bookingId} to PostgreSQL`);
-  } catch (error: any) {
-    console.error("❌ Sync to PostgreSQL failed:", error.message);
-    throw error;
-  }
-};
-
-// =========================================================
-// HÀM MỚI: TẠO BOOKING (CÓ REDIS LOCK)
+// HÀM CHÍNH: TẠO BOOKING (SINGLE TRANSACTION - POSTGRES ONLY)
 // Gọi hàm này ở Controller khi User bấm "Đặt phòng"
 // =========================================================
-export const createBooking = async (userId: string, bookingData: any) => {
+export const createBooking = async (
+  userId: string,
+  bookingData: any,
+  sagaTimeoutQueue?: Queue<SagaTimeoutJobData>,
+) => {
   const {
     hotelId,
     checkIn,
@@ -106,62 +25,131 @@ export const createBooking = async (userId: string, bookingData: any) => {
     contactDetails,
     bookingSnapshot,
   } = bookingData;
+
   const resource = `locks:hotel:${hotelId}:${checkIn}`;
   const ttl = 5000;
-
   let lock;
 
   try {
+    // 1. Acquire Redis lock to prevent race conditions
     lock = await redlock.acquire([resource], ttl);
-    console.log(` Đã khóa tài nguyên: ${resource}`);
+    console.log(`🔒 Acquired lock: ${resource}`);
 
-    const conflict = await Booking.findOne({
-      hotelId: Number(hotelId),
-      status: { $in: ["CONFIRMED", "PENDING"] },
-      $or: [
-        { checkIn: { $lt: new Date(checkOut), $gte: new Date(checkIn) } },
-        { checkOut: { $gt: new Date(checkIn), $lte: new Date(checkOut) } },
-      ],
+    // 2. Check for booking conflict in PostgreSQL
+    const conflict = await prisma.booking.findFirst({
+      where: {
+        hotelId: Number(hotelId),
+        status: { in: ["CONFIRMED", "PENDING"] },
+        checkIn: { lt: new Date(checkOut) },
+        checkOut: { gt: new Date(checkIn) },
+      },
     });
 
     if (conflict) {
-      throw new Error("Rất tiếc, phòng này vừa có người đặt!");
+      throw new Error(
+        "Rất tiếc, phòng này vừa có người đặt! Vui lòng chọn ngày khác.",
+      );
     }
 
-    const newBooking = await Booking.create({
-      bookingId: crypto.randomUUID(),
-      userId,
-      hotelId,
-      checkIn: new Date(checkIn),
-      checkOut: new Date(checkOut),
-      totalPrice: totalAmount,
-      status: "PENDING",
+    const bookingId = crypto.randomUUID();
+    const requestId = crypto.randomUUID(); // For saga idempotency
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    const basePrice = totalAmount / (nights || 1);
 
-      nights: nights || 1,
-      contactDetails: contactDetails || {},
-      bookingSnapshot: bookingSnapshot || {},
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+    // 3. Create booking + outbox message in a single Prisma transaction
+    const newBooking = await prisma.$transaction(async (tx) => {
+      // Create booking directly in PostgreSQL
+      const booking = await tx.booking.create({
+        data: {
+          bookingId,
+          userId,
+          hotelId: Number(hotelId),
+          guestName: contactDetails?.fullName || "Guest",
+          guestEmail: contactDetails?.email || "guest@example.com",
+          guestPhone: contactDetails?.phone || "",
+          adults: contactDetails?.adults || 1,
+          children: contactDetails?.children || 0,
+          checkIn: checkInDate,
+          checkOut: checkOutDate,
+          nights: nights || 1,
+          basePrice,
+          discount: 0,
+          totalAmount,
+          currency: "VND",
+          paymentMethod: "STRIPE",
+          paymentStatus: "PENDING",
+          status: "PENDING",
+          bookingSnapshot: bookingSnapshot
+            ? JSON.parse(JSON.stringify(bookingSnapshot))
+            : null,
+          contactDetails: contactDetails
+            ? JSON.parse(JSON.stringify(contactDetails))
+            : null,
+        },
+      });
 
-    // GỬI KAFKA NOTIFICATION (Đã thêm)
-    // Gửi sự kiện để Email Service gửi mail "Đơn hàng đã được tạo, vui lòng thanh toán"
-    await producer.send("booking-events", {
-      event: "BOOKING_CREATED",
-      bookingId: newBooking.bookingId,
-      email: "test@example.com", // Hoặc lấy từ user info
-      amount: totalAmount,
-    });
+      // Create outbox message in the same transaction
+      const outboxPayload = {
+        event: "BOOKING_CREATED",
+        bookingId,
+        userId,
+        email: contactDetails?.email || "guest@example.com",
+        amount: totalAmount,
+        currency: "VND",
+        hotelId,
+        hotelName: bookingSnapshot?.hotel?.name || "Unknown Hotel",
+        checkIn: checkInDate.toISOString(),
+        checkOut: checkOutDate.toISOString(),
+      };
 
-    // AUTO-SYNC SANG POSTGRESQL NGAY KHI TẠO BOOKING (PENDING)
-    try {
-      await syncBookingToPostgres(newBooking);
+      await tx.outboxMessage.create({
+        data: {
+          dedupKey: `booking:${bookingId}:BOOKING_CREATED`,
+          aggregateType: "Booking",
+          aggregateId: bookingId,
+          eventType: "BOOKING_CREATED",
+          topic: "booking-events",
+          payload: outboxPayload,
+          status: "PENDING",
+        },
+      });
+
       console.log(
-        `🔄 Auto-synced PENDING booking ${newBooking.bookingId} to PostgreSQL`,
+        `✅ Created booking ${bookingId} and outbox message in PostgreSQL`,
       );
-    } catch (syncError: any) {
-      console.error("⚠️ Auto-sync failed:", syncError.message);
-      // Không throw để không fail booking creation
+      return booking;
+    });
+
+    // 4️⃣ ADD SAGA TIMEOUT JOB (Outside transaction, after booking confirmed)
+    // If queue not provided, skip timeout setup (for backward compatibility)
+    if (sagaTimeoutQueue) {
+      const timeoutMs = 15 * 60 * 1000; // 15 minutes
+      try {
+        await sagaTimeoutQueue.add(
+          `timeout:${newBooking.bookingId}`,
+          {
+            bookingId: newBooking.bookingId!,
+            sagaId: requestId,
+            timeoutMs,
+          },
+          {
+            delay: timeoutMs,
+            attempts: 1,
+            removeOnComplete: true,
+            jobId: `timeout:${newBooking.bookingId}`,
+          },
+        );
+        console.log(
+          `⏰ [Saga] Created timeout job for booking ${newBooking.bookingId}`,
+        );
+      } catch (queueError: any) {
+        console.error(
+          `❌ [Saga] Failed to create timeout job: ${queueError.message}`,
+          "Continuing without timeout...",
+        );
+        // Don't throw - continue without timeout (system still works, just lacks protection)
+      }
     }
 
     return newBooking;
@@ -173,113 +161,72 @@ export const createBooking = async (userId: string, bookingData: any) => {
     }
     throw error;
   } finally {
+    // Always release the lock
     if (lock) {
       await lock
         .unlock()
-        .catch((err) => console.error("Lỗi nhả khóa Redis:", err));
-      console.log(`🔓 Đã mở khóa: ${resource}`);
+        .catch((err) => console.error("❌ Lock release error:", err));
+      console.log(`🔓 Released lock: ${resource}`);
     }
   }
 };
 
 // =========================================================
-// ♻️ HÀM CŨ: UPDATE STATUS (GIỮ NGUYÊN CODE CỦA BẠN)
+// HÀM UPDATE: PAYMENT SUCCESSFUL (POSTGRES ONLY)
 // =========================================================
 export const updateBookingStatusToPaid = async (
   bookingId: string,
   paymentData: any,
+  db: BookingDbClient = prisma,
 ) => {
-  console.log(`⚡ [Service] Bắt đầu xử lý Booking UUID: ${bookingId}`);
-
-  // 🔍 DEBUG: In toàn bộ dữ liệu nhận được để kiểm tra
-  console.log(
-    "🔍 [DEBUG] Payment Data Raw:",
-    JSON.stringify(paymentData, null, 2),
-  );
-
-  // ---------------------------------------------------------
-  // 1. TRÍCH XUẤT DỮ LIỆU
-  // ---------------------------------------------------------
-  const hotelInfo = paymentData.hotelInfo || {};
-  const meta = paymentData.metadata || {};
-
-  // Lấy thông tin Hotel
-  const incomingHotelId = Number(hotelInfo.id) || Number(meta.hotelId) || 1;
-
-  const incomingHotelName =
-    hotelInfo.name || paymentData.hotel || meta.hotelName;
-
-  const incomingAddress = hotelInfo.address || meta.hotelAddress;
-  const incomingImage = hotelInfo.image || meta.hotelImage;
-  const incomingSlug = hotelInfo.slug || meta.hotelSlug;
-  const incomingStars = Number(hotelInfo.stars) || Number(meta.hotelStars) || 0;
-
-  // Lấy thông tin Khách hàng
-  const incomingCustomerName =
-    paymentData.customerName ||
-    paymentData.user ||
-    meta.customerName ||
-    "Stripe Customer";
-
-  const incomingCustomerEmail =
-    paymentData.customerEmail ||
-    paymentData.email ||
-    meta.customerEmail ||
-    "stripe@stazy.com";
-
-  const incomingPhone = paymentData.customerPhone || meta.customerPhone || "";
-
-  // ---------------------------------------------------------
-  // 2. TÍNH TOÁN NGÀY
-  // ---------------------------------------------------------
-  const checkInDate = new Date(
-    paymentData.checkInDate || meta.checkInDate || Date.now(),
-  );
-  const checkOutDate = new Date(
-    paymentData.checkOutDate || meta.checkOutDate || Date.now(),
-  );
-  const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
-  const calculatedNights = Math.max(
-    1,
-    Math.ceil(timeDiff / (1000 * 3600 * 24)),
-  );
+  console.log(`⚡ [Service] Processing booking payment: ${bookingId}`);
 
   try {
-    // 3. Tìm Booking cũ (nếu có) để merge data
-    const existingBooking = await Booking.findOne({ bookingId });
+    const hotelInfo = paymentData.hotelInfo || {};
+    const meta = paymentData.metadata || {};
 
-    // Khởi tạo giá trị mặc định
-    let finalHotelName = "Unknown Hotel";
-    let finalAddress = "Address not provided";
-    let finalSlug = "recovered-booking";
-    let finalImage = "";
-    let finalStars = 0;
+    const incomingHotelId = Number(hotelInfo.id) || Number(meta.hotelId) || 1;
+    const incomingHotelName =
+      hotelInfo.name || paymentData.hotel || meta.hotelName;
+    const incomingAddress = hotelInfo.address || meta.hotelAddress;
+    const incomingImage = hotelInfo.image || meta.hotelImage;
+    const incomingSlug = hotelInfo.slug || meta.hotelSlug;
+    const incomingStars =
+      Number(hotelInfo.stars) || Number(meta.hotelStars) || 0;
 
-    if (incomingHotelName) {
-      finalHotelName = incomingHotelName;
-      finalAddress = incomingAddress || finalAddress;
-      finalSlug = incomingSlug || finalSlug;
-      finalImage = incomingImage || finalImage;
-      finalStars = incomingStars || finalStars;
-    } else if (existingBooking?.bookingSnapshot?.hotel?.name) {
-      console.log("⚠️ Không nhận được tên Hotel từ Kafka, dùng lại DB cũ");
-      const oldSnapshot = existingBooking.bookingSnapshot.hotel;
-      finalHotelName = oldSnapshot.name;
-      finalAddress = oldSnapshot.address || finalAddress;
-      finalSlug = oldSnapshot.slug || finalSlug;
-      finalImage = oldSnapshot.image || finalImage;
-      finalStars = oldSnapshot.stars || finalStars;
-    }
+    const incomingCustomerName =
+      paymentData.customerName ||
+      paymentData.user ||
+      meta.customerName ||
+      "Stripe Customer";
+    const incomingCustomerEmail =
+      paymentData.customerEmail ||
+      paymentData.email ||
+      meta.customerEmail ||
+      "stripe@stazy.com";
+    const incomingPhone = paymentData.customerPhone || meta.customerPhone || "";
 
-    // 4. TẠO SNAPSHOT HOÀN CHỈNH
+    const checkInDate = new Date(
+      paymentData.checkInDate || meta.checkInDate || Date.now(),
+    );
+    const checkOutDate = new Date(
+      paymentData.checkOutDate || meta.checkOutDate || Date.now(),
+    );
+    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+    const calculatedNights = Math.max(
+      1,
+      Math.ceil(timeDiff / (1000 * 3600 * 24)),
+    );
+
+    // Build hotel snapshot
     const fullSnapshot = {
       hotel: {
         id: incomingHotelId,
-        name: finalHotelName,
-        slug: finalSlug,
-        address: finalAddress,
-        image: finalImage,
-        stars: finalStars,
+        name: incomingHotelName || "Unknown Hotel",
+        slug: incomingSlug || "recovered-booking",
+        address: incomingAddress || "Address not provided",
+        image: incomingImage || "",
+        stars: incomingStars || 0,
       },
       room: {
         id: incomingHotelId,
@@ -288,59 +235,173 @@ export const updateBookingStatusToPaid = async (
       },
     };
 
-    console.log(
-      "🛠 [DEBUG] Snapshot sẽ lưu:",
-      JSON.stringify(fullSnapshot.hotel, null, 2),
-    );
+    const existingBooking = await db.booking.findFirst({
+      where: { bookingId },
+      select: { id: true, status: true },
+    });
 
-    // 5. UPDATE MONGODB
-    // Logic: Nếu đã có PENDING (do hàm createBooking tạo) -> Update thành PAID
-    // Nếu chưa có (Webhook chạy trước hoặc lỗi) -> Upsert mới
-    const result = await Booking.findOneAndUpdate(
-      { bookingId: bookingId },
-      {
-        $set: {
-          status: "CONFIRMED",
-          "payment.status": "PAID",
-          "payment.stripeSessionId":
-            paymentData.stripeSessionId || meta.stripeSessionId,
-          paymentMethod: "stripe", // Thêm field paymentMethod
-          updatedAt: new Date(),
-          nights: calculatedNights,
-          checkIn: checkInDate,
-          checkOut: checkOutDate,
-          bookingSnapshot: fullSnapshot,
-          contactDetails: {
-            fullName: incomingCustomerName,
-            email: incomingCustomerEmail,
-            phone: incomingPhone,
-          },
-        },
-        $setOnInsert: {
-          bookingId: bookingId,
-          userId: paymentData.userId || meta.userId || "guest_user",
-          hotelId: incomingHotelId,
-          totalPrice: paymentData.amount,
-          createdAt: new Date(),
-        },
-      },
-      { new: true, upsert: true },
-    );
-
-    console.log(`✅ [Service] ĐÃ LƯU MONGODB THÀNH CÔNG!`);
-
-    // SYNC SANG POSTGRESQL (Quan trọng để hiển thị Recent Bookings trên Admin)
-    try {
-      await syncBookingToPostgres(result);
-      console.log(`✅ [Service] ĐÃ SYNC SANG POSTGRESQL!`);
-    } catch (syncError: any) {
-      console.error("⚠️ [Service] Lỗi sync PostgreSQL:", syncError.message);
-      // Không throw error để không fail toàn bộ quá trình
+    if (existingBooking?.status === "CONFIRMED") {
+      console.log(`✅ Booking ${bookingId} already CONFIRMED, skipping update`);
+      return await db.booking.findUnique({
+        where: { id: existingBooking.id },
+      });
     }
+
+    const bookingData = {
+      status: "CONFIRMED" as const,
+      paymentStatus: "SUCCEEDED" as const,
+      paymentIntentId: paymentData.paymentIntentId || null,
+      stripeSessionId:
+        paymentData.stripeSessionId || meta.stripeSessionId || null,
+      nights: calculatedNights,
+      checkIn: checkInDate,
+      checkOut: checkOutDate,
+      bookingSnapshot: fullSnapshot,
+      contactDetails: {
+        fullName: incomingCustomerName,
+        email: incomingCustomerEmail,
+        phone: incomingPhone,
+      },
+      updatedAt: new Date(),
+    };
+
+    const result = existingBooking
+      ? await db.booking.update({
+          where: { id: existingBooking.id },
+          data: bookingData,
+        })
+      : await db.booking.create({
+          data: {
+            bookingId,
+            userId: paymentData.userId || meta.userId || "guest_user",
+            hotelId: incomingHotelId,
+            guestName: incomingCustomerName,
+            guestEmail: incomingCustomerEmail,
+            guestPhone: incomingPhone,
+            basePrice:
+              (paymentData.amount || 0) / Math.max(1, calculatedNights),
+            totalAmount: paymentData.amount || 0,
+            currency: "VND",
+            paymentMethod: "STRIPE",
+            ...bookingData,
+          },
+        });
+
+    console.log(`✅ Updated booking ${bookingId} to CONFIRMED in PostgreSQL`);
+    return result;
+  } catch (error: any) {
+    console.error("❌ Error updating booking payment status:", error.message);
+    throw error;
+  }
+};
+
+export const cancelBookingOnPaymentFailure = async (
+  bookingId: string,
+  failureData: any,
+  sagaTimeoutQueue?: Queue<SagaTimeoutJobData>,
+) => {
+  try {
+    // 1. Remove timeout job (payment failed, no need to wait)
+    if (sagaTimeoutQueue) {
+      const jobId = `timeout:${bookingId}`;
+      const job = await sagaTimeoutQueue.getJob(jobId);
+      if (job) {
+        await job.remove();
+        console.log(
+          `🗑️ [Saga] Removed timeout job for cancelled booking ${bookingId}`,
+        );
+      }
+    }
+
+    // Find existing booking
+    const existingBooking = await prisma.booking.findFirst({
+      where: { bookingId },
+      select: { id: true, userId: true, hotelId: true },
+    });
+
+    if (!existingBooking) {
+      console.warn(`⚠️ [Compensate] Booking not found: ${bookingId}`);
+      return null;
+    }
+
+    // Update booking + create outbox event in ATOMIC transaction
+    const result = await prisma.$transaction(async (tx) => {
+      const updated = await tx.booking.update({
+        where: { id: existingBooking.id },
+        data: {
+          status: "CANCELLED",
+          paymentStatus: "FAILED",
+          paymentFailureReason:
+            failureData?.reason || "Payment processing failed",
+          updatedAt: new Date(),
+        },
+      });
+
+      console.log(
+        `♻️ [Compensate] Booking ${bookingId} cancelled due to payment failure`,
+      );
+
+      // Create outbox event for notification service in same transaction
+      await tx.outboxMessage.create({
+        data: {
+          dedupKey: `booking:${bookingId}:BOOKING_CANCELLED_PAYMENT_FAILED`,
+          aggregateType: "Booking",
+          aggregateId: bookingId,
+          eventType: "BOOKING_CANCELLED_PAYMENT_FAILED",
+          topic: "booking-events",
+          payload: {
+            event: "BOOKING_CANCELLED_PAYMENT_FAILED",
+            bookingId,
+            userId: existingBooking.userId,
+            hotelId: existingBooking.hotelId,
+            reason: failureData?.reason || "Payment processing failed",
+            cancelledAt: new Date().toISOString(),
+          },
+          status: "PENDING",
+        },
+      });
+
+      return updated;
+    });
 
     return result;
   } catch (error: any) {
-    console.error("❌ [Service] Lỗi lưu MongoDB:", error.message);
+    console.error("❌ [Compensate] Error cancelling booking:", error.message);
     throw error;
+  }
+};
+
+// =========================================================
+// HÀM: REMOVE SAGA TIMEOUT WHEN PAYMENT SUCCEEDS
+// =========================================================
+export const removeSagaTimeoutOnPaymentSuccess = async (
+  bookingId: string,
+  sagaTimeoutQueue?: Queue<SagaTimeoutJobData>,
+): Promise<void> => {
+  if (!sagaTimeoutQueue) {
+    console.warn(`⚠️ [Saga] Queue not available, skipping timeout removal`);
+    return;
+  }
+
+  try {
+    const jobId = `timeout:${bookingId}`;
+    const job = await sagaTimeoutQueue.getJob(jobId);
+
+    if (job) {
+      await job.remove();
+      console.log(
+        `✅ [Saga] Removed timeout job after payment success: ${bookingId}`,
+      );
+    } else {
+      console.log(
+        `⚠️ [Saga] No timeout job found for ${bookingId} (may have already executed)`,
+      );
+    }
+  } catch (error: any) {
+    console.error(
+      `❌ [Saga] Error removing timeout job: ${error.message}`,
+      "Continuing...",
+    );
+    // Don't throw - continue even if we can't remove timeout
   }
 };

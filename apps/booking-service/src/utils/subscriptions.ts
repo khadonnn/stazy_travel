@@ -1,57 +1,167 @@
-import { updateBookingStatusToPaid } from "./booking";
 import { consumer } from "./kafka";
+import { getBookingEventsQueue } from "./queues";
+
+const normalizeKafkaMessage = (message: any) => {
+  let payload = message;
+
+  if (message && message.value) {
+    const rawValue = message.value;
+
+    try {
+      if (Buffer.isBuffer(rawValue)) {
+        payload = JSON.parse(rawValue.toString());
+      } else if (typeof rawValue === "string") {
+        payload = JSON.parse(rawValue);
+      } else {
+        payload = rawValue;
+      }
+    } catch (error) {
+      console.error("❌ Lỗi Parse JSON Kafka:", error);
+      return null;
+    }
+  }
+
+  if (payload?.value && typeof payload.value === "object") {
+    payload = payload.value;
+  }
+
+  return payload;
+};
+
+const handleBookingEvent = async (message: any) => {
+  console.log("\n================================================");
+  console.log("📩 [Kafka Consumer] Nhận sự kiện booking!");
+
+  const bookingData = normalizeKafkaMessage(message);
+
+  if (!bookingData || !bookingData.bookingId) {
+    console.warn("⚠️ [Skip] Dữ liệu booking thiếu bookingId:", bookingData);
+    return;
+  }
+
+  if (bookingData.event === "BOOKING_CREATED") {
+    console.log(
+      `ℹ️ [Booking Event] BOOKING_CREATED đã vào Outbox, chờ payment xử lý bookingId=${bookingData.bookingId}`,
+    );
+    return;
+  }
+
+  if (
+    bookingData.event === "PAYMENT_PROCESSED" ||
+    bookingData.event === "PAYMENT_SUCCESS" ||
+    bookingData.status === "PAID"
+  ) {
+    const bookingEventsQueue = getBookingEventsQueue();
+    if (!bookingEventsQueue) {
+      console.error(
+        "❌ [Booking Event] booking:events queue is not initialized",
+      );
+      return;
+    }
+
+    const eventId = bookingData.eventId;
+    if (!eventId) {
+      console.warn(
+        `⚠️ [Booking Event] Missing eventId from producer, skip bookingId=${bookingData.bookingId}`,
+      );
+      return;
+    }
+
+    await bookingEventsQueue.add(
+      `booking-event:${eventId}`,
+      {
+        eventId,
+        topic: "booking-events",
+        eventType: bookingData.event || "PAYMENT_SUCCESS",
+        bookingId: bookingData.bookingId,
+        payload: bookingData,
+      },
+      {
+        jobId: `booking-event:${eventId}`,
+      },
+    );
+
+    console.log(
+      `📥 [Booking Event] Enqueued payment success for bookingId=${bookingData.bookingId}, eventId=${eventId}`,
+    );
+
+    return;
+  }
+
+  console.log(
+    "ℹ️ [Booking Event] Bỏ qua event không thuộc luồng thanh toán:",
+    bookingData.event,
+  );
+};
+
+const handlePaymentEvent = async (message: any) => {
+  console.log("\n================================================");
+  console.log("📩 [Kafka Consumer] Nhận sự kiện payment!");
+
+  const paymentData = normalizeKafkaMessage(message);
+
+  if (!paymentData || !paymentData.bookingId) {
+    console.warn("⚠️ [Skip] Dữ liệu payment thiếu bookingId:", paymentData);
+    return;
+  }
+
+  if (
+    paymentData.event === "PAYMENT_FAILED" ||
+    paymentData.status === "FAILED"
+  ) {
+    const bookingEventsQueue = getBookingEventsQueue();
+    if (!bookingEventsQueue) {
+      console.error(
+        "❌ [Payment Event] booking:events queue is not initialized",
+      );
+      return;
+    }
+
+    const eventId = paymentData.eventId;
+    if (!eventId) {
+      console.warn(
+        `⚠️ [Payment Event] Missing eventId from producer, skip bookingId=${paymentData.bookingId}`,
+      );
+      return;
+    }
+
+    await bookingEventsQueue.add(
+      `booking-event:${eventId}`,
+      {
+        eventId,
+        topic: "payment-events",
+        eventType: paymentData.event || "PAYMENT_FAILED",
+        bookingId: paymentData.bookingId,
+        payload: paymentData,
+      },
+      {
+        jobId: `booking-event:${eventId}`,
+      },
+    );
+
+    console.log(
+      `📥 [Payment Event] Enqueued payment failure for bookingId=${paymentData.bookingId}, eventId=${eventId}`,
+    );
+
+    return;
+  }
+
+  console.log(
+    "ℹ️ [Payment Event] Bỏ qua event không phải thất bại:",
+    paymentData.event,
+  );
+};
 
 export const runKafkaSubscriptions = async () => {
   try {
     await consumer.subscribe([
       {
-        //  QUAN TRỌNG: Phải khớp với Topic mà Payment Service gửi đi (xem log ảnh của bạn là booking-events)
         topicName: "booking-events",
-        topicHandler: async (message: any) => {
-          console.log("\n================================================");
-          console.log("📩 [Kafka Consumer] Nhận tín hiệu thanh toán!");
-
-          try {
-            let paymentData = message;
-
-            // 1. Parse dữ liệu cẩn thận
-            if (message && message.value) {
-              const rawValue = message.value;
-              try {
-                if (Buffer.isBuffer(rawValue)) {
-                  paymentData = JSON.parse(rawValue.toString());
-                } else if (typeof rawValue === "string") {
-                  paymentData = JSON.parse(rawValue);
-                } else {
-                  paymentData = rawValue;
-                }
-              } catch (e) {
-                console.error("❌ Lỗi Parse JSON Kafka:", e);
-                return;
-              }
-            }
-
-            // Fix trường hợp payload bị lồng nhau (Kafka wrapper đôi khi bọc thêm 1 lớp value)
-            if (paymentData.value && typeof paymentData.value === "object") {
-              paymentData = paymentData.value;
-            }
-
-            // 2. Validate ID
-            if (!paymentData || !paymentData.bookingId) {
-              console.warn("⚠️ [Skip] Dữ liệu thiếu bookingId:", paymentData);
-              return;
-            }
-
-            console.log(
-              `➡️ Gọi Update Service cho BookingID: ${paymentData.bookingId}`,
-            );
-
-            // 3. Gọi Service
-            await updateBookingStatusToPaid(paymentData.bookingId, paymentData);
-          } catch (err) {
-            console.error("❌ [Consumer Error]", err);
-          }
-        },
+        topicHandler: handleBookingEvent,
+      },
+      {
+        topicName: "payment-events",
+        topicHandler: handlePaymentEvent,
       },
     ]);
 

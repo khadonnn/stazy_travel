@@ -1,146 +1,151 @@
-import sendMail from "./utils/mailer";
 import { createConsumer, createKafkaClient } from "@repo/kafka";
+import {
+  createEmailWorker,
+  setupEmailQueueObservability,
+} from "./queues/email.queue.js";
+import {
+  createEmailEventsWorker,
+  enqueueEmailEvent,
+  setupEmailEventsQueueObservability,
+} from "./queues/email-events.queue.js";
+import { initializeQueues, getEmailEventsQueue } from "./utils/queues.js";
 
 const kafka = createKafkaClient("email-service");
 const consumer = createConsumer(kafka, "email-service");
-const LOGO_URL =
-  "https://res.cloudinary.com/dtj7wfwzu/image/upload/v1768450033/logo_4_ueg3y8.png";
+
+let emailWorker: any = null;
+let emailEventsWorker: any = null;
+let emailQueue: any = null;
+let emailEventsQueue: any = null;
+
+const extractEventId = (message: any): string | null => {
+  try {
+    const rawValue = message?.value;
+    if (!rawValue) {
+      return null;
+    }
+
+    const payload = Buffer.isBuffer(rawValue)
+      ? JSON.parse(rawValue.toString())
+      : typeof rawValue === "string"
+        ? JSON.parse(rawValue)
+        : rawValue;
+
+    if (payload?.eventId) {
+      return payload.eventId;
+    }
+
+    if (payload?.value?.eventId) {
+      return payload.value.eventId;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};
 
 const start = async () => {
   try {
+    const queues = await initializeQueues();
+    emailQueue = queues.email;
+    emailEventsQueue = queues.emailEvents;
+
+    emailWorker = createEmailWorker();
+    emailEventsWorker = createEmailEventsWorker();
+
+    setupEmailQueueObservability(queues.email);
+    setupEmailEventsQueueObservability(queues.emailEvents);
+
+    console.log("✅ Email Queue initialized");
+    console.log("✅ Email Events Queue initialized");
+
     await consumer.connect();
 
     await consumer.subscribe([
-      // 1. TOPIC: TẠO USER (Giữ nguyên)
       {
         topicName: "user.created",
         topicHandler: async (message) => {
-          const { email, username } = message;
-          if (email) {
-            await sendMail({
-              to: email,
-              subject: "Chào mừng đến với Stazy!",
-              html: `
-                <div style="font-family: Arial; padding: 20px; text-align: center;">
-                  <img src="${LOGO_URL}" alt="Stazy Logo" style="height: 50px; margin-bottom: 20px;" />
-                  <h2 style="color: #059669;">Xin chào ${username}!</h2>
-                  <p>Tài khoản của bạn đã được tạo thành công.</p>
-                </div>
-              `,
-            });
+          const queue = getEmailEventsQueue();
+          const eventId = extractEventId(message);
+          if (!queue || !eventId) {
+            console.warn("⚠️ [user.created] Missing queue/eventId, skipping");
+            return;
           }
+
+          await enqueueEmailEvent(queue, {
+            eventId,
+            eventType: "WELCOME",
+            message,
+          });
         },
       },
-
-      // 2. TOPIC: BOOKING EVENTS (Thanh toán thành công)
       {
         topicName: "booking-events",
         topicHandler: async (message) => {
-          console.log("\n" + "=".repeat(70));
-          console.log("🔔 [KAFKA] Nhận message từ topic: booking-events");
-          console.log("=".repeat(70));
-          console.log("📦 Payload:", JSON.stringify(message, null, 2));
-          console.log("=".repeat(70));
-
-          const { email, user, hotel, amount, checkInDate, checkOutDate } =
-            message;
-
-          if (email) {
-            // Format giá tiền
-            const formattedPrice = new Intl.NumberFormat("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            }).format(amount);
-
-            // Format ngày tháng theo chuẩn Việt Nam
-            const formatDate = (dateString: string) => {
-              try {
-                const date = new Date(dateString);
-                return new Intl.DateTimeFormat("vi-VN", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                }).format(date);
-              } catch (error) {
-                return dateString; // Fallback nếu lỗi
-              }
-            };
-
-            const formattedCheckIn = formatDate(checkInDate);
-            const formattedCheckOut = formatDate(checkOutDate);
-
-            await sendMail({
-              to: email,
-              // Tiêu đề email (Subject) chỉ chứa Text & Emoji
-              subject: `✅ Xác nhận đặt phòng: ${hotel}`,
-
-              // Nội dung HTML (Chứa Logo)
-              html: `
-                <div style="font-family: Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #ffffff;">
-                  
-                  <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px dashed #eee;">
-                    <img src="${LOGO_URL}" alt="Stazy Logo" style="height: 60px; width: auto; object-fit: contain;" />
-                  </div>
-
-                  <div style="text-align: center; margin-bottom: 20px;">
-                    <h2 style="color: #059669; margin: 0; font-size: 24px;">Đặt phòng thành công!</h2>
-                    <p style="color: #6b7280; font-size: 14px; margin-top: 5px;">Mã đặt chỗ: #${Date.now().toString().slice(-6)}</p>
-                  </div>
-
-                  <p style="font-size: 16px;">Xin chào <b>${user || "Quý khách"}</b>,</p>
-                  <p style="color: #4b5563;">Cảm ơn bạn đã lựa chọn <b>Stazy</b> cho kỳ nghỉ sắp tới. Dưới đây là thông tin chi tiết đơn hàng của bạn:</p>
-                  
-                  <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 15px;">
-                    <tr style="background-color: #f9fafb;">
-                      <td style="padding: 12px; border: 1px solid #e5e7eb; color: #374151; width: 40%;">🏨 Khách sạn</td>
-                      <td style="padding: 12px; border: 1px solid #e5e7eb; font-weight: bold; color: #111827;">${hotel}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 12px; border: 1px solid #e5e7eb; color: #374151;">📅 Ngày nhận phòng</td>
-                      <td style="padding: 12px; border: 1px solid #e5e7eb;">${formattedCheckIn}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 12px; border: 1px solid #e5e7eb; color: #374151;">📅 Ngày trả phòng</td>
-                      <td style="padding: 12px; border: 1px solid #e5e7eb;">${formattedCheckOut}</td>
-                    </tr>
-                    <tr style="background-color: #ecfdf5;">
-                      <td style="padding: 12px; border: 1px solid #e5e7eb; color: #059669; font-weight: bold;">💰 Tổng tiền</td>
-                      <td style="padding: 12px; border: 1px solid #e5e7eb; color: #059669; font-weight: bold; font-size: 18px;">${formattedPrice}</td>
-                    </tr>
-                  </table>
-
-                  <div style="margin-top: 35px; text-align: center;">
-                    <a href="http://localhost:3000/trips" style="background-color: #059669; color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">Xem chi tiết chuyến đi</a>
-                  </div>
-
-                  <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
-                  
-                  <p style="font-size: 12px; color: #9ca3af; text-align: center; line-height: 1.5;">
-                    Bạn nhận được email này vì đã đặt phòng tại Stazy.<br>
-                    Nếu cần hỗ trợ, vui lòng liên hệ <a href="mailto:support@stazy.com" style="color: #059669;">support@stazy.com</a>.<br>
-                    © 2026 Stazy Inc. All rights reserved.
-                  </p>
-                </div>
-              `,
-            });
-            console.log("\n✅ [EMAIL SENT] Đã gửi email xác nhận booking");
-            console.log(`   📧 To: ${email}`);
-            console.log(`   🏨 Hotel: ${hotel}`);
-            console.log(`   💰 Amount: ${formattedPrice}`);
-            console.log("=".repeat(70) + "\n");
-          } else {
-            console.warn("⚠️  [WARNING] Không có email để gửi!");
-            console.log("   Payload:", JSON.stringify(message, null, 2));
+          const queue = getEmailEventsQueue();
+          const eventId = extractEventId(message);
+          if (!queue || !eventId) {
+            console.warn("⚠️ [booking-events] Missing queue/eventId, skipping");
+            return;
           }
+
+          await enqueueEmailEvent(queue, {
+            eventId,
+            eventType: "BOOKING_CREATED",
+            message,
+          });
+        },
+      },
+      {
+        topicName: "payment-events",
+        topicHandler: async (message) => {
+          const queue = getEmailEventsQueue();
+          const eventId = extractEventId(message);
+          if (!queue || !eventId) {
+            console.warn("⚠️ [payment-events] Missing queue/eventId, skipping");
+            return;
+          }
+
+          await enqueueEmailEvent(queue, {
+            eventId,
+            eventType: "PAYMENT_SUCCESS",
+            message,
+          });
         },
       },
     ]);
 
-    console.log("🚀 Email Service đang lắng nghe Kafka...");
+    console.log("🚀 Email Service is running & listening to topics...");
   } catch (error) {
-    console.log("❌ Lỗi Kafka Consumer:", error);
+    console.error("❌ Email Service Error:", error);
+    process.exit(1);
   }
 };
 
 start();
+
+const closeGracefully = async (signal: string) => {
+  console.log(`Received signal to terminate: ${signal}`);
+
+  if (emailEventsWorker) {
+    await emailEventsWorker.close();
+  }
+  if (emailWorker) {
+    await emailWorker.close();
+  }
+  if (emailEventsQueue) {
+    await emailEventsQueue.close();
+  }
+  if (emailQueue) {
+    await emailQueue.close();
+  }
+
+  await consumer.disconnect();
+
+  console.log("🛑 Email service shut down gracefully");
+  process.exit(0);
+};
+
+process.on("SIGINT", () => closeGracefully("SIGINT"));
+process.on("SIGTERM", () => closeGracefully("SIGTERM"));

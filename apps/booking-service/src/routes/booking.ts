@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { shouldBeAdmin, shouldBeUser } from "../middleware/authMiddleware";
 import { Booking } from "@repo/booking-db";
 import { createBooking } from "../utils/booking";
+import { getSagaTimeoutQueue } from "../utils/queues.js";
 // Định nghĩa kiểu dữ liệu Body gửi lên để TS hiểu
 interface CreateBookingBody {
   hotelId: number | string;
@@ -66,29 +67,34 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
 
         // --- BƯỚC 2: GỌI HÀM LOGIC CÓ KHÓA REDIS ---
         // Chúng ta truyền tất cả dữ liệu đã chuẩn bị vào hàm này
-        const newBooking = await createBooking(userId, {
-          hotelId: realHotelId,
-          checkIn: startDate, // Truyền Date object luôn
-          checkOut: endDate,
-          totalAmount: totalPrice,
-          //  Truyền thêm các dữ liệu phụ trợ để hàm utils lưu vào DB
-          nights,
-          contactDetails,
-          bookingSnapshot: {
-            hotel: {
-              id: hotelData.id,
-              name: hotelData.name || hotelData.title,
-              slug: hotelData.slug,
-              address: hotelData.address,
-              image: hotelData.featuredImage || hotelData.image,
-              stars: hotelData.starRating || 0,
-            },
-            room: {
-              name: "Standard Room",
-              priceAtBooking: pricePerNight,
+        const sagaTimeoutQueue = getSagaTimeoutQueue();
+        const newBooking = await createBooking(
+          userId,
+          {
+            hotelId: realHotelId,
+            checkIn: startDate, // Truyền Date object luôn
+            checkOut: endDate,
+            totalAmount: totalPrice,
+            //  Truyền thêm các dữ liệu phụ trợ để hàm utils lưu vào DB
+            nights,
+            contactDetails,
+            bookingSnapshot: {
+              hotel: {
+                id: hotelData.id,
+                name: hotelData.name || hotelData.title,
+                slug: hotelData.slug,
+                address: hotelData.address,
+                image: hotelData.featuredImage || hotelData.image,
+                stars: hotelData.starRating || 0,
+              },
+              room: {
+                name: "Standard Room",
+                priceAtBooking: pricePerNight,
+              },
             },
           },
-        });
+          sagaTimeoutQueue || undefined,
+        );
 
         // --- BƯỚC 3: TRẢ VỀ KẾT QUẢ ---
         return reply.code(201).send(newBooking);

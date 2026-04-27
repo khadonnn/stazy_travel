@@ -8,9 +8,28 @@ import { adminRoute } from "./routes/admin.js";
 import availabilityRoutes from "./routes/availability.js";
 import { producer, consumer } from "./utils/kafka.js"; // Import cả consumer để disconnect
 import { runKafkaSubscriptions } from "./utils/subscriptions.js";
+import {
+  startOutboxWorker,
+  stopOutboxWorker,
+} from "./workers/outbox-worker.js";
 import { startCronJobs } from "./cron/analyticsJob.js";
 import { startAITrainingJob } from "./cron/aiTrainingJob.js";
+import {
+  createSagaTimeoutWorker,
+  setupSagaTimeoutObservability,
+} from "./queues/saga-timeout.queue.js";
+import {
+  createBookingEventsWorker,
+  setupBookingEventsObservability,
+} from "./queues/booking-events.queue.js";
+import { closeQueue, closeWorker } from "@repo/bullmq";
+import { setSagaTimeoutQueue } from "./utils/queues.js";
 import cors from "@fastify/cors";
+
+let sagaTimeoutWorker: any;
+let bookingEventsWorker: any;
+let sagaTimeoutQueue: any;
+let bookingEventsQueue: any;
 const fastify = Fastify({ logger: true });
 await fastify.register(cors, {
   origin: [
@@ -63,11 +82,24 @@ const start = async () => {
     // 2. Kích hoạt Consumer lắng nghe tin nhắn
     await runKafkaSubscriptions();
 
-    //  3. Start Cron Jobs (Analytics & AI Training)
-    startCronJobs(); // Analytics: Mỗi ngày 00:00
+    // 3. Kích hoạt Outbox Relay
+    await startOutboxWorker();
+
+    // 4. Kích hoạt BullMQ Saga Timeout Queue
+    const { initializeQueues } = await import("./utils/queues.js");
+    const queues = await initializeQueues();
+    sagaTimeoutQueue = queues.sagaTimeout;
+    bookingEventsQueue = queues.bookingEvents;
+    sagaTimeoutWorker = createSagaTimeoutWorker();
+    bookingEventsWorker = createBookingEventsWorker(queues.sagaTimeout);
+    setupSagaTimeoutObservability(queues.sagaTimeout);
+    setupBookingEventsObservability(queues.bookingEvents);
+    console.log("✅ Saga Timeout Queue initialized");
+    console.log("✅ Booking Events Queue initialized");
+
     startAITrainingJob(); // AI Training: Mỗi ngày 02:00
 
-    // 4. Start Server
+    // 5. Start Server
     // Quan trọng: host '0.0.0.0' để chạy được trong Docker Container
     const PORT = parseInt(process.env.PORT || "8001");
     await fastify.listen({ port: PORT, host: "0.0.0.0" });
@@ -88,6 +120,11 @@ const closeGracefully = async (signal: string) => {
   await fastify.close();
 
   // Ngắt kết nối Kafka & DB
+  stopOutboxWorker();
+  if (sagaTimeoutWorker) await closeWorker(sagaTimeoutWorker);
+  if (bookingEventsWorker) await closeWorker(bookingEventsWorker);
+  if (sagaTimeoutQueue) await closeQueue(sagaTimeoutQueue);
+  if (bookingEventsQueue) await closeQueue(bookingEventsQueue);
   await producer.disconnect();
   await consumer.disconnect();
   // await mongoose.disconnect(); // Nếu cần thiết

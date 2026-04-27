@@ -9,8 +9,23 @@ import webhookRoute from "./routes/webhooks.route.js";
 // Import producer để gửi tin nhắn, consumer để nhận tin nhắn
 import { consumer, producer } from "./utils/kafka.js";
 import { runKafkaSubscriptions } from "./utils/subscriptions.js";
+import {
+  createPaymentWorker,
+  setupPaymentQueueObservability,
+} from "./queues/payment.queue.js";
+import {
+  createStripeProductWorker,
+  setupStripeProductQueueObservability,
+} from "./queues/stripe-product.queue.js";
+import { closeQueue, closeWorker } from "@repo/bullmq";
+import { initializeQueues } from "./utils/queues.js";
 
 const app = new Hono();
+
+let paymentWorker: any = null;
+let stripeProductWorker: any = null;
+let paymentQueue: any = null;
+let stripeProductQueue: any = null;
 
 // 1. Cấu hình CORS (Giữ nguyên của bạn - rất tốt)
 app.use(
@@ -80,7 +95,18 @@ const start = async () => {
         ),
     ]);
 
-    // 6. Chạy Subscription (Lắng nghe Product Service)
+    // 6. Kích hoạt BullMQ Payment Queue
+    const queues = await initializeQueues();
+    paymentQueue = queues.payment;
+    stripeProductQueue = queues.stripeProduct;
+    paymentWorker = createPaymentWorker();
+    stripeProductWorker = createStripeProductWorker();
+    setupPaymentQueueObservability(queues.payment);
+    setupStripeProductQueueObservability(queues.stripeProduct);
+    console.log("✅ Payment Queue initialized");
+    console.log("✅ Stripe Product Queue initialized");
+
+    // 7. Chạy Subscription (Lắng nghe Product Service)
     await runKafkaSubscriptions();
 
     const PORT = 8002;
@@ -97,3 +123,30 @@ const start = async () => {
 };
 
 start();
+
+// --- GRACEFUL SHUTDOWN ---
+const closeGracefully = async (signal: string) => {
+  console.log(`Received signal to terminate: ${signal}`);
+
+  if (paymentWorker) {
+    await closeWorker(paymentWorker);
+  }
+  if (stripeProductWorker) {
+    await closeWorker(stripeProductWorker);
+  }
+  if (paymentQueue) {
+    await closeQueue(paymentQueue);
+  }
+  if (stripeProductQueue) {
+    await closeQueue(stripeProductQueue);
+  }
+
+  await producer.disconnect();
+  await consumer.disconnect();
+
+  console.log("🛑 Payment service shut down gracefully");
+  process.exit(0);
+};
+
+process.on("SIGINT", () => closeGracefully("SIGINT"));
+process.on("SIGTERM", () => closeGracefully("SIGTERM"));
