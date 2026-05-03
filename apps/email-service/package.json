@@ -5,6 +5,8 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
     "dev": "pnpm dlx tsx --env-file=.env --watch src/index.ts"
   },
   "keywords": [],

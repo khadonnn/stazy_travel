@@ -12,14 +12,14 @@ export interface StripeProductJobData {
 }
 
 export const createStripeProductQueue = (): Queue<StripeProductJobData> => {
-  return createQueue<StripeProductJobData>("payment:stripe-product");
+  return createQueue<StripeProductJobData>("payment-stripe-product");
 };
 
 export const enqueueStripeProductJob = async (
   queue: Queue<StripeProductJobData>,
   data: StripeProductJobData,
 ): Promise<string> => {
-  const jobId = `stripe-product:${data.eventId}`;
+  const jobId = `stripe-product-${data.eventId}`;
   const job = await queue.add(jobId, data, {
     jobId,
     attempts: 5,
@@ -34,7 +34,7 @@ export const enqueueStripeProductJob = async (
 
 export const createStripeProductWorker = (): Worker<StripeProductJobData> => {
   return createWorker<StripeProductJobData>(
-    "payment:stripe-product",
+    "payment-stripe-product",
     async (job) => {
       const { action, payload } = job.data;
 

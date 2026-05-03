@@ -20,14 +20,14 @@ export interface BookingEventJobData {
 }
 
 export const createBookingEventsQueue = (): Queue<BookingEventJobData> => {
-  return createQueue<BookingEventJobData>("booking:events");
+  return createQueue<BookingEventJobData>("booking-events");
 };
 
 export const enqueueBookingEvent = async (
   queue: Queue<BookingEventJobData>,
   data: BookingEventJobData,
 ): Promise<string> => {
-  const jobId = `booking-event:${data.eventId}`;
+  const jobId = `booking-event-${data.eventId}`;
   const job = await queue.add(jobId, data, {
     jobId,
     attempts: 5,
@@ -43,7 +43,7 @@ export const createBookingEventsWorker = (
   sagaTimeoutQueue?: Queue<SagaTimeoutJobData>,
 ): Worker<BookingEventJobData, any, string> => {
   return createWorker<BookingEventJobData>(
-    "booking:events",
+    "booking-events",
     async (job) => {
       const { eventId, topic, eventType, bookingId, payload } = job.data;
 
@@ -59,18 +59,18 @@ export const createBookingEventsWorker = (
         payload?.status === "PAID"
       ) {
         const result = await prisma.$transaction(async (tx) => {
-          try {
-            await tx.processedEvent.create({
-              data: { eventId, topic },
-            });
-          } catch (error) {
-            if (isUniqueConstraintError(error)) {
-              console.log(
-                `✅ [Booking Worker] Event ${eventId} already processed`,
-              );
-              return { duplicate: true };
-            }
-            throw error;
+          const inserted = await tx.$queryRaw<Array<{ eventId: string }>>`
+            INSERT INTO "processed_events" ("eventId", "topic", "createdAt")
+            VALUES (${eventId}, ${topic}, NOW())
+            ON CONFLICT ("eventId") DO NOTHING
+            RETURNING "eventId"
+          `;
+
+          if (inserted.length === 0) {
+            console.log(
+              `✅ [Booking Worker] Event ${eventId} already processed`,
+            );
+            return { duplicate: true };
           }
 
           await updateBookingStatusToPaid(bookingId, payload, tx);
@@ -79,7 +79,7 @@ export const createBookingEventsWorker = (
         });
 
         if (!result.duplicate && sagaTimeoutQueue) {
-          const timeoutJobId = `timeout:${bookingId}`;
+          const timeoutJobId = `timeout-${bookingId}`;
           const timeoutJob = await sagaTimeoutQueue.getJob(timeoutJobId);
           if (timeoutJob) {
             await timeoutJob.remove();
@@ -94,18 +94,18 @@ export const createBookingEventsWorker = (
 
       if (eventType === "PAYMENT_FAILED" || payload?.status === "FAILED") {
         const result = await prisma.$transaction(async (tx) => {
-          try {
-            await tx.processedEvent.create({
-              data: { eventId, topic },
-            });
-          } catch (error) {
-            if (isUniqueConstraintError(error)) {
-              console.log(
-                `✅ [Booking Worker] Event ${eventId} already processed`,
-              );
-              return { duplicate: true, cancelled: false };
-            }
-            throw error;
+          const inserted = await tx.$queryRaw<Array<{ eventId: string }>>`
+            INSERT INTO "processed_events" ("eventId", "topic", "createdAt")
+            VALUES (${eventId}, ${topic}, NOW())
+            ON CONFLICT ("eventId") DO NOTHING
+            RETURNING "eventId"
+          `;
+
+          if (inserted.length === 0) {
+            console.log(
+              `✅ [Booking Worker] Event ${eventId} already processed`,
+            );
+            return { duplicate: true, cancelled: false };
           }
 
           const existingBooking = await tx.booking.findFirst({
@@ -152,7 +152,7 @@ export const createBookingEventsWorker = (
         });
 
         if (result.cancelled && sagaTimeoutQueue) {
-          const timeoutJobId = `timeout:${bookingId}`;
+          const timeoutJobId = `timeout-${bookingId}`;
           const timeoutJob = await sagaTimeoutQueue.getJob(timeoutJobId);
           if (timeoutJob) {
             await timeoutJob.remove();
@@ -176,7 +176,7 @@ export const createBookingEventsWorker = (
 export const setupBookingEventsObservability = (
   queue: Queue<BookingEventJobData>,
 ) => {
-  const queueEvents = setupQueueEvents("booking:events");
+  const queueEvents = setupQueueEvents("booking-events");
 
   queueEvents.on("completed", ({ jobId }) => {
     console.log(`✅ [Booking Events Queue] Job completed: ${jobId}`);

@@ -1,17 +1,17 @@
-import Redis from "ioredis";
 import { Queue, Worker, QueueEvents } from "bullmq";
+import type { ConnectionOptions } from "bullmq";
 
 // ============================================
 // REDIS CLIENT SETUP
 // ============================================
 export const createRedisConnection = () => {
-  return new Redis({
-    host: process.env.REDIS_HOST || "stazy-redis",
+  return {
+    host: process.env.REDIS_HOST || "localhost",
     port: Number(process.env.REDIS_PORT) || 6379,
     maxRetriesPerRequest: null, // Required for BullMQ
     enableReadyCheck: false,
     enableOfflineQueue: false,
-  });
+  } as ConnectionOptions;
 };
 
 // ============================================
@@ -54,8 +54,10 @@ export const setupQueueEvents = (queueName: string) => {
     console.error(`❌ [${queueName}] Job failed: ${jobId}`, failedReason);
   });
 
-  queueEvents.on("progress", ({ jobId, progress }) => {
-    console.log(`⏳ [${queueName}] Job progress: ${jobId} - ${progress}%`);
+  queueEvents.on("progress", ({ jobId, data }) => {
+    const progressText =
+      typeof data === "number" ? `${data}%` : JSON.stringify(data);
+    console.log(`⏳ [${queueName}] Job progress: ${jobId} - ${progressText}`);
   });
 
   return queueEvents;

@@ -36,7 +36,7 @@ export interface SagaTimeoutJobData {
 // ============================================
 
 export const createSagaTimeoutQueue = (): Queue<SagaTimeoutJobData> => {
-  return createQueue<SagaTimeoutJobData>("saga:timeout");
+  return createQueue<SagaTimeoutJobData>("saga-timeout");
 };
 
 // ============================================
@@ -59,7 +59,7 @@ export const addSagaTimeout = async (
   queue: Queue<SagaTimeoutJobData>,
   data: SagaTimeoutJobData,
 ): Promise<string> => {
-  const jobId = `timeout:${data.bookingId}`;
+  const jobId = `timeout-${data.bookingId}`;
 
   const job = await queue.add(jobId, data, {
     delay: data.timeoutMs, // Schedule for 15 minutes later
@@ -82,7 +82,7 @@ export const removeSagaTimeout = async (
   queue: Queue<SagaTimeoutJobData>,
   bookingId: string,
 ): Promise<boolean> => {
-  const jobId = `timeout:${bookingId}`;
+  const jobId = `timeout-${bookingId}`;
   const job = await queue.getJob(jobId);
 
   if (job) {
@@ -105,7 +105,7 @@ export const removeSagaTimeout = async (
 
 export const createSagaTimeoutWorker = (): Worker<SagaTimeoutJobData> => {
   return createWorker<SagaTimeoutJobData>(
-    "saga:timeout",
+    "saga-timeout",
     async (job) => {
       const { bookingId, sagaId } = job.data;
 
@@ -130,7 +130,7 @@ export const createSagaTimeoutWorker = (): Worker<SagaTimeoutJobData> => {
         // ─────────────────────────────────────────────────────
         // 2️⃣ CHECK BOOKING STATUS (Race condition guard)
         // ─────────────────────────────────────────────────────
-        const booking = await prisma.booking.findUnique({
+        const booking = await prisma.booking.findFirst({
           where: { bookingId },
           select: { id: true, status: true, userId: true, hotelId: true },
         });
@@ -154,8 +154,8 @@ export const createSagaTimeoutWorker = (): Worker<SagaTimeoutJobData> => {
         // 3️⃣ COMPENSATION: Update booking + create outbox in ATOMIC transaction
         // ─────────────────────────────────────────────────────
         await prisma.$transaction(async (tx) => {
-          const cancelledBooking = await tx.booking.update({
-            where: { bookingId },
+          await tx.booking.update({
+            where: { id: booking.id },
             data: {
               status: "CANCELLED",
               updatedAt: new Date(),
@@ -234,7 +234,7 @@ export const setupSagaTimeoutObservability = (
 
   // Track metrics
   setInterval(async () => {
-    const counts = await queue.getCountsPerState(
+    const counts = await queue.getJobCounts(
       "active",
       "completed",
       "failed",

@@ -45,7 +45,7 @@ export interface PaymentJobData {
 // ============================================
 
 export const createPaymentQueue = (): Queue<PaymentJobData> => {
-  return createQueue<PaymentJobData>("payment:process");
+  return createQueue<PaymentJobData>("payment-process");
 };
 
 // ============================================
@@ -60,7 +60,7 @@ export const enqueuePayment = async (
   data: PaymentJobData,
 ): Promise<string> => {
   // Use transactionId as job ID for idempotency
-  const jobId = `payment:${data.transactionId}`;
+  const jobId = `payment-${data.transactionId}`;
 
   const job = await queue.add(jobId, data, {
     jobId,
@@ -90,7 +90,7 @@ export const moveToPaymentDLQ = async (
   reason: string,
 ): Promise<void> => {
   try {
-    const dlqQueue = createQueue<PaymentJobData>("payment:dlq");
+    const dlqQueue = createQueue<PaymentJobData>("payment-dlq");
 
     const job = await queue.getJob(jobId);
     if (job) {
@@ -121,7 +121,7 @@ export const moveToPaymentDLQ = async (
 
 export const createPaymentWorker = (): Worker<PaymentJobData> => {
   return createWorker<PaymentJobData>(
-    "payment:process",
+    "payment-process",
     async (job) => {
       const { bookingId, transactionId, amount, paymentIntentId } = job.data;
 
@@ -277,7 +277,7 @@ export const setupPaymentQueueObservability = (
 
   // Track metrics every minute
   setInterval(async () => {
-    const counts = await queue.getCountsPerState(
+    const counts = await queue.getJobCounts(
       "active",
       "completed",
       "failed",

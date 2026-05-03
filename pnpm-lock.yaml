@@ -523,6 +523,9 @@ importers:
       '@hono/node-server':
         specifier: ^1.19.6
         version: 1.19.6(hono@4.10.7)
+      '@repo/bullmq':
+        specifier: workspace:*
+        version: link:../../packages/bullmq
       '@repo/kafka':
         specifier: workspace:*
         version: link:../../packages/kafka

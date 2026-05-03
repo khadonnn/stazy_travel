@@ -54,7 +54,7 @@ const handleBookingEvent = async (message: any) => {
     const bookingEventsQueue = getBookingEventsQueue();
     if (!bookingEventsQueue) {
       console.error(
-        "❌ [Booking Event] booking:events queue is not initialized",
+        "❌ [Booking Event] booking-events queue is not initialized",
       );
       return;
     }
@@ -68,7 +68,7 @@ const handleBookingEvent = async (message: any) => {
     }
 
     await bookingEventsQueue.add(
-      `booking-event:${eventId}`,
+      `booking-event-${eventId}`,
       {
         eventId,
         topic: "booking-events",
@@ -77,7 +77,7 @@ const handleBookingEvent = async (message: any) => {
         payload: bookingData,
       },
       {
-        jobId: `booking-event:${eventId}`,
+        jobId: `booking-event-${eventId}`,
       },
     );
 
@@ -112,7 +112,7 @@ const handlePaymentEvent = async (message: any) => {
     const bookingEventsQueue = getBookingEventsQueue();
     if (!bookingEventsQueue) {
       console.error(
-        "❌ [Payment Event] booking:events queue is not initialized",
+        "❌ [Payment Event] booking-events queue is not initialized",
       );
       return;
     }
@@ -126,7 +126,7 @@ const handlePaymentEvent = async (message: any) => {
     }
 
     await bookingEventsQueue.add(
-      `booking-event:${eventId}`,
+      `booking-event-${eventId}`,
       {
         eventId,
         topic: "payment-events",
@@ -135,7 +135,7 @@ const handlePaymentEvent = async (message: any) => {
         payload: paymentData,
       },
       {
-        jobId: `booking-event:${eventId}`,
+        jobId: `booking-event-${eventId}`,
       },
     );
 

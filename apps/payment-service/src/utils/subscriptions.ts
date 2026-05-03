@@ -1,7 +1,7 @@
 import { consumer } from "./kafka";
-import { getPaymentQueue, enqueuePayment } from "../queues/payment.queue.js";
+import { enqueuePayment } from "../queues/payment.queue.js";
 import { enqueueStripeProductJob } from "../queues/stripe-product.queue.js";
-import { getStripeProductQueue } from "./queues.js";
+import { getPaymentQueue, getStripeProductQueue } from "./queues.js";
 import crypto from "crypto";
 
 const normalizeKafkaMessage = (message: any) => {

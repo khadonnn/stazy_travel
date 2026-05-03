@@ -44,6 +44,7 @@ const CATEGORIES = [
 
 export function OnboardingModal() {
   const { isSignedIn, isLoaded } = useUser();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -94,7 +95,7 @@ export function OnboardingModal() {
       await saveUserInterests(selected);
       toast.success("Đã cập nhật sở thích của bạn!");
       setOpen(false);
-      window.location.reload(); // Reload để AI tính toán lại
+      router.refresh();
     } catch (error) {
       console.error("❌ Save error:", error);
       toast.error("Có lỗi xảy ra, thử lại sau!");

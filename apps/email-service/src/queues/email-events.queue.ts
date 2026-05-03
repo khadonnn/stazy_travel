@@ -9,14 +9,14 @@ export interface EmailEventJobData {
 }
 
 export const createEmailEventsQueue = () => {
-  return createQueue<EmailEventJobData>("email:events");
+  return createQueue<EmailEventJobData>("email-events");
 };
 
 export const enqueueEmailEvent = async (
   queue: Queue<EmailEventJobData>,
   data: EmailEventJobData,
 ): Promise<string> => {
-  const jobId = `email-event:${data.eventId}`;
+  const jobId = `email-event-${data.eventId}`;
   const job = await queue.add(jobId, data, {
     jobId,
     attempts: 5,
@@ -31,7 +31,7 @@ export const enqueueEmailEvent = async (
 
 export const createEmailEventsWorker = (): Worker<EmailEventJobData> => {
   return createWorker<EmailEventJobData>(
-    "email:events",
+    "email-events",
     async (job) => {
       await handleKafkaMessage(job.data.message, job.data.eventType);
       return {

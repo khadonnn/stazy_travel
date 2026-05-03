@@ -192,9 +192,6 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     };
   }, [stayData?.id]);
 
-  const BOOKING_API_URL =
-    process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || "http://localhost:8001";
-
   useEffect(() => {
     const checkAvailability = async () => {
       // 1. Chỉ check khi đã chọn đủ ngày và có dữ liệu hotel
@@ -208,13 +205,12 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       try {
         // Gọi API kiểm tra (bạn cần tạo endpoint này ở Backend Booking Service như bài trước)
         // GET /api/check-availability?hotelId=1&checkIn=...&checkOut=...
-        const res = await axios.get(`${BOOKING_API_URL}/check-availability`, {
+        const res = await axios.get("/api/check-availability", {
           params: {
             hotelId: stayData.id,
             checkIn: checkInDate.toISOString(), // Chuyển về string ISO
             checkOut: checkOutDate.toISOString(),
           },
-          withCredentials: true,
         });
 
         // Backend trả về { available: true/false, message: "..." }

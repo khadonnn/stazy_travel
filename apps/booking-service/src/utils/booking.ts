@@ -127,7 +127,7 @@ export const createBooking = async (
       const timeoutMs = 15 * 60 * 1000; // 15 minutes
       try {
         await sagaTimeoutQueue.add(
-          `timeout:${newBooking.bookingId}`,
+          `timeout-${newBooking.bookingId}`,
           {
             bookingId: newBooking.bookingId!,
             sagaId: requestId,
@@ -137,7 +137,7 @@ export const createBooking = async (
             delay: timeoutMs,
             attempts: 1,
             removeOnComplete: true,
-            jobId: `timeout:${newBooking.bookingId}`,
+            jobId: `timeout-${newBooking.bookingId}`,
           },
         );
         console.log(
@@ -303,7 +303,7 @@ export const cancelBookingOnPaymentFailure = async (
   try {
     // 1. Remove timeout job (payment failed, no need to wait)
     if (sagaTimeoutQueue) {
-      const jobId = `timeout:${bookingId}`;
+      const jobId = `timeout-${bookingId}`;
       const job = await sagaTimeoutQueue.getJob(jobId);
       if (job) {
         await job.remove();
@@ -384,7 +384,7 @@ export const removeSagaTimeoutOnPaymentSuccess = async (
   }
 
   try {
-    const jobId = `timeout:${bookingId}`;
+    const jobId = `timeout-${bookingId}`;
     const job = await sagaTimeoutQueue.getJob(jobId);
 
     if (job) {

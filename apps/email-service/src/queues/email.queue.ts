@@ -47,7 +47,7 @@ export interface EmailJobData {
 // ============================================
 
 export const createEmailQueue = (): Queue<EmailJobData> => {
-  const queue = createQueue<EmailJobData>("email:send");
+  const queue = createQueue<EmailJobData>("email-send");
 
   // Set rate limit: 10 emails/second
   // This prevents overwhelming the SMTP provider
@@ -71,7 +71,7 @@ export const enqueueEmail = async (
   queue: Queue<EmailJobData>,
   data: EmailJobData,
 ): Promise<string> => {
-  const jobId = `email:${data.messageId}`;
+  const jobId = `email-${data.messageId}`;
 
   // Determine priority based on email type
   const priorityMap = {
@@ -111,7 +111,7 @@ export const moveEmailToDLQ = async (
   reason: string,
 ): Promise<void> => {
   try {
-    const dlqQueue = createQueue<EmailJobData>("email:dlq");
+    const dlqQueue = createQueue<EmailJobData>("email-dlq");
 
     const job = await queue.getJob(jobId);
     if (job) {
@@ -143,7 +143,7 @@ export const moveEmailToDLQ = async (
 
 export const createEmailWorker = (): Worker<EmailJobData> => {
   return createWorker<EmailJobData>(
-    "email:send",
+    "email-send",
     async (job) => {
       const { to, subject, messageId, emailType } = job.data;
 
@@ -235,7 +235,7 @@ export const setupEmailQueueObservability = (queue: Queue<EmailJobData>) => {
 
   // Track metrics every minute
   setInterval(async () => {
-    const counts = await queue.getCountsPerState(
+    const counts = await queue.getJobCounts(
       "active",
       "completed",
       "failed",
@@ -267,7 +267,7 @@ export const setupEmailQueueObservability = (queue: Queue<EmailJobData>) => {
   // Track DLQ status
   setInterval(async () => {
     try {
-      const dlqQueue = createQueue<EmailJobData>("email:dlq");
+      const dlqQueue = createQueue<EmailJobData>("email-dlq");
       const dlqCount = await dlqQueue.count();
       if (dlqCount > 0) {
         console.warn(
