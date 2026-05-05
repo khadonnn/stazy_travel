@@ -15,8 +15,8 @@ export default function FadeIn({
   children,
   className,
   delay = 0,
-  threshold = 0.2, // Mặc định an toàn là 20%
-  duration = 800, // Mặc định 800ms cho mượt
+  threshold = 0.2,
+  duration = 700, // Giảm một chút xuống 700ms cho gọn gàng, không bị lê thê
 }: FadeInProps) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -33,7 +33,7 @@ export default function FadeIn({
           observer.unobserve(element);
         }
       },
-      { threshold }
+      { threshold },
     );
 
     observer.observe(element);
@@ -44,18 +44,16 @@ export default function FadeIn({
   return (
     <div
       ref={ref}
-      // ✅ THÊM 'mx-auto' để luôn căn giữa
-      // ✅ THÊM 'origin-center' để đảm bảo nó nở ra từ tâm
       className={cn(
         "mx-auto transition-all ease-out will-change-transform origin-center",
         isVisible
-          ? "opacity-100 scale-100" // Trạng thái cuối: Full size
-          : "opacity-0 scale-95", // Trạng thái đầu: Nhỏ hơn (95%) và mờ
-        className
+          ? "opacity-100 scale-100 translate-y-0" // Hiện: Kéo về vị trí gốc
+          : "opacity-0 scale-95 translate-y-8", // Ẩn: Nằm thấp hơn 32px (translate-y-8)
+        className,
       )}
       style={{
         transitionDelay: `${delay}ms`,
-        transitionDuration: `${duration}ms`, // Dùng style inline để tùy biến duration dễ hơn
+        transitionDuration: `${duration}ms`,
       }}
     >
       {children}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation"; // ✅ Bổ sung: Import hook lấy đường dẫn
-import { BotMessageSquare, X } from "lucide-react";
+import { BotMessageSquare, Expand, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import ChatBox from "./ChatBox";
 import { motion, AnimatePresence } from "motion/react";
@@ -59,17 +59,24 @@ export default function ChatWidget() {
             <Card
               className={`${WIDGET_WIDTH} ${WIDGET_HEIGHT} flex flex-col shadow-2xl rounded-xl overflow-hidden p-0 border-none`}
             >
-              <div className="flex justify-between items-center p-3 border-b bg-[#3B7F70] text-white shadow-md shrink-0">
-                <h3 className="text-base font-semibold w-full text-center">
-                  Welcome to Stazy Hotel 🎉
+              <div className="relative flex items-center p-3 border-b bg-[#3B7F70] text-white shadow-md shrink-0">
+                {/* Title luôn nằm giữa */}
+                <h3 className="absolute left-1/2 -translate-x-1/2 text-base font-semibold">
+                  Welcome to Stazy AI 🎉
                 </h3>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-full hover:bg-[#2e6459] transition-colors"
-                  aria-label="Đóng Chat"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+
+                {/* Buttons nằm bên phải */}
+                <div className="ml-auto flex gap-2">
+                  <button className="p-1 rounded-full hover:bg-[#2e6459] cursor-pointer">
+                    <Expand className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-1 rounded-full hover:bg-[#2e6459] cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
               <ChatBox />
             </Card>

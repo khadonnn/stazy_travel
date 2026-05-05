@@ -11,14 +11,14 @@ const idToColorMap: Record<number, TwMainColor> = {
   7: "purple",
 };
 const colorClassMap: Record<TwMainColor, string> = {
-  pink: "bg-pink-100 text-pink-800",
-  green: "bg-green-100 text-green-800",
-  yellow: "bg-yellow-100 text-yellow-800",
-  red: "bg-red-100 text-red-800",
-  indigo: "bg-indigo-100 text-indigo-800",
-  blue: "bg-blue-100 text-blue-800",
-  purple: "bg-purple-100 text-purple-800",
-  gray: "bg-gray-100 text-gray-800",
+  pink: "bg-pink-50 text-pink-800",
+  green: "bg-green-50 text-green-800",
+  yellow: "bg-yellow-50 text-yellow-800",
+  red: "bg-red-50 text-red-800",
+  indigo: "bg-indigo-50 text-indigo-800",
+  blue: "bg-blue-50 text-blue-800",
+  purple: "bg-purple-50 text-purple-800",
+  gray: "bg-gray-50 text-gray-800",
 };
 const getCategoryColor = (id?: number): TwMainColor => {
   if (!id) return "gray";

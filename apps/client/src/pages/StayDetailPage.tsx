@@ -782,7 +782,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
           </p>
         </div>
         <Separator className="my-4" />
-        <LocationMap address={address} lat={map?.lat} lng={map?.lng} />
+        <LocationMap stay={stayData} />
       </div>
     );
   };

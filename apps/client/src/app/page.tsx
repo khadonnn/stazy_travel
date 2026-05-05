@@ -5,16 +5,15 @@ import PersonalizedSection from "@/components/home/personalized-section";
 import AIRecommendationsSection from "@/components/home/ai-recommendations-section";
 import { ExplorePlace } from "@/components/ExplorePlace";
 import StayListing from "@/components/StayListings";
-// Import component FadeIn mới cập nhật
 import FadeIn from "@/components/ui/fade-in";
 import { PersonalizedSkeleton } from "@/components/personalized-skeleton";
+
 export default function HomePage() {
   return (
     <>
-      {/* Hero Section: Hiện ngay, không cần delay */}
       <HeroSection />
 
-      {/* Personalized Section: Dựa trên sở thích user (Content-based) */}
+      {/* Các khối lớn này không có list bên trong, cứ giữ FadeIn bình thường */}
       <Suspense
         fallback={
           <FadeIn>
@@ -22,36 +21,28 @@ export default function HomePage() {
           </FadeIn>
         }
       >
-        <FadeIn threshold={0.2} delay={100}>
+        <FadeIn threshold={0.2}>
           <Suspense fallback={<PersonalizedSkeleton />}>
             <PersonalizedSection />
           </Suspense>
         </FadeIn>
       </Suspense>
 
-      {/* AI Recommendations Section: Collaborative Filtering (Chỉ hiện cho user có đủ interactions) */}
       <Suspense fallback={null}>
-        <FadeIn threshold={0.2} delay={150}>
+        <FadeIn threshold={0.2}>
           <AIRecommendationsSection />
         </FadeIn>
       </Suspense>
 
-      {/* Các section tiếp theo tăng delay để tạo hiệu ứng gợn sóng */}
-      <FadeIn
-        className="mb-24 flex w-full flex-col items-center px-4 sm:px-8"
-        threshold={0.3}
-        delay={200}
-      >
+      {/* ĐÃ XOÁ FADE-IN VÀ THAY BẰNG DIV BÌNH THƯỜNG */}
+      <div className="mb-24 flex w-full flex-col items-center px-4 sm:px-8">
         <ExplorePlace />
-      </FadeIn>
+      </div>
 
-      <FadeIn
-        className="mb-24 flex w-full flex-col items-center px-4 sm:px-8"
-        threshold={0.3}
-        delay={300}
-      >
+      {/* ĐÃ XOÁ FADE-IN VÀ THAY BẰNG DIV BÌNH THƯỜNG */}
+      <div className="mb-24 flex w-full flex-col items-center px-4 sm:px-8">
         <StayListing />
-      </FadeIn>
+      </div>
     </>
   );
 }

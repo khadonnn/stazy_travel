@@ -15,6 +15,7 @@ import { HotelFrontend } from "@repo/types";
 
 // IMPORT MOTION
 import { motion, AnimatePresence } from "motion/react";
+import FadeIn from "./ui/fade-in";
 
 const ITEMS_PER_PAGE = 4;
 
@@ -43,7 +44,7 @@ const fetchStays = async (): Promise<HotelFrontend[]> => {
           title: hotel.title,
           price: hotel.price ?? 500000,
           // ... fake data mapping ...
-        }) as unknown as HotelFrontend
+        }) as unknown as HotelFrontend,
     );
 
   if (FORCE_FALLBACK) return mapStaticStays();
@@ -51,7 +52,7 @@ const fetchStays = async (): Promise<HotelFrontend[]> => {
   try {
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/hotels`,
-      { withCredentials: true }
+      { withCredentials: true },
     );
     return res.data.data.map((post: StayApiResponse) => mapStay(post));
   } catch (error) {
@@ -102,44 +103,43 @@ export default function StayListing() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 justify-center">
-          {currentItems.map((stay) => (
-            <div
-              key={stay.id}
-              className="relative group block h-full w-full"
-              onMouseEnter={() => {
-                setHoveredId(stay.id);
-                setHoverColor(getRandomColor());
-              }}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              <AnimatePresence>
-                {hoveredId === stay.id && (
-                  <motion.span
-                    className="absolute inset-0 block h-full w-full rounded-3xl -z-10 bg-opacity-20"
-                    // 1. Initial: Bắt đầu hơi nhỏ một chút (0.95) để cảm giác bung ra
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    // 2. Animate: Scale lên vừa phải, đệm opacity
-                    animate={{
-                      scale: 1.05,
-                      opacity: 0.1,
-                      backgroundColor: hoverColor,
-                    }}
-                    // 3. Exit: Thu về lại
-                    exit={{ scale: 0.9, opacity: 0 }}
-                    // 4. Transition: Dùng easeOut để mượt, không dùng spring (lò xo)
-                    transition={{
-                      duration: 0.1, // Tốc độ nhanh (0.2s)
-                      ease: "easeOut", // Hiệu ứng ra mượt
-                    }}
+          {currentItems.map((stay, index) => (
+            <FadeIn key={stay.id} delay={index * 100} className="h-full w-full">
+              <div
+                className="relative group block h-full w-full"
+                onMouseEnter={() => {
+                  // 2. SỬA LỖI TRIGGER 2 LẦN: Chỉ random màu mới nếu ID khác với thẻ đang hover
+                  if (hoveredId !== stay.id) {
+                    setHoveredId(stay.id);
+                    setHoverColor(getRandomColor());
+                  }
+                }}
+                onMouseLeave={() => setHoveredId(null)}
+              >
+                <AnimatePresence>
+                  {hoveredId === stay.id && (
+                    <motion.span
+                      // 3. QUAN TRỌNG: Thêm 'pointer-events-none' để cái bóng "tàng hình" với con trỏ chuột,
+                      // chuột không chạm vào nó được nên sẽ không bị chớp giật sự kiện nữa.
+                      className="absolute inset-0 block h-full w-full rounded-3xl -z-10 bg-opacity-20 pointer-events-none"
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{
+                        scale: 1.05,
+                        opacity: 0.1,
+                        backgroundColor: hoverColor,
+                      }}
+                      exit={{ scale: 0.9, opacity: 0 }}
+                      transition={{
+                        duration: 0.1,
+                        ease: "easeOut",
+                      }}
+                    />
+                  )}
+                </AnimatePresence>
 
-                    // 5. BỎ layoutId để không bị hiệu ứng "bay" từ ô này sang ô kia
-                    // layoutId="hoverBackground"
-                  />
-                )}
-              </AnimatePresence>
-
-              <StayCard data={stay} />
-            </div>
+                <StayCard data={stay} />
+              </div>
+            </FadeIn>
           ))}
         </div>
       )}
