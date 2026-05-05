@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 export const BackgroundBeams = React.memo(
   ({ className }: { className?: string }) => {
-    const paths = [
+    const originalPaths = [
       "M-380 -189C-380 -189 -312 216 152 343C616 470 684 875 684 875",
       "M-373 -197C-373 -197 -305 208 159 335C623 462 691 867 691 867",
       "M-366 -205C-366 -205 -298 200 166 327C630 454 698 859 698 859",
@@ -57,6 +57,18 @@ export const BackgroundBeams = React.memo(
       "M-44 -573C-44 -573 24 -168 488 -41C952 86 1020 491 1020 491",
       "M-37 -581C-37 -581 31 -176 495 -49C959 78 1027 483 1027 483",
     ];
+    const getDistributedPaths = (count: number = 12) => {
+      const n = originalPaths.length;
+      const step = Math.max(1, Math.floor(n / count));
+
+      return Array.from({ length: count }, (_, i) => {
+        // Lấy xen kẽ đều từ đầu → giữa → cuối
+        const index = Math.floor(i * step * 0.85 + (i % 3) * 3);
+        return originalPaths[Math.min(index, n - 1)];
+      });
+    };
+
+    const paths = getDistributedPaths(12);
     return (
       <div
         className={cn(

@@ -2,6 +2,7 @@
 import SearchBar from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { BadgeInfo, Bell, Plane, Map } from "lucide-react";
+import { usePathname } from "next/navigation";
 import {
   Tooltip,
   TooltipContent,
@@ -15,6 +16,12 @@ import { useUser } from "@clerk/nextjs";
 import { SitemapSheet } from "@/components/sitemap/SitemapSheet";
 // TEMP
 const Navbar = () => {
+  const pathname = usePathname();
+  const hideRoutes = ["/search-service", "/full-screen"];
+
+  const shouldHide = hideRoutes.some((route) => pathname?.startsWith(route));
+
+  if (shouldHide) return null;
   const { isSignedIn, user, isLoaded } = useUser();
 
   if (!isLoaded) {
@@ -23,7 +30,7 @@ const Navbar = () => {
     );
   }
   return (
-    <div className="w-full flex items-center justify-between border border-gray-300 py-2 px-10 fixed top-0 z-50 bg-white/80 backdrop-blur-md">
+    <div className="w-full flex items-center justify-between border border-gray-300/50 py-2 px-10 fixed top-0 z-50 bg-white/60 backdrop-blur-lg shadow-sm">
       {/* left */}
       <Link href="/" className="flex items-center">
         <Image

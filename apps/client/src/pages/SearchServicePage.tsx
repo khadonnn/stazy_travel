@@ -15,10 +15,12 @@ import {
   Palmtree,
   Crown,
   Loader2,
+  ArrowLeft,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { BackgroundBeams } from "@/components/ui/background-beams";
+import { cn } from "@/lib/utils/formatPrice";
 
 // --- 1. ĐỊNH NGHĨA TYPE (Theo yêu cầu của bạn) ---
 export type LocationMap = {
@@ -372,9 +374,16 @@ export default function SearchServicePage() {
 
   // --- RENDER UI ---
   return (
-    <div className="min-h-screen bg-neutral-950 text-white p-4 md:p-8 relative">
+    <div className="min-h-screen bg-neutral-950 text-white py-4 relative  ">
       <BackgroundBeams />
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10 my-8 mb-20">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-2xl bg-zinc-800 text-white hover:bg-zinc-700 transition"
+        >
+          <ArrowLeft size={18} />
+          Back to Home
+        </Link>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* === CỘT TRÁI (SEARCH TOOLS) === */}
           <div className="lg:col-span-2 space-y-6 lg:sticky lg:top-8 lg:self-start">
@@ -499,8 +508,38 @@ export default function SearchServicePage() {
                 <button
                   onClick={() => handleSearch()}
                   disabled={isSearching || isLoadingData}
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className={cn(
+                    "relative w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 cursor-pointer",
+
+                    /* Background siêu trong suốt + glassmorphism nhẹ */
+                    "bg-white/5 backdrop-blur-lg border border-white/10",
+                    "hover:bg-white/8 hover:border-white/20",
+
+                    "text-white overflow-hidden",
+                    "transition-all duration-300 active:scale-[0.97]",
+                    "disabled:opacity-70 disabled:cursor-not-allowed",
+                    "group",
+                  )}
                 >
+                  {/* Dust / Firefly Container */}
+                  <span className="pointer-events-none absolute inset-0 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    {Array.from({ length: 18 }).map((_, i) => (
+                      <span
+                        key={i}
+                        className="dust-particle absolute w-1 h-1 bg-white rounded-full"
+                        style={{
+                          left: `${Math.random() * 100}%`,
+                          top: `${Math.random() * 100}%`,
+                          animationDelay: `-${Math.random() * 2.5}s`,
+                          animationDuration: `${1.8 + Math.random() * 1.2}s`,
+                          opacity: Math.random() * 0.7 + 0.3,
+                          boxShadow: "0 0 6px #a5b4fc, 0 0 12px #c4d0ff",
+                        }}
+                      />
+                    ))}
+                  </span>
+
+                  {/* Content */}
                   {isSearching || isLoadingData ? (
                     <>
                       <Loader2 size={20} className="animate-spin" />
@@ -510,7 +549,8 @@ export default function SearchServicePage() {
                     </>
                   ) : (
                     <>
-                      <Search size={20} /> Khám phá ngay
+                      <Search size={20} />
+                      Khám phá ngay
                     </>
                   )}
                 </button>

@@ -51,7 +51,7 @@ export default async function RootLayout({
         >
           <Navbar />
 
-          <main className="mt-10 flex-1">
+          <main className=" flex-1">
             <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/20" />
               <BackgroundWave />
