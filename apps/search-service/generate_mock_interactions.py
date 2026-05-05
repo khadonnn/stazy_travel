@@ -2,64 +2,31 @@ import json
 import os
 import random
 import uuid
-import pandas as pd
+import numpy as np
 from faker import Faker
-from surprise import Dataset, Reader, SVD
-from surprise.model_selection import train_test_split
-from surprise import accuracy
 from datetime import datetime, timedelta
-from collections import Counter, defaultdict
+from collections import defaultdict
+
+fake = Faker()
+random.seed(42)
+np.random.seed(42)
 
 # ---------------------------------------------------------
-# 1. CẤU HÌNH
+# CẤU HÌNH
 # ---------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_DIR = os.path.join(BASE_DIR, "jsons")
 
-# Input files
 HOTEL_FILE = os.path.join(JSON_DIR, "__homeStay.json")
 USER_FILE = os.path.join(JSON_DIR, "__users.json")
 
-# Output files
 OUTPUT_INTERACTIONS_FILE = os.path.join(JSON_DIR, "__interactions.json")
 OUTPUT_REVIEWS_FILE = os.path.join(JSON_DIR, "__reviews.json")
 OUTPUT_METRICS_FILE = os.path.join(JSON_DIR, "__metrics.json")
-OUTPUT_DAILY_STATS_FILE = os.path.join(JSON_DIR, "__daily_stats.json") # File mới
-
-fake = Faker()
-
-POSITIVE_COMMENTS = [
-    "Phòng ốc rất sạch sẽ, view đẹp tuyệt vời.",
-    "Nhân viên nhiệt tình, địa điểm thuận lợi.",
-    "Trải nghiệm tuyệt vời, chắc chắn sẽ quay lại.",
-    "Giá cả hợp lý so với chất lượng phục vụ.",
-    "Không gian yên tĩnh, thích hợp nghỉ dưỡng.",
-    "Bể bơi vô cực rất đẹp, đồ ăn ngon.",
-    # Bổ sung thêm 5 bình luận tích cực
-    "Check-in nhanh chóng, phòng được upgrade miễn phí, bất ngờ dễ chịu!",
-    "Ban công rộng, ngắm hoàng hôn cực chill. Rất đáng tiền!",
-    "Đệm êm, ga gối thơm tho, ngủ ngon suốt đêm.",
-    "Dịch vụ dọn phòng chuyên nghiệp, thay khăn mỗi ngày.",
-    "Gần biển, đi bộ 2 phút là tới. View từ phòng siêu ưng!"
-]
-
-NEGATIVE_COMMENTS = [
-    "Phòng hơi cũ, cách âm không tốt.",
-    "Nhân viên lễ tân thái độ chưa tốt.",
-    "Vị trí hơi xa trung tâm, đi lại bất tiện.",
-    "Wifi yếu, không làm việc được.",
-    "Bữa sáng ít món, không hợp khẩu vị.",
-    "Vệ sinh chưa sạch, còn bụi bẩn.",
-    # Bổ sung thêm 5 bình luận tiêu cực
-    "Mùi ẩm mốc trong phòng, mở cửa cả ngày vẫn không hết.",
-    "Gọi lễ tân 3 lần mới có người phản hồi, quá chậm!",
-    "Hình ảnh trên web đẹp hơn thực tế nhiều, cảm giác bị lừa.",
-    "Điều hòa kêu to, ảnh hưởng giấc ngủ ban đêm.",
-    "Không có chỗ để xe an toàn, phải gửi ngoài đường."
-]
+OUTPUT_DAILY_STATS_FILE = os.path.join(JSON_DIR, "__daily_stats.json")
 
 # ---------------------------------------------------------
-# 2. HÀM HỖ TRỢ
+# HELPER FUNCTIONS
 # ---------------------------------------------------------
 def load_json(filepath):
     if not os.path.exists(filepath):
@@ -67,200 +34,357 @@ def load_json(filepath):
     with open(filepath, "r", encoding="utf-8") as f:
         return json.load(f)
 
-# Hàm sinh Tuning Params giả lập (cho biểu đồ SVD)
 def generate_tuning_params(base_rmse):
-    # Giả lập: K tăng thì RMSE giảm dần
+    """Giả lập tuning params cho SVD"""
     data = []
     for k in [10, 20, 30, 40, 50, 60]:
         noise = random.uniform(-0.02, 0.02)
-        # RMSE giảm dần theo K
         metric = base_rmse + (60 - k) * 0.002 + noise 
         data.append({"param": k, "metric": round(metric, 4)})
     return data
 
-# ---------------------------------------------------------
-# 3. LOGIC CHÍNH
-# ---------------------------------------------------------
-def generate_data():
-    hotels = load_json(HOTEL_FILE)
-    if not hotels:
-        print(f"❌ Không tìm thấy file hotel.")
-        return
+# =========================================================
+# DYNAMIC REVIEW GENERATOR (MIX & MATCH)
+# =========================================================
+def generate_dynamic_review(sentiment):
+    """Tạo comment đa dạng dựa trên sentiment"""
+    if sentiment == "POSITIVE":
+        subjects = ["Phòng ốc", "Vị trí khách sạn", "Nhân viên lễ tân", "Không gian", "Bữa sáng", "Hồ bơi và tiện ích"]
+        adjectives = [
+            "cực kỳ sạch sẽ và thơm tho", "nằm ngay trung tâm rất tiện đi lại", 
+            "siêu nhiệt tình và dễ thương", "rộng rãi, view nhìn ra ngoài cực chill", 
+            "được thiết kế rất hiện đại và ấm cúng", "vượt xa mong đợi của mình so với mức giá"
+        ]
+        endings = [
+            "Chắc chắn sẽ quay lại vào lần sau!", "10 điểm không có nhưng nha mọi người.", 
+            "Gia đình mình đã có một kỳ nghỉ rất trọn vẹn.", "Rất đáng đồng tiền bát gạo.",
+            "Highly recommend cho những ai đang tìm chỗ nghỉ ở đây."
+        ]
+        return f"{random.choice(subjects)} {random.choice(adjectives)}. {random.choice(endings)}"
 
-    # 1. Load User
-    users_data = load_json(USER_FILE)
-    users = []
-    if users_data:
-        for u in users_data:
-            users.append({"id": u["id"]})
+    elif sentiment == "NEGATIVE":
+        subjects = ["Trải nghiệm", "Phòng", "Chất lượng dịch vụ", "Vệ sinh", "Thái độ nhân viên", "Cách âm của phòng"]
+        adjectives = [
+            "thật sự quá tệ hại", "rất ẩm mốc và có mùi khó chịu", 
+            "không hề giống với hình ảnh quảng cáo trên mạng", "làm việc thiếu chuyên nghiệp, chậm chạp", 
+            "rất kém, ga giường có vẻ chưa được thay", "quá ồn ào, mình không thể ngủ được cả đêm"
+        ]
+        endings = [
+            "Sẽ không bao giờ quay lại đây thêm một lần nào nữa.", "Tiếc tiền thật sự, mọi người nên né ra.", 
+            "Cảm thấy thất vọng tràn trề.", "Khách sạn cần xem lại khâu quản lý ngay lập tức.",
+            "Một trải nghiệm đáng quên cho kỳ nghỉ này."
+        ]
+        return f"{random.choice(subjects)} {random.choice(adjectives)}. {random.choice(endings)}"
+
+    else:  # NEUTRAL
+        starts = ["Nói chung là", "Đánh giá khách quan thì", "Theo cảm nhận của mình,"]
+        middles = [
+            "mọi thứ ở mức cơ bản, tạm chấp nhận được.", "phòng ốc bình thường, không có gì quá nổi bật.",
+            "tiện nghi đầy đủ nhưng hơi cũ.", "chỉ hợp để ngủ qua đêm trong chuyến công tác.",
+            "dịch vụ tương xứng với số tiền bỏ ra, không đòi hỏi hơn."
+        ]
+        endings = ["", "Có dịp tiện đường thì ghé lại.", "Sẽ cân nhắc nếu không tìm được chỗ khác tốt hơn."]
+        
+        review = f"{random.choice(starts)} {random.choice(middles)} {random.choice(endings)}"
+        return review.strip()
+
+# ---------------------------------------------------------
+# MAIN LOGIC WITH CLUSTERING
+# ---------------------------------------------------------
+print("📊 GENERATING MOCK INTERACTIONS WITH USER CLUSTERING")
+print("=" * 60)
+print("\n[1/6] Loading data...")
+hotels = load_json(HOTEL_FILE)
+if not hotels:
+    print(f"❌ Cannot find hotel file")
+    exit(1)
+
+users_data = load_json(USER_FILE)
+users = [{"id": u["id"]} for u in users_data] if users_data else []
+
+if not users:
+    users = [{"id": f"user_{i}"} for i in range(1, 201)]
+
+print(f"✅ Loaded {len(users)} users, {len(hotels)} hotels")
+
+# =========================================================
+# STEP 2: CLASSIFY USERS BY SEGMENT
+# =========================================================
+print("\n[2/6] Classifying users by segment...")
+
+user_segments = {}
+n_budget = len(users) // 3
+n_mid = len(users) // 3
+n_luxury = len(users) - n_budget - n_mid
+
+user_ids = [u['id'] for u in users]
+budget_user_ids = user_ids[:n_budget]
+mid_user_ids = user_ids[n_budget:n_budget+n_mid]
+luxury_user_ids = user_ids[n_budget+n_mid:]
+
+for uid in budget_user_ids:
+    user_segments[uid] = 'budget'
+for uid in mid_user_ids:
+    user_segments[uid] = 'mid'
+for uid in luxury_user_ids:
+    user_segments[uid] = 'luxury'
+
+print(f"   Budget users: {len(budget_user_ids)}")
+print(f"   Mid-range users: {len(mid_user_ids)}")
+print(f"   Luxury users: {len(luxury_user_ids)}")
+
+# =========================================================
+# STEP 3: CLASSIFY HOTELS BY SEGMENT
+# =========================================================
+print("\n[3/6] Classifying hotels by segment...")
+
+hotel_segments = {}
+n_hotels_budget = len(hotels) // 3
+n_hotels_mid = len(hotels) // 3
+n_hotels_luxury = len(hotels) - n_hotels_budget - n_hotels_mid
+
+hotel_list = sorted(hotels, key=lambda h: h.get('price', 0))
+for i, h in enumerate(hotel_list):
+    if i < n_hotels_budget:
+        hotel_segments[h['id']] = 'budget'
+    elif i < n_hotels_budget + n_hotels_mid:
+        hotel_segments[h['id']] = 'mid'
     else:
-        # Fallback tạo user ảo
-        for i in range(1, 51):
-            users.append({"id": f"user_ai_{i}"})
+        hotel_segments[h['id']] = 'luxury'
 
-    interactions = []
-    reviews = []
+print(f"   Budget hotels: {n_hotels_budget}")
+print(f"   Mid-range hotels: {n_hotels_mid}")
+print(f"   Luxury hotels: {n_hotels_luxury}")
+
+# =========================================================
+# STEP 4: GENERATE STRUCTURED INTERACTIONS WITH CLUSTERING
+# =========================================================
+print("\n[4/6] Generating structured interactions with clustering...")
+
+interactions = []
+reviews = []
+bookings_created = []
+
+daily_agg = defaultdict(lambda: {
+    "totalRevenue": 0, "totalBookings": 0, "totalCancels": 0,
+    "totalViews": 0, "totalClickBook": 0, "totalLikes": 0, "totalSearch": 0
+})
+
+# Preference matrix: (user_segment, hotel_segment) → probability
+preference_matrix = {
+    ('budget', 'budget'): 0.8,
+    ('budget', 'mid'): 0.15,
+    ('budget', 'luxury'): 0.05,
+    ('mid', 'budget'): 0.2,
+    ('mid', 'mid'): 0.6,
+    ('mid', 'luxury'): 0.2,
+    ('luxury', 'budget'): 0.05,
+    ('luxury', 'mid'): 0.15,
+    ('luxury', 'luxury'): 0.8,
+}
+
+# Rating strength by segment match
+rating_strength_matrix = {
+    ('budget', 'budget'): (4, 5),
+    ('budget', 'mid'): (2, 3),
+    ('budget', 'luxury'): (1, 2),
+    ('mid', 'budget'): (2, 3),
+    ('mid', 'mid'): (4, 5),
+    ('mid', 'luxury'): (3, 4),
+    ('luxury', 'budget'): (1, 2),
+    ('luxury', 'mid'): (2, 4),
+    ('luxury', 'luxury'): (4, 5),
+}
+
+# Generate interactions per user
+for user in users:
+    user_id = user['id']
+    user_segment = user_segments[user_id]
     
-    # Dùng dictionary để cộng dồn DailyStat ngay khi sinh Interaction
-    daily_agg = defaultdict(lambda: {
-        "totalRevenue": 0, "totalBookings": 0, "totalCancels": 0,
-        "totalViews": 0, "totalClickBook": 0, "totalLikes": 0, "totalSearch": 0
+    # ~80 interactions per user
+    num_interactions = random.randint(50, 100)
+    
+    for _ in range(num_interactions):
+        hotel = random.choice(hotels)
+        hotel_id = hotel['id']
+        hotel_segment = hotel_segments[hotel_id]
+        
+        # Check preference
+        pref_score = preference_matrix[(user_segment, hotel_segment)]
+        if random.random() > pref_score:
+            continue
+        
+        # Pick interaction type
+        match_strength = pref_score
+        
+        # Generate timestamp
+        base_date = datetime(2024, 1, 1)
+        timestamp = base_date + timedelta(days=random.randint(0, 364), hours=random.randint(0, 23))
+        date_key = timestamp.strftime("%Y-%m-%d")
+        
+        if random.random() < 0.3 * match_strength:
+            # BOOK
+            interaction_type = "BOOK"
+            rating = random.randint(*rating_strength_matrix[(user_segment, hotel_segment)])
+            
+            booking_id = str(uuid.uuid4())
+            price = hotel.get('price', 1000000)
+            
+            interactions.append({
+                "id": str(uuid.uuid4()),
+                "userId": user_id,
+                "hotelId": hotel_id,
+                "sessionId": str(uuid.uuid4()),
+                "type": interaction_type,
+                "rating": rating,
+                "timestamp": timestamp.isoformat(),
+                "metadata": {"amount": price, "bookingId": booking_id}
+            })
+            
+            bookings_created.append({
+                "bookingId": booking_id,
+                "userId": user_id,
+                "hotelId": hotel_id,
+                "timestamp": timestamp,
+                "price": price
+            })
+            
+            daily_agg[date_key]["totalBookings"] += 1
+            daily_agg[date_key]["totalRevenue"] += price
+            
+            # Generate review
+            if random.random() > 0.05:  # 95% complete without cancel
+                booking_id = booking_id
+                review_timestamp = timestamp + timedelta(days=random.randint(2, 7))
+                
+                if match_strength > 0.5:
+                    sentiment = random.choices(['POSITIVE', 'NEUTRAL'], weights=[0.7, 0.3])[0]
+                else:
+                    sentiment = random.choices(['NEGATIVE', 'NEUTRAL'], weights=[0.4, 0.6])[0]
+                
+                # Generate dynamic comment
+                comment = generate_dynamic_review(sentiment)
+                
+                reviews.append({
+                    "id": str(uuid.uuid4()),
+                    "bookingId": booking_id,
+                    "userId": user_id,
+                    "hotelId": hotel_id,
+                    "rating": rating,
+                    "comment": comment,
+                    "sentiment": sentiment,
+                    "createdAt": review_timestamp.isoformat(),
+                    "updatedAt": review_timestamp.isoformat()
+                })
+            else:
+                # CANCEL
+                daily_agg[date_key]["totalCancels"] += 1
+                daily_agg[date_key]["totalRevenue"] -= price
+        
+        elif random.random() < 0.5:
+            # ADD_TO_WISHLIST
+            interactions.append({
+                "id": str(uuid.uuid4()),
+                "userId": user_id,
+                "hotelId": hotel_id,
+                "sessionId": str(uuid.uuid4()),
+                "type": "ADD_TO_WISHLIST",
+                "rating": None,
+                "timestamp": timestamp.isoformat(),
+                "metadata": {}
+            })
+            daily_agg[date_key]["totalLikes"] += 1
+        
+        else:
+            # CLICK_BOOK_NOW
+            interactions.append({
+                "id": str(uuid.uuid4()),
+                "userId": user_id,
+                "hotelId": hotel_id,
+                "sessionId": str(uuid.uuid4()),
+                "type": "CLICK_BOOK_NOW",
+                "rating": None,
+                "timestamp": timestamp.isoformat(),
+                "metadata": {}
+            })
+            daily_agg[date_key]["totalClickBook"] += 1
+
+print(f"   ✅ Generated {len(interactions)} interactions")
+print(f"   ✅ Generated {len(reviews)} reviews")
+
+# =========================================================
+# STEP 5: SAVE FILES
+# =========================================================
+print("\n[5/6] Saving files...")
+
+with open(OUTPUT_INTERACTIONS_FILE, 'w', encoding='utf-8') as f:
+    json.dump(interactions, f, indent=2, ensure_ascii=False)
+    print(f"   ✅ {OUTPUT_INTERACTIONS_FILE}")
+
+with open(OUTPUT_REVIEWS_FILE, 'w', encoding='utf-8') as f:
+    json.dump(reviews, f, indent=2, ensure_ascii=False)
+    print(f"   ✅ {OUTPUT_REVIEWS_FILE}")
+
+# Convert daily_agg to list
+daily_stats_list = []
+for date_str, stats in daily_agg.items():
+    daily_stats_list.append({
+        "date": f"{date_str}T00:00:00.000Z",
+        **stats
     })
 
-    print("🤖 Đang sinh dữ liệu mô phỏng Session & DailyStats...")
-    
-    current_time = datetime.now()
+with open(OUTPUT_DAILY_STATS_FILE, 'w', encoding='utf-8') as f:
+    json.dump(daily_stats_list, f, indent=2, ensure_ascii=False)
+    print(f"   ✅ {OUTPUT_DAILY_STATS_FILE}")
 
-    # Sinh 2000 Sessions (Mỗi session là 1 chuỗi hành động của 1 user)
-    for _ in range(2000): 
-        user = random.choice(users)
-        
-        # Tạo Session ID
-        session_id = f"sess_{uuid.uuid4().hex[:12]}"
-        
-        # Chọn ngẫu nhiên ngày trong 6 tháng qua
-        days_back = random.randint(0, 180)
-        base_time = current_time - timedelta(days=days_back)
-        date_key = base_time.strftime("%Y-%m-%d") # Key cho DailyStat
+# =========================================================
+# STEP 6: GENERATE METRICS
+# =========================================================
+print("\n[6/6] Generating system metrics...")
 
-        # Mỗi session user xem từ 1-5 khách sạn
-        num_viewed = random.randint(1, 5)
-        
-        for _ in range(num_viewed):
-            hotel = random.choice(hotels)
-            hotel_id = hotel['id']
-            price = hotel.get('price', 1000000)
+historical_metrics = []
+for i in range(29, -1, -1):
+    date_str = (datetime.now() - timedelta(days=i)).isoformat()
+    base_rmse = 0.95 - (i * 0.005)
+    base_rmse = max(0.80, base_rmse + random.uniform(-0.02, 0.02))
 
-            # Thời gian hành động diễn ra sau base_time vài giây/phút
-            offset_seconds = random.randint(10, 3600)
-            timestamp_obj = base_time + timedelta(seconds=offset_seconds)
-            timestamp = timestamp_obj.isoformat()
+    metric_entry = {
+        "rmse": round(base_rmse, 4),
+        "precisionAt5": round(70 + random.uniform(-5, 5), 2),
+        "recallAt5": round(60 + random.uniform(-5, 5), 2),
+        "algorithm": "SVD",
+        "datasetSize": len(interactions),
+        "executionTimeMs": random.randint(100, 500),
+        "createdAt": date_str,
+        "tuningParams": generate_tuning_params(base_rmse) if i == 0 else None,
+        "trainingHistory": None
+    }
+    historical_metrics.append(metric_entry)
 
-            # 1. VIEW (Luôn có)
-            interactions.append({
-                "userId": user["id"], "hotelId": hotel_id, "sessionId": session_id,
-                "type": "VIEW", "rating": None,
-                "timestamp": timestamp, "metadata": {"duration": random.randint(30, 300)}
-            })
-            daily_agg[date_key]["totalViews"] += 1
+with open(OUTPUT_METRICS_FILE, 'w', encoding='utf-8') as f:
+    json.dump(historical_metrics, f, indent=2, ensure_ascii=False)
+    print(f"   ✅ {OUTPUT_METRICS_FILE}")
 
-            # 2. LIKE (Random 20%)
-            if random.random() < 0.2:
-                interactions.append({
-                    "userId": user["id"], "hotelId": hotel_id, "sessionId": session_id,
-                    "type": "LIKE", "rating": None,
-                    "timestamp": timestamp, "metadata": {}
-                })
-                daily_agg[date_key]["totalLikes"] += 1
+# =========================================================
+# PRINT STATISTICS
+# =========================================================
+print("\n[SUMMARY] Data Generation Completed ✅")
+print(f"   Total interactions: {len(interactions)}")
+print(f"   Total reviews: {len(reviews)}")
+print(f"   Daily stats: {len(daily_stats_list)}")
+print(f"   Metrics records: {len(historical_metrics)}")
 
-            # 3. CLICK BOOK (High Intent - Random 15%)
-            if random.random() < 0.15:
-                interactions.append({
-                    "userId": user["id"], "hotelId": hotel_id, "sessionId": session_id,
-                    "type": "CLICK_BOOK_NOW", "rating": None,
-                    "timestamp": timestamp, "metadata": {}
-                })
-                daily_agg[date_key]["totalClickBook"] += 1
+# Count interaction types
+interaction_types = defaultdict(int)
+for inter in interactions:
+    interaction_types[inter['type']] += 1
 
-                # 4. BOOK CONFIRMED (Conversion - 80% của Click Book)
-                if random.random() < 0.8:
-                    interactions.append({
-                        "userId": user["id"], "hotelId": hotel_id, "sessionId": session_id,
-                        "type": "BOOK", "rating": None,
-                        "timestamp": timestamp,
-                        "metadata": {"amount": price}
-                    })
-                    daily_agg[date_key]["totalBookings"] += 1
-                    daily_agg[date_key]["totalRevenue"] += price
+print("\n[INTERACTION TYPES]")
+for itype, count in sorted(interaction_types.items()):
+    pct = count / len(interactions) * 100
+    print(f"   {itype}: {count} ({pct:.1f}%)")
 
-                    # 5. CANCEL (Random 5% sau khi Book)
-                    if random.random() < 0.05:
-                        # Tạo lệnh hủy sau đó vài ngày
-                        cancel_time = (timestamp_obj + timedelta(days=random.randint(1, 3))).isoformat()
-                        interactions.append({
-                            "userId": user["id"], "hotelId": hotel_id, "sessionId": session_id,
-                            "type": "CANCEL", "rating": None,
-                            "timestamp": cancel_time, "metadata": {}
-                        })
-                        # Cập nhật thống kê hủy (Lưu ý: Thường trừ doanh thu ở ngày hủy hoặc ngày đặt tùy logic, ở đây trừ ngày đặt cho đơn giản dashboard)
-                        daily_agg[date_key]["totalCancels"] += 1
-                        daily_agg[date_key]["totalRevenue"] -= price # Hoàn tiền
-                    
-                    else:
-                        # 6. REVIEW (Chỉ review nếu đã book và không hủy)
-                        # Tạo rating giả
-                        rating = random.choices([5, 4, 3, 2, 1], weights=[50, 30, 10, 5, 5])[0]
-                        comment = random.choice(POSITIVE_COMMENTS if rating >=4 else NEGATIVE_COMMENTS)
-                        
-                        # Lưu vào bảng Review
-                        reviews.append({
-                            "userId": user["id"], "hotelId": hotel_id, "rating": rating,
-                            "comment": comment, "sentiment": "POSITIVE" if rating >=4 else "NEGATIVE",
-                            "createdAt": (timestamp_obj + timedelta(days=2)).isoformat()
-                        })
-                        # Lưu Interaction Rating (để sync data)
-                        interactions.append({
-                            "userId": user["id"], "hotelId": hotel_id, "sessionId": session_id,
-                            "type": "RATING", "rating": rating,
-                            "timestamp": (timestamp_obj + timedelta(days=2)).isoformat(),
-                            "metadata": {}
-                        })
-
-    # --- SAVE FILES ---
-    with open(OUTPUT_INTERACTIONS_FILE, "w", encoding="utf-8") as f:
-        json.dump(interactions, f, ensure_ascii=False, indent=2)
-    
-    with open(OUTPUT_REVIEWS_FILE, "w", encoding="utf-8") as f:
-        json.dump(reviews, f, ensure_ascii=False, indent=2)
-
-    # Xử lý Daily Stats từ dictionary ra list
-    daily_stats_list = []
-    for date_str, stats in daily_agg.items():
-        daily_stats_list.append({
-            "date": f"{date_str}T00:00:00.000Z", # Format chuẩn ISO cho Prisma DateTime
-            **stats
-        })
-    
-    with open(OUTPUT_DAILY_STATS_FILE, "w", encoding="utf-8") as f:
-        json.dump(daily_stats_list, f, ensure_ascii=False, indent=2)
-    
-    print(f"✅ Đã tạo: {len(daily_stats_list)} ngày thống kê (DailyStat).")
-
-    # -------------------------------------------------
-    # C. TRAIN AI MODEL & METRICS (Cập nhật SystemMetric mới)
-    # -------------------------------------------------
-    print("🧠 Đang giả lập System Metrics & Tuning Params...")
-    
-    # Giả lập metrics trong 30 ngày gần đây
-    historical_metrics = []
-    
-    for i in range(29, -1, -1):
-        date_str = (datetime.now() - timedelta(days=i)).isoformat()
-        
-        # Giả lập cải thiện dần theo thời gian
-        base_rmse = 0.95 - (i * 0.005) # Càng về hiện tại RMSE càng thấp (tốt)
-        base_rmse = max(0.80, base_rmse + random.uniform(-0.02, 0.02))
-
-        metric_entry = {
-            "rmse": round(base_rmse, 4),
-            "precisionAt5": round(70 + random.uniform(-5, 5), 2),
-            "recallAt5": round(60 + random.uniform(-5, 5), 2),
-            "algorithm": "SVD",
-            "datasetSize": 1000 + (30-i)*50,
-            "executionTimeMs": random.randint(100, 500), # NEW FIELD
-            "createdAt": date_str,
-            # NEW FIELD: JSON Tuning Params (Chỉ thêm vào bản ghi mới nhất hoặc tất cả tùy bạn)
-            "tuningParams": generate_tuning_params(base_rmse) if i == 0 else None, 
-            "trainingHistory": None # SVD không có epoch history, để null
-        }
-        historical_metrics.append(metric_entry)
-
-    with open(OUTPUT_METRICS_FILE, "w", encoding="utf-8") as f:
-        json.dump(historical_metrics, f, indent=2)
-            
-    print(f"📊 Đã tạo {len(historical_metrics)} bản ghi Metrics.")
-    print("🎉 HOÀN TẤT! Copy file JSON vào thư mục seed.")
+print("\n✅ All files saved successfully!")
 
 if __name__ == "__main__":
     os.makedirs(JSON_DIR, exist_ok=True)
-    generate_data()

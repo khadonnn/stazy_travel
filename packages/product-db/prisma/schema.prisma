@@ -386,6 +386,7 @@ enum InteractionType {
   VIEW            // Xem chi tiết
   LIKE            // Thả tim
   SHARE           // Chia sẻ
+  ADD_TO_WISHLIST // Thêm vào wishlist (Implicit signal)
   BOOK            // Đặt phòng thành công
   CLICK_BOOK_NOW  // Bấm nút đặt nhưng chưa thanh toán (High intent)
   CANCEL  // Hủy (Negative signal)

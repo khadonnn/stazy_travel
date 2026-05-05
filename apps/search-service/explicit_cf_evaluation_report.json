@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-05-05T09:45:53.856390",
+  "system": "Explicit CF (Rating Prediction)",
+  "data_stats": {
+    "total_ratings": 849,
+    "rating_distribution": {
+      "4": 396,
+      "3": 36,
+      "5": 398,
+      "1": 2,
+      "2": 17
+    },
+    "train_count": 509,
+    "test_count": 171
+  },
+  "matrix_stats": {
+    "train_shape": [
+      200,
+      100
+    ],
+    "sparsity_pct": 97.56
+  },
+  "cf_results": {
+    "rmse": 0.8763,
+    "mae": 0.6628
+  },
+  "baseline_results": {
+    "rmse": 0.8696,
+    "mae": 0.6529
+  },
+  "improvement_pct": {
+    "rmse": -0.77,
+    "mae": -1.52
+  }
+}

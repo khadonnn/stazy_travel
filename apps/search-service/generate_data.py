@@ -22,17 +22,40 @@ def random_date(start_days_ago=90):
     random_days = random.randint(0, start_days_ago)
     return (start_date + timedelta(days=random_days)).strftime("%Y-%m-%dT%H:%M:%S.000Z") # Format ISO 8601 cho DB
 
-# --- LOAD ẢNH THẬT (GIỮ NGUYÊN) ---
+# --- LOAD ẢNH THẬT (TỪ LOCATIONS/) ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-REAL_IMAGES_PATH = os.path.join(BASE_DIR, "real_images_map.json")
+REAL_IMAGES_PATH = os.path.join(BASE_DIR, "locations", "real_images_map.json")
 
 try:
     with open(REAL_IMAGES_PATH, "r", encoding="utf-8") as f:
         REAL_IMAGES_MAP = json.load(f)
-    print(f"✅ Đã load danh sách ảnh thật.")
+    print(f"✅ Đã load danh sách ảnh thật từ locations/.")
 except FileNotFoundError:
     print("⚠️ Dùng chế độ Fallback (không có ảnh thật).")
     REAL_IMAGES_MAP = {}
+
+# --- CLOUDINARY IMAGES MAP (từ __homeStay.json hiện tại) ---
+CLOUDINARY_IMAGES_MAP = {
+    "can-tho": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540966/can-tho-1_g49cjw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540972/can-tho-4_jileai.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540967/can-tho-5_csghkr.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540968/can-tho-3_lfs9xt.jpg"],
+    "con-dao": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540969/con-dao-5_zdjgfk.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540971/con-dao-2_ye0pqg.jpg"],
+    "da-lat": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540971/da-lat-2_mntd0b.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540975/da-lat-3_o1l9vw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540973/da-lat-1_bevmpu.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540976/da-lat-5_eacggq.jpg"],
+    "da-nang": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540986/da-nang-5_arulor.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540982/da-nang-3_vow6lx.jpg"],
+    "ha-giang": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540989/ha-giang-2_y1iqni.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540987/ha-giang-1_jqxmav.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540991/ha-giang-3_pmoeas.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540994/ha-giang-5_tici1j.jpg"],
+    "ha-long": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540997/ha-long-2_ullf47.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541000/ha-long-3_yzvar5.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541001/ha-long-5_iy8wgc.jpg"],
+    "ha-noi": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541011/ha-noi-5_lldbb4.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541007/ha-noi-2_aywnh0.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541010/ha-noi-4_ubhj0i.jpg"],
+    "hcm": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541015/hcm-1_vcvab7.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541020/hcm-4_wuqguq.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541021/hcm-5_i0izfa.jpg"],
+    "hoi-an": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541027/hoi-an-3_dq4hyd.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541028/hoi-an-4_v03fjq.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541029/hoi-an-5_u04eyp.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541023/hoi-an-2_fi8uff.jpg"],
+    "hue": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541037/hue-4_fjixbn.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541038/hue-5_fu8izq.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541034/hue-3_nnk8gj.jpg"],
+    "mui-ne": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541047/mui-ne-4_qchzqs.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541041/mui-ne-2_q9kbaw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541048/mui-ne-5_fgmxlu.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541045/mui-ne-3_pc50ur.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541049/mui-ne-6_dcncbl.jpg"],
+    "nha-trang": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541057/nha-trang-4_q4rfjw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541052/nha-trang-1_i267aa.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541056/nha-trang-3_cwzfug.jpg"],
+    "ninh-binh": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541067/ninh-binh-3_mcdcx9.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541066/ninh-binh-2_yakhq8.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541062/ninh-binh-1_l5fup2.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541069/ninh-binh-4_j8tqlw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541071/ninh-binh-5_vqjagt.jpg"],
+    "phu-quoc": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541082/phu-quoc-5_oyygdf.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541087/phu-quoc-7_wxvlr7.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541076/phu-quoc-2_jxiqa0.jpg"],
+    "phu-yen": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541095/phu-yen-3_sf9c6z.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541091/phu-yen-2_gwta2q.jpg"],
+    "quy-nhon": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541105/quy-nhon-5_rflams.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541104/quy-nhon-4_frh8ko.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541102/quy-nhon-2_rdut5c.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541103/quy-nhon-3_w0xsmm.jpg"],
+    "sapa": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541117/sapa-5_bvaqlr.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541116/sapa-4_g8hqbk.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541107/sapa-1_rqwgvw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541110/sapa-2_zqeicd.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541112/sapa-3_wwd7vp.jpg"],
+    "tam-dao": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541118/tam-dao-1_r624of.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541127/tam-dao-5_xzxk5o.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541124/tam-dao-4_ldl9gb.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541122/tam-dao-2_xlsdpi.jpg"],
+    "vung-tau": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541136/vung-tau-5_xyxcua.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541128/vung-tau-1_lclk4q.jpg"],
+}
 
 # --- CẤU HÌNH CATEGORY ---
 CATEGORY_CONFIG = {
@@ -165,14 +188,25 @@ def generate_stays(count=100):
         lat = base_lat + random.uniform(-0.02, 0.02)
         lng = base_lng + random.uniform(-0.02, 0.02)
 
-        # 5. Ảnh
-        file_prefix = scenario.get("file_prefix_map", {}).get(loc, "sapa")
-        available_images = REAL_IMAGES_MAP.get(file_prefix)
+        # 5. XỬ LÝ ẢNH: CLOUDINARY + REAL_IMAGES_MAP
+        file_prefix = scenario.get("file_prefix_map", {}).get(loc, create_slug(loc))
         
-        if available_images and len(available_images) > 0:
-            featured_img_url = random.choice(available_images)
-        else:
-            featured_img_url = random.choice(fallback_images) if fallback_images else "https://placehold.co/600x400?text=Hotel"
+        # Lấy featured image từ Cloudinary
+        cloudinary_images = CLOUDINARY_IMAGES_MAP.get(file_prefix, [])
+        featured_img_url = random.choice(cloudinary_images) if cloudinary_images else "https://loremflickr.com/800/600/hotel"
+        
+        # Lấy 4 ảnh từ real_images_map
+        loc_images = REAL_IMAGES_MAP.get(file_prefix, [])
+        real_images_sample = random.sample(loc_images, min(4, len(loc_images))) if loc_images else []
+        
+        # Ghép gallery: [Featured Cloudinary] + [4 Real Images]
+        gallery = [featured_img_url] + real_images_sample
+        
+        # Lấp đầy nếu chưa đủ 5 ảnh
+        while len(gallery) < 5:
+            keyword = f"{file_prefix},hotel"
+            placeholder_url = f"https://loremflickr.com/800/600/{keyword}?lock={i}{len(gallery)}"
+            gallery.append(placeholder_url)
 
         # 6. Amenities & Tags
         selected_amenities = random.sample(ALL_AMENITIES, k=random.randint(5, 12))
@@ -234,7 +268,7 @@ def generate_stays(count=100):
             "title": full_title,
             "name":room_name,
             "featuredImage": featured_img_url, 
-            "galleryImgs": [featured_img_url] + [f"https://loremflickr.com/800/600/hotel?lock={i}{x}" for x in range(4)],
+            "galleryImgs": gallery,
             
             "description": short_desc,
             

@@ -205,6 +205,10 @@ async function main() {
     (await prisma.user.findMany({ select: { id: true } })).map((u) => u.id),
   );
 
+  const existingHotelIds = new Set(
+    (await prisma.hotel.findMany({ select: { id: true } })).map((h) => h.id),
+  );
+
   for (const interaction of interactionsData) {
     // MỚI: Thêm sessionId từ JSON
     const { userId, hotelId, type, timestamp, metadata, rating, sessionId } =
@@ -258,47 +262,92 @@ async function main() {
           paymentStatus = PaymentStatus.FAILED;
         }
 
-        await prisma.booking.create({
-          data: {
-            userId,
-            hotelId,
-            guestName,
-            guestEmail,
-            guestPhone,
-            adults: metadata?.adults || 2,
-            children: metadata?.children || 0,
-            checkIn: checkInDate,
-            checkOut: checkOutDate,
-            nights: 2,
-            basePrice: totalPrice,
-            totalAmount: totalPrice,
-            status: status,
-            paymentStatus: paymentStatus,
-            paymentMethod: randomPaymentMethod,
-            createdAt: new Date(timestamp),
-            // Nếu bảng Booking của bạn có cột sessionId, hãy thêm vào đây:
-            // sessionId: sessionId
-          },
-        });
+        try {
+          await prisma.booking.create({
+            data: {
+              userId,
+              hotelId,
+              guestName,
+              guestEmail,
+              guestPhone,
+              adults: metadata?.adults || 2,
+              children: metadata?.children || 0,
+              checkIn: checkInDate,
+              checkOut: checkOutDate,
+              nights: 2,
+              basePrice: totalPrice,
+              totalAmount: totalPrice,
+              status: status,
+              paymentStatus: paymentStatus,
+              paymentMethod: randomPaymentMethod,
+              createdAt: new Date(timestamp),
+              // Nếu bảng Booking của bạn có cột sessionId, hãy thêm vào đây:
+              // sessionId: sessionId
+            },
+          });
+        } catch (error: any) {
+          // Handle constraint violations (overlapping bookings)
+          if (error.message?.includes("no_overlapping_bookings")) {
+            // Silently skip bookings that violate the constraint
+            // (This is expected for randomly generated data)
+          } else {
+            throw error; // Re-throw other unexpected errors
+          }
+        }
       }
     }
   }
 
   // --- 5.5 SEED REVIEWS ---
   // Sync với Interaction type RATING
+  // Logic: mỗi review → tạo 1 booking riêng (booking xảy ra trước, review sau trải nghiệm)
   const reviewsData = readJson("__reviews.json");
   console.log(`💬 Đang xử lý ${reviewsData.length} Reviews...`);
 
   for (const review of reviewsData) {
-    if (existingUserIds.has(review.userId)) {
-      await prisma.review.create({
+    if (
+      existingUserIds.has(review.userId) &&
+      existingHotelIds.has(review.hotelId)
+    ) {
+      // Booking xảy ra trước review (2 ngày trước review date)
+      const checkInDate = new Date(review.createdAt);
+      checkInDate.setDate(checkInDate.getDate() - 2);
+
+      const checkOutDate = new Date(checkInDate);
+      checkOutDate.setDate(checkOutDate.getDate() + 1);
+
+      // Tạo booking riêng cho review này
+      const booking = await prisma.booking.create({
         data: {
           userId: review.userId,
           hotelId: review.hotelId,
+          guestName: "Guest",
+          guestEmail: `${review.userId}@example.com`,
+          guestPhone: "0909000000",
+          adults: 1,
+          children: 0,
+          checkIn: checkInDate,
+          checkOut: checkOutDate,
+          nights: 1,
+          basePrice: 0,
+          totalAmount: 0,
+          status: BookingStatus.COMPLETED,
+          paymentStatus: PaymentStatus.SUCCEEDED,
+          paymentMethod: PaymentMethod.STRIPE,
+          createdAt: checkInDate,
+        },
+      });
+
+      // Tạo review gắn với booking vừa tạo
+      await prisma.review.create({
+        data: {
+          bookingId: booking.id,
           rating: review.rating,
           comment: review.comment,
           sentiment: review.sentiment,
           createdAt: new Date(review.createdAt),
+          user: { connect: { id: review.userId } },
+          hotel: { connect: { id: review.hotelId } },
         },
       });
     }

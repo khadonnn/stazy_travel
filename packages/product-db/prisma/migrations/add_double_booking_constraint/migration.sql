@@ -36,8 +36,8 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 
 ALTER TABLE bookings
 ADD CONSTRAINT no_overlapping_bookings EXCLUDE USING gist (
-  hotel_id WITH =,
-  daterange(check_in::date, check_out::date) WITH &&
+  "hotelId" WITH =,
+  daterange("checkIn"::date, "checkOut"::date) WITH &&
 ) WHERE (status IN ('PENDING', 'CONFIRMED'));
 
 -- ─────────────────────────────────────────────────────

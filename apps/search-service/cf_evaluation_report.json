@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-05-05T09:10:28.218863",
+  "data_stats": {
+    "total_interactions": 5034,
+    "unique_hotels": 100,
+    "unique_users": 200,
+    "invalid_interactions": 0,
+    "valid_interactions": 5034
+  },
+  "split_stats": {
+    "train": 3020,
+    "val": 1006,
+    "test": 1008
+  },
+  "matrix_stats": {
+    "train_shape": [
+      200,
+      100
+    ],
+    "test_shape": [
+      200,
+      100
+    ],
+    "train_sparsity": 0.8683
+  },
+  "cf_results": {
+    "model": "CF",
+    "rmse": 2.196057198261891,
+    "precision_at_5": 0.083,
+    "recall_at_5": 0.09700613275613275,
+    "users_evaluated": 200,
+    "users_no_recommendations": 0,
+    "cold_start_users": 0
+  },
+  "baseline_results": {
+    "model": "Baseline",
+    "rmse": 1.0216970676419246,
+    "precision_at_5": 0.04800000000000001,
+    "recall_at_5": 0.043079545454545454,
+    "users_evaluated": 200,
+    "users_no_recommendations": 0,
+    "cold_start_users": 0
+  },
+  "improvement": {
+    "rmse_improvement_percent": -114.94210640443434
+  }
+}
