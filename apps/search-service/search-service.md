@@ -44,8 +44,6 @@ python generate_recommendations.py || uv run generate_recommendations.py
 
 uv run process_data.py
 
-> uv run evaluate_cf.py
-
 > uv run evaluate.py --mode all # Chạy cả 2
 > uv run evaluate.py --mode implicit # Chỉ ranking
 > uv run evaluate.py --mode explicit # Chỉ rating

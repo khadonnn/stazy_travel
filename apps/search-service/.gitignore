@@ -9,3 +9,4 @@ __pycache__/
 
 # Chặn file chứa biến môi trường nhạy cảm
 .env
+update_image_cloudinary/downloads/

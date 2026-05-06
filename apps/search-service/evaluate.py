@@ -35,7 +35,8 @@ USERS_FILE = os.path.join(JSON_DIR, "__users.json")
 HOTELS_FILE = os.path.join(JSON_DIR, "__homeStay.json")
 
 # CF Parameters
-K_NEIGHBORS = 5
+K_NEIGHBORS_IMPLICIT = 5
+K_NEIGHBORS_EXPLICIT = 10  # More neighbors for sparse explicit data
 K_RECOMMENDATIONS = 5
 
 # ---------------------------------------------------------
@@ -272,7 +273,7 @@ def evaluate_implicit():
         # ===== CF PREDICTIONS =====
         # Get similar users
         user_similarities = user_similarity_df.loc[user_id].drop(user_id)
-        top_similar_users = user_similarities.nlargest(K_NEIGHBORS).index
+        top_similar_users = user_similarities.nlargest(K_NEIGHBORS_IMPLICIT).index
         
         # Aggregate recommendations from similar users
         recommendations_scores = defaultdict(float)
@@ -465,16 +466,32 @@ def evaluate_explicit():
     
     print(f"   ✅ Train matrix shape: ({len(users)}, {len(hotels)}) (sparsity: {sparsity_train:.1f}%)")
     
-    # Compute user similarity
-    train_matrix_filled = train_matrix.fillna(0)
-    user_similarity_matrix = cosine_similarity(train_matrix_filled.values)
+    # Compute user similarity using PEARSON CORRELATION (not cosine on 0-filled)
+    # For explicit ratings, filling NaN with 0 corrupts similarity (0 is not a valid rating).
+    # Pearson correlation (mean-centered cosine) properly handles missing values.
+    
+    # Fill NaN with user mean for similarity computation (mean-centering)
+    train_matrix_centered = train_matrix.copy()
+    for user_id in train_matrix_centered.index:
+        user_mean = train_matrix.loc[user_id].mean()
+        if pd.notna(user_mean):
+            train_matrix_centered.loc[user_id] = train_matrix.loc[user_id].fillna(user_mean)
+        else:
+            train_matrix_centered.loc[user_id] = train_matrix.loc[user_id].fillna(3.0)  # global fallback
+    
+    # Mean-center the data (subtract user mean from each rating)
+    user_means_for_centering = train_matrix_centered.mean(axis=1)
+    train_matrix_mc = train_matrix_centered.sub(user_means_for_centering, axis=0)
+    
+    # Compute Pearson correlation via cosine similarity on mean-centered data
+    user_similarity_matrix = cosine_similarity(train_matrix_mc.values)
     user_similarity_df = pd.DataFrame(
         user_similarity_matrix,
         index=train_matrix.index,
         columns=train_matrix.index
     )
     
-    print(f"✅ CF Model trained. User-Similarity shape: {user_similarity_df.shape}")
+    print(f"✅ CF Model trained (Pearson correlation). User-Similarity shape: {user_similarity_df.shape}")
     
     # ---------------------------------------------------------
     # STEP 6: EVALUATE ON TEST SET
@@ -504,7 +521,7 @@ def evaluate_explicit():
             predicted_rating = 3.0  # default
         else:
             user_similarities = user_similarity_df.loc[user_id].drop(user_id)
-            top_similar_users = user_similarities.nlargest(K_NEIGHBORS).index
+            top_similar_users = user_similarities.nlargest(K_NEIGHBORS_EXPLICIT).index
             
             # Get user mean for bias correction
             user_mean = train_matrix.loc[user_id].mean()

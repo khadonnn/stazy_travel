@@ -183,18 +183,33 @@ preference_matrix = {
     ('luxury', 'luxury'): 0.8,
 }
 
-# Rating strength by segment match
-rating_strength_matrix = {
-    ('budget', 'budget'): (4, 5),
-    ('budget', 'mid'): (2, 3),
-    ('budget', 'luxury'): (1, 2),
-    ('mid', 'budget'): (2, 3),
-    ('mid', 'mid'): (4, 5),
-    ('mid', 'luxury'): (3, 4),
-    ('luxury', 'budget'): (1, 2),
-    ('luxury', 'mid'): (2, 4),
-    ('luxury', 'luxury'): (4, 5),
-}
+# Rating scoring function (replaces hard-coded rating_strength_matrix)
+def compute_base_score(user_seg, hotel_seg):
+    """
+    Compute a base rating score based on user-hotel segment match.
+    Match → higher base, mismatch → lower base.
+    Uses continuous uniform distribution for natural variance.
+    """
+    if user_seg == hotel_seg:
+        # Same segment: strong match → base 3.5–5.0
+        return random.uniform(3.5, 5.0)
+    elif (user_seg == 'mid' and hotel_seg in ('budget', 'luxury')) or \
+         (user_seg in ('budget', 'luxury') and hotel_seg == 'mid'):
+        # Adjacent segment: moderate match → base 2.0–4.0
+        return random.uniform(2.0, 4.0)
+    else:
+        # Cross segment (budget↔luxury): weak match → base 1.0–3.0
+        return random.uniform(1.0, 3.0)
+
+def compute_rating(user_seg, hotel_seg):
+    """
+    Final rating = base_score + noise, clamped to [1, 5].
+    Noise simulates individual taste variation.
+    """
+    base_score = compute_base_score(user_seg, hotel_seg)
+    noise = random.choice([-1, -0.5, 0, 0, 0.5, 1])  # weighted toward 0
+    rating = int(round(min(5, max(1, base_score + noise))))
+    return rating
 
 # Generate interactions per user
 for user in users:
@@ -209,10 +224,15 @@ for user in users:
         hotel_id = hotel['id']
         hotel_segment = hotel_segments[hotel_id]
         
-        # Check preference
+        # Check preference (with noise for realism)
         pref_score = preference_matrix[(user_segment, hotel_segment)]
-        if random.random() > pref_score:
-            continue
+        pref_score_noisy = pref_score + random.uniform(-0.1, 0.1)
+        pref_score_noisy = max(0.05, min(1.0, pref_score_noisy))
+        
+        if random.random() > pref_score_noisy:
+            # Even when pref fails, 30% chance to keep (realistic exploration)
+            if random.random() > 0.3:
+                continue
         
         # Pick interaction type
         match_strength = pref_score
@@ -225,7 +245,7 @@ for user in users:
         if random.random() < 0.3 * match_strength:
             # BOOK
             interaction_type = "BOOK"
-            rating = random.randint(*rating_strength_matrix[(user_segment, hotel_segment)])
+            rating = compute_rating(user_segment, hotel_segment)
             
             booking_id = str(uuid.uuid4())
             price = hotel.get('price', 1000000)
@@ -252,15 +272,24 @@ for user in users:
             daily_agg[date_key]["totalBookings"] += 1
             daily_agg[date_key]["totalRevenue"] += price
             
-            # Generate review
-            if random.random() > 0.05:  # 95% complete without cancel
-                booking_id = booking_id
+            # Generate review (realistic: not everyone reviews)
+            # People with extreme experiences (very good or very bad) are more likely to review
+            if rating >= 4:
+                review_prob = 0.7
+            elif rating == 3:
+                review_prob = 0.4
+            else:
+                review_prob = 0.5  # Angry customers also tend to review
+            
+            if random.random() < review_prob:
                 review_timestamp = timestamp + timedelta(days=random.randint(2, 7))
                 
-                if match_strength > 0.5:
-                    sentiment = random.choices(['POSITIVE', 'NEUTRAL'], weights=[0.7, 0.3])[0]
+                if rating >= 4:
+                    sentiment = random.choices(['POSITIVE', 'NEUTRAL'], weights=[0.75, 0.25])[0]
+                elif rating == 3:
+                    sentiment = random.choices(['NEUTRAL', 'POSITIVE', 'NEGATIVE'], weights=[0.5, 0.25, 0.25])[0]
                 else:
-                    sentiment = random.choices(['NEGATIVE', 'NEUTRAL'], weights=[0.4, 0.6])[0]
+                    sentiment = random.choices(['NEGATIVE', 'NEUTRAL'], weights=[0.7, 0.3])[0]
                 
                 # Generate dynamic comment
                 comment = generate_dynamic_review(sentiment)
@@ -277,7 +306,11 @@ for user in users:
                     "updatedAt": review_timestamp.isoformat()
                 })
             else:
-                # CANCEL
+                # Booking completed but user didn't review (realistic)
+                pass
+            
+            # 5% cancellation rate
+            if random.random() < 0.05:
                 daily_agg[date_key]["totalCancels"] += 1
                 daily_agg[date_key]["totalRevenue"] -= price
         
@@ -308,6 +341,32 @@ for user in users:
                 "metadata": {}
             })
             daily_agg[date_key]["totalClickBook"] += 1
+            
+            # 25% of CLICK_BOOK_NOW users also leave a rating/review (browsing feedback)
+            if random.random() < 0.25:
+                click_rating = compute_rating(user_segment, hotel_segment)
+                click_review_timestamp = timestamp + timedelta(days=random.randint(0, 3))
+                
+                if click_rating >= 4:
+                    click_sentiment = random.choices(['POSITIVE', 'NEUTRAL'], weights=[0.7, 0.3])[0]
+                elif click_rating == 3:
+                    click_sentiment = random.choices(['NEUTRAL', 'POSITIVE', 'NEGATIVE'], weights=[0.5, 0.3, 0.2])[0]
+                else:
+                    click_sentiment = random.choices(['NEGATIVE', 'NEUTRAL'], weights=[0.6, 0.4])[0]
+                
+                click_comment = generate_dynamic_review(click_sentiment)
+                
+                reviews.append({
+                    "id": str(uuid.uuid4()),
+                    "bookingId": None,
+                    "userId": user_id,
+                    "hotelId": hotel_id,
+                    "rating": click_rating,
+                    "comment": click_comment,
+                    "sentiment": click_sentiment,
+                    "createdAt": click_review_timestamp.isoformat(),
+                    "updatedAt": click_review_timestamp.isoformat()
+                })
 
 print(f"   ✅ Generated {len(interactions)} interactions")
 print(f"   ✅ Generated {len(reviews)} reviews")

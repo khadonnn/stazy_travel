@@ -22,39 +22,36 @@ def random_date(start_days_ago=90):
     random_days = random.randint(0, start_days_ago)
     return (start_date + timedelta(days=random_days)).strftime("%Y-%m-%dT%H:%M:%S.000Z") # Format ISO 8601 cho DB
 
-# --- LOAD ẢNH THẬT (TỪ LOCATIONS/) ---
+# --- LOAD ẢNH TỪ CLOUDINARY (featuredImage & galleryImgs) ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-REAL_IMAGES_PATH = os.path.join(BASE_DIR, "locations", "real_images_map.json")
+JSONS_DIR = os.path.join(BASE_DIR, "update_image_cloudinary", "jsons")
+FEATURED_IMAGE_JSON = os.path.join(JSONS_DIR, "featuredImage.json")
+GALLERY_IMGS_JSON = os.path.join(JSONS_DIR, "galleryImgs.json")
 
 try:
-    with open(REAL_IMAGES_PATH, "r", encoding="utf-8") as f:
-        REAL_IMAGES_MAP = json.load(f)
-    print(f"✅ Đã load danh sách ảnh thật từ locations/.")
+    with open(FEATURED_IMAGE_JSON, "r", encoding="utf-8") as f:
+        FEATURED_IMAGE_MAP = json.load(f)
+    print(f"✅ Đã load featuredImage từ {FEATURED_IMAGE_JSON}")
 except FileNotFoundError:
-    print("⚠️ Dùng chế độ Fallback (không có ảnh thật).")
-    REAL_IMAGES_MAP = {}
+    print("⚠️ Không tìm thấy featuredImage.json, dùng fallback.")
+    FEATURED_IMAGE_MAP = {}
 
-# --- CLOUDINARY IMAGES MAP (từ __homeStay.json hiện tại) ---
-CLOUDINARY_IMAGES_MAP = {
-    "can-tho": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540966/can-tho-1_g49cjw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540972/can-tho-4_jileai.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540967/can-tho-5_csghkr.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540968/can-tho-3_lfs9xt.jpg"],
-    "con-dao": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540969/con-dao-5_zdjgfk.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540971/con-dao-2_ye0pqg.jpg"],
-    "da-lat": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540971/da-lat-2_mntd0b.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540975/da-lat-3_o1l9vw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540973/da-lat-1_bevmpu.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540976/da-lat-5_eacggq.jpg"],
-    "da-nang": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540986/da-nang-5_arulor.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540982/da-nang-3_vow6lx.jpg"],
-    "ha-giang": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540989/ha-giang-2_y1iqni.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540987/ha-giang-1_jqxmav.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540991/ha-giang-3_pmoeas.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540994/ha-giang-5_tici1j.jpg"],
-    "ha-long": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767540997/ha-long-2_ullf47.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541000/ha-long-3_yzvar5.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541001/ha-long-5_iy8wgc.jpg"],
-    "ha-noi": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541011/ha-noi-5_lldbb4.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541007/ha-noi-2_aywnh0.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541010/ha-noi-4_ubhj0i.jpg"],
-    "hcm": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541015/hcm-1_vcvab7.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541020/hcm-4_wuqguq.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541021/hcm-5_i0izfa.jpg"],
-    "hoi-an": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541027/hoi-an-3_dq4hyd.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541028/hoi-an-4_v03fjq.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541029/hoi-an-5_u04eyp.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541023/hoi-an-2_fi8uff.jpg"],
-    "hue": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541037/hue-4_fjixbn.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541038/hue-5_fu8izq.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541034/hue-3_nnk8gj.jpg"],
-    "mui-ne": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541047/mui-ne-4_qchzqs.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541041/mui-ne-2_q9kbaw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541048/mui-ne-5_fgmxlu.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541045/mui-ne-3_pc50ur.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541049/mui-ne-6_dcncbl.jpg"],
-    "nha-trang": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541057/nha-trang-4_q4rfjw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541052/nha-trang-1_i267aa.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541056/nha-trang-3_cwzfug.jpg"],
-    "ninh-binh": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541067/ninh-binh-3_mcdcx9.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541066/ninh-binh-2_yakhq8.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541062/ninh-binh-1_l5fup2.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541069/ninh-binh-4_j8tqlw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541071/ninh-binh-5_vqjagt.jpg"],
-    "phu-quoc": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541082/phu-quoc-5_oyygdf.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541087/phu-quoc-7_wxvlr7.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541076/phu-quoc-2_jxiqa0.jpg"],
-    "phu-yen": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541095/phu-yen-3_sf9c6z.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541091/phu-yen-2_gwta2q.jpg"],
-    "quy-nhon": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541105/quy-nhon-5_rflams.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541104/quy-nhon-4_frh8ko.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541102/quy-nhon-2_rdut5c.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541103/quy-nhon-3_w0xsmm.jpg"],
-    "sapa": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541117/sapa-5_bvaqlr.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541116/sapa-4_g8hqbk.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541107/sapa-1_rqwgvw.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541110/sapa-2_zqeicd.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541112/sapa-3_wwd7vp.jpg"],
-    "tam-dao": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541118/tam-dao-1_r624of.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541127/tam-dao-5_xzxk5o.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541124/tam-dao-4_ldl9gb.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541122/tam-dao-2_xlsdpi.jpg"],
-    "vung-tau": ["https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541136/vung-tau-5_xyxcua.jpg", "https://res.cloudinary.com/dtj7wfwzu/image/upload/f_auto,q_auto/v1767541128/vung-tau-1_lclk4q.jpg"],
+try:
+    with open(GALLERY_IMGS_JSON, "r", encoding="utf-8") as f:
+        GALLERY_IMGS_MAP = json.load(f)
+    print(f"✅ Đã load galleryImgs từ {GALLERY_IMGS_JSON}")
+except FileNotFoundError:
+    print("⚠️ Không tìm thấy galleryImgs.json, dùng fallback.")
+    GALLERY_IMGS_MAP = {}
+
+# Map location_key -> tên hiển thị tiếng Việt (để tra cứu LOC_COORDS, LANDMARKS, SCENARIOS)
+LOCATION_KEY_TO_DISPLAY = {
+    "sapa": "Sapa", "da-lat": "Đà Lạt", "tam-dao": "Tam Đảo",
+    "ha-giang": "Hà Giang", "ninh-binh": "Ninh Bình", "ha-long": "Hạ Long",
+    "nha-trang": "Nha Trang", "phu-quoc": "Phú Quốc", "quy-nhon": "Quy Nhơn",
+    "phu-yen": "Phú Yên", "con-dao": "Côn Đảo", "mui-ne": "Mũi Né",
+    "vung-tau": "Vũng Tàu", "ha-noi": "Hà Nội", "hcm": "TP.HCM",
+    "da-nang": "Đà Nẵng", "can-tho": "Cần Thơ", "hue": "Huế", "hoi-an": "Hội An",
 }
 
 # --- CẤU HÌNH CATEGORY ---
@@ -156,174 +153,194 @@ ALL_AMENITIES = [
 
 ADJECTIVES = ["Luxury", "Cozy", "Modern", "Classic", "Hidden", "Sunny", "Royal", "Grand", "Boutique", "Charming", "Peaceful", "Vintage"]
 
+# Map ngược: tên hiển thị -> scenario_key (khởi tạo sau khi SCENARIOS được định nghĩa)
+DISPLAY_TO_SCENARIO = {}
+for _sk, _sv in SCENARIOS.items():
+    for _ld in _sv["locs"]:
+        DISPLAY_TO_SCENARIO[_ld] = _sk
+
+
 # ---------------------------------------------------------
 # 2. HÀM TẠO DỮ LIỆU
 # ---------------------------------------------------------
-def generate_stays(count=100):
+def generate_stays():
+    """
+    Duyệt toàn bộ URL trong featuredImage.json.
+    Mỗi URL = 1 khách sạn thuộc đúng địa điểm đó.
+    Tổng số stay = tổng số URL trong featuredImage.json (~255).
+    """
     stays = []
-    
-    fallback_images = []
-    if REAL_IMAGES_MAP:
-        first_key = next(iter(REAL_IMAGES_MAP))
-        fallback_images = REAL_IMAGES_MAP[first_key]
+    stay_id = 0
 
-    for i in range(1, count + 1):
-        # 1. Chọn Scenario
-        scenario_key = random.choice(list(SCENARIOS.keys()))
+    # Duyệt qua từng location_key và danh sách featured URL
+    for location_key, featured_urls in FEATURED_IMAGE_MAP.items():
+        # Map location_key -> tên hiển thị tiếng Việt
+        loc_display = LOCATION_KEY_TO_DISPLAY.get(location_key, location_key)
+
+        # Xác định scenario_key từ tên hiển thị
+        scenario_key = DISPLAY_TO_SCENARIO.get(loc_display)
+        if not scenario_key:
+            # Fallback: nếu không tìm thấy scenario, bỏ qua location này
+            print(f"⚠️ Không tìm thấy scenario cho '{loc_display}' ({location_key}), bỏ qua.")
+            continue
+
         scenario = SCENARIOS[scenario_key]
-        
-        # 2. Địa điểm & Category
-        loc = random.choice(scenario["locs"])
-        cat_id = random.choice(scenario["valid_cats"])
-        cat_info = CATEGORY_CONFIG[cat_id]
-        
-        # 3. Tên & Slug
-        title_suffix = random.choice(cat_info["titles"])
-        adj = random.choice(ADJECTIVES)
-        full_title = f"{adj} {loc} {title_suffix} {random.randint(10, 99)}"
-        slug = create_slug(full_title)
+        valid_cats = scenario["valid_cats"]
 
-        # 4. Tọa độ
-        base_lat, base_lng = LOC_COORDS.get(loc, (10.0, 105.0))
-        lat = base_lat + random.uniform(-0.02, 0.02)
-        lng = base_lng + random.uniform(-0.02, 0.02)
+        # Danhảng gallery cho location_key này
+        gallery_pool = GALLERY_IMGS_MAP.get(location_key, [])
 
-        # 5. XỬ LÝ ẢNH: CLOUDINARY + REAL_IMAGES_MAP
-        file_prefix = scenario.get("file_prefix_map", {}).get(loc, create_slug(loc))
-        
-        # Lấy featured image từ Cloudinary
-        cloudinary_images = CLOUDINARY_IMAGES_MAP.get(file_prefix, [])
-        featured_img_url = random.choice(cloudinary_images) if cloudinary_images else "https://loremflickr.com/800/600/hotel"
-        
-        # Lấy 4 ảnh từ real_images_map
-        loc_images = REAL_IMAGES_MAP.get(file_prefix, [])
-        real_images_sample = random.sample(loc_images, min(4, len(loc_images))) if loc_images else []
-        
-        # Ghép gallery: [Featured Cloudinary] + [4 Real Images]
-        gallery = [featured_img_url] + real_images_sample
-        
-        # Lấp đầy nếu chưa đủ 5 ảnh
-        while len(gallery) < 5:
-            keyword = f"{file_prefix},hotel"
-            placeholder_url = f"https://loremflickr.com/800/600/{keyword}?lock={i}{len(gallery)}"
-            gallery.append(placeholder_url)
+        for featured_img_url in featured_urls:
+            stay_id += 1
 
-        # 6. Amenities & Tags
-        selected_amenities = random.sample(ALL_AMENITIES, k=random.randint(5, 12))
-        if cat_id == 3: selected_amenities.extend(["pool", "spa"])
-        if scenario_key == "sea": selected_amenities.append("sea-view")
-        elif scenario_key == "mountain": selected_amenities.append("mountain-view")
-        selected_amenities = list(set(selected_amenities))
+            # 1. Category ngẫu nhiên (theo scenario)
+            cat_id = random.choice(valid_cats)
+            cat_info = CATEGORY_CONFIG[cat_id]
 
-        # 7. New Fields Generation
-        suitable_for = random.sample(TRIP_TYPES, k=random.randint(1, 3)) # ['FAMILY', 'COUPLE']
-        tags = random.sample(TAGS_POOL, k=random.randint(2, 5))
-        accessibility = random.sample(ACCESSIBILITY_POOL, k=random.randint(0, 2))
-        nearby_landmarks = random.sample(LANDMARKS_MAP.get(loc, ["Trung tâm"]), k=min(2, len(LANDMARKS_MAP.get(loc, []))))
-        policies = random.choice(POLICIES_TEXTS)
-        
-        # Full Description cho RAG
-        short_desc = f"{cat_info['name']} {adj} tại {loc}. Phù hợp cho {', '.join(suitable_for)}."
-        full_desc = f"""
-        Tận hưởng kỳ nghỉ tuyệt vời tại {full_title}. 
-        Vị trí đắc địa gần {', '.join(nearby_landmarks)}. 
-        Chỗ nghỉ được trang bị đầy đủ tiện nghi như {', '.join(selected_amenities)}.
-        Không gian thiết kế theo phong cách {adj}, mang lại cảm giác thư thái.
-        Thích hợp nhất cho nhóm khách: {', '.join(suitable_for)}.
-        """.strip()
+            # 2. Tên & Slug
+            title_suffix = random.choice(cat_info["titles"])
+            adj = random.choice(ADJECTIVES)
+            full_title = f"{adj} {loc_display} {title_suffix} {random.randint(10, 99)}"
+            slug = create_slug(full_title)
 
-        # 8. Giá & Logic
-        base_price = random.randint(3, 40) * 100000
-        if cat_id in [3, 4]: base_price = int(base_price * 1.5)
-        
-        has_sale = random.random() < 0.3
-        sale_percent = random.choice([10, 20, 30, 50]) if has_sale else 0
-        sale_text = f"-{sale_percent}% Summer Deal" if has_sale else None
-        # 9
-        room_name = "Standard Room" 
-        
-        if cat_id in [2, 4, 5, 6]: 
-            room_name = "Nguyên căn"
-        elif cat_id == 7:
-            room_name = random.choice(["Lều trại cao cấp", "Giường Dorm", "Bungalow"])
-        else:
-            room_name = random.choice([
-                "Standard Room", 
-                "Deluxe Room", 
-                "Suite City View", 
-                "Family Suite", 
-                "King Room with Balcony"
-            ])
-        stay = {
-            # --- CÁC TRƯỜNG CƠ BẢN ---
-            "id": i,
-            "authorId": f"user_seed_{random.randint(1, 5)}", # Placeholder
-            "createdAt": random_date(),
-            "updatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.000Z"),
-            "slug": slug,
-            
-            "categoryId": cat_id,
-            "category": cat_info["name"], # Để tạo JSON dễ đọc, khi seed DB thì dùng categoryId
-            
-            "title": full_title,
-            "name":room_name,
-            "featuredImage": featured_img_url, 
-            "galleryImgs": gallery,
-            
-            "description": short_desc,
-            
-            # --- CÁC TRƯỜNG MỚI (UPDATE SCHEMA) ---
-            "fullDescription": full_desc,   # Text dài cho vector search
-            "policies": policies,           # Text chính sách
-            "tags": tags,                   # ["romantic", "luxury"]
-            "suitableFor": suitable_for,    # ["FAMILY", "COUPLE"] - Enum
-            "accessibility": accessibility, # ["elevator"]
-            "nearbyLandmarks": nearby_landmarks, # ["Hồ Gươm"]
-            "cancellationRate": round(random.random() * 0.2, 2), # 0.0 -> 0.2 (tỷ lệ hủy thấp)
-            
-            "amenities": selected_amenities, 
-            
-            "price": base_price, 
-            "address": f"{random.randint(1,999)} Đường {loc}, Việt Nam",
-            
-            "reviewStar": round(random.uniform(3.8, 5.0), 1), # Đã sửa reviewStar -> reviewStar
-            "reviewCount": random.randint(10, 500),
-            "viewCount": random.randint(100, 2000),
-            "commentCount": random.randint(0, 50),
-            
-            "like": random.choice([True, False]),
-            "isAds": random.random() < 0.05,
-            
-            "maxGuests": random.randint(2, 10),
-            "bedrooms": random.randint(1, 5),
-            "bathrooms": random.randint(1, 5),
-            
-            "saleOff": sale_text,
-            "saleOffPercent": sale_percent,
-            
-            "map": {"lat": round(lat, 6), "lng": round(lng, 6)},
-        }
-        stays.append(stay)
-    
+            # 3. Tọa độ
+            base_lat, base_lng = LOC_COORDS.get(loc_display, (10.0, 105.0))
+            lat = base_lat + random.uniform(-0.02, 0.02)
+            lng = base_lng + random.uniform(-0.02, 0.02)
+
+            # 4. Gallery: featured + 4 ảnh từ galleryImgs (cho phép trùng)
+            if gallery_pool:
+                gallery_imgs = random.choices(gallery_pool, k=4)
+            else:
+                gallery_imgs = []
+            gallery = [featured_img_url] + gallery_imgs
+
+            # Lấp đầy nếu gallery không đủ 5 ảnh
+            while len(gallery) < 5:
+                keyword = f"{location_key},hotel"
+                placeholder_url = f"https://loremflickr.com/800/600/{keyword}?lock={stay_id}{len(gallery)}"
+                gallery.append(placeholder_url)
+
+            # 5. Amenities & Tags
+            selected_amenities = random.sample(ALL_AMENITIES, k=random.randint(5, 12))
+            if cat_id == 3:
+                selected_amenities.extend(["pool", "spa"])
+            if scenario_key == "sea":
+                selected_amenities.append("sea_view")
+            elif scenario_key == "mountain":
+                selected_amenities.append("mountain_view")
+            selected_amenities = list(set(selected_amenities))
+
+            # 6. New Fields Generation
+            suitable_for = random.sample(TRIP_TYPES, k=random.randint(1, 3))
+            tags = random.sample(TAGS_POOL, k=random.randint(2, 5))
+            accessibility = random.sample(ACCESSIBILITY_POOL, k=random.randint(0, 2))
+            landmarks_for_loc = LANDMARKS_MAP.get(loc_display, ["Trung tâm"])
+            nearby_landmarks = random.sample(
+                landmarks_for_loc, k=min(2, len(landmarks_for_loc))
+            )
+            policies = random.choice(POLICIES_TEXTS)
+
+            # 7. Description
+            short_desc = f"{cat_info['name']} {adj} tại {loc_display}. Phù hợp cho {', '.join(suitable_for)}."
+            full_desc = (
+                f"Tận hưởng kỳ nghỉ tuyệt vời tại {full_title}. "
+                f"Vị trí đắc địa gần {', '.join(nearby_landmarks)}. "
+                f"Chỗ nghỉ được trang bị đầy đủ tiện nghi như {', '.join(selected_amenities)}. "
+                f"Không gian thiết kế theo phong cách {adj}, mang lại cảm giác thư thái. "
+                f"Thích hợp nhất cho nhóm khách: {', '.join(suitable_for)}."
+            )
+
+            # 8. Giá
+            base_price = random.randint(3, 40) * 100000
+            if cat_id in [3, 4]:
+                base_price = int(base_price * 1.5)
+
+            has_sale = random.random() < 0.3
+            sale_percent = random.choice([10, 20, 30, 50]) if has_sale else 0
+            sale_text = f"-{sale_percent}% Summer Deal" if has_sale else None
+
+            # 9. Room name
+            if cat_id in [2, 4, 5, 6]:
+                room_name = "Nguyên căn"
+            elif cat_id == 7:
+                room_name = random.choice(["Lều trại cao cấp", "Giường Dorm", "Bungalow"])
+            else:
+                room_name = random.choice([
+                    "Standard Room", "Deluxe Room", "Suite City View",
+                    "Family Suite", "King Room with Balcony",
+                ])
+
+            stay = {
+                "id": stay_id,
+                "authorId": f"user_seed_{random.randint(1, 5)}",
+                "createdAt": random_date(),
+                "updatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                "slug": slug,
+                "categoryId": cat_id,
+                "category": cat_info["name"],
+                "title": full_title,
+                "name": room_name,
+                "featuredImage": featured_img_url,
+                "galleryImgs": gallery,
+                "description": short_desc,
+                "fullDescription": full_desc,
+                "policies": policies,
+                "tags": tags,
+                "suitableFor": suitable_for,
+                "accessibility": accessibility,
+                "nearbyLandmarks": nearby_landmarks,
+                "cancellationRate": round(random.random() * 0.2, 2),
+                "amenities": selected_amenities,
+                "price": base_price,
+                "address": f"{random.randint(1, 999)} Đường {loc_display}, Việt Nam",
+                "reviewStar": round(random.uniform(3.8, 5.0), 1),
+                "reviewCount": random.randint(10, 500),
+                "viewCount": random.randint(100, 2000),
+                "commentCount": random.randint(0, 50),
+                "like": random.choice([True, False]),
+                "isAds": random.random() < 0.05,
+                "maxGuests": random.randint(2, 10),
+                "bedrooms": random.randint(1, 5),
+                "bathrooms": random.randint(1, 5),
+                "saleOff": sale_text,
+                "saleOffPercent": sale_percent,
+                "map": {"lat": round(lat, 6), "lng": round(lng, 6)},
+            }
+            stays.append(stay)
+
     return stays
+
 
 if __name__ == "__main__":
     JSON_DIR = os.path.join(BASE_DIR, "jsons")
     os.makedirs(JSON_DIR, exist_ok=True)
 
-    data = generate_stays(100)
+    data = generate_stays()
+
+    # Đảm bảo slug là duy nhất
     slug_count = {}
     for item in data:
         base_slug = item["slug"]
-
         if base_slug not in slug_count:
             slug_count[base_slug] = 1
             item["slug"] = base_slug
         else:
             slug_count[base_slug] += 1
             item["slug"] = f"{base_slug}-{slug_count[base_slug]}"
+
     output_path = os.path.join(JSON_DIR, "__homeStay.json")
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-        
-    print(f"✅ Đã tạo {len(data)} khách sạn (Full Schema AI) tại: {output_path}")
+
+    print(f"✅ Đã tạo {len(data)} khách sạn tại: {output_path}")
+
+    # In thống kê theo địa điểm
+    location_stats = {}
+    for item in data:
+        addr = item["address"]
+        loc = addr.split(" Đường ")[-1].split(",")[0] if " Đường " in addr else "Unknown"
+        location_stats[loc] = location_stats.get(loc, 0) + 1
+    print("\n📊 Phân bổ theo địa điểm:")
+    for loc, count in sorted(location_stats.items()):
+        print(f"  • {loc}: {count} khách sạn")
