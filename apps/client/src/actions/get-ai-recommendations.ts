@@ -5,8 +5,8 @@ import { currentUser } from "@clerk/nextjs/server";
 
 const SEARCH_SERVICE_URL =
   process.env.SEARCH_SERVICE_URL || "http://127.0.0.1:8008";
-const MIN_INTERACTIONS = 1; // 🔧 DEV: Giảm xuống 1 để test nhanh (Production: 5-10)
-const CACHE_DURATION = 60000; // 🔧 DEV: 1 phút (Production: 3600000 = 1 giờ)
+const MIN_INTERACTIONS = 5; // Production: Cần ít nhất 5 interactions để SVD có data đủ
+const CACHE_DURATION = 3600000; // 1 giờ - giảm tải cho backend Python
 
 export async function getAIRecommendations() {
   const user = await currentUser();

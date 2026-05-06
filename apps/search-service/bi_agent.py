@@ -325,6 +325,9 @@ def run_bi_agent_logic(user_text: str, user_id: str = "owner") -> Dict[str, Any]
             "confidence_note": parsed.get("confidence_note", "Confidence trung bình"),
             "predictions": preds,
             "data_quality": "mock" if snapshot.get("source") == "mock" else "db",
+            "daily_metrics": snapshot.get("daily_metrics", []),
+            "hourly_activity": snapshot.get("hourly_activity", []),
+            "customer_segments": snapshot.get("customer_segments", []),
         }
 
         return {

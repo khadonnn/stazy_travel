@@ -10,6 +10,9 @@ import { useNotificationStore } from '@/store/useNotificationStore';
 import { getAllPendingCounts } from '@/actions/statsActions';
 
 import {
+    BrainCircuit,
+    RefreshCw,
+    Activity,
     Home,
     Inbox,
     Calendar,
@@ -29,6 +32,9 @@ import {
     UserCheck,
     Building2,
     HousePlus,
+    History,
+    Database,
+    Bot,
 } from 'lucide-react';
 
 import {
@@ -44,6 +50,9 @@ import {
     SidebarMenuBadge,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
     SidebarSeparator,
 } from '@/components/ui/sidebar';
 
@@ -117,9 +126,9 @@ const items = [
     { title: 'Author Requests', url: '/author-requests', icon: UserCheck },
     { title: 'Hotel Approvals', url: '/hotel-approvals', icon: HousePlus },
     { title: 'Notifications', url: '/notifications', icon: Bell },
-    { title: 'Calendar', url: '#', icon: Calendar },
-    { title: 'Search', url: '#', icon: Search },
-    { title: 'Settings', url: '/users/settings', icon: Settings },
+    // { title: 'Calendar', url: '#', icon: Calendar },
+    // { title: 'Search', url: '#', icon: Search },
+    // { title: 'Settings', url: '/users/settings', icon: Settings },
 ];
 
 const AppSidebar = () => {
@@ -267,7 +276,6 @@ const AppSidebar = () => {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-
                 {/* --- HOTELS GROUP --- */}
                 <SidebarGroup>
                     <SidebarGroupLabel>Hotels</SidebarGroupLabel>
@@ -306,7 +314,6 @@ const AppSidebar = () => {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-
                 {/* --- USERS GROUP --- */}
                 <SidebarGroup>
                     <SidebarGroupLabel>Users</SidebarGroupLabel>
@@ -335,7 +342,6 @@ const AppSidebar = () => {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-
                 {/* --- ORDERS GROUP --- */}
                 <SidebarGroup>
                     <SidebarGroupLabel>Orders / Payments</SidebarGroupLabel>
@@ -364,38 +370,70 @@ const AppSidebar = () => {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-
-                {/* --- TODOS COLLAPSIBLE --- */}
+                {/* --- AI & DATA GROUP (Collapsible) --- */}
                 <Collapsible defaultOpen className="group/collapsible">
-                    <SidebarGroup>
-                        <SidebarGroupLabel asChild>
-                            <CollapsibleTrigger>
-                                Todos
+                    <SidebarMenuItem>
+                        {/* Nút bấm cha (Trigger) */}
+                        <CollapsibleTrigger asChild>
+                            <SidebarMenuButton>
+                                <Database /> {/* Bạn nhớ import icon Database từ lucide-react nhé */}
+                                <span>Hệ thống AI & Dữ liệu</span>
                                 <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                            </CollapsibleTrigger>
-                        </SidebarGroupLabel>
+                            </SidebarMenuButton>
+                        </CollapsibleTrigger>
+
+                        {/* Nội dung xổ xuống có đường kẻ dọc */}
                         <CollapsibleContent>
-                            <SidebarGroupContent>
-                                <SidebarMenu>
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton asChild>
-                                            <Link href="#">
-                                                <CalendarCheck2 /> Daily
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton asChild>
-                                            <Link href="#">
-                                                <MessageSquareWarning /> Feedback
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                </SidebarMenu>
-                            </SidebarGroupContent>
+                            <SidebarMenuSub>
+                                {/* Menu Daily */}
+                                <SidebarMenuSubItem>
+                                    <SidebarMenuSubButton asChild>
+                                        <Link href="/chatbox">
+                                            <Bot className="size-4" />
+                                            <span>ChatBox</span>
+                                        </Link>
+                                    </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+
+                                {/* Menu Quản lý AI */}
+                                <SidebarMenuSubItem>
+                                    <SidebarMenuSubButton asChild>
+                                        <Link href="/ai-management">
+                                            <BrainCircuit className="size-4" />
+                                            <span>Quản lý AI Model</span>
+                                        </Link>
+                                    </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+
+                                {/* Menu Lịch sử Huấn luyện */}
+                                <SidebarMenuSubItem>
+                                    <SidebarMenuSubButton asChild>
+                                        <Link href="/ai-training-logs">
+                                            <History className="size-4" />
+                                            <span>Lịch sử Huấn luyện</span>
+                                        </Link>
+                                    </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                            </SidebarMenuSub>
                         </CollapsibleContent>
-                    </SidebarGroup>
+                    </SidebarMenuItem>
                 </Collapsible>
+                <SidebarGroup>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            {/* Cục code của bạn đặt ở đây */}
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <Link href="/feedbacks">
+                                        <MessageSquareWarning />
+                                        <span>Feedback</span>{' '}
+                                        {/* Mẹo: Nên bọc chữ vào thẻ span để shadcn căn lề chuẩn hơn */}
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
             </SidebarContent>
 
             <SidebarSeparator className="inset-0 ml-0" />
