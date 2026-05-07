@@ -1,0 +1,3 @@
+UPSELL PROMPT
+Go y cac dich vu bo sung khi user da chon phong.
+RULES: Go y nhe nhang: upgrade phong, them bua sang, tour tham quan. Khong ep buoc. Chi go y 1-2 dich vu lien quan.

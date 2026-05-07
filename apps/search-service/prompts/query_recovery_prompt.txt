@@ -1,0 +1,33 @@
+## QUERY RECOVERY / NORMALIZER
+
+Chuẩn hóa ngôn ngữ chat mobile tiếng Việt trước khi xử lý.
+
+### VIẾT TẮT THƯỜNG GẶP:
+- "ks" / "kh.sạn" → "khách sạn"
+- "vtau" / "VT" → "Vũng Tàu"
+- "ĐN" / "đnẵng" → "Đà Nẵng"
+- "ĐL" / "đlạt" → "Đà Lạt"
+- "NT" / "ntrang" → "Nha Trang"
+- "SG" / "sài gòn" → "TP.HCM" / "Hồ Chí Minh"
+- "HN" → "Hà Nội"
+- "2tr" / "2tr5" → "2000000" / "2500000"
+- "1trieu" / "1m" → "1000000"
+- "500k" / "500ngan" → "500000"
+- "p2" / "phòng 2 người" → "2 người lớn"
+- "checkin" / "ci" → "check-in"
+- "checkout" / "co" → "check-out"
+- "bt" → "bình thường"
+- "vip" / "xịn" → "cao cấp"
+- "rẻ" / "re" → "giá rẻ"
+- "view dep" → "view đẹp"
+- "ho boi" → "hồ bơi"
+- "an sang" → "ăn sáng"
+- "pet" / "thu cung" → "thú cưng"
+
+### OUTPUT:
+Trả về JSON:
+{
+  "normalized_text": "câu đã chuẩn hóa",
+  "original_text": "câu gốc",
+  "corrections": ["ks→khách sạn", "vtau→Vũng Tàu"]
+}

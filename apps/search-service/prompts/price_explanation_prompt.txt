@@ -1,0 +1,4 @@
+PRICE EXPLANATION PROMPT
+Giai thich gia phong va cac yeu to anh huong gia.
+RULES: Giai thich gia theo: Mua du lich, Loai phong, Vi tri, Rating. So sanh voi muc gia trung binh khu vuc.
+FORMAT: Phan tich gia - vi sao gia nhu vay - goi y lua chon phu hop.

@@ -1,0 +1,77 @@
+[
+  {
+    "id": 1,
+    "question": "Giờ check-in và check-out là mấy giờ?",
+    "answer": "Giờ check-in tiêu chuẩn là 14:00 (2 giờ chiều) và check-out là 12:00 (12 giờ trưa). Nếu bạn cần check-in sớm hoặc check-out muộn, vui lòng liên hệ lễ tân trước để được hỗ trợ (có thể phát sinh phụ phí).",
+    "keywords": [
+      "check-in",
+      "check-out",
+      "giờ nhận",
+      "giờ trả",
+      "nhận phòng",
+      "trả phòng"
+    ]
+  },
+  {
+    "id": 2,
+    "question": "Chính sách hủy phòng như thế nào?",
+    "answer": "Bạn có thể hủy miễn phí trước 24 giờ so với giờ check-in. Hủy trong vòng 24 giờ sẽ bị tính phí 50% tổng giá trị đặt phòng. Không đến (No-show) sẽ bị tính 100% phí.",
+    "keywords": ["hủy", "hủy phòng", "huỷ", "hoàn tiền", "chính sách hủy"]
+  },
+  {
+    "id": 3,
+    "question": "Khách sạn có cho phép mang thú cưng không?",
+    "answer": "Tùy thuộc vào từng khách sạn. Một số khách sạn pet-friendly cho phép mang thú cưng nhỏ (dưới 10kg) với phụ phí 100.000-200.000đ/đêm. Vui lòng kiểm tra mô tả khách sạn hoặc hỏi trực tiếp trước khi đặt.",
+    "keywords": ["thú cưng", "pet", "chó", "mèo", "mang theo thú"]
+  },
+  {
+    "id": 4,
+    "question": "Có bãi đậu xe không? Phí bao nhiêu?",
+    "answer": "Hầu hết khách sạn trên Stazy đều có bãi đậu xe miễn phí cho khách lưu trú. Một số khách sạn trung tâm thành phố có thể tính phí đậu xe 50.000-100.000đ/ngày. Xe máy đậu miễn phí.",
+    "keywords": ["bãi xe", "đậu xe", "parking", "xe máy", "ô tô", "bãi đậu"]
+  },
+  {
+    "id": 5,
+    "question": "Buffet sáng có bao gồm trong giá phòng không?",
+    "answer": "Nhiều khách sạn bao gồm bữa sáng buffet miễn phí trong giá phòng. Kiểm tra mục 'Tiện nghi' hoặc 'Bao gồm' trên trang chi tiết khách sạn. Nếu không bao gồm, bạn có thể đặt thêm với giá khoảng 80.000-150.000đ/người.",
+    "keywords": ["buffet", "bữa sáng", "ăn sáng", "breakfast", "bao gồm"]
+  },
+  {
+    "id": 6,
+    "question": "Có hồ bơi không?",
+    "answer": "Nhiều resort và khách sạn 4-5 sao có hồ bơi. Bạn có thể dùng bộ lọc 'Có hồ bơi' hoặc hỏi chatbot để tìm khách sạn có hồ bơi phù hợp.",
+    "keywords": ["hồ bơi", "swimming pool", "pool", "bơi"]
+  },
+  {
+    "id": 7,
+    "question": "Thanh toán bằng hình thức nào?",
+    "answer": "Stazy hỗ trợ thanh toán qua: Thẻ tín dụng/ghi nợ (Visa, MasterCard), chuyển khoản ngân hàng, ví MoMo, ZaloPay, và thanh toán trực tiếp tại khách sạn (COD).",
+    "keywords": ["thanh toán", "trả tiền", "payment", "visa", "momo", "COD"]
+  },
+  {
+    "id": 8,
+    "question": "Có được hoàn tiền nếu không hài lòng không?",
+    "answer": "Stazy có chính sách bảo vệ khách hàng. Nếu phòng không đúng mô tả hoặc có vấn đề nghiêm trọng, bạn có thể gửi yêu cầu hoàn tiền trong vòng 24 giờ sau check-out. Đội ngũ hỗ trợ sẽ xem xét trong 3-5 ngày làm việc.",
+    "keywords": ["hoàn tiền", "refund", "không hài lòng", "bảo vệ", "khiếu nại"]
+  },
+  {
+    "id": 9,
+    "question": "Có thể đặt phòng theo giờ không?",
+    "answer": "Hiện tại Stazy chỉ hỗ trợ đặt phòng theo đêm (tối thiểu 1 đêm). Nếu bạn cần thuê theo giờ, vui lòng liên hệ trực tiếp khách sạn để thương lượng.",
+    "keywords": ["theo giờ", "giờ", "nghỉ trưa", "short stay", "half day"]
+  },
+  {
+    "id": 10,
+    "question": "Trẻ em có được miễn phí không?",
+    "answer": "Trẻ em dưới 6 tuổi thường được miễn phí khi ngủ chung giường với bố mẹ. Trẻ từ 6-11 tuổi có thể bị tính phụ phí 50-70% giá phòng. Trẻ từ 12 tuổi trở lên tính như người lớn. Chính sách cụ thể tùy từng khách sạn.",
+    "keywords": [
+      "trẻ em",
+      "em bé",
+      "trẻ nhỏ",
+      "children",
+      "kid",
+      "miễn phí",
+      "phụ thu"
+    ]
+  }
+]

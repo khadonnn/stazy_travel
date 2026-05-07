@@ -399,7 +399,7 @@ export default function ChatBox() {
                         router.push(`/chat/explore-${Date.now()}`);
                       }}
                       variant="outline"
-                      className="w-full border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-semibold shadow-sm"
+                      className="cursor-pointer w-full border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-semibold shadow-sm"
                     >
                       <MapPin className="w-4 h-4 mr-2" />
                       Xem trên bản đồ ({msg.data.hotels.length} kết quả)

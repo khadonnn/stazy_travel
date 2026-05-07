@@ -18,9 +18,10 @@ import Link from "next/link";
 import { io, Socket } from "socket.io-client";
 import { useUser } from "@clerk/nextjs";
 import { motion } from "motion/react";
-import type {
-  ChatMessage as StoreChatMessage,
-  ExploreHotel,
+import {
+  useExploreStore,
+  type ChatMessage as StoreChatMessage,
+  type ExploreHotel,
 } from "@/store/useExploreStore";
 
 // --- TYPES ---
@@ -79,7 +80,7 @@ export default function ExploreChatBox({
   onHotelsFound,
   initialQuery,
   initialMessages,
-  currentHotels = [],
+  currentHotels: parentHotels = [],
 }: ExploreChatBoxProps) {
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -137,10 +138,23 @@ export default function ExploreChatBox({
         ],
   );
 
+  // Read hotels from store as fallback (for initial mount when parent hasn't passed them yet)
+  const storeHotels = useExploreStore((s) => s.hotels);
+  // Merge: prefer parent's hotels, fallback to store
+  const effectiveHotels = parentHotels.length > 0 ? parentHotels : storeHotels;
+
+  // Static FAQ suggestions when no hotels available
+  const staticFaqTags = [
+    "🕒 Giờ nhận phòng?",
+    "🐶 Cho mang thú cưng?",
+    "🚗 Có bãi đậu xe?",
+    "🍳 Bao gồm bữa sáng?",
+  ];
+
   // Dynamic suggestion tags from current hotel data
   const dynamicTags = useMemo(
-    () => extractDynamicTags(currentHotels),
-    [currentHotels],
+    () => extractDynamicTags(effectiveHotels),
+    [effectiveHotels],
   );
 
   // --- SOCKET SETUP ---
@@ -446,19 +460,29 @@ export default function ExploreChatBox({
         )}
       </div>
 
-      {/* --- DYNAMIC SUGGESTION TAGS (TripAdvisor Style) --- */}
-      {dynamicTags.length > 0 && (
+      {/* --- SUGGESTION TAGS (Dynamic when hotels exist, Static FAQ when empty) --- */}
+      {(dynamicTags.length > 0 || effectiveHotels.length === 0) && (
         <div className="px-4 py-2 border-t border-gray-100 bg-white shrink-0">
           <div className="flex gap-1.5 overflow-x-auto whitespace-nowrap scrollbar-hide">
-            {dynamicTags.map((tag) => (
-              <button
-                key={tag}
-                onClick={() => handleSendMessage(`Tìm khách sạn có ${tag}`)}
-                className="px-3 py-1.5 bg-white text-[#3B7F70] border border-gray-200 rounded-full text-[11px] font-medium hover:bg-[#3B7F70] hover:text-white hover:border-[#3B7F70] transition shrink-0"
-              >
-                + {tag}
-              </button>
-            ))}
+            {dynamicTags.length > 0
+              ? dynamicTags.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => handleSendMessage(`Tìm khách sạn có ${tag}`)}
+                    className="px-3 py-1.5 bg-white text-[#3B7F70] border border-gray-200 rounded-full text-[11px] font-medium hover:bg-[#3B7F70] hover:text-white hover:border-[#3B7F70] transition shrink-0"
+                  >
+                    + {tag}
+                  </button>
+                ))
+              : staticFaqTags.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => handleSendMessage(tag)}
+                    className="px-3 py-1.5 bg-white text-[#3B7F70] border border-gray-200 rounded-full text-[11px] font-medium hover:bg-[#3B7F70] hover:text-white hover:border-[#3B7F70] transition shrink-0"
+                  >
+                    {tag}
+                  </button>
+                ))}
           </div>
         </div>
       )}

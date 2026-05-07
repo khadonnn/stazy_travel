@@ -213,7 +213,7 @@ export default function ExploreWorkspacePage() {
         {/* Nút đóng */}
         <button
           onClick={() => router.back()}
-          className="absolute top-4 right-4 bg-white px-4 py-2 rounded-full shadow-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition z-[1000]"
+          className="cursor-pointer absolute top-4 right-4 bg-white px-4 py-2 rounded-full shadow-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition z-[1000]"
         >
           <span className="flex items-center gap-1">
             <X className="w-4 h-4" />
