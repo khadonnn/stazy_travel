@@ -1,7 +1,7 @@
 "use client";
 import SearchBar from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
-import { BadgeInfo, Bell, Plane, Map } from "lucide-react";
+import { BadgeInfo, Bell, Plane, Map, Heart } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
   Tooltip,
@@ -86,14 +86,16 @@ const Navbar = () => {
           {/* Sitemap */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <SitemapSheet trigger="custom">
-                <button className="hover:bg-accent rounded-md p-2 transition-colors">
-                  <Map className="w-5 h-5 text-gray-600" />
-                </button>
-              </SitemapSheet>
+              <Link
+                href="/favorites"
+                className="hover:bg-accent rounded-md p-2 transition-colors"
+              >
+                {/* Icon */}
+                <Heart className="w-5 h-5 text-gray-600" />
+              </Link>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Sitemap</p>
+              <p>Yêu thích</p>
             </TooltipContent>
           </Tooltip>
 

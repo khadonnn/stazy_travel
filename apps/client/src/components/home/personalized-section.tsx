@@ -2,7 +2,7 @@
 import React from "react";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { getPersonalizedHotels } from "@/actions/get-personalized-hotels";
-import { Sparkles } from "lucide-react";
+import { Flame, Sparkles } from "lucide-react";
 import FadeIn from "@/components/ui/fade-in"; // 👈 NHỚ IMPORT FADE-IN
 
 export default async function PersonalizedSection() {
@@ -12,14 +12,28 @@ export default async function PersonalizedSection() {
   if (!items || items.length === 0) return null;
 
   return (
-    <section className="mb-12 px-4 md:px-8 max-w-9xl mx-auto ">
+    <section className="mb-12 px-4 md:px-8 max-w-7xl mx-auto ">
       {/* Tiêu đề hiện lên đầu tiên (delay 0) */}
       <FadeIn delay={0}>
-        <div className="mb-8 flex items-center gap-2 ml-18">
-          <Sparkles className="w-6 h-6 text-yellow-500 fill-yellow-500 animate-pulse" />
-          <h2 className="text-3xl font-bold tracking-tight">
-            Dành riêng cho bạn
+        <div className="mb-8">
+          {/* Eyebrow (Dòng chữ nhỏ ở trên cùng) */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-px w-8 bg-zinc-400/40" />
+            <span className="flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-zinc-500">
+              Gợi ý cho bạn
+              <Flame className="w-3.5 h-3.5 text-red-500 fill-red-500 animate-pulse" />
+            </span>
+          </div>
+
+          {/* Tiêu đề chính */}
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900">
+            Khám phá theo sở thích của bạn
           </h2>
+
+          {/* Đoạn mô tả (Bạn có thể tùy chỉnh lại nội dung text này) */}
+          <p className="mt-3 text-sm text-zinc-400 max-w-xl leading-relaxed">
+            Chọn lọc riêng dựa trên sở thích du lịch của bạn.
+          </p>
         </div>
       </FadeIn>
 

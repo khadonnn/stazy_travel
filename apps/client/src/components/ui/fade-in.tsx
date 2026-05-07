@@ -45,10 +45,8 @@ export default function FadeIn({
     <div
       ref={ref}
       className={cn(
-        "mx-auto transition-all ease-out will-change-transform origin-center",
-        isVisible
-          ? "opacity-100 scale-100 translate-y-0" // Hiện: Kéo về vị trí gốc
-          : "opacity-0 scale-95 translate-y-8", // Ẩn: Nằm thấp hơn 32px (translate-y-8)
+        "transition-all ease-out will-change-[opacity,transform]",
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
         className,
       )}
       style={{

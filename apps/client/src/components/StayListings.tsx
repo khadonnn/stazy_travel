@@ -87,14 +87,42 @@ export default function StayListing() {
 
   return (
     <div className="space-y-6 px-4 sm:px-6 md:px-12 sm:space-y-8 mx-auto w-full">
-      <div className="flex items-center justify-between space-x-3">
-        <div className="flex items-center space-x-3">
-          <h2 className="text-3xl font-semibold">Nổi bật</h2>
-          <Flame className="inline-block text-red-500 h-8 w-8" />
+      <div className="mb-8 flex items-end justify-between gap-4">
+        {/* Phần nội dung bên trái */}
+        <div>
+          {/* Eyebrow */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-px w-8 bg-zinc-400/40" />
+            <span className="text-xs uppercase tracking-[0.2em] text-zinc-500 flex items-center gap-1.5">
+              Thịnh hành
+              <Flame className="w-3.5 h-3.5 text-red-500 fill-red-500 animate-pulse" />
+            </span>
+          </div>
+
+          {/* Tiêu đề chính */}
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900">
+            Nổi bật nhất
+          </h2>
+
+          {/* Đoạn mô tả (Có thể bỏ nếu không cần thiết) */}
+          <p className="mt-3 text-sm text-zinc-400 max-w-xl leading-relaxed">
+            Những địa điểm lưu trú đang thu hút nhiều sự quan tâm
+          </p>
         </div>
-        <Link href="/hotels">
-          <Button variant="link">Xem tất cả</Button>
-        </Link>
+
+        {/* Nút Xem tất cả bên phải */}
+        <div className="shrink-0 mb-1">
+          <Link href="/hotels">
+            <Button
+              variant="link"
+              className="text-zinc-500 hover:text-zinc-900 px-0 flex items-center gap-1"
+            >
+              Xem tất cả
+              {/* Nếu bạn có import ArrowRight từ lucide-react thì thêm dòng dưới vào sẽ rất đẹp */}
+              {/* <ArrowRight className="w-4 h-4" /> */}
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {currentItems.length === 0 ? (

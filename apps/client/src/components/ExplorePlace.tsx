@@ -85,9 +85,26 @@ export function ExplorePlace() {
   return (
     <div className="relative w-full px-14 mx-auto">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3 mb-8">
-          <h2 className="text-3xl font-semibold">Khám phá địa điểm</h2>
-          <TrendingUp className="inline-block text-red-500 h-8 w-8" />
+        <div className="mb-8">
+          {/* Eyebrow */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-px w-8 bg-zinc-400/40" />
+            <span className="text-xs uppercase tracking-[0.2em] text-zinc-500 flex items-center gap-1.5">
+              {/* Mình dùng emerald-500 cho cảm giác tích cực/du lịch */}
+              Xu hướng điểm đến
+              <TrendingUp className="w-3.5 h-3.5 text-orange-700" />{" "}
+            </span>
+          </div>
+
+          {/* Tiêu đề chính */}
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900">
+            Khám phá địa điểm
+          </h2>
+
+          {/* Đoạn mô tả */}
+          <p className="mt-3 text-sm text-zinc-400 max-w-xl leading-relaxed">
+            Tìm hiểu các khu vực hấp dẫn
+          </p>
         </div>
         <Link href="/hotels">
           <Button variant="link">Xem tất cả</Button>

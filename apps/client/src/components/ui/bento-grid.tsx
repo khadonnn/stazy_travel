@@ -1,11 +1,8 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, MapPin, ArrowRight } from "lucide-react";
+import { Star, MapPin, ArrowRight } from "lucide-react"; // Bổ sung thêm ArrowRight
 
-/* =========================
-   BENTO GRID CONTAINER
-========================= */
 export const BentoGrid = ({
   className,
   children,
@@ -16,11 +13,7 @@ export const BentoGrid = ({
   return (
     <div
       className={cn(
-        // 1 col mobile | 2 col tablet | 4 col desktop (bento ratio đẹp)
-        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4",
-        "max-w-7xl mx-auto px-4",
-        // Chiều cao cố định → layout ổn định, không jump
-        "auto-rows-[220px] md:auto-rows-[240px]",
+        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-rows-[240px] md:auto-rows-[280px] gap-4",
         className,
       )}
     >
@@ -29,9 +22,6 @@ export const BentoGrid = ({
   );
 };
 
-/* =========================
-   BENTO GRID ITEM
-========================= */
 export const BentoGridItem = ({
   className,
   title,
@@ -41,6 +31,7 @@ export const BentoGridItem = ({
   rating,
   image,
   category,
+  featured = false, // Giữ lại prop featured để xử lý thẻ lớn
 }: {
   className?: string;
   title?: string;
@@ -50,17 +41,16 @@ export const BentoGridItem = ({
   rating: number;
   image: string;
   category: string;
+  featured?: boolean;
 }) => {
   return (
     <Link
       href={`/hotels/${id}`}
       className={cn(
-        "group relative overflow-hidden rounded-3xl",
-        "h-full w-full",
-        "flex flex-col justify-end",
-        // GPU-friendly hover
+        "group relative overflow-hidden rounded-xl",
+        "block w-full h-full",
         "transition-all duration-300 ease-out",
-        "hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/30",
+        "hover:-translate-y-1 hover:shadow-xl", // Hiệu ứng nhấc card lên
         "will-change-transform",
         className,
       )}
@@ -71,95 +61,92 @@ export const BentoGridItem = ({
           src={image}
           alt={title || "Hotel"}
           fill
-          priority={false}
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
 
-        {/* Gradient overlay – animation rẻ & cinematic */}
+        {/* Gradient overlay: Tối đi một chút khi hover để chữ nổi bật hơn */}
         <div
           className="
             absolute inset-0
             bg-gradient-to-t
-            from-black/90 via-black/45 to-transparent
+            from-black/90 via-black/30 to-transparent
             opacity-70 group-hover:opacity-90
             transition-opacity duration-300
           "
         />
       </div>
 
-      {/* ===== CATEGORY BADGE ===== */}
-      <div className="absolute top-4 right-4 z-20">
-        <span
-          className="
-            px-3 py-1 text-xs font-semibold
-            text-white
-            bg-black/40 backdrop-blur-md
-            rounded-full
-            border border-white/10
-          "
-        >
-          {category}
-        </span>
+      {/* ===== TOP META (Giữ nguyên vị trí 2 bên) ===== */}
+      <div className="absolute top-4 left-4 right-4 z-20 flex items-start justify-between">
+        <div className="flex items-center justify-center px-2.5 py-1 rounded-xl bg-black/30 backdrop-blur-sm border border-white/10">
+          <span className="text-[11px] font-medium leading-none text-white/90">
+            {category}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/30 backdrop-blur-sm border border-white/10">
+          <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+          <span className="text-xs text-white font-medium">
+            {rating.toFixed(1)}
+          </span>
+        </div>
       </div>
 
-      {/* ===== CONTENT ===== */}
+      {/* ===== CONTENT (Chứa hiệu ứng chuyển động) ===== */}
       <div
         className="
-          relative z-20 p-5
-          flex flex-col gap-2
-          translate-y-3 group-hover:translate-y-0
-          transition-transform duration-300 ease-out
+          relative z-20
+          h-full
+          flex flex-col justify-end
+          p-5 md:p-6
         "
       >
-        {/* --- Title & Rating --- */}
-        <div className="flex items-start justify-between gap-2">
+        <div
+          className="
+            flex flex-col gap-1.5
+            translate-y-3 group-hover:translate-y-0
+            transition-transform duration-300 ease-out
+          "
+        >
+          {/* --- Title --- */}
           <h3
-            className="
-              text-xl font-bold text-white leading-tight
-              line-clamp-2
-              group-hover:text-yellow-400
-              transition-colors
-            "
+            className={cn(
+              "font-semibold text-white leading-tight line-clamp-2",
+              "group-hover:text-yellow-400 transition-colors duration-300",
+              featured ? "text-xl md:text-2xl" : "text-base md:text-lg", // Kích thước chữ dựa vào featured
+            )}
           >
             {title}
           </h3>
 
-          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-black/40 backdrop-blur-sm shrink-0">
-            <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-            <span className="text-xs font-bold text-white">
-              {rating.toFixed(1)}
-            </span>
+          {/* --- Location (Ẩn đi, hiện ra khi hover) --- */}
+          <div
+            className="
+              flex items-center gap-1.5 text-xs text-white/70
+              max-h-0 opacity-0 overflow-hidden
+              group-hover:max-h-8 group-hover:opacity-100 group-hover:mt-1
+              transition-all duration-300 ease-out
+            "
+          >
+            <MapPin className="w-3.5 h-3.5 shrink-0" />
+            <span className="line-clamp-1">{description}</span>
           </div>
-        </div>
 
-        {/* --- Location (no layout reflow) --- */}
-        <div
-          className="
-            flex items-center gap-1 text-sm text-gray-300
-            max-h-0 opacity-0 overflow-hidden
-            group-hover:max-h-10 group-hover:opacity-100
-            transition-all duration-300 ease-out
-          "
-        >
-          <MapPin className="w-3.5 h-3.5 shrink-0" />
-          <span className="line-clamp-1">{description}</span>
-        </div>
-
-        {/* --- Price & CTA --- */}
-        {/* --- Price & CTA --- */}
-        <div className="mt-2 pt-3 border-t border-white/20 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-gray-400">Giá mỗi đêm</p>
-            {/* Bao bọc giá trong container ẩn/mở khi hover */}
-            <div
-              className="
-        max-h-0 opacity-0 overflow-hidden
-        group-hover:max-h-6 group-hover:opacity-100
-        transition-all duration-300 ease-out
-      "
-            >
-              <p className="text-lg font-bold text-white">
+          {/* --- Price & CTA (Ẩn đi, hiện ra kèm đường gạch ngang) --- */}
+          <div
+            className="
+              mt-1 pt-3 border-t border-white/15 
+              flex items-center justify-between
+              max-h-0 opacity-0 overflow-hidden
+              group-hover:max-h-16 group-hover:opacity-100 group-hover:mt-2
+              transition-all duration-300 ease-out
+            "
+          >
+            <div>
+              <p className="text-[10px] text-white/50 uppercase tracking-wider mb-0.5">
+                Mỗi đêm
+              </p>
+              <p className="text-sm md:text-base font-bold text-white">
                 {new Intl.NumberFormat("vi-VN", {
                   style: "currency",
                   currency: "VND",
@@ -167,20 +154,24 @@ export const BentoGridItem = ({
                 }).format(price)}
               </p>
             </div>
-          </div>
 
-          <div
-            className="
-      p-2 rounded-full bg-white text-black
-      opacity-0 translate-x-[-6px]
-      group-hover:opacity-100 group-hover:translate-x-0
-      transition-all duration-150 ease-out delay-50
-    "
-          >
-            <ArrowRight className="w-4 h-4" />
+            {/* Mũi tên trượt từ trái sang phải */}
+            <div
+              className="
+                p-2 rounded-full bg-white text-black
+                opacity-0 -translate-x-3
+                group-hover:opacity-100 group-hover:translate-x-0
+                transition-all duration-300 ease-out delay-75
+              "
+            >
+              <ArrowRight className="w-4 h-4" />
+            </div>
           </div>
         </div>
       </div>
+
+      {/* hover ring */}
+      <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-white/0 group-hover:ring-white/15 transition-all duration-300 pointer-events-none" />
     </Link>
   );
 };
