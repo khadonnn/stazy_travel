@@ -1,5 +1,6 @@
 import { consumer } from "./kafka";
 import { getBookingEventsQueue } from "./queues";
+import crypto from "crypto";
 
 const normalizeKafkaMessage = (message: any) => {
   let payload = message;
@@ -30,18 +31,25 @@ const normalizeKafkaMessage = (message: any) => {
 
 const handleBookingEvent = async (message: any) => {
   console.log("\n================================================");
-  console.log("📩 [Kafka Consumer] Nhận sự kiện booking!");
+  console.log("📥 [KAFKA CONSUMER] Đã nhận message từ topic booking-events");
 
   const bookingData = normalizeKafkaMessage(message);
 
+  console.log(
+    `📥 [KAFKA CONSUMER] Parsed data - event: ${bookingData?.event}, bookingId: ${bookingData?.bookingId}, status: ${bookingData?.status}`,
+  );
+
   if (!bookingData || !bookingData.bookingId) {
-    console.warn("⚠️ [Skip] Dữ liệu booking thiếu bookingId:", bookingData);
+    console.warn(
+      "⚠️ [KAFKA CONSUMER] Dữ liệu booking thiếu bookingId:",
+      bookingData,
+    );
     return;
   }
 
   if (bookingData.event === "BOOKING_CREATED") {
     console.log(
-      `ℹ️ [Booking Event] BOOKING_CREATED đã vào Outbox, chờ payment xử lý bookingId=${bookingData.bookingId}`,
+      `ℹ️ [KAFKA CONSUMER] BOOKING_CREATED đã vào Outbox, chờ payment xử lý bookingId=${bookingData.bookingId}`,
     );
     return;
   }
@@ -54,20 +62,20 @@ const handleBookingEvent = async (message: any) => {
     const bookingEventsQueue = getBookingEventsQueue();
     if (!bookingEventsQueue) {
       console.error(
-        "❌ [Booking Event] booking-events queue is not initialized",
+        "❌ [KAFKA CONSUMER] booking-events BullMQ queue is NOT initialized!",
       );
       return;
     }
 
-    const eventId = bookingData.eventId;
-    if (!eventId) {
-      console.warn(
-        `⚠️ [Booking Event] Missing eventId from producer, skip bookingId=${bookingData.bookingId}`,
-      );
-      return;
-    }
+    // Generate eventId if missing (Stripe webhook doesn't send eventId)
+    const eventId =
+      bookingData.eventId || `evt-${bookingData.bookingId}-${Date.now()}`;
 
-    await bookingEventsQueue.add(
+    console.log(
+      `📥 [KAFKA CONSUMER] Đang đưa message vào BullMQ queue. eventId=${eventId}, bookingId=${bookingData.bookingId}`,
+    );
+
+    const job = await bookingEventsQueue.add(
       `booking-event-${eventId}`,
       {
         eventId,
@@ -82,14 +90,14 @@ const handleBookingEvent = async (message: any) => {
     );
 
     console.log(
-      `📥 [Booking Event] Enqueued payment success for bookingId=${bookingData.bookingId}, eventId=${eventId}`,
+      `📝 [BULLMQ] Đã add job vào queue thành công. Job ID: ${job.id}, bookingId=${bookingData.bookingId}`,
     );
 
     return;
   }
 
   console.log(
-    "ℹ️ [Booking Event] Bỏ qua event không thuộc luồng thanh toán:",
+    "ℹ️ [KAFKA CONSUMER] Bỏ qua event không thuộc luồng thanh toán:",
     bookingData.event,
   );
 };

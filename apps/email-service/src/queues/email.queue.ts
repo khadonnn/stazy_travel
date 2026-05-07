@@ -47,17 +47,13 @@ export interface EmailJobData {
 // ============================================
 
 export const createEmailQueue = (): Queue<EmailJobData> => {
-  const queue = createQueue<EmailJobData>("email-send");
-
-  // Set rate limit: 10 emails/second
-  // This prevents overwhelming the SMTP provider
-  queue.setDefaultSettings?.({
+  return createQueue<EmailJobData>("email-send", {
     defaultJobOptions: {
-      priority: 1, // Lower is higher priority
+      priority: 1,
+      attempts: 3,
+      backoff: { type: "exponential", delay: 1000 },
     },
   });
-
-  return queue;
 };
 
 // ============================================

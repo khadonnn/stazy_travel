@@ -201,7 +201,7 @@ const MyBooking: React.FC = () => {
 
   // --- Render Main Content ---
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[80vh]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[80vh] mt-8">
       <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
@@ -232,7 +232,7 @@ const MyBooking: React.FC = () => {
           </p>
           <button
             onClick={() => router.push("/hotels")}
-            className="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition"
+            className="bg-green-600 text-white px-6 py-2.5 rounded-lg hover:bg-green-700 transition"
           >
             Khám phá ngay
           </button>
@@ -311,7 +311,7 @@ const MyBooking: React.FC = () => {
                             ? router.push(`/hotels/${booking.hotel.id}`)
                             : null
                         }
-                        className="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50 transition"
+                        className="cursor-pointer text-green-600 hover:text-green-800 p-2 rounded-full hover:bg-green-50 transition"
                         title="Xem khách sạn"
                         disabled={!booking.hotel?.id}
                       >

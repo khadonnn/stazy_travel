@@ -85,15 +85,19 @@ webhookRoute.post("/stripe", async (c) => {
         },
       };
 
-      await producer.send("booking-events", kafkaPayload);
-
-      console.log(`✅ [6] Đã gửi Kafka thành công! Topic: booking-events`);
       console.log(
-        `    - Payload gửi đi:`,
-        JSON.stringify(kafkaPayload, null, 2),
+        `📤 [KAFKA PRODUCER] Đang gửi message booking_id: ${bookingId} vào topic booking-events...`,
       );
+      await producer.send("booking-events", kafkaPayload);
+      console.log(
+        `📤 [KAFKA PRODUCER] ✅ Đã gửi message booking_id: ${bookingId} vào topic booking-events`,
+      );
+      console.log(`    Payload:`, JSON.stringify(kafkaPayload, null, 2));
     } catch (kafkaError) {
-      console.error("❌ [LỖI] Không gửi được Kafka:", kafkaError);
+      console.error(
+        `📤 [KAFKA PRODUCER] ❌ LỖI gửi Kafka cho booking_id: ${bookingId}:`,
+        kafkaError,
+      );
     }
   } else if (event.type === "payment_intent.payment_failed") {
     const paymentIntent = event.data.object as Stripe.PaymentIntent;

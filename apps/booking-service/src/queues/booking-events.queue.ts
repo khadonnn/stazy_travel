@@ -42,12 +42,19 @@ export const enqueueBookingEvent = async (
 export const createBookingEventsWorker = (
   sagaTimeoutQueue?: Queue<SagaTimeoutJobData>,
 ): Worker<BookingEventJobData, any, string> => {
-  return createWorker<BookingEventJobData>(
+  const worker = createWorker<BookingEventJobData>(
     "booking-events",
     async (job) => {
       const { eventId, topic, eventType, bookingId, payload } = job.data;
 
+      console.log(
+        `👷 [WORKER] Bắt đầu xử lý job thanh toán cho booking_id: ${bookingId}, eventId: ${eventId}, eventType: ${eventType}`,
+      );
+
       if (!eventId || !topic || !bookingId) {
+        console.error(
+          `❌ [WORKER] Missing required event data: eventId=${eventId}, topic=${topic}, bookingId=${bookingId}`,
+        );
         throw new Error(
           "Missing required event data (eventId/topic/bookingId)",
         );
@@ -74,6 +81,43 @@ export const createBookingEventsWorker = (
           }
 
           await updateBookingStatusToPaid(bookingId, payload, tx);
+
+          // TRIGGER EMAIL DIRECTLY (bypass Kafka issue)
+          try {
+            const emailPayload = {
+              to: payload?.customerEmail || payload?.email,
+              user: payload?.customerName || payload?.user,
+              hotel: payload?.hotelInfo?.name || payload?.hotel,
+              amount: payload?.amount || 0,
+              checkInDate: payload?.checkInDate,
+              checkOutDate: payload?.checkOutDate,
+            };
+            if (emailPayload.to) {
+              console.log(
+                `📧 [WORKER] Sending confirmation email to: ${emailPayload.to}`,
+              );
+              // Fire-and-forget: send email via email-service HTTP endpoint
+              fetch("http://localhost:8003/send-confirmation", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(emailPayload),
+              }).catch((e) =>
+                console.warn(
+                  "📧 [WORKER] Email service call failed (non-critical):",
+                  e.message,
+                ),
+              );
+            } else {
+              console.warn(
+                "📧 [WORKER] No email address in payload, skipping email",
+              );
+            }
+          } catch (emailErr: any) {
+            console.warn(
+              "📧 [WORKER] Email trigger error (non-critical):",
+              emailErr.message,
+            );
+          }
 
           return { duplicate: false };
         });
@@ -171,6 +215,26 @@ export const createBookingEventsWorker = (
       concurrency: 5,
     },
   );
+
+  // Worker event listeners for debugging
+  worker.on("completed", (job) => {
+    console.log(
+      `✅ [WORKER] Job ${job.id} done! bookingId=${job.data.bookingId}`,
+    );
+  });
+
+  worker.on("failed", (job, err) => {
+    console.error(`❌ [WORKER] Job ${job?.id} FAILED:`, err?.message);
+    console.error(
+      `   bookingId=${job?.data?.bookingId}, eventId=${job?.data?.eventId}`,
+    );
+  });
+
+  worker.on("error", (err) => {
+    console.error(`🔥 [WORKER] Lỗi hệ thống Redis/BullMQ:`, err?.message);
+  });
+
+  return worker;
 };
 
 export const setupBookingEventsObservability = (

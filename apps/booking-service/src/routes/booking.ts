@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { shouldBeAdmin, shouldBeUser } from "../middleware/authMiddleware";
 import { Booking } from "@repo/booking-db";
+import { prisma } from "@repo/product-db";
 import { createBooking } from "../utils/booking";
 import { getSagaTimeoutQueue } from "../utils/queues.js";
 // Định nghĩa kiểu dữ liệu Body gửi lên để TS hiểu
@@ -113,7 +114,7 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
     },
   );
 
-  // 2. API LẤY LỊCH SỬ CỦA USER
+  // 2. API LẤY LỊCH SỬ CỦA USER (PostgreSQL)
   fastify.get(
     "/user-bookings",
     { preHandler: shouldBeUser },
@@ -121,24 +122,28 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
       // @ts-ignore
       const userId = request.userId;
 
-      // Lấy danh sách từ MongoDB, sắp xếp mới nhất lên đầu
-      const bookings = await Booking.find({ userId: userId }).sort({
-        createdAt: -1,
+      // Lấy danh sách từ PostgreSQL, sắp xếp mới nhất lên đầu
+      const bookings = await prisma.booking.findMany({
+        where: { userId: userId },
+        orderBy: { createdAt: "desc" },
       });
 
-      // Format lại dữ liệu cho Frontend dễ dùng (Optional)
-      // Giúp Frontend không cần chọc sâu vào bookingSnapshot
+      // Format lại dữ liệu cho Frontend dễ dùng
       const formattedBookings = bookings.map((b) => ({
-        id: b._id,
+        id: b.id,
         status: b.status,
         checkIn: b.checkIn,
         checkOut: b.checkOut,
-        totalPrice: b.totalPrice,
+        totalPrice: Number(b.totalAmount),
         nights: b.nights,
         // Lấy thông tin hotel từ snapshot ra ngoài cho dễ truy cập
-        hotel: b.bookingSnapshot?.hotel,
-        room: b.bookingSnapshot?.room,
-        contactDetails: b.contactDetails,
+        hotel: (b.bookingSnapshot as any)?.hotel || null,
+        room: (b.bookingSnapshot as any)?.room || null,
+        contactDetails: (b.contactDetails as any) || {
+          fullName: b.guestName,
+          email: b.guestEmail,
+          phone: b.guestPhone,
+        },
         createdAt: b.createdAt,
       }));
 
@@ -146,27 +151,28 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
     },
   );
 
-  // 3. API ADMIN (Xem tất cả)
-  fastify.get(
-    "/", //  Đổi từ "/bookings" thành "/" vì đã có prefix /bookings ở index.ts
-    { preHandler: shouldBeAdmin }, // Nhớ bật lại auth admin
-    async (request, reply) => {
-      const bookings = await Booking.find().sort({ createdAt: -1 });
-      return reply.send(bookings);
-    },
-  );
+  // 3. API ADMIN (Xem tất cả - PostgreSQL)
+  fastify.get("/", { preHandler: shouldBeAdmin }, async (request, reply) => {
+    const bookings = await prisma.booking.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { hotel: { select: { id: true, title: true, slug: true } } },
+    });
+    return reply.send(bookings);
+  });
 
-  // 3.5 API LẤY 5 BOOKING MỚI NHẤT (For Recent Bookings Widget)
-  fastify.get(
-    "/recent",
-    // Không cần auth vì đây là public stats
-    async (request, reply) => {
-      const recentBookings = await Booking.find()
-        .sort({ createdAt: -1 })
-        .limit(5);
-      return reply.send(recentBookings);
-    },
-  );
+  // 3.5 API LẤY 5 BOOKING MỚI NHẤT (For Recent Bookings Widget - PostgreSQL)
+  fastify.get("/recent", async (request, reply) => {
+    const recentBookings = await prisma.booking.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: {
+        hotel: {
+          select: { id: true, title: true, slug: true, featuredImage: true },
+        },
+      },
+    });
+    return reply.send(recentBookings);
+  });
 
   // 4. API KIỂM TRA TÍNH KHẢ DỤNG (CHECK AVAILABILITY)
   fastify.get<{ Querystring: CheckAvailabilityQuery }>(

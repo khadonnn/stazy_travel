@@ -1,5 +1,7 @@
 # DANH GIA LAI DO AN STAZY (HUONG NEN TANG LIST HOTEL KIEU AIRBNB)
 
+bị hiẹu ứng hotel hot mãi được recoomend mà các hotel mới không được, reset
+
 ## 1) Danh gia tong quan
 
 De tai co huong di dung va co tiem nang ung dung thuc te cao: ket hop nen tang dat phong khach san voi goi y ca nhan hoa (Content-based + Collaborative Filtering), kien truc microservices, real-time notification va thanh toan.

@@ -17,7 +17,10 @@ export const createRedisConnection = () => {
 // ============================================
 // QUEUE FACTORY
 // ============================================
-export const createQueue = <T>(queueName: string) => {
+export const createQueue = <T>(
+  queueName: string,
+  opts?: { defaultJobOptions?: Record<string, any> },
+) => {
   const connection = createRedisConnection();
   return new Queue<T>(queueName, {
     connection,
@@ -28,11 +31,12 @@ export const createQueue = <T>(queueName: string) => {
         delay: 2000,
       },
       removeOnComplete: {
-        age: 3600, // Keep completed jobs for 1 hour
+        age: 3600,
       },
       removeOnFail: {
-        age: 86400 * 7, // Keep failed jobs for 7 days (for debugging)
+        age: 86400 * 7,
       },
+      ...opts?.defaultJobOptions,
     },
   });
 };
@@ -71,13 +75,18 @@ export const createWorker = <T>(
   processor: (job: any) => Promise<any>,
   options?: {
     concurrency?: number;
+    limiter?: { max: number; duration: number };
   },
 ) => {
   const connection = createRedisConnection();
-  const worker = new Worker(queueName, processor, {
+  const workerOpts: any = {
     connection,
     concurrency: options?.concurrency || 5,
-  });
+  };
+  if (options?.limiter) {
+    workerOpts.limiter = options.limiter;
+  }
+  const worker = new Worker(queueName, processor, workerOpts);
 
   worker.on("completed", (job) => {
     console.log(`✅ [${queueName}] Processed: ${job.id}`);

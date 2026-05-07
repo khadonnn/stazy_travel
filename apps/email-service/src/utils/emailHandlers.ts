@@ -209,12 +209,15 @@ export const handleKafkaMessage = async (message: any, eventType: string) => {
           console.warn("⚠️ [Email] Missing email or hotel for BOOKING_CREATED");
           return;
         }
+        console.log(
+          `📧 [EMAIL-SERVICE] Chuẩn bị gửi email BOOKING_CREATED cho: ${data.email}`,
+        );
         const bookingTemplate = buildBookingConfirmationEmail(
           data.user || "Quý khách",
           data.hotel,
           data.amount || 0,
-          data.checkIn || new Date().toISOString(),
-          data.checkOut || new Date().toISOString(),
+          data.checkInDate || data.checkIn || new Date().toISOString(),
+          data.checkOutDate || data.checkOut || new Date().toISOString(),
         );
         emailData = {
           to: data.email,
