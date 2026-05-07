@@ -53,6 +53,9 @@ model User {
 
   // Log tìm kiếm (Optional)
   searchLogs    SearchQueryLog[]
+  
+  // Danh sách yêu thích
+  favorites     Favorite[]
 
   @@map("users")
 }
@@ -211,6 +214,7 @@ model Hotel {
   interactions  Interaction[]
   bookings      Booking[]
   reviews      Review[]
+  favorites     Favorite[]
   
   @@index([status])
   @@index([authorId, status])
@@ -439,6 +443,26 @@ model SystemMetric {
   createdAt    DateTime @default(now())
 
   @@map("system_metrics")
+}
+
+// =========================================
+// 5. MODEL: FAVORITES (WISHLIST)
+// =========================================
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  hotelId   Int
+  hotel     Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+
+  @@unique([userId, hotelId]) // Đảm bảo mỗi user chỉ thích 1 hotel 1 lần
+  @@index([userId])
+  @@index([hotelId])
+  @@map("favorites")
 }
 model Review {
   id        String   @id @default(uuid())

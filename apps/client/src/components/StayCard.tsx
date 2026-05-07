@@ -86,7 +86,11 @@ function StayCard({ size = "default", className = "", data }: StayCardProps) {
         galleryClass={size === "default" ? undefined : ""}
         id={id}
       />
-      <BtnLikeIcon isLiked={like} className="absolute right-3 top-3 z-[1]" />
+      <BtnLikeIcon
+        isLiked={like}
+        hotelId={id}
+        className="absolute right-3 top-3 z-[1]"
+      />
       {saleOffPercent && Number(saleOffPercent) > 0 ? (
         <SaleOffBadge
           className="absolute left-3 top-3"
