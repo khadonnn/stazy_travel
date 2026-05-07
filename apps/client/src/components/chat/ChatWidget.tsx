@@ -1,23 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation"; // ✅ Bổ sung: Import hook lấy đường dẫn
+import { usePathname } from "next/navigation";
 import { BotMessageSquare, Expand, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import ChatBox from "./ChatBox";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "motion/react"; // hoặc "framer-motion" tùy phiên bản bạn dùng
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-
-  // ✅ Bổ sung: Lấy đường dẫn hiện tại
   const pathname = usePathname();
 
-  // ✅ Bổ sung: Danh sách các route muốn ẩn ChatWidget
   const disabledRoutes = ["/about", "/login", "/register"];
 
-  // ✅ Bổ sung: Kiểm tra logic - Nếu route hiện tại nằm trong danh sách đen -> không render gì cả
-  if (pathname && disabledRoutes.includes(pathname)) {
+  // Hide widget on /chat/ pages (explore page has its own chat panel)
+  if (
+    pathname &&
+    (disabledRoutes.includes(pathname) || pathname.startsWith("/chat/"))
+  ) {
     return null;
   }
 
@@ -60,12 +60,10 @@ export default function ChatWidget() {
               className={`${WIDGET_WIDTH} ${WIDGET_HEIGHT} flex flex-col shadow-2xl rounded-xl overflow-hidden p-0 border-none`}
             >
               <div className="relative flex items-center p-3 border-b bg-[#3B7F70] text-white shadow-md shrink-0">
-                {/* Title luôn nằm giữa */}
                 <h3 className="absolute left-1/2 -translate-x-1/2 text-base font-semibold">
                   Welcome to Stazy AI 🎉
                 </h3>
 
-                {/* Buttons nằm bên phải */}
                 <div className="ml-auto flex gap-2">
                   <button className="p-1 rounded-full hover:bg-[#2e6459] cursor-pointer">
                     <Expand className="w-5 h-5" />
@@ -84,44 +82,34 @@ export default function ChatWidget() {
         )}
       </AnimatePresence>
 
-      {/* Nút bật chat — hiệu ứng ping sóng bằng Framer Motion thuần */}
+      {/* Nút bật chat — Đã gom lại và fix hiệu ứng sóng */}
       <div className="relative w-14 h-14">
-        {/* ✅ Ripple 1 (sớm hơn) */}
-        {!isOpen && (
-          <motion.div
-            className="absolute inset-0 rounded-full border-2 border-blue-400"
-            initial={{ scale: 0, opacity: 0.8 }}
-            animate={{
-              scale: [0, 1.6],
-              opacity: [0.8, 0],
-            }}
-            transition={{
-              duration: 1.8,
-              repeat: Infinity,
-              ease: "easeOut",
-            }}
-          />
-        )}
+        {!isOpen &&
+          [0, 1, 2].map((delay) => (
+            <motion.div
+              key={delay}
+              className="absolute inset-0 rounded-full border-2 border-blue-400"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{
+                scale: [1, 2.2],
+                opacity: [0, 0.6, 0], // Xuất hiện mờ -> Đậm -> Biến mất hoàn toàn
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeOut",
+                delay: delay,
+                // CHỐT HẠ: times giúp kiểm soát chính xác thời điểm của từng mốc opacity
+                // [0, 0.1, 0.95] nghĩa là:
+                // 0%: opacity 0 (bắt đầu)
+                // 10%: đạt độ đậm 0.6 (hiện ra nhanh)
+                // 95%: đã phải về 0 hoàn toàn (để 5% còn lại nó "tàng hình" trước khi lặp lại)
+                times: [0, 0.1, 0.95],
+              }}
+            />
+          ))}
 
-        {/* ✅ Ripple 2 (delay 0.7s — tạo cảm giác "sóng từng đợt") */}
-        {!isOpen && (
-          <motion.div
-            className="absolute inset-0 rounded-full border-2 border-blue-400"
-            initial={{ scale: 0, opacity: 0.8 }}
-            animate={{
-              scale: [0, 1.6],
-              opacity: [0.8, 0],
-            }}
-            transition={{
-              duration: 1.8,
-              delay: 0.7,
-              repeat: Infinity,
-              ease: "easeOut",
-            }}
-          />
-        )}
-
-        {/* ✅ Vòng tròn trung tâm (nút bấm) */}
+        {/* Nút bấm chính giữ nguyên */}
         <motion.button
           onClick={() => setIsOpen(!isOpen)}
           whileHover={{ scale: 1.05 }}

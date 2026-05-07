@@ -17,6 +17,9 @@ import {
 } from "lucide-react";
 import { useBookingStore } from "@/store/useBookingStore";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useExploreStore, type ChatMessage } from "@/store/useExploreStore";
+import { motion } from "motion/react";
 // 1. IMPORT SOCKET
 import { io, Socket } from "socket.io-client";
 import { useUser } from "@clerk/nextjs";
@@ -60,6 +63,9 @@ export default function ChatBox() {
   const setDate = useBookingStore((s) => s.setDate);
   const setGuests = useBookingStore((s) => s.setGuests);
   const { user } = useUser();
+  const router = useRouter();
+  const setExploreHotels = useExploreStore((s) => s.setHotels);
+  const setExploreMessages = useExploreStore((s) => s.setMessages);
   // Xác định ID và Tên (Nếu chưa đăng nhập thì fallback là 'guest')
   const currentUserId = user?.id || "user_seed_6";
   const currentUserName = user?.fullName || user?.firstName || "Khách hàng";
@@ -227,7 +233,10 @@ export default function ChatBox() {
   };
 
   return (
-    <div className="flex flex-col flex-1 bg-white overflow-hidden border-none h-full w-full">
+    <motion.div
+      layoutId="main-chat-box"
+      className="flex flex-col flex-1 bg-white overflow-hidden border-none h-full w-full"
+    >
       {/* --- HEADER CÓ NÚT CHUYỂN ĐỔI --- */}
       <div
         className={`p-3 border-b flex items-center justify-between transition-colors ${isSupportMode ? "bg-blue-50" : "bg-green-50"}`}
@@ -309,27 +318,26 @@ export default function ChatBox() {
               {/* Rich UI (Hotels) chỉ hiện khi là AI */}
               {msg.sender === "ai" && msg.data?.hotels && (
                 /* ... (Giữ nguyên code render hotel list) ... */
-                <div className="flex gap-2 overflow-x-auto pb-2 snap-x">
+                <div className="grid grid-cols-2 gap-2">
                   {msg.data.hotels.map((hotel) => (
-                    <Link
-                      href={`/hotels/${hotel.slug}`}
-                      key={hotel.id}
-                      className="snap-center"
-                    >
-                      <Card className="w-48 shrink-0 cursor-pointer hover:shadow-md transition-shadow">
+                    <Link href={`/hotels/${hotel.slug}`} key={hotel.id}>
+                      <Card className="cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
                         <div className="h-24 bg-gray-200 w-full relative">
                           <img
                             src={hotel.image || "https://placehold.co/400x300"}
-                            className="w-full h-full object-cover rounded-t-xl"
+                            className="w-full h-full object-cover"
                           />
+
                           <Badge className="absolute top-1 right-1 bg-white/90 text-black text-[10px]">
                             ⭐ {hotel.rating}
                           </Badge>
                         </div>
+
                         <CardContent className="p-2">
-                          <h4 className="font-bold text-xs truncate">
+                          <h4 className="font-bold text-xs line-clamp-2">
                             {hotel.title}
                           </h4>
+
                           <div className="font-bold text-green-600 text-xs mt-1">
                             {new Intl.NumberFormat("vi-VN", {
                               style: "currency",
@@ -352,6 +360,52 @@ export default function ChatBox() {
                   </Link>
                 </div>
               )}
+
+              {/* "Xem trên bản đồ" button when hotels found */}
+              {msg.sender === "ai" &&
+                msg.data?.hotels &&
+                msg.data.hotels.length > 0 &&
+                !msg.data.bookingLink && (
+                  <div className="mt-2">
+                    <Button
+                      onClick={() => {
+                        // Save hotels to store
+                        const hotelsWithMap = msg.data!.hotels!.map((h) => ({
+                          ...h,
+                          map: (h as any).map ?? null,
+                        }));
+                        setExploreHotels(hotelsWithMap);
+
+                        // Save chat messages to store (transfer history)
+                        const serializable: ChatMessage[] = messages.map(
+                          (m) => ({
+                            id: m.id,
+                            text: m.text,
+                            sender: m.sender,
+                            imagePreview: m.imagePreview ?? null,
+                            data: m.data
+                              ? {
+                                  hotels: m.data.hotels?.map((h) => ({
+                                    ...h,
+                                    map: (h as any).map ?? null,
+                                  })),
+                                  bookingLink: m.data.bookingLink,
+                                }
+                              : undefined,
+                          }),
+                        );
+                        setExploreMessages(serializable);
+
+                        router.push(`/chat/explore-${Date.now()}`);
+                      }}
+                      variant="outline"
+                      className="w-full border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-semibold shadow-sm"
+                    >
+                      <MapPin className="w-4 h-4 mr-2" />
+                      Xem trên bản đồ ({msg.data.hotels.length} kết quả)
+                    </Button>
+                  </div>
+                )}
             </div>
           </div>
         ))}
@@ -404,6 +458,6 @@ export default function ChatBox() {
           <SendHorizontal className="w-5 h-5 ml-0.5" />
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }
