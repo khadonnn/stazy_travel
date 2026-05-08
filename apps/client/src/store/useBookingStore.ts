@@ -4,6 +4,9 @@ import type { DateRange } from "react-day-picker";
 import type { BookingFormInputs } from "@/types/cart"; // Đảm bảo đường dẫn đúng
 
 interface BookingState {
+  // --- State cho Location (Tìm kiếm) ---
+  location: string;
+
   // --- State cho Ngày & Khách ---
   date: DateRange | undefined;
   checkInDate: Date | undefined;
@@ -18,10 +21,12 @@ interface BookingState {
   bookingDetails: BookingFormInputs | null;
 
   // --- Actions ---
+  setLocation: (location: string) => void;
   setDate: (date: DateRange | undefined) => void;
   setGuests: (guests: BookingState["guests"]) => void;
   setBookingDetails: (details: BookingFormInputs) => void;
 
+  clearLocation: () => void;
   clearDate: () => void;
   clearGuests: () => void;
   resetStore: () => void; // Reset toàn bộ sau khi Booking thành công
@@ -31,6 +36,7 @@ export const useBookingStore = create<BookingState>()(
   persist(
     (set) => ({
       // 1. Khởi tạo giá trị ban đầu
+      location: "",
       date: undefined,
       checkInDate: undefined,
       checkOutDate: undefined,
@@ -38,6 +44,7 @@ export const useBookingStore = create<BookingState>()(
       bookingDetails: null,
 
       // 2. Các hàm cập nhật
+      setLocation: (location) => set({ location }),
       setDate: (date) =>
         set({
           date,
@@ -57,6 +64,8 @@ export const useBookingStore = create<BookingState>()(
           checkOutDate: undefined,
         }),
 
+      clearLocation: () => set({ location: "" }),
+
       clearGuests: () =>
         set({
           guests: { adults: 1, children: 0, infants: 0 },
@@ -64,6 +73,7 @@ export const useBookingStore = create<BookingState>()(
 
       resetStore: () =>
         set({
+          location: "",
           date: undefined,
           checkInDate: undefined,
           checkOutDate: undefined,

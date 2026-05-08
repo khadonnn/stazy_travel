@@ -33,7 +33,7 @@ export default function UserSetting() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-full">
+      <DropdownMenuTrigger className="focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-full mr-5 cursor-pointer">
         <Avatar className="w-8 h-8">
           <AvatarImage
             src={user.imageUrl || "/assets/user2.avif"} // Clerk tự quản lý ảnh
@@ -46,11 +46,11 @@ export default function UserSetting() {
         </Avatar>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="mt-1">
+      <DropdownMenuContent sideOffset={8} className="mt-1 w-40">
         <DropdownMenuLabel>{user.fullName || "My Account"}</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem asChild className="cursor-pointer focus:bg-muted">
           <Link
             href={`/profile/${user.id}`} //  dùng user.id từ Clerk
             className="flex items-center gap-2"
@@ -58,7 +58,7 @@ export default function UserSetting() {
             <User className="h-4 w-4" /> Hồ sơ
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem asChild className="cursor-pointer focus:bg-muted">
           <Link
             href={`/cart`} //  dùng user.id từ Clerk
             className="flex items-center gap-2"
@@ -66,7 +66,7 @@ export default function UserSetting() {
             <BaggageClaim className="h-4 w-4" /> Giỏ hàng
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem asChild className="cursor-pointer focus:bg-muted">
           <Link href="/my-bookings" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" /> Phòng đã đặt
           </Link>
@@ -74,13 +74,13 @@ export default function UserSetting() {
 
         {isAuthor && (
           <>
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="cursor-pointer focus:bg-muted">
               <Link href="/create-hotel" className="flex items-center gap-2">
                 <HousePlus className="h-4 w-4" /> Tạo khách sạn
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="cursor-pointer focus:bg-muted">
               <Link href="/my-hotels" className="flex items-center gap-2">
                 <GalleryVerticalEnd className="h-4 w-4" /> Khách sạn đã tạo
               </Link>
@@ -94,7 +94,7 @@ export default function UserSetting() {
 
         <SitemapSheet trigger="custom">
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-            <Map className="h-4 w-4" /> Sitemap
+            <Map className="h-4 w-4 cursor-pointer focus:bg-muted" /> Sitemap
           </DropdownMenuItem>
         </SitemapSheet>
 
@@ -102,7 +102,7 @@ export default function UserSetting() {
           className="text-destructive"
           onClick={() => signOut()} //  dùng Clerk signOut
         >
-          <LogOut className="h-4 w-4" /> Logout
+          <LogOut className="h-4 w-4 cursor-pointer focus:bg-muted" /> Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

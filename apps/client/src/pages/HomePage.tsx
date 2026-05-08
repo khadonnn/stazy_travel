@@ -50,7 +50,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="absolute left-1/2 -translate-x-1/2 bottom-8 w-full max-w-6xl px-4 sm:px-8 z-20 ">
-          <StaySearchForm />
+          {/* <StaySearchForm /> */}
         </div>
       </div>
       <div className="mx-auto mb-24 flex w-full flex-col items-center px-4 sm:px-8">

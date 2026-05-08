@@ -18,18 +18,18 @@ import {
   Building2,
   Plus,
   GalleryVerticalEnd,
+  Heart,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface SitemapNode {
   id: string;
   label: string;
   path?: string;
   icon?: React.ReactNode;
-  bgColor: string;
-  textColor: string;
-  hoverBg: string;
+  badge?: string;
   children?: SitemapNode[];
 }
 
@@ -37,301 +37,229 @@ const sitemapData: SitemapNode[] = [
   {
     id: "discovery",
     label: "Discovery",
-    bgColor: "bg-amber-500",
-    textColor: "text-white",
-    hoverBg: "hover:bg-amber-600",
     children: [
-      {
-        id: "search",
-        label: "Search",
-        path: "/search-service",
-        icon: <Search className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-amber-50",
-      },
       {
         id: "hotels",
         label: "Hotels",
         path: "/hotels",
-        icon: <Hotel className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-amber-50",
+        icon: <Hotel className="h-4 w-4" />,
+      },
+      {
+        id: "hotel-detail",
+        label: "Hotel Detail",
+        path: "/hotels/[slug]",
+        icon: <Hotel className="h-4 w-4" />,
+        badge: "dynamic",
+      },
+      {
+        id: "search",
+        label: "AI Search",
+        path: "/search-service",
+        icon: <Search className="h-4 w-4" />,
+      },
+      {
+        id: "chat",
+        label: "AI Chat",
+        path: "/chat/[chatId]",
+        icon: <MessageCircle className="h-4 w-4" />,
+        badge: "dynamic",
       },
       {
         id: "about",
         label: "About",
         path: "/about",
-        icon: <Info className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-amber-50",
-      },
-      {
-        id: "debug",
-        label: "Debug",
-        path: "/debug-role",
-        icon: <Bug className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-amber-50",
+        icon: <Info className="h-4 w-4" />,
       },
     ],
   },
   {
     id: "user",
-    label: "User Auth",
-    bgColor: "bg-blue-500",
-    textColor: "text-white",
-    hoverBg: "hover:bg-blue-600",
+    label: "User",
     children: [
       {
         id: "signin",
         label: "Sign In",
         path: "/sign-in",
-        icon: <LogIn className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-blue-50",
+        icon: <LogIn className="h-4 w-4" />,
       },
       {
         id: "signup",
         label: "Sign Up",
         path: "/sign-up",
-        icon: <UserPlus className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-blue-50",
+        icon: <UserPlus className="h-4 w-4" />,
       },
       {
         id: "profile",
         label: "Profile",
         path: "/profile",
-        icon: <User className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-blue-50",
+        icon: <User className="h-4 w-4" />,
       },
       {
         id: "bookings",
-        label: "Bookings",
+        label: "My Bookings",
         path: "/my-bookings",
-        icon: <Calendar className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-blue-50",
+        icon: <Calendar className="h-4 w-4" />,
+      },
+      {
+        id: "favorites",
+        label: "Favorites",
+        path: "/favorites",
+        icon: <Heart className="h-4 w-4" />,
       },
     ],
   },
   {
     id: "transaction",
     label: "Payments",
-    bgColor: "bg-rose-500",
-    textColor: "text-white",
-    hoverBg: "hover:bg-rose-600",
     children: [
       {
         id: "cart",
         label: "Cart",
         path: "/cart",
-        icon: <ShoppingCart className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-rose-50",
+        icon: <ShoppingCart className="h-4 w-4" />,
       },
       {
         id: "checkout",
         label: "Checkout",
         path: "/checkout",
-        icon: <CreditCard className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-rose-50",
+        icon: <CreditCard className="h-4 w-4" />,
       },
       {
         id: "return",
         label: "Return",
         path: "/return",
-        icon: <RotateCcw className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-rose-50",
+        icon: <RotateCcw className="h-4 w-4" />,
       },
     ],
   },
   {
     id: "host",
     label: "Host",
-    bgColor: "bg-orange-500",
-    textColor: "text-white",
-    hoverBg: "hover:bg-orange-600",
     children: [
       {
         id: "host-dashboard",
         label: "Dashboard",
         path: "/host",
-        icon: <Building2 className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-orange-50",
+        icon: <Building2 className="h-4 w-4" />,
       },
       {
         id: "my-hotels",
         label: "My Hotels",
         path: "/my-hotels",
-        icon: <GalleryVerticalEnd className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-orange-50",
+        icon: <GalleryVerticalEnd className="h-4 w-4" />,
       },
       {
-        id: "create",
-        label: "Create",
+        id: "create-hotel",
+        label: "Create Hotel",
         path: "/create-hotel",
-        icon: <Plus className="h-3.5 w-3.5" />,
-        bgColor: "bg-white",
-        textColor: "text-foreground",
-        hoverBg: "hover:bg-orange-50",
+        icon: <Plus className="h-4 w-4" />,
       },
     ],
   },
 ];
 
+const categoryColors: Record<string, string> = {
+  Discovery: "border-l-amber-500",
+  User: "border-l-blue-500",
+  Payments: "border-l-rose-500",
+  Host: "border-l-orange-500",
+};
+
 export function SitemapDiagram() {
   const pathname = usePathname();
 
   return (
-    <div className="w-full py-8 px-4 bg-muted/30">
-      <div className="max-w-6xl mx-auto">
-        {/* Root Node */}
-        <div className="flex flex-col items-center mb-10">
-          <Link href="/">
-            <Card
+    <div className="space-y-6">
+      {/* Root */}
+      <div className="flex justify-center">
+        <Link href="/">
+          <div
+            className={cn(
+              "inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 bg-primary text-primary-foreground font-semibold text-sm transition-all",
+              pathname === "/" && "ring-2 ring-primary/40 ring-offset-2",
+            )}
+          >
+            <Home className="h-4 w-4" />
+            HOME
+          </div>
+        </Link>
+      </div>
+
+      {/* Connector */}
+      <div className="flex justify-center">
+        <div className="w-px h-6 bg-border" />
+      </div>
+
+      {/* Categories Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {sitemapData.map((category) => (
+          <div key={category.id} className="space-y-3">
+            {/* Category Header */}
+            <div
               className={cn(
-                "px-5 py-3 border-2 transition-colors cursor-pointer",
-                "bg-emerald-600 border-emerald-700 text-white",
-                pathname === "/" && "ring-2 ring-emerald-400 ring-offset-2",
-                "hover:bg-emerald-700",
+                "px-3 py-2 rounded-md border-l-4 bg-muted/50",
+                categoryColors[category.label],
               )}
             >
-              <div className="flex items-center gap-2.5">
-                <Home className="h-5 w-5" />
-                <div>
-                  <div className="font-semibold text-sm">HOMEPAGE</div>
-                </div>
-              </div>
-            </Card>
-          </Link>
-
-          {/* Vertical Line */}
-          <div className="w-px h-8 bg-border"></div>
-
-          {/* Horizontal Distributor */}
-          <div className="relative w-full max-w-4xl">
-            <div className="absolute left-0 right-0 top-0 h-px bg-border"></div>
-            <div className="grid grid-cols-4 gap-0">
-              {sitemapData.map((_, index) => (
-                <div key={index} className="flex justify-center">
-                  <div className="w-px h-8 bg-border"></div>
-                </div>
-              ))}
+              <span className="text-sm font-semibold">{category.label}</span>
             </div>
-          </div>
-        </div>
 
-        {/* Category Branches */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {sitemapData.map((category) => (
-            <div key={category.id} className="flex flex-col items-center gap-3">
-              {/* Category Header */}
-              <Card
-                className={cn(
-                  "w-full px-4 py-2.5 border-2 transition-colors",
-                  category.bgColor,
-                  category.textColor,
-                  category.hoverBg,
-                )}
-              >
-                <div className="font-semibold text-sm text-center">
-                  {category.label}
-                </div>
-              </Card>
+            {/* Children */}
+            <div className="space-y-1.5">
+              {category.children?.map((child) => {
+                const isActive = child.path === pathname;
+                const isDynamic = child.badge === "dynamic";
 
-              {/* Vertical Line */}
-              <div className="w-px h-3 bg-border"></div>
-
-              {/* Child Nodes */}
-              <div className="w-full space-y-2.5">
-                {category.children?.map((child) => {
-                  const isActive = child.path === pathname;
-
-                  const nodeContent = (
-                    <Card
-                      className={cn(
-                        "px-3 py-2.5 border transition-colors cursor-pointer",
-                        child.bgColor,
-                        child.textColor,
-                        child.hoverBg,
-                        isActive &&
-                          "ring-2 ring-primary ring-offset-1 bg-accent",
-                      )}
-                    >
-                      <div className="flex items-center gap-2">
+                const content = (
+                  <div
+                    className={cn(
+                      "group flex items-center gap-2.5 px-3 py-2 rounded-md border text-sm transition-all",
+                      isActive
+                        ? "bg-primary/5 border-primary/30 text-primary font-medium"
+                        : "bg-background border-transparent hover:bg-muted/60 hover:border-border",
+                      isDynamic && "opacity-70",
+                    )}
+                  >
+                    {child.icon && (
+                      <span
+                        className={cn(
+                          "shrink-0 text-muted-foreground",
+                          isActive && "text-primary",
+                        )}
+                      >
                         {child.icon}
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-xs truncate">
-                            {child.label}
-                          </div>
-                          {child.path && (
-                            <div className="text-[10px] text-muted-foreground truncate mt-0.5">
-                              {child.path}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  );
+                      </span>
+                    )}
+                    <span className="flex-1 truncate">{child.label}</span>
+                    {child.badge && (
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] px-1.5 py-0"
+                      >
+                        {child.badge}
+                      </Badge>
+                    )}
+                    {child.path && !isDynamic && (
+                      <span className="text-[10px] text-muted-foreground/50 font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+                        {child.path}
+                      </span>
+                    )}
+                  </div>
+                );
 
-                  return (
-                    <div key={child.id}>
-                      {child.path ? (
-                        <Link href={child.path}>{nodeContent}</Link>
-                      ) : (
-                        nodeContent
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Legend */}
-        <Card className="mt-10 p-4">
-          <div className="text-xs font-semibold mb-2.5 text-muted-foreground">
-            CATEGORIES
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-sm bg-amber-500"></div>
-              <span className="text-xs">Discovery & Public</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-sm bg-blue-500"></div>
-              <span className="text-xs">User & Auth</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-sm bg-rose-500"></div>
-              <span className="text-xs">Payments</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-sm bg-orange-500"></div>
-              <span className="text-xs">Host Manager</span>
+                return (
+                  <div key={child.id}>
+                    {child.path && !isDynamic ? (
+                      <Link href={child.path}>{content}</Link>
+                    ) : (
+                      content
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
-        </Card>
+        ))}
       </div>
     </div>
   );

@@ -39,38 +39,46 @@ export function SitemapSheet({
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-4xl overflow-y-auto"
+        className="w-full sm:max-w-4xl overflow-y-auto p-0"
       >
-        <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
-            <Map className="h-5 w-5" />
-            STAZY Platform - Sitemap
-          </SheetTitle>
-          <SheetDescription>
-            Explore the complete navigation structure of STAZY platform
-          </SheetDescription>
-        </SheetHeader>
+        <div className="p-6">
+          <SheetHeader className="pb-4">
+            <SheetTitle className="flex items-center gap-2 text-lg">
+              <Map className="h-5 w-5 text-primary" />
+              Sitemap
+            </SheetTitle>
+            <SheetDescription className="text-muted-foreground">
+              Navigation structure of Stazy platform
+            </SheetDescription>
+          </SheetHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="diagram" className="flex items-center gap-2">
-              <Network className="h-4 w-4" />
-              Diagram View
-            </TabsTrigger>
-            <TabsTrigger value="tree" className="flex items-center gap-2">
-              <List className="h-4 w-4" />
-              Tree View
-            </TabsTrigger>
-          </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger
+                value="diagram"
+                className="flex items-center gap-2 text-xs"
+              >
+                <Network className="h-3.5 w-3.5" />
+                Diagram
+              </TabsTrigger>
+              <TabsTrigger
+                value="tree"
+                className="flex items-center gap-2 text-xs"
+              >
+                <List className="h-3.5 w-3.5" />
+                Tree
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="diagram" className="mt-4">
-            <SitemapDiagram />
-          </TabsContent>
+            <TabsContent value="diagram" className="mt-0">
+              <SitemapDiagram />
+            </TabsContent>
 
-          <TabsContent value="tree" className="mt-4">
-            <SitemapTree />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="tree" className="mt-0">
+              <SitemapTree />
+            </TabsContent>
+          </Tabs>
+        </div>
       </SheetContent>
     </Sheet>
   );

@@ -64,17 +64,34 @@ export async function getAIRecommendations() {
       }
     }
 
-    // 2. Gọi AI Service
+    // 2. Gọi AI Service (với timeout 5 giây)
+    const aiUrl = `${SEARCH_SERVICE_URL}/recommend/${user.id}`;
     console.log("🤖 Calling AI Service for fresh recommendations...");
-    console.log("🔗 URL:", `${SEARCH_SERVICE_URL}/recommend/${user.id}`);
+    console.log("🔗 URL:", aiUrl);
 
-    const response = await fetch(`${SEARCH_SERVICE_URL}/recommend/${user.id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store", // Tắt cache để debug
-    });
+    let response: Response;
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+      response = await fetch(aiUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeout);
+    } catch (fetchError: any) {
+      // Network error, DNS failure, timeout, service not running...
+      console.warn(
+        "⚠️ AI Service unreachable (service may be offline):",
+        fetchError.message,
+      );
+      return null; // Graceful fallback - không show AI section
+    }
 
     console.log("📡 Response status:", response.status);
 
