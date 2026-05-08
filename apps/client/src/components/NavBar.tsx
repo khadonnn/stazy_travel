@@ -17,10 +17,9 @@ import { SitemapSheet } from "@/components/sitemap/SitemapSheet";
 // TEMP
 const Navbar = () => {
   const pathname = usePathname();
-  const shouldHide =
-    pathname?.startsWith("/search-service") ||
-    pathname?.startsWith("/full-screen") ||
-    pathname?.startsWith("/chat");
+  const hiddenRoutes = ["/search-service", "/full-screen", "/chat", "/about"];
+
+  const shouldHide = hiddenRoutes.some((route) => pathname?.startsWith(route));
 
   if (shouldHide) return null;
   const { isSignedIn, user, isLoaded } = useUser();

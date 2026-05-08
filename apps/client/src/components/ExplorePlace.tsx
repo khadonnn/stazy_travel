@@ -12,6 +12,7 @@ import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import FadeIn from "./ui/fade-in";
 
 // XÓA BỎ CÁC DÒNG IMPORT HÌNH ẢNH TRỰC TIẾP TỪ THƯ MỤC PUBLIC
 // import halongbay from '@/assets/travels/halongbay.jpeg';
@@ -113,32 +114,34 @@ export function ExplorePlace() {
 
       <Carousel opts={{ align: "start" }}>
         <CarouselContent>
-          {places.map((place) => (
+          {places.map((place, index) => (
             <CarouselItem
               key={place.id}
               className="md:basis-1/2 lg:basis-1/3 xl:basis-1/5"
             >
-              <Card className="overflow-hidden rounded-2xl shadow-sm">
-                <div className="overflow-hidden rounded-2xl">
-                  {/* Component Image sử dụng URL (string) */}
-                  <Image
-                    src={place.thumbnail}
-                    alt={place.name}
-                    width={500}
-                    height={400}
-                    className="h-56 w-full object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </div>
-                <CardContent className="p-3">
-                  <h3 className="text-base font-semibold">{place.name}</h3>
-                  <p
-                    className="text-sm text-muted-foreground"
-                    suppressHydrationWarning
-                  >
-                    {place.count.toLocaleString()}+ phòng
-                  </p>
-                </CardContent>
-              </Card>
+              <FadeIn className="h-full w-full" delay={index * 100}>
+                <Card className="overflow-hidden rounded-2xl shadow-sm">
+                  <div className="overflow-hidden rounded-2xl">
+                    {/* Component Image sử dụng URL (string) */}
+                    <Image
+                      src={place.thumbnail}
+                      alt={place.name}
+                      width={500}
+                      height={400}
+                      className="h-56 w-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                  <CardContent className="p-3">
+                    <h3 className="text-base font-semibold">{place.name}</h3>
+                    <p
+                      className="text-sm text-muted-foreground"
+                      suppressHydrationWarning
+                    >
+                      {place.count.toLocaleString()}+ phòng
+                    </p>
+                  </CardContent>
+                </Card>
+              </FadeIn>
             </CarouselItem>
           ))}
         </CarouselContent>
