@@ -1,15 +1,24 @@
 import { FastifyInstance } from "fastify";
-import { redlock } from "../utils/redis";
-import { Booking } from "@repo/booking-db";
+import { prisma } from "@repo/product-db";
+import { getHold } from "../utils/redis-hold";
 
 /**
- * Route kiểm tra availability cho Collaborative Filtering Use Case
+ * Route kiểm tra availability - READ-ONLY API
  * Endpoint: GET /check-availability
  *
- *  REDIS LOCK STRATEGY:
- * - Sử dụng shared lock (read lock) để cho phép nhiều user check đồng thời
- * - Chỉ block khi có user đang trong quá trình CREATE booking
- * - Lock key: `locks:hotel:${hotelId}:${checkIn}` (giống với createBooking)
+ *  CHIẾN LƯỢC KIỂM TRA 2 LỚP:
+ *
+ * LỚP 1 - PostgreSQL (Data Source of Truth):
+ *   → Kiểm tra xem đã có booking CONFIRMED/PENDING trong DB chưa
+ *
+ * LỚP 2 - Redis Hold (Temporary Reservation):
+ *   → Kiểm tra xem có user nào đang "giữ chỗ" trong 10 phút không
+ *   → Nếu có → báo cho user khác biết để không bị double booking
+ *
+ *  KHÔNG CẦN LOCK cho read operation:
+ *   - Đây là API chỉ đọc (read-only)
+ *   - Không ghi data → không có race condition ở đây
+ *   - Race condition chỉ xảy ra ở CREATE booking (đã có Redis lock xử lý)
  */
 export default async function availabilityRoutes(fastify: FastifyInstance) {
   // GET /check-availability?hotelId=1&checkIn=2026-01-20&checkOut=2026-01-25
@@ -31,7 +40,6 @@ export default async function availabilityRoutes(fastify: FastifyInstance) {
     const checkInDate = new Date(checkIn);
     const checkOutDate = new Date(checkOut);
 
-    // Validate dates
     if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
       return reply.status(400).send({ error: "Invalid date format" });
     }
@@ -43,79 +51,71 @@ export default async function availabilityRoutes(fastify: FastifyInstance) {
     }
 
     try {
-      // 2. REDIS LOCK (Optional cho read operation)
-      // Lưu ý: Check availability KHÔNG CẦN lock mạnh như create booking
-      // Nhưng ta có thể dùng short TTL lock để tránh race với createBooking
-
-      // Tạo lock resource giống với createBooking để đồng bộ
-      const lockResource = `locks:hotel:${hotelIdNum}:${checkIn}`;
-      const lockTTL = 1000; // 1 giây (ngắn hơn nhiều so với createBooking 5s)
-
-      let lock;
-      try {
-        // Attempt to acquire lock (non-blocking check)
-        lock = await redlock.acquire([lockResource], lockTTL);
-        console.log(`🔍 [Availability Check] Acquired lock: ${lockResource}`);
-      } catch (lockError) {
-        // Nếu không lấy được lock (đang có booking đang được tạo)
-        console.warn(
-          `⚠️ [Availability] Lock busy, proceeding with direct DB query`,
-        );
-        // Vẫn cho phép check DB (vì check availability ít rủi ro hơn create)
-      }
-
-      // 3. Query MongoDB để tìm booking trùng lịch
-      // Logic: Hai khoảng thời gian trùng nhau nếu:
-      // (StartA < EndB) && (EndA > StartB)
-      const conflictingBookings = await Booking.find({
-        hotelId: hotelIdNum,
-        status: { $in: ["PENDING", "CONFIRMED", "PAID"] }, // Chỉ check booking còn hiệu lực
-
-        // Logic trùng lịch (Overlap Detection)
-        $or: [
-          // Case 1: Booking cũ bao phủ hoàn toàn khoảng mới
-          {
-            checkInDate: { $lte: checkInDate },
-            checkOutDate: { $gte: checkOutDate },
-          },
-          // Case 2: Khoảng mới bao phủ hoàn toàn booking cũ
-          {
-            checkInDate: { $gte: checkInDate },
-            checkOutDate: { $lte: checkOutDate },
-          },
-          // Case 3: Overlap bên trái (Start cũ < End mới && End cũ > Start mới)
-          {
-            checkInDate: { $lt: checkOutDate },
-            checkOutDate: { $gt: checkInDate },
-          },
-        ],
+      // =============================================
+      // LỚP 1: KIỂM TRA POSTGRESQL (Source of Truth)
+      // =============================================
+      // Logic trùng lịch (Overlap Detection):
+      // (StartA < EndB) && (EndA > StartA)
+      const conflictingBooking = await prisma.booking.findFirst({
+        where: {
+          hotelId: hotelIdNum,
+          status: { in: ["PENDING", "CONFIRMED"] },
+          // Overlap logic
+          checkIn: { lt: checkOutDate },
+          checkOut: { gt: checkInDate },
+        },
+        select: {
+          bookingId: true,
+          status: true,
+          checkIn: true,
+          checkOut: true,
+          guestName: true,
+        },
       });
 
-      // 4. Release lock if acquired
-      if (lock) {
-        await lock
-          .unlock()
-          .catch((err) =>
-            console.error("❌ [Availability] Unlock error:", err),
-          );
-        console.log(`🔓 [Availability Check] Released lock: ${lockResource}`);
-      }
-
-      // 5. Nếu có booking trùng → Không available
-      if (conflictingBookings.length > 0) {
+      // Nếu đã có booking trong DB → Không available
+      if (conflictingBooking) {
         return reply.status(200).send({
           available: false,
-          message: "Phòng đã có người đặt trong khoảng thời gian này",
-          conflictCount: conflictingBookings.length,
-          conflictingDates: conflictingBookings.map((b) => ({
-            checkIn: b.checkInDate,
-            checkOut: b.checkOutDate,
-            status: b.status,
-          })),
+          reason: "BOOKED",
+          message: "Phòng đã có người đặt trong khoảng thời gian này.",
+          conflictDetails: {
+            status: conflictingBooking.status,
+            checkIn: conflictingBooking.checkIn,
+            checkOut: conflictingBooking.checkOut,
+          },
         });
       }
 
-      // 6. Nếu không có conflict → Available
+      // =============================================
+      // LỚP 2: KIỂM TRA REDIS HOLD (Temporary Hold)
+      // =============================================
+      // Kiểm tra xem có user nào đang "giữ chỗ" trong 10 phút không
+      const activeHold = await getHold(hotelIdNum, checkInDate, checkOutDate);
+
+      if (activeHold) {
+        // Tính thời gian còn lại của hold
+        const holdExpiresAt = new Date(activeHold.expiresAt);
+        const remainingSeconds = Math.max(
+          0,
+          Math.floor((holdExpiresAt.getTime() - Date.now()) / 1000),
+        );
+
+        return reply.status(200).send({
+          available: false,
+          reason: "HELD",
+          message: `Phòng đang được giữ chỗ bởi khách khác. Thử lại sau ${remainingSeconds} giây.`,
+          holdInfo: {
+            heldBy: activeHold.userName,
+            expiresAt: activeHold.expiresAt,
+            remainingSeconds,
+          },
+        });
+      }
+
+      // =============================================
+      // AVAILABLE - Không có booking, không có hold
+      // =============================================
       return reply.status(200).send({
         available: true,
         message: "Phòng còn trống, bạn có thể đặt!",
@@ -124,7 +124,7 @@ export default async function availabilityRoutes(fastify: FastifyInstance) {
       console.error("❌ Check availability error:", error);
       return reply.status(500).send({
         error: "Internal server error",
-        available: true, // Fallback: Cho phép đặt nếu lỗi server (tùy chọn)
+        available: true, // Fallback: Cho phép đặt nếu lỗi server
       });
     }
   });

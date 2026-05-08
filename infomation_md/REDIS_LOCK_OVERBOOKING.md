@@ -1,24 +1,66 @@
-# REDIS DISTRIBUTED LOCK - CHỐNG OVERBOOKING
+# REDIS DISTRIBUTED LOCK + HOLD - CHỐNG OVERBOOKING
 
 > Giải pháp ngăn chặn Race Condition và Double Booking trong hệ thống đặt phòng phân tán
+> Sử dụng **PostgreSQL** (thay MongoDB) + **Redis Hold** (giữ chỗ 10 phút) + **Redlock** (Double-check Locking)
 
 ---
 
 ## 📋 MỤC LỤC
 
-- [1. Vấn Đề: Overbooking](#1-vấn-đề-overbooking)
-- [2. Giải Pháp: Redis Distributed Lock](#2-giải-pháp-redis-distributed-lock)
-- [3. Implementation Chi Tiết](#3-implementation-chi-tiết)
-- [4. So Sánh: Check Availability vs Create Booking](#4-so-sánh-check-availability-vs-create-booking)
-- [5. Flow Diagram](#5-flow-diagram)
-- [6. Testing Race Condition](#6-testing-race-condition)
-- [7. Best Practices](#7-best-practices)
+- [1. Tổng Quan Kiến Trúc](#1-tổng-quan-kiến-trúc)
+- [2. Vấn Đề: Overbooking](#2-vấn-đề-overbooking)
+- [3. Giải Pháp: 2 Lớp Bảo Vệ](#3-giải-pháp-2-lớp-bảo-vệ)
+- [4. Implementation Chi Tiết](#4-implementation-chi-tiết)
+- [5. API /check-availability (Read-Only)](#5-api-check-availability-read-only)
+- [6. Flow Diagram](#6-flow-diagram)
+- [7. So Sánh: Check Availability vs Create Booking](#7-so-sánh-check-availability-vs-create-booking)
+- [8. Testing Race Condition](#8-testing-race-condition)
+- [9. Best Practices](#9-best-practices)
 
 ---
 
-## 1. VẤN ĐỀ: OVERBOOKING
+## 1. TỔNG QUAN KIẾN TRÚC
 
-### 1.1. Kịch Bản Race Condition
+### 1.1. Stack Công Nghệ
+
+| Component         | Công Nghệ           | Vai trò                              |
+| ----------------- | ------------------- | ------------------------------------ |
+| **Database**      | PostgreSQL (Prisma) | Source of Truth - lưu booking        |
+| **Cache/Lock**    | Redis + Redlock     | Distributed Lock + Temporary Hold    |
+| **Framework**     | Fastify             | HTTP API                             |
+| **Message Queue** | BullMQ + Outbox     | Async events (booking-created, etc.) |
+
+### 1.2. Hai Cơ Chế Bảo Vệ
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    BOOKING FLOW                              │
+│                                                              │
+│  User A nhấn "Đặt phòng"                                    │
+│         │                                                    │
+│         ▼                                                    │
+│  ┌──────────────┐    ┌──────────────────┐                   │
+│  │  LỚP 1:      │    │  LỚP 2:          │                   │
+│  │  Redis HOLD   │───▶│  Redis LOCK       │───▶ PostgreSQL   │
+│  │  (10 phút)    │    │  (Double-check)   │    (Create)      │
+│  └──────────────┘    └──────────────────┘                   │
+│         │                                                    │
+│         ▼                                                    │
+│  User B check availability                                   │
+│         │                                                    │
+│         ▼                                                    │
+│  ┌──────────────┐    ┌──────────────────┐                   │
+│  │  PostgreSQL   │    │  Redis HOLD       │                   │
+│  │  (Check DB)   │───▶│  (Check hold)     │───▶ Result       │
+│  └──────────────┘    └──────────────────┘                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 2. VẤN ĐỀ: OVERBOOKING
+
+### 2.1. Kịch Bản Race Condition (Không có bảo vệ)
 
 ```
 Timeline:
@@ -32,65 +74,74 @@ Timeline:
 10:00:00.300  Create Booking A ✅
 10:00:00.400                         Create Booking B ✅ (!!!)
 ─────────────────────────────────────────────────────────────
-KẾT QUẢ: 2 bookings cho cùng 1 phòng/khách sạn → OVERBOOKING ❌
+KẾT QUẢ: 2 bookings cho cùng 1 phòng → OVERBOOKING ❌
 ```
 
-### 1.2. Nguyên Nhân
+### 2.2. Nguyên Nhân
 
-**Không có cơ chế đồng bộ (synchronization)** giữa các request:
-
-- ❌ MongoDB **KHÔNG HỖ TRỢ** row-level locking như MySQL
-- ❌ Check availability và Create booking là **2 bước riêng biệt**
+- ❌ **Check availability và Create booking** là 2 bước riêng biệt (TOCTOU)
 - ❌ Giữa 2 bước này, DB state có thể bị thay đổi bởi request khác
+- ❌ Không có cơ chế "giữ chỗ" tạm thời
 
-### 1.3. Tác Động
+### 2.3. Tác Động
 
-- 😡 User A và User B đều nhận email xác nhận
+- 😡 Cả 2 user đều nhận email xác nhận
 - 🤯 Khi đến khách sạn, chỉ có 1 phòng
-- 💸 Hoàn tiền, mất uy tín, khách hàng chuyển qua đối thủ
+- 💸 Hoàn tiền, mất uy tín
 
 ---
 
-## 2. GIẢI PHÁP: REDIS DISTRIBUTED LOCK
+## 3. GIẢI PHÁP: 2 LỚP BẢO VỆ
 
-### 2.1. Khái Niệm
+### 3.1. LỚP 1: Redis Hold (Giữ Chỗ 10 Phút)
 
-**Distributed Lock** là cơ chế đảm bảo:
+**Mục đích**: Ngăn user khác đặt phòng trong khi user A đang trong quá trình đặt.
 
-- ✅ **Chỉ 1 process** được truy cập tài nguyên tại 1 thời điểm
-- ✅ Hoạt động **cross-server** (nhiều container/instance)
-- ✅ **Tự động release** lock khi hết TTL (tránh deadlock)
-
-### 2.2. Tại Sao Dùng Redis?
-
-| Tiêu Chí             | Redis         | Database Lock | In-Memory Lock     |
-| -------------------- | ------------- | ------------- | ------------------ |
-| **Tốc độ**           | ⚡ <1ms       | 🐢 10-50ms    | ⚡ <0.1ms          |
-| **Cross-server**     | ✅            | ✅            | ❌ (chỉ 1 process) |
-| **TTL Auto-release** | ✅            | ❌            | ❌                 |
-| **Scalable**         | ✅            | 🔸 Trung bình | ❌                 |
-| **Độ phức tạp**      | 🔸 Trung bình | 🔴 Cao        | 🟢 Thấp            |
-
-**Lựa chọn**: Redis Distributed Lock là **best practice** cho microservices.
-
-### 2.3. Thư Viện Sử Dụng
-
-```bash
-# Redlock - Thuật toán distributed lock chuẩn từ Redis
-pnpm add redlock ioredis
+```
+Key:   holds:hotel:{hotelId}:checkIn:{checkIn}:checkOut:{checkOut}
+Value: { userId, userName, createdAt, expiresAt }
+TTL:   600 giây (10 phút)
 ```
 
-**Redlock Algorithm** (tác giả: Salvatore Sanfilippo - creator of Redis):
+**Cách hoạt động**:
+
+| Thời điểm | User A (đang đặt)                | User B (check availability)       |
+| --------- | -------------------------------- | --------------------------------- |
+| T+0s      | `setHold()` → giữ chỗ 10 phút    | -                                 |
+| T+1s      | Đang thanh toán...               | `getHold()` → "Đang được giữ" ❌  |
+| T+60s     | Thanh toán xong → `clearHold()`  | `getHold()` → null → Available ✅ |
+| _Hoặc_    | _Timeout 10 phút_ → Redis tự xóa | `getHold()` → null → Available ✅ |
+
+### 3.2. LỚP 2: Redis Lock (Double-Check Locking)
+
+**Mục đích**: Ngăn 2 request cùng lúc chui qua lớp Hold và cùng tạo booking.
+
+```
+Key:   locks:hotel:{hotelId}:{checkIn}:{checkOut}
+TTL:   10 giây (đủ cho toàn bộ flow)
+Retry: 3 lần, mỗi lần cách 200ms + jitter 200ms
+```
+
+**Thuật toán Redlock** (Salvatore Sanfilippo - creator of Redis):
 
 - Acquire lock trên **majority nodes** (>50%)
-- Auto-extend lock nếu operation kéo dài
-- Guaranteed unlock với TTL
+- Auto-release khi hết TTL
+- Retry với jitter để tránh thundering herd
+
+### 3.3. Tại Sao Cần Cả 2 Lớp?
+
+| Kịch bản                         | Chỉ Lock                  | Chỉ Hold             | **Cả 2** |
+| -------------------------------- | ------------------------- | -------------------- | -------- |
+| User A đặt, B check availability | B không biết A đang đặt   | ✅ B thấy "đang giữ" | ✅       |
+| A và B nhấn "Đặt" cùng lúc       | ✅ Chỉ 1 người được       | ⚠️ Race condition    | ✅       |
+| A abandon (không thanh toán)     | Lock hết 10s → B đặt được | ✅ Hold hết 10 phút  | ✅       |
+| Network partition                | ✅ TTL auto-release       | ✅ TTL auto-release  | ✅       |
 
 ---
 
-## 3. IMPLEMENTATION CHI TIẾT
+## 4. IMPLEMENTATION CHI TIẾT
 
-### 3.1. Setup Redis Client
+### 4.1. Setup Redis Client
 
 **File**: `apps/booking-service/src/utils/redis.ts`
 
@@ -105,17 +156,13 @@ const redisClient = new Redis({
 });
 
 // 2. Cấu hình Redlock
-const redlock = new Redlock(
-  [redisClient as any], // Type casting do mismatch ioredis v5 và redlock
-  {
-    driftFactor: 0.01, // Clock drift tolerance
-    retryCount: 3, // Thử lại 3 lần nếu không lấy được lock
-    retryDelay: 200, // Đợi 200ms giữa các lần retry
-    retryJitter: 200, // Random delay để tránh thundering herd
-  },
-);
+const redlock = new Redlock([redisClient as any], {
+  driftFactor: 0.01, // Clock drift tolerance
+  retryCount: 3, // Thử lại 3 lần nếu lock bận
+  retryDelay: 200, // Đợi 200ms giữa các lần retry
+  retryJitter: 200, // Random 0-200ms để tránh thundering herd
+});
 
-// 3. Error handling
 redlock.on("clientError", (error) => {
   console.error("Redlock error:", error);
 });
@@ -123,95 +170,153 @@ redlock.on("clientError", (error) => {
 export { redisClient, redlock };
 ```
 
-**Giải thích các tham số:**
+### 4.2. Redis Hold Utility
 
-| Tham số       | Giá trị | Ý nghĩa                                            |
-| ------------- | ------- | -------------------------------------------------- |
-| `driftFactor` | 0.01    | Chấp nhận 1% độ lệch đồng hồ giữa các server       |
-| `retryCount`  | 3       | Thử lại 3 lần nếu lock đang bận                    |
-| `retryDelay`  | 200ms   | Đợi 200ms trước mỗi lần retry                      |
-| `retryJitter` | 200ms   | Random thêm 0-200ms để tránh tất cả retry cùng lúc |
+**File**: `apps/booking-service/src/utils/redis-hold.ts`
 
----
+```typescript
+import { redisClient } from "./redis";
 
-### 3.2. Create Booking với Lock (Critical Section)
+const HOLD_TTL_SECONDS = 600; // 10 phút
+
+interface HoldInfo {
+  userId: string;
+  userName: string;
+  createdAt: string;
+  expiresAt: string;
+}
+
+// Tạo key Redis cho hold
+function buildHoldKey(hotelId: number, checkIn: string | Date, checkOut: string | Date): string {
+  const checkInStr = checkIn instanceof Date ? checkIn.toISOString().split("T")[0] : checkIn;
+  const checkOutStr = checkOut instanceof Date ? checkOut.toISOString().split("T")[0] : checkOut;
+  return `holds:hotel:${hotelId}:checkIn:${checkInStr}:checkOut:${checkOutStr}`;
+}
+
+// Đặt hold - Giữ chỗ 10 phút
+export async function setHold(
+  hotelId: number, checkIn: string | Date, checkOut: string | Date,
+  userId: string, userName: string
+): Promise<{ isExisting: boolean; expiresAt: Date }> {
+  const key = buildHoldKey(hotelId, checkIn, checkOut);
+  const existingHoldRaw = await redisClient.get(key);
+
+  if (existingHoldRaw) {
+    const existingHold: HoldInfo = JSON.parse(existingHoldRaw);
+
+    // Hold của chính user → gia hạn
+    if (existingHold.userId === userId) {
+      await redisClient.set(key, JSON.stringify({...}), "EX", HOLD_TTL_SECONDS);
+      return { isExisting: true, expiresAt };
+    }
+
+    // Hold của user khác → throw error
+    const ttl = await redisClient.ttl(key);
+    if (ttl > 0) {
+      throw new RoomHoldError(
+        `Phòng đang được giữ chỗ bởi ${existingHold.userName}`,
+        existingHold.userId, existingHold.userName, holdExpiresAt,
+      );
+    }
+  }
+
+  // Tạo hold mới
+  await redisClient.set(key, JSON.stringify(holdData), "EX", HOLD_TTL_SECONDS);
+  return { isExisting: false, expiresAt };
+}
+
+// Kiểm tra hold (READ-ONLY, cho /check-availability)
+export async function getHold(hotelId: number, checkIn: Date, checkOut: Date): Promise<HoldInfo | null> {
+  const key = buildHoldKey(hotelId, checkIn, checkOut);
+  const holdRaw = await redisClient.get(key);
+  if (!holdRaw) return null;
+
+  const ttl = await redisClient.ttl(key);
+  if (ttl <= 0) return null;
+
+  return { ...JSON.parse(holdRaw), expiresAt: new Date(Date.now() + ttl * 1000).toISOString() };
+}
+
+// Xóa hold sau khi đặt thành công
+export async function clearHold(hotelId: number, checkIn: Date, checkOut: Date): Promise<void> {
+  await redisClient.del(buildHoldKey(hotelId, checkIn, checkOut));
+}
+
+// Custom Error class
+export class RoomHoldError extends Error {
+  public heldByUserId: string;
+  public heldByUserName: string;
+  public holdExpiresAt: Date;
+  // ... constructor
+}
+```
+
+### 4.3. Create Booking với 2 Lớp Bảo Vệ
 
 **File**: `apps/booking-service/src/utils/booking.ts`
 
 ```typescript
 import { redlock } from "./redis";
+import { setHold, clearHold, RoomHoldError } from "./redis-hold";
+import { prisma } from "@repo/product-db";
 
 export const createBooking = async (userId: string, bookingData: any) => {
-  const { hotelId, checkIn, checkOut, totalAmount, ... } = bookingData;
+  const { hotelId, checkIn, checkOut, ... } = bookingData;
 
-  // 🔑 BƯỚC 1: Định nghĩa lock resource
-  // Format: locks:hotel:{hotelId}:{checkInDate}
-  const resource = `locks:hotel:${hotelId}:${checkIn}`;
-  const ttl = 5000; // 5 giây (đủ để hoàn tất check + create)
-
+  const resource = `locks:hotel:${hotelId}:${checkInStr}:${checkOutStr}`;
+  const ttl = 10000; // 10 giây
   let lock;
 
   try {
-    //  BƯỚC 2: Acquire Lock (BLOCKING)
+    // ═══════════════════════════════════════════════
+    //  BƯỚC 1: SET HOLD (Giữ chỗ 10 phút trên Redis)
+    // ═══════════════════════════════════════════════
+    // User A bắt đầu đặt → giữ chỗ ngay
+    // User B check → thấy "đang được giữ"
+    await setHold(hotelId, checkInStr, checkOutStr, userId, userName);
+
+    // ═══════════════════════════════════════════════
+    //  BƯỚC 2: ACQUIRE REDIS LOCK (Double-check Locking)
+    // ═══════════════════════════════════════════════
+    // Chỉ cho 1 request vào critical section
     lock = await redlock.acquire([resource], ttl);
-    console.log(` Đã khóa: ${resource}`);
 
-    // ─────────────────────────────────────────────────────
-    // 🛡️ CRITICAL SECTION - CHỈ 1 REQUEST ĐƯỢC VÀO ĐÂY
-    // ─────────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════
+    //  BƯỚC 3: DOUBLE-CHECK TRONG POSTGRESQL
+    // ═══════════════════════════════════════════════
+    // Kiểm tra lại DB (trong lock) - tránh race condition
+    const conflict = await prisma.booking.findFirst({
+      where: {
+        hotelId: Number(hotelId),
+        status: { in: ["CONFIRMED", "PENDING"] },
+        checkIn: { lt: new Date(checkOut) },
+        checkOut: { gt: new Date(checkIn) },
+      },
+    });
+    if (conflict) throw new Error("Phòng vừa có người đặt!");
 
-    // 🔍 BƯỚC 3: Double-check availability (trong lock)
-    const conflict = await Booking.findOne({
-      hotelId: Number(hotelId),
-      status: { $in: ["CONFIRMED", "PENDING", "PAID"] },
-      $or: [
-        { checkIn: { $lt: new Date(checkOut), $gte: new Date(checkIn) } },
-        { checkOut: { $gt: new Date(checkIn), $lte: new Date(checkOut) } },
-      ],
+    // ═══════════════════════════════════════════════
+    //  BƯỚC 4: CREATE BOOKING TRONG POSTGRESQL
+    // ═══════════════════════════════════════════════
+    const newBooking = await prisma.$transaction(async (tx) => {
+      const booking = await tx.booking.create({ data: { ... } });
+      await tx.outboxMessage.create({ data: { ... } }); // Outbox pattern
+      return booking;
     });
 
-    if (conflict) {
-      throw new Error("Rất tiếc, phòng này vừa có người đặt!");
-    }
-
-    // ✅ BƯỚC 4: Create booking (đã đảm bảo không có conflict)
-    const newBooking = await Booking.create({
-      bookingId: crypto.randomUUID(),
-      userId,
-      hotelId,
-      checkIn: new Date(checkIn),
-      checkOut: new Date(checkOut),
-      totalPrice: totalAmount,
-      status: "PENDING",
-      nights,
-      contactDetails,
-      bookingSnapshot,
-    });
-
-    // 📤 BƯỚC 5: Gửi Kafka event
-    await producer.send("booking-events", {
-      event: "BOOKING_CREATED",
-      bookingId: newBooking.bookingId,
-    });
+    // ═══════════════════════════════════════════════
+    //  BƯỚC 5: CLEAR HOLD (Xóa giữ chỗ)
+    // ═══════════════════════════════════════════════
+    await clearHold(hotelId, checkInStr, checkOutStr);
 
     return newBooking;
 
-  } catch (error: any) {
-    // ❌ XỬ LÝ LỖI
-    if (error.name === "ExecutionError") {
-      // Lock đang bị giữ bởi request khác
-      throw new Error("Phòng đang được giữ bởi khách khác, vui lòng thử lại sau giây lát.");
-    }
+  } catch (error) {
+    if (error instanceof RoomHoldError) throw error; // RoomHold → 409
+    if (error.name === "ExecutionError") throw new Error("Lock timeout"); // Redlock → 409
     throw error;
-
   } finally {
-    // 🔓 BƯỚC 6: ALWAYS release lock (kể cả khi lỗi)
-    if (lock) {
-      await lock.unlock().catch((err) =>
-        console.error("Lỗi nhả khóa Redis:", err)
-      );
-      console.log(`🔓 Đã mở khóa: ${resource}`);
-    }
+    if (lock) await lock.unlock().catch(console.error); // Always release
   }
 };
 ```
@@ -220,268 +325,266 @@ export const createBooking = async (userId: string, bookingData: any) => {
 
 ```mermaid
 graph TD
-    A[User click Đặt phòng] --> B[Try acquire lock]
-    B -->|Success| C[ Lock acquired]
-    B -->|Failed after 3 retries| D[Throw ExecutionError]
+    A[User click Đặt phòng] --> B[ BƯỚC 1: setHold - Giữ chỗ 10 phút]
+    B -->|RoomHoldError| Z1[❌ 409 - Phòng đang được giữ]
+    B -->|Success| C[ BƯỚC 2: Acquire Redlock]
 
-    C --> E[Check DB trong lock]
-    E -->|Có conflict| F[Throw error]
-    E -->|Available| G[Create booking]
+    C -->|Failed 3 retries| Z2[❌ 409 - Lock timeout]
+    C -->|Success| D[🔒 Lock acquired]
 
-    G --> H[Send Kafka event]
-    H --> I[🔓 Release lock]
+    D --> E[ BƯỚC 3: Double-check PostgreSQL]
+    E -->|Conflict| F[❌ Throw - Phòng vừa có người đặt]
+    E -->|Available| G[ BƯỚC 4: Create Booking + Outbox]
 
-    F --> I
-    D --> J[Show error to user]
-    I --> K[Return booking]
+    G --> H[ BƯỚC 5: clearHold - Xóa giữ chỗ]
+    H --> I[ Return booking]
 
+    F --> J[🔓 Release lock]
+    Z2 --> K[Show error to user]
+    I --> L[201 Created]
+    J --> K
+
+    style B fill:#2196F3
     style C fill:#4CAF50
-    style I fill:#FF9800
+    style D fill:#FF9800
     style F fill:#f44336
+    style Z1 fill:#f44336
+    style Z2 fill:#f44336
 ```
 
 ---
 
-### 3.3. Check Availability với Soft Lock (Read Operation)
+## 5. API /check-availability (READ-ONLY)
+
+### 5.1. Chiến Lược Kiểm Tra 2 Lớp
 
 **File**: `apps/booking-service/src/routes/availability.ts`
 
 ```typescript
-import { redlock } from "../utils/redis";
+import { prisma } from "@repo/product-db";
+import { getHold } from "../utils/redis-hold";
 
 fastify.get("/check-availability", async (request, reply) => {
   const { hotelId, checkIn, checkOut } = request.query;
 
-  // ... validation ...
-
-  try {
-    // 🔑 Lock resource (giống với createBooking)
-    const lockResource = `locks:hotel:${hotelIdNum}:${checkIn}`;
-    const lockTTL = 1000; // 1 giây (ngắn hơn nhiều so với create)
-
-    let lock;
-    try {
-      // ⚡ Attempt to acquire lock (NON-CRITICAL)
-      lock = await redlock.acquire([lockResource], lockTTL);
-      console.log(`🔍 [Availability] Acquired lock: ${lockResource}`);
-    } catch (lockError) {
-      // ⚠️ Không lấy được lock (đang có booking đang được tạo)
-      console.warn(`Lock busy, proceeding with direct DB query`);
-      // Vẫn cho phép check DB (ít rủi ro hơn create)
-    }
-
-    // 📊 Query DB (có hoặc không có lock đều OK)
-    const conflictingBookings = await BookingModel.find({
+  // ─────────────────────────────────────────────────
+  //  LỚP 1: KIỂM TRA POSTGRESQL (Source of Truth)
+  // ─────────────────────────────────────────────────
+  const conflictingBooking = await prisma.booking.findFirst({
+    where: {
       hotelId: hotelIdNum,
-      status: { $in: ["PENDING", "CONFIRMED", "PAID"] },
-      $or: [
-        /* overlap logic */
-      ],
-    });
+      status: { in: ["PENDING", "CONFIRMED"] },
+      checkIn: { lt: checkOutDate }, // Overlap logic
+      checkOut: { gt: checkInDate },
+    },
+  });
 
-    // 🔓 Release lock if acquired
-    if (lock) {
-      await lock.unlock();
-      console.log(`🔓 [Availability] Released lock`);
-    }
-
-    // ✅ Return result
-    if (conflictingBookings.length > 0) {
-      return reply.status(200).send({
-        available: false,
-        message: "Phòng đã có người đặt",
-      });
-    }
-
-    return reply.status(200).send({
-      available: true,
-      message: "Phòng còn trống!",
-    });
-  } catch (error) {
-    console.error("❌ Check availability error:", error);
-    return reply.status(500).send({ error: "Internal server error" });
+  if (conflictingBooking) {
+    return {
+      available: false,
+      reason: "BOOKED",
+      message: "Phòng đã có người đặt trong khoảng thời gian này.",
+    };
   }
+
+  // ─────────────────────────────────────────────────
+  //  LỚP 2: KIỂM TRA REDIS HOLD (Temporary Reservation)
+  // ─────────────────────────────────────────────────
+  const activeHold = await getHold(hotelIdNum, checkInDate, checkOutDate);
+
+  if (activeHold) {
+    return {
+      available: false,
+      reason: "HELD",
+      message: `Phòng đang được giữ chỗ. Thử lại sau ${remainingSeconds}s.`,
+      holdInfo: { heldBy: activeHold.userName, expiresAt, remainingSeconds },
+    };
+  }
+
+  // ─────────────────────────────────────────────────
+  //  AVAILABLE - Không có booking, không có hold
+  // ─────────────────────────────────────────────────
+  return { available: true, message: "Phòng còn trống, bạn có thể đặt!" };
 });
 ```
 
-**Tại sao Check Availability dùng "Soft Lock"?**
+### 5.2. Response Format
 
-| Khía cạnh               | Check Availability | Create Booking          |
-| ----------------------- | ------------------ | ----------------------- |
-| **Tính chất**           | Read operation     | Write operation         |
-| **Độ quan trọng**       | Low                | **CRITICAL**            |
-| **Lock TTL**            | 1s (ngắn)          | 5s (dài)                |
-| **Retry strategy**      | Best effort        | Must succeed            |
-| **Khi không lock được** | ✅ Vẫn check DB    | ❌ Throw error          |
-| **Mục đích lock**       | Đồng bộ với Create | **Ngăn race condition** |
+**Phòng trống**:
 
----
-
-## 4. SO SÁNH: CHECK AVAILABILITY VS CREATE BOOKING
-
-### 4.1. Bảng So Sánh
-
-| Tiêu chí                    | Check Availability        | Create Booking            |
-| --------------------------- | ------------------------- | ------------------------- |
-| **Endpoint**                | `GET /check-availability` | `POST /`                  |
-| **Lock required?**          | Optional (soft lock)      | **REQUIRED** (hard lock)  |
-| **Lock TTL**                | 1 giây                    | 5 giây                    |
-| **Hành động khi lock fail** | Proceed anyway            | Throw error to user       |
-| **Critical level**          | 🟡 Medium                 | 🔴 **HIGH**               |
-| **Frequency**               | Mỗi khi user chọn ngày    | Chỉ khi click "Đặt phòng" |
-| **Impact nếu race**         | Hiển thị sai UI           | **DOUBLE BOOKING**        |
-
-### 4.2. Lock Key Strategy
-
-Cả 2 functions đều dùng **CÙNG lock key format**:
-
-```typescript
-`locks:hotel:${hotelId}:${checkInDate}`;
+```json
+{
+  "available": true,
+  "message": "Phòng còn trống, bạn có thể đặt!"
+}
 ```
 
-**Ví dụ**:
+**Phòng đã có booking trong DB**:
 
-- `locks:hotel:15:2026-01-20`
-- `locks:hotel:23:2026-02-14`
+```json
+{
+  "available": false,
+  "reason": "BOOKED",
+  "message": "Phòng đã có người đặt trong khoảng thời gian này.",
+  "conflictDetails": {
+    "status": "CONFIRMED",
+    "checkIn": "2026-01-20T00:00:00.000Z",
+    "checkOut": "2026-01-25T00:00:00.000Z"
+  }
+}
+```
 
-**Tại sao dùng format này?**
+**Phòng đang được giữ chỗ (Redis Hold)**:
 
-- ✅ **Granular locking**: Chỉ lock hotel + ngày cụ thể
-- ✅ **Không block toàn bộ hotel**: User A đặt ngày 20-22, User B vẫn đặt được 25-27
-- ✅ **Tránh false positive**: Lock chính xác resource cần bảo vệ
+```json
+{
+  "available": false,
+  "reason": "HELD",
+  "message": "Phòng đang được giữ chỗ bởi khách khác. Thử lại sau 480 giây.",
+  "holdInfo": {
+    "heldBy": "Nguyễn Văn A",
+    "expiresAt": "2026-01-20T10:10:00.000Z",
+    "remainingSeconds": 480
+  }
+}
+```
+
+### 5.3. Tại Sao /check-availability KHÔNG CẦN Lock?
+
+| Khía cạnh           | Check Availability  | Create Booking            |
+| ------------------- | ------------------- | ------------------------- |
+| **Tính chất**       | 📖 Read-only        | ✏️ Write                  |
+| **Lock cần?**       | ❌ Không cần        | ✅ **REQUIRED**           |
+| **Tại sao?**        | Không ghi data      | Ngăn race condition       |
+| **Race condition?** | Không (chỉ đọc)     | Có (TOCTOU vulnerability) |
+| **Redis dùng?**     | getHold() (chỉ đọc) | setHold() + redlock (ghi) |
+
+**Nguyên tắc**: Race condition chỉ xảy ra khi **ghi data**. API đọc không có race condition.
 
 ---
 
-## 5. FLOW DIAGRAM
+## 6. FLOW DIAGRAM
 
-### 5.1. Luồng Thành Công (Happy Path)
+### 6.1. Luồng Thành Công (Happy Path)
 
 ```mermaid
 sequenceDiagram
     participant U1 as User A
-    participant U2 as User B
     participant API as Booking API
-    participant Redis as Redis Lock
-    participant DB as MongoDB
+    participant Redis as Redis
+    participant DB as PostgreSQL
 
-    U1->>API: POST /bookings (10:00:00.000)
-    API->>Redis: Acquire lock:hotel:15:2026-01-20
-    Redis->>API: ✅ Lock granted
+    U1->>API: POST /bookings
+    API->>Redis: setHold() - Giữ chỗ 10 phút
+    Redis->>API: ✅ Hold set
 
-    Note over API:  CRITICAL SECTION
-    API->>DB: Check availability
-    DB->>API: ✅ Available
-    API->>DB: Create booking A
-    DB->>API: ✅ Booking A created
-    Note over API: 🔓 END CRITICAL SECTION
-
-    API->>Redis: Release lock
-    Redis->>API: ✅ Lock released
-    API->>U1: 200 OK - Booking A
-
-    U2->>API: POST /bookings (10:00:00.400)
-    API->>Redis: Acquire lock:hotel:15:2026-01-20
-    Redis->>API: ✅ Lock granted
-
-    Note over API:  CRITICAL SECTION
-    API->>DB: Check availability
-    DB->>API: ❌ Conflict (Booking A exists)
-    Note over API: 🔓 END CRITICAL SECTION
-
-    API->>Redis: Release lock
-    API->>U2: 409 Conflict - Already booked
-```
-
-### 5.2. Luồng Race Condition (Được Ngăn Chặn)
-
-```mermaid
-sequenceDiagram
-    participant U1 as User A
-    participant U2 as User B
-    participant API as Booking API
-    participant Redis as Redis Lock
-    participant DB as MongoDB
-
-    U1->>API: POST /bookings (10:00:00.000)
     API->>Redis: Acquire lock
-    Redis->>API: ✅ Lock granted to User A
+    Redis->>API: ✅ Lock granted
+
+    Note over API: 🔒 CRITICAL SECTION
+    API->>DB: Double-check availability
+    DB->>API: ✅ Available
+    API->>DB: Create booking (Prisma transaction)
+    DB->>API: ✅ Booking + Outbox created
+    Note over API: 🔓 END CRITICAL SECTION
+
+    API->>Redis: clearHold() - Xóa giữ chỗ
+    API->>Redis: Release lock
+    API->>U1: 201 Created - Booking success
+```
+
+### 6.2. Luồng User B Thấy "Đang Được Giữ"
+
+```mermaid
+sequenceDiagram
+    participant U1 as User A
+    participant U2 as User B
+    participant API as Booking API
+    participant Redis as Redis
+    participant DB as PostgreSQL
+
+    U1->>API: POST /bookings (10:00:00)
+    API->>Redis: setHold() - Giữ chỗ 10 phút
+    Redis->>API: ✅ Hold set
+
+    U2->>API: GET /check-availability (10:00:05)
+    API->>DB: Check PostgreSQL
+    DB->>API: ✅ No booking found
+    API->>Redis: getHold()
+    Redis->>API: ⚠️ Hold by User A (còn 595s)
+    API->>U2: { available: false, reason: "HELD" }
+
+    Note over U2: Hiển thị: "Phòng đang được giữ, thử lại sau 595s"
+
+    U1->>API: Thanh toán xong
+    API->>DB: Booking CONFIRMED
+    API->>Redis: clearHold()
+
+    U2->>API: GET /check-availability (10:10:05)
+    API->>DB: Check PostgreSQL
+    DB->>API: ⚠️ Booking CONFIRMED exists
+    API->>U2: { available: false, reason: "BOOKED" }
+```
+
+### 6.3. Luồng Race Condition (Được Ngăn Chặn)
+
+```mermaid
+sequenceDiagram
+    participant U1 as User A
+    participant U2 as User B
+    participant API as Booking API
+    participant Redis as Redis
+    participant DB as PostgreSQL
+
+    U1->>API: POST /bookings (10:00:00.000)
+    API->>Redis: setHold() ✅
 
     U2->>API: POST /bookings (10:00:00.100)
-    API->>Redis: Acquire lock
-    Note over Redis: Lock đang bị giữ bởi User A
-    Redis->>API: ⏳ Waiting... (retry 1/3)
+    API->>Redis: setHold()
+    Redis->>API: ❌ RoomHoldError (User A đang giữ)
 
-    Note over API: User A đang trong critical section
-    API->>DB: Create booking A
-    DB->>API: ✅ Success
-    API->>Redis: Release lock
+    Note over API: User A đang trong flow đặt phòng
+    API->>Redis: Acquire lock ✅
+    API->>DB: Double-check → Available
+    API->>DB: Create booking A ✅
+    API->>Redis: clearHold() + Release lock ✅
 
-    Redis->>API: ✅ Lock granted to User B
-    API->>DB: Check availability
-    DB->>API: ❌ Booking A exists
-    API->>Redis: Release lock
-    API->>U2: 409 Conflict
+    API->>U1: 201 Created
+    API->>U2: 409 Conflict - "Phòng đang được giữ"
 ```
 
 ---
 
-## 6. TESTING RACE CONDITION
+## 7. SO SÁNH: CHECK AVAILABILITY VS CREATE BOOKING
 
-### 6.1. Test Script (Artillery Load Test)
+| Tiêu chí            | Check Availability           | Create Booking             |
+| ------------------- | ---------------------------- | -------------------------- |
+| **Endpoint**        | `GET /check-availability`    | `POST /bookings`           |
+| **Tính chất**       | 📖 Read-only                 | ✏️ Write (Critical)        |
+| **Database**        | PostgreSQL (Prisma)          | PostgreSQL (Prisma)        |
+| **Redis Lock?**     | ❌ Không cần                 | ✅ **REQUIRED** (Redlock)  |
+| **Redis Hold?**     | 📖 getHold() (chỉ đọc)       | ✏️ setHold() + clearHold() |
+| **Lock TTL**        | N/A                          | 10 giây                    |
+| **Hold TTL**        | N/A                          | 10 phút                    |
+| **Khi có hold**     | Hiển thị "đang giữ" cho user | Throw RoomHoldError → 409  |
+| **Khi lock fail**   | N/A                          | Throw ExecutionError → 409 |
+| **Critical level**  | 🟡 Medium                    | 🔴 **HIGH**                |
+| **Frequency**       | Mỗi khi user chọn ngày       | Chỉ khi click "Đặt phòng"  |
+| **Impact nếu race** | Hiển thị sai UI (tạm thời)   | **DOUBLE BOOKING** ❌      |
 
-```yaml
-# test-race-condition.yml
-config:
-  target: "http://localhost:8001"
-  phases:
-    - duration: 1
-      arrivalRate: 100 # 100 requests/giây
-scenarios:
-  - name: "Concurrent Booking"
-    flow:
-      - post:
-          url: "/bookings"
-          json:
-            hotelId: 15
-            checkIn: "2026-01-20"
-            checkOut: "2026-01-22"
-            contactDetails:
-              fullName: "Load Test User"
-              email: "test@example.com"
-              phone: "0123456789"
-```
+---
 
-**Chạy test**:
+## 8. TESTING RACE CONDITION
+
+### 8.1. Manual Test với cURL
+
+**Test 1: User A giữ chỗ, User B check availability**
 
 ```bash
-pnpm add -g artillery
-artillery run test-race-condition.yml
-```
-
-### 6.2. Kết Quả Mong Đợi
-
-**Với Redis Lock**:
-
-```
-✅ 1 request thành công (201 Created)
-❌ 99 requests bị reject (409 Conflict hoặc Lock timeout)
-Total bookings in DB: 1
-```
-
-**Không có Redis Lock**:
-
-```
-⚠️ ~50-80 requests thành công (201 Created) - OVERBOOKING!
-Total bookings in DB: 50-80 (DISASTER)
-```
-
-### 6.3. Manual Test với cURL
-
-**Terminal 1**:
-
-```bash
+# Terminal 1: User A bắt đầu đặt phòng (setHold)
 curl -X POST http://localhost:8001/bookings \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TOKEN_USER_A" \
   -d '{
     "hotelId": 15,
     "checkIn": "2026-01-20",
@@ -492,162 +595,201 @@ curl -X POST http://localhost:8001/bookings \
       "phone": "0123456789"
     }
   }'
+
+# Terminal 2: User B check availability (trong khi A đang đặt)
+curl "http://localhost:8001/check-availability?hotelId=15&checkIn=2026-01-20&checkOut=2026-01-22"
+
+# Expected:
+# {
+#   "available": false,
+#   "reason": "HELD",
+#   "message": "Phòng đang được giữ chỗ bởi User A. Thử lại sau 595 giây.",
+#   "holdInfo": { "heldBy": "User A", "remainingSeconds": 595 }
+# }
 ```
 
-**Terminal 2** (chạy ngay sau, trong vòng 1 giây):
+**Test 2: Hai user nhấn "Đặt" cùng lúc**
 
 ```bash
+# Chạy đồng thời 2 terminal
+# Terminal 1:
 curl -X POST http://localhost:8001/bookings \
-  -H "Content-Type: application/json" \
-  -d '{
-    "hotelId": 15,
-    "checkIn": "2026-01-20",
-    "checkOut": "2026-01-22",
-    "contactDetails": {
-      "fullName": "User B",
-      "email": "userB@test.com",
-      "phone": "0987654321"
-    }
-  }'
+  -H "Authorization: Bearer TOKEN_A" \
+  -d '{"hotelId": 15, "checkIn": "2026-01-20", "checkOut": "2026-01-22", "contactDetails": {"fullName": "A", "email": "a@test.com", "phone": "0111"}}'
+
+# Terminal 2 (chạy ngay sau):
+curl -X POST http://localhost:8001/bookings \
+  -H "Authorization: Bearer TOKEN_B" \
+  -d '{"hotelId": 15, "checkIn": "2026-01-20", "checkOut": "2026-01-22", "contactDetails": {"fullName": "B", "email": "b@test.com", "phone": "0222"}}'
+
+# Expected:
+# Terminal 1: 201 Created ✅
+# Terminal 2: 409 Conflict - "Phòng đang được giữ bởi A" ❌
 ```
 
-**Expected**:
+### 8.2. Artillery Load Test
 
-- ✅ Terminal 1: `201 Created`
-- ❌ Terminal 2: `409 Conflict` hoặc `Lock timeout`
+```yaml
+# test-race-condition.yml
+config:
+  target: "http://localhost:8001"
+  phases:
+    - duration: 1
+      arrivalRate: 50
+scenarios:
+  - name: "Concurrent Booking"
+    flow:
+      - post:
+          url: "/bookings"
+          json:
+            hotelId: 15
+            checkIn: "2026-01-20"
+            checkOut: "2026-01-22"
+            contactDetails:
+              fullName: "Load Test"
+              email: "test@example.com"
+              phone: "0123456789"
+```
+
+**Kết quả mong đợi**:
+
+```
+✅ 1 request thành công (201 Created)
+❌ 49 requests bị reject (409 Conflict - RoomHoldError)
+Total bookings in DB: 1
+```
+
+### 8.3. Kiểm Tra Redis Hold Trực Tiếp
+
+```bash
+# Xem tất cả hold keys đang active
+redis-cli KEYS "holds:hotel:*"
+
+# Xem hold cụ thể
+redis-cli GET "holds:hotel:15:checkIn:2026-01-20:checkOut:2026-01-22"
+
+# Xem TTL còn lại
+redis-cli TTL "holds:hotel:15:checkIn:2026-01-20:checkOut:2026-01-22"
+
+# Xóa hold thủ công (nếu cần test)
+redis-cli DEL "holds:hotel:15:checkIn:2026-01-20:checkOut:2026-01-22"
+```
 
 ---
 
-## 7. BEST PRACTICES
+## 9. BEST PRACTICES
 
-### 7.1. TTL Selection
+### 9.1. TTL Selection
 
-| Use Case               | Recommended TTL | Lý do                                   |
-| ---------------------- | --------------- | --------------------------------------- |
-| **Create Booking**     | 5-10s           | Đủ cho: check DB + create + Kafka event |
-| **Check Availability** | 1-2s            | Read operation nhanh                    |
-| **Payment Processing** | 30-60s          | API bên thứ 3 có thể chậm               |
-| **Batch Operations**   | 60-300s         | Process nhiều records                   |
+| Use Case         | TTL        | Lý do                                     |
+| ---------------- | ---------- | ----------------------------------------- |
+| **Redis Hold**   | 10 phút    | Đủ cho user thanh toán (5-8 phút TB)      |
+| **Redis Lock**   | 10 giây    | Đủ cho: setHold + check + create + outbox |
+| **Payment Lock** | 30-60 giây | API bên thứ 3 có thể chậm                 |
 
-**Công thức tính TTL**:
-
-```
-TTL = (Avg operation time) × 2 + (Network latency buffer)
-```
-
-### 7.2. Lock Granularity
-
-❌ **TRÁNH**: Lock quá rộng
+### 9.2. Lock Key Strategy
 
 ```typescript
-// WRONG: Block toàn bộ hotel
-const resource = `locks:hotel:${hotelId}`;
+// ✅ Hold Key - Chi tiết (checkIn + checkOut)
+`holds:hotel:${hotelId}:checkIn:${checkInDate}:checkOut:${checkOutDate}`
+// Ví dụ: holds:hotel:15:checkIn:2026-01-20:checkOut:2026-01-22
+
+// ✅ Lock Key - Chi tiết (checkIn + checkOut)
+`locks:hotel:${hotelId}:${checkInDate}:${checkOutDate}`
+// Ví dụ: locks:hotel:15:2026-01-20:2026-01-22
+
+// ❌ TRÁNH: Lock quá rộng (block toàn bộ hotel)
+`locks:hotel:${hotelId}`; // BAD!
 ```
 
-✅ **NÊN**: Lock chính xác resource
+### 9.3. Error Handling
 
 ```typescript
-// CORRECT: Chỉ block ngày cụ thể
-const resource = `locks:hotel:${hotelId}:${checkInDate}`;
-```
-
-### 7.3. Error Handling
-
-```typescript
+// Ưu tiên bắt lỗi từ trong ra ngoài:
 try {
-  lock = await redlock.acquire([resource], ttl);
-  // ... critical section ...
-} catch (error: any) {
-  // Phân loại lỗi
+  await setHold(...);          // Có thể throw RoomHoldError
+  lock = await redlock.acquire(...);  // Có thể throw ExecutionError
+  await prisma.booking.create(...);   // Có thể throw PrismaError
+  await clearHold(...);
+} catch (error) {
+  if (error instanceof RoomHoldError) {
+    // Phòng đang được giữ → 409 Conflict + thông tin hold
+    return reply.status(409).send({
+      message: error.message,
+      reason: "HELD",
+      heldBy: error.heldByUserName,
+      holdExpiresAt: error.holdExpiresAt,
+      remainingSeconds: Math.floor((error.holdExpiresAt - Date.now()) / 1000),
+    });
+  }
+
   if (error.name === "ExecutionError") {
-    // Lock timeout - User-friendly message
-    throw new Error("Phòng đang được giữ, vui lòng thử lại sau 5 giây.");
-  } else if (error.name === "ResourceLockedError") {
-    // Lock đang bận - Retry logic
-    throw new Error("Hệ thống đang xử lý, vui lòng đợi...");
-  } else {
-    // Unknown error - Log chi tiết
-    logger.error("Redis lock error:", error);
-    throw new Error("Lỗi hệ thống, vui lòng liên hệ support.");
+    // Redlock timeout → 409 Conflict
+    return reply.status(409).send({
+      message: "Phòng đang được giữ bởi khách khác",
+      reason: "LOCK_TIMEOUT",
+    });
   }
-} finally {
-  // ALWAYS cleanup
-  if (lock) {
-    await lock.unlock().catch((err) => logger.error("Unlock failed:", err));
-  }
+
+  // Unknown error → 500
+  return reply.status(500).send({ message: "Lỗi hệ thống" });
 }
 ```
 
-### 7.4. Monitoring & Alerting
+### 9.4. Monitoring & Alerting
 
 **Metrics cần track**:
 
-```typescript
-// Prometheus metrics
-const lockAcquisitionTime = new Histogram({
-  name: "redis_lock_acquisition_seconds",
-  help: "Time to acquire lock",
-  buckets: [0.001, 0.01, 0.1, 1, 5],
-});
-
-const lockFailures = new Counter({
-  name: "redis_lock_failures_total",
-  help: "Total lock acquisition failures",
-});
-```
+- `redis_hold_set_total` - Số lần set hold
+- `redis_hold_conflict_total` - Số lần user bị reject do hold
+- `redis_lock_acquisition_seconds` - Thời gian acquire lock
+- `redis_lock_failures_total` - Số lần lock timeout
 
 **Alerts**:
 
-- 🚨 Lock acquisition time > 2s (đáng lẽ <100ms)
-- 🚨 Lock failure rate > 5%
+- 🚨 Hold conflict rate > 10% (có thể cần tăng số phòng)
+- 🚨 Lock acquisition time > 2s
 - 🚨 Redis connection errors
 
 ---
 
 ## 📊 TỔNG KẾT
 
-### ✅ Ưu Điểm Redis Lock
+### ✅ Tại Sao Cần /check-availability?
 
-1. **Ngăn chặn overbooking 100%** (với correct implementation)
-2. **Cross-server compatible** (multi-instance deployment)
-3. **Auto-release** với TTL (tránh deadlock)
-4. **Low latency** (<1ms trong mạng nội bộ)
-5. **Battle-tested** (dùng bởi Booking.com, Airbnb, Uber)
+**CÓ, CHẮC CHẮN CẦN.** Nhưng vai trò thay đổi:
 
-### 🎯 Khi Nào Dùng Redis Lock?
+| Trước (MongoDB)                 | Sau (PostgreSQL + Redis)                      |
+| ------------------------------- | --------------------------------------------- |
+| Check availability có soft lock | **Read-only** (không cần lock)                |
+| Chỉ check MongoDB               | Check **PostgreSQL + Redis Hold**             |
+| Không biết ai đang đặt          | **Thông báo "đang được giữ"** cho user khác   |
+| Dùng MongoDB `Booking.find()`   | Dùng Prisma `findFirst()` + Redis `getHold()` |
 
-✅ **NÊN DÙNG**:
-
-- Create booking (write operations)
-- Payment processing
-- Inventory management
-- Voucher/coupon redemption
-
-❌ **KHÔNG CẦN**:
-
-- Read-only operations (view hotel, search)
-- Analytics queries
-- Logging/tracking events
-
-### 🔗 Liên Quan Đến Collaborative Filtering
-
-Redis Lock đảm bảo:
-
-- ✅ **Interaction tracking chính xác** (không duplicate BOOK events)
-- ✅ **CF model training với clean data** (không có ghost bookings)
-- ✅ **User experience tốt** (không bao giờ bị overbooking sau khi nhận gợi ý)
-
-**Use Case Flow**:
+### 🎯 Tổng Kết 2 Lớp Bảo Vệ
 
 ```
-CF Recommend Hotel → User click → Check Availability (soft lock)
-→ User confirm → Create Booking (HARD LOCK) → Track BOOK event
-→ Retrain CF model with accurate data
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│  LỚP 1: Redis HOLD (10 phút)                               │
+│  → User A bắt đầu đặt → giữ chỗ ngay                      │
+│  → User B check → thấy "đang được giữ" + thời gian còn lại │
+│  → Sau 10 phút, hold tự hết → ai cũng đặt được             │
+│                                                             │
+│  LỚP 2: Redis LOCK (Double-check Locking)                  │
+│  → Nếu A và B cùng nhấn "Đặt" → chỉ 1 người vào được      │
+│  → Trong lock: double-check PostgreSQL trước khi create     │
+│  → Ngăn race condition ở tầng write                         │
+│                                                             │
+│  KẾT QUẢ: KHÔNG BAO GIỜ OVERBOOKING ✅                     │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-**Tài liệu này được tạo ngày**: 21/01/2026  
-**Version**: 1.0  
-**Liên quan đến**: UC-08 (Tạo Booking), UC-12 (CF Recommendation)  
-**Reference**: Redlock Algorithm - https://redis.io/docs/manual/patterns/distributed-locks/
+**Tài liệu này được tạo ngày**: 21/01/2026
+**Cập nhật**: 08/05/2026 - Migrated từ MongoDB sang PostgreSQL, thêm Redis Hold
+**Version**: 2.0
+**Liên quan đến**: UC-08 (Tạo Booking), UC-12 (CF Recommendation)
+**Reference**: [Redlock Algorithm](https://redis.io/docs/manual/patterns/distributed-locks/)

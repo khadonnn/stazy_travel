@@ -1,9 +1,9 @@
 import { FastifyInstance } from "fastify";
 import { shouldBeAdmin, shouldBeUser } from "../middleware/authMiddleware";
-import { Booking } from "@repo/booking-db";
 import { prisma } from "@repo/product-db";
 import { createBooking } from "../utils/booking";
 import { getSagaTimeoutQueue } from "../utils/queues.js";
+import { RoomHoldError } from "../utils/redis-hold";
 // Định nghĩa kiểu dữ liệu Body gửi lên để TS hiểu
 interface CreateBookingBody {
   hotelId: number | string;
@@ -15,11 +15,6 @@ interface CreateBookingBody {
     email: string;
     phone: string;
   };
-}
-interface CheckAvailabilityQuery {
-  hotelId: string | number;
-  checkIn: string;
-  checkOut: string;
 }
 // URL của Product Service (Nên để trong .env)
 const PRODUCT_SERVICE_URL =
@@ -102,7 +97,21 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
       } catch (error: any) {
         console.error("❌ Booking Error:", error.message);
 
-        // Bắt lỗi Redis Lock (Quan trọng cho bài test Race Condition)
+        // Bắt lỗi Redis Hold (phòng đang được giữ chỗ bởi user khác)
+        if (error instanceof RoomHoldError) {
+          return reply.status(409).send({
+            message: error.message,
+            reason: "HELD",
+            heldBy: error.heldByUserName,
+            holdExpiresAt: error.holdExpiresAt.toISOString(),
+            remainingSeconds: Math.max(
+              0,
+              Math.floor((error.holdExpiresAt.getTime() - Date.now()) / 1000),
+            ),
+          });
+        }
+
+        // Bắt lỗi Redis Lock (Race condition - Double-check locking)
         if (error.message.includes("giữ bởi khách khác")) {
           return reply.status(409).send({ message: error.message });
         }
@@ -174,49 +183,6 @@ export const bookingRoute = async (fastify: FastifyInstance) => {
     return reply.send(recentBookings);
   });
 
-  // 4. API KIỂM TRA TÍNH KHẢ DỤNG (CHECK AVAILABILITY)
-  fastify.get<{ Querystring: CheckAvailabilityQuery }>(
-    "/check-availability",
-    // Không cần middleware auth để ai cũng check được
-    async (request, reply) => {
-      try {
-        const { hotelId, checkIn, checkOut } = request.query;
-
-        // 1. Validate đầu vào
-        if (!hotelId || !checkIn || !checkOut) {
-          return reply.status(400).send({ message: "Thiếu thông tin tra cứu" });
-        }
-
-        const startDate = new Date(checkIn);
-        const endDate = new Date(checkOut);
-
-        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-          return reply.status(400).send({ message: "Ngày tháng không hợp lệ" });
-        }
-
-        // 2. Logic kiểm tra trùng lịch (Overlap)
-        // (StartCũ < EndMới) && (EndCũ > StartMới)
-        const conflictBooking = await Booking.findOne({
-          hotelId: Number(hotelId), // Quan trọng: Convert string -> number
-          checkIn: { $lt: endDate },
-          checkOut: { $gt: startDate },
-          // Các trạng thái được coi là "Đã đặt"
-          status: { $in: ["CONFIRMED", "PENDING", "PAID"] },
-        });
-
-        // 3. Trả về kết quả
-        if (conflictBooking) {
-          return reply.send({
-            available: false,
-            message: "Phòng đã có người đặt trong thời gian này.",
-          });
-        }
-
-        return reply.send({ available: true, message: "Phòng còn trống" });
-      } catch (error) {
-        console.error("Check Availability Error:", error);
-        return reply.status(500).send({ message: "Lỗi server" });
-      }
-    },
-  );
+  // NOTE: /check-availability đã được chuyển sang routes/availability.ts
+  // (Read-only API: kiểm tra PostgreSQL + Redis Hold)
 };

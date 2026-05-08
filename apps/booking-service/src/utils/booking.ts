@@ -1,4 +1,5 @@
 import { redlock } from "../utils/redis";
+import { setHold, clearHold, RoomHoldError } from "../utils/redis-hold";
 import crypto from "crypto";
 import { prisma } from "@repo/product-db";
 import type { Prisma } from "@repo/product-db";
@@ -26,16 +27,37 @@ export const createBooking = async (
     bookingSnapshot,
   } = bookingData;
 
-  const resource = `locks:hotel:${hotelId}:${checkIn}`;
-  const ttl = 5000;
+  const checkInStr =
+    checkIn instanceof Date ? checkIn.toISOString().split("T")[0] : checkIn;
+  const checkOutStr =
+    checkOut instanceof Date ? checkOut.toISOString().split("T")[0] : checkOut;
+  const resource = `locks:hotel:${hotelId}:${checkInStr}:${checkOutStr}`;
+  const ttl = 10000; // 10 giây (đủ cho toàn bộ flow)
   let lock;
 
   try {
-    // 1. Acquire Redis lock to prevent race conditions
+    // =========================================================
+    // BƯỚC 1: SET HOLD - Giữ chỗ 10 phút trên Redis
+    // =========================================================
+    // Khi user A bắt đầu đặt phòng → giữ chỗ ngay lập tức
+    // User B check availability sẽ thấy "phòng đang được giữ"
+    // Nếu user A là người giữ trước → gia hạn hold
+    // Nếu user B đang giữ → throw RoomHoldError
+    const userName = contactDetails?.fullName || "Guest";
+    await setHold(hotelId, checkInStr, checkOutStr, userId, userName);
+
+    // =========================================================
+    // BƯỚC 2: ACQUIRE REDIS LOCK - Double-check Locking
+    // =========================================================
+    // Redlock chỉ cho 1 request vào critical section
+    // Ngăn race condition giữa 2 user nhấn "Đặt" cùng lúc
     lock = await redlock.acquire([resource], ttl);
     console.log(`🔒 Acquired lock: ${resource}`);
 
-    // 2. Check for booking conflict in PostgreSQL
+    // =========================================================
+    // BƯỚC 3: DOUBLE-CHECK - Kiểm tra lại trong PostgreSQL
+    // (Trong lock - chỉ 1 request được vào đây)
+    // =========================================================
     const conflict = await prisma.booking.findFirst({
       where: {
         hotelId: Number(hotelId),
@@ -121,7 +143,12 @@ export const createBooking = async (
       return booking;
     });
 
-    // 4️⃣ ADD SAGA TIMEOUT JOB (Outside transaction, after booking confirmed)
+    // =========================================================
+    // BƯỚC 5: CLEAR HOLD - Xóa giữ chỗ sau khi đặt thành công
+    // =========================================================
+    await clearHold(hotelId, checkInStr, checkOutStr);
+
+    // 6️⃣ ADD SAGA TIMEOUT JOB (Outside transaction, after booking confirmed)
     // If queue not provided, skip timeout setup (for backward compatibility)
     if (sagaTimeoutQueue) {
       const timeoutMs = 15 * 60 * 1000; // 15 minutes
@@ -154,6 +181,11 @@ export const createBooking = async (
 
     return newBooking;
   } catch (error: any) {
+    // Re-throw RoomHoldError để controller xử lý
+    if (error instanceof RoomHoldError) {
+      throw error;
+    }
+
     if (error.name === "ExecutionError") {
       throw new Error(
         "Phòng đang được giữ bởi khách khác, vui lòng thử lại sau giây lát.",
@@ -161,7 +193,7 @@ export const createBooking = async (
     }
     throw error;
   } finally {
-    // Always release the lock
+    // Luôn luôn release lock (kể cả khi có lỗi)
     if (lock) {
       await lock
         .unlock()
