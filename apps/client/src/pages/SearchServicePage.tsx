@@ -21,6 +21,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { cn } from "@/lib/utils/formatPrice";
+import { Amenities_demos, type Amenity } from "@/constants/amenities";
 
 // --- 1. ĐỊNH NGHĨA TYPE (Theo yêu cầu của bạn) ---
 export type LocationMap = {
@@ -71,6 +72,17 @@ export default function SearchServicePage() {
   // Kết quả tìm kiếm hiển thị ra màn hình
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+
+  // State cho tiện nghi được chọn & tiện nghi động từ kết quả tìm kiếm ảnh
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [allImageAmenities, setAllImageAmenities] = useState<
+    { id: string; name: string; amenity: string; icon: any }[]
+  >([]);
+  const [topImageAmenities, setTopImageAmenities] = useState<
+    { id: string; name: string; amenity: string; icon: any }[]
+  >([]);
+  const [hasSearchedByImage, setHasSearchedByImage] = useState(false);
+  const [showAllAmenities, setShowAllAmenities] = useState(false);
 
   // URL Backend
   const PRODUCT_API_URL =
@@ -138,18 +150,77 @@ export default function SearchServicePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allHotels]); // Chạy lại khi allHotels đã load xong
 
+  // --- HÀM TRỢ GIÚP: Map amenity key sang tên tiếng Việt ---
+  const amenityDisplayName: Record<string, string> = {
+    wifi: "Wifi miễn phí",
+    parking: "Bãi đỗ xe",
+    breakfast: "Bao gồm bữa sáng",
+    gym: "Phòng gym",
+    spa: "Spa & Massage",
+    restaurant: "Nhà hàng",
+    "pet-friendly": "Cho phép thú cưng",
+    bar: "Quầy bar",
+    pool: "Hồ bơi",
+    "swimming-pool": "Hồ bơi",
+    "beach-view": "View biển",
+    "sea-view": "View biển",
+    "mountain-view": "View núi",
+    "city-view": "View thành phố",
+    luxury: "Sang trọng",
+    premium: "Cao cấp",
+    "air-conditioning": "Điều hòa",
+    "hot-tub": "Bồn nước nóng",
+    "room-service": "Dịch vụ phòng",
+    elevator: "Thang máy",
+    laundry: "Giặt ủi",
+    "airport-shuttle": "Đưa đón sân bay",
+    "free-cancel": "Hủy miễn phí",
+    "24h-front-desk": "Lễ tân 24h",
+  };
+
+  // --- HÀM TRỢ GIÚP: Trích xuất amenities duy nhất từ kết quả (dùng icon thật từ Amenities_demos) ---
+  const extractAmenitiesFromResults = (
+    results: any[],
+  ): {
+    id: string;
+    name: string;
+    amenity: string;
+    icon: any;
+  }[] => {
+    const uniqueAmenities = new Set<string>();
+    for (const hotel of results) {
+      if (hotel.amenities) {
+        hotel.amenities.forEach((a: string) => uniqueAmenities.add(a));
+      }
+    }
+
+    return Array.from(uniqueAmenities).map((amenity) => {
+      const match = Amenities_demos.find((d) => d.id === amenity);
+      return {
+        id: amenity,
+        name: match?.name || amenityDisplayName[amenity] || amenity,
+        amenity,
+        icon: match?.icon || Tag,
+      };
+    });
+  };
+
   // --- HÀM BỔ TRỢ: CẬP NHẬT UI TỪ KẾT QUẢ AI ---
-  const updateUIWithResults = (matches: any[]) => {
+  const updateUIWithResults = (matches: any[], fromImageSearch = false) => {
     console.log("1. Dữ liệu AI trả về (Matches):", matches);
     if (!matches || matches.length === 0) {
       console.warn("❌ AI trả về mảng rỗng!");
-      console.groupEnd();
       setSearchResults([]);
+      if (fromImageSearch) {
+        setAllImageAmenities([]);
+        setTopImageAmenities([]);
+        setHasSearchedByImage(false);
+        setShowAllAmenities(false);
+      }
       return;
     }
     if (allHotels.length === 0) {
       console.warn("❌ Chưa có dữ liệu allHotels để map!");
-      console.groupEnd();
       return;
     }
     const matchIds = matches.map((m: any) => String(m.id));
@@ -188,7 +259,25 @@ export default function SearchServicePage() {
     }
 
     setSearchResults(filteredResults);
-    console.groupEnd();
+
+    // Khi tìm kiếm bằng ảnh → trích xuất amenities từ kết quả
+    if (fromImageSearch) {
+      // Lọc chỉ lấy khách sạn có score >= 0.9 (tương đồng cao)
+      const topHotels = filteredResults.filter(
+        (h: any) => (h.score || 0) >= 0.9,
+      );
+      const allExtracted = extractAmenitiesFromResults(filteredResults);
+      const topExtracted = extractAmenitiesFromResults(
+        topHotels.length > 0 ? topHotels : filteredResults.slice(0, 3),
+      );
+
+      setAllImageAmenities(allExtracted);
+      setTopImageAmenities(topExtracted);
+      setHasSearchedByImage(true);
+      setShowAllAmenities(false);
+      // Auto-select amenities từ top hotels
+      setSelectedAmenities(topExtracted.map((a) => a.amenity));
+    }
   };
 
   // --- 4. CÁC HÀM XỬ LÝ LOGIC TÌM KIẾM ---
@@ -307,7 +396,7 @@ export default function SearchServicePage() {
           });
           const matches = await res.json();
           console.log(" AI trả về matches:", matches);
-          updateUIWithResults(matches);
+          updateUIWithResults(matches, true); // fromImageSearch = true
         } catch (e) {
           console.error(e);
         } finally {
@@ -387,65 +476,25 @@ export default function SearchServicePage() {
     },
   ];
 
-  // Amenity-based suggestions for "Các chủ đề tìm kiếm liên quan"
+  // Amenity-based suggestions (dùng icon từ Amenities_demos)
   const amenitySuggestions = [
-    {
-      id: "wifi",
-      name: "Wifi miễn phí",
-      amenity: "wifi",
-      icon: Tag,
-      color: "bg-teal-600",
-    },
-    {
-      id: "parking",
-      name: "Bãi đỗ xe",
-      amenity: "parking",
-      icon: Tag,
-      color: "bg-slate-600",
-    },
-    {
-      id: "breakfast",
-      name: "Bao gồm bữa sáng",
-      amenity: "breakfast",
-      icon: Tag,
-      color: "bg-orange-600",
-    },
-    {
-      id: "gym",
-      name: "Phòng gym",
-      amenity: "gym",
-      icon: Tag,
-      color: "bg-red-600",
-    },
-    {
-      id: "spa",
-      name: "Spa & Massage",
-      amenity: "spa",
-      icon: Tag,
-      color: "bg-pink-600",
-    },
-    {
-      id: "restaurant",
-      name: "Nhà hàng",
-      amenity: "restaurant",
-      icon: Tag,
-      color: "bg-yellow-600",
-    },
-    {
-      id: "pet",
-      name: "Cho phép thú cưng",
-      amenity: "pet-friendly",
-      icon: Tag,
-      color: "bg-green-600",
-    },
-    {
-      id: "bar",
-      name: "Quầy bar",
-      amenity: "bar",
-      icon: Tag,
-      color: "bg-purple-600",
-    },
-  ];
+    "wifi",
+    "parking",
+    "breakfast",
+    "gym",
+    "spa",
+    "restaurant",
+    "pet-friendly",
+    "bar",
+  ].map((amenityId) => {
+    const found = Amenities_demos.find((d) => d.id === amenityId);
+    return {
+      id: amenityId,
+      name: found?.name || amenityId,
+      amenity: amenityId,
+      icon: found?.icon || Tag,
+    };
+  });
 
   const filters = [
     {
@@ -477,6 +526,15 @@ export default function SearchServicePage() {
     return true;
   });
 
+  // Logic: Xác định danh sách tiện nghi hiển thị
+  // Nếu đã tìm bằng ảnh → dùng topImageAmenities (hoặc allImageAmenities nếu showAll)
+  // Nếu chưa → dùng amenitySuggestions mặc định
+  const currentAmenityList = (() => {
+    if (!hasSearchedByImage) return amenitySuggestions;
+    if (showAllAmenities) return allImageAmenities;
+    return topImageAmenities.length > 0 ? topImageAmenities : allImageAmenities;
+  })();
+
   // Logic: Find which amenities exist in current results for suggestions
   const getAvailableAmenities = () => {
     const available: Set<string> = new Set();
@@ -488,6 +546,24 @@ export default function SearchServicePage() {
     return available;
   };
   const availableAmenities = getAvailableAmenities();
+
+  // Logic: Lọc kết quả theo selected amenities
+  const getFilteredByAmenities = () => {
+    if (selectedAmenities.length === 0) return filteredResults;
+    return filteredResults.filter((hotel) =>
+      selectedAmenities.some((sa) => hotel.amenities?.includes(sa)),
+    );
+  };
+  const finalDisplayResults = getFilteredByAmenities();
+
+  // Toggle chọn/bỏ chọn amenity
+  const toggleAmenity = (amenityKey: string) => {
+    setSelectedAmenities((prev) =>
+      prev.includes(amenityKey)
+        ? prev.filter((a) => a !== amenityKey)
+        : [...prev, amenityKey],
+    );
+  };
 
   // --- RENDER UI ---
   return (
@@ -684,41 +760,84 @@ export default function SearchServicePage() {
 
             {/* === CỘT PHẢI (RESULTS) - Independent scroll */}
             <div className="lg:col-span-3 space-y-6 overflow-y-auto pb-4 [&::-webkit-scrollbar]:w-[2px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-white/[0.08]">
-              {/* 3. AMENITY SUGGESTIONS - Based on current results */}
-              {searchResults.length > 0 && (
-                <div className="bg-gray-800/30 rounded-2xl p-6 border border-gray-800 shadow-inner">
-                  <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <Tag size={16} className="text-green-400" /> Tiện nghi khách
-                    sạn phổ biến
+              {/* 3. AMENITY SUGGESTIONS */}
+              <div className="bg-gray-800/30 rounded-2xl p-6 border border-gray-800 shadow-inner">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                    <Tag size={16} className="text-green-400" /> Tiện nghi
                   </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {amenitySuggestions.map((item) => {
-                      const hasInResults = availableAmenities.has(item.amenity);
-                      return (
-                        <button
-                          key={item.id}
-                          disabled={!hasInResults || isSearching}
-                          onClick={() => {
+                  {selectedAmenities.length > 0 && (
+                    <button
+                      onClick={() => setSelectedAmenities([])}
+                      className="text-[10px] text-red-400 hover:text-red-300 cursor-pointer transition-colors"
+                    >
+                      Bỏ chọn ({selectedAmenities.length})
+                    </button>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {currentAmenityList.map((item) => {
+                    const Icon = item.icon;
+                    const isSelected = selectedAmenities.includes(item.amenity);
+                    return (
+                      <button
+                        key={item.id}
+                        disabled={isSearching}
+                        onClick={() => {
+                          if (hasSearchedByImage) {
+                            toggleAmenity(item.amenity);
+                          } else {
                             setSearchDescription(item.name);
                             handleSearch(item.name);
-                          }}
-                          className={`flex items-center border border-gray-600/50 gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all
-                          ${
-                            hasInResults
-                              ? `${item.color}/80 text-white hover:bg-zinc-700 cursor-pointer`
-                              : "bg-gray-800/60 text-gray-600 cursor-not-allowed opacity-40"
-                          }`}
-                        >
-                          {item.name}
-                          {hasInResults && (
-                            <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse ml-0.5" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+                          }
+                        }}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all border
+                        ${
+                          isSelected
+                            ? "bg-blue-600 text-white border-blue-400 shadow-lg shadow-blue-500/20"
+                            : "bg-gray-800/60 text-gray-300 border-gray-600/50 hover:bg-gray-700/80 hover:text-white cursor-pointer"
+                        } disabled:opacity-40 disabled:cursor-not-allowed`}
+                      >
+                        <Icon
+                          size={13}
+                          className={
+                            isSelected ? "text-white" : "text-gray-400"
+                          }
+                        />
+                        <span>{item.name}</span>
+                        {isSelected && (
+                          <X size={11} className="ml-0.5 opacity-80" />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+                {/* Nút xem toàn bộ + chú thích */}
+                {hasSearchedByImage && (
+                  <div className="mt-3 pt-3 border-t border-gray-700/50 flex items-center justify-between text-[10px] text-gray-500">
+                    <div className="flex items-center gap-4">
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-gray-600 inline-block" />
+                        Tất cả tiện nghi
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-blue-600 inline-block" />
+                        Đang chọn để lọc
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setShowAllAmenities(!showAllAmenities);
+                      }}
+                      className="text-blue-400 hover:text-blue-300 cursor-pointer transition-colors underline"
+                    >
+                      {showAllAmenities
+                        ? `Thu gọn (${topImageAmenities.length})`
+                        : `Xem toàn bộ (${allImageAmenities.length})`}
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {/* 4. RESULT GRID */}
               <div className="border border-gray-700/50 bg-gray-800/30 rounded-2xl p-6 backdrop-blur-md ">
@@ -726,9 +845,10 @@ export default function SearchServicePage() {
                   <h2 className="text-2xl font-black">
                     Kết quả{" "}
                     <span className="text-blue-400 ml-2">
-                      {filteredResults.length}
+                      {finalDisplayResults.length}
                     </span>
-                    {activeFilter !== "recommend" && (
+                    {(activeFilter !== "recommend" ||
+                      selectedAmenities.length > 0) && (
                       <span className="text-gray-500 text-sm font-normal ml-2">
                         / {searchResults.length}
                       </span>
@@ -758,7 +878,7 @@ export default function SearchServicePage() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredResults.map((hotel) => (
+                    {finalDisplayResults.map((hotel) => (
                       <Link
                         key={hotel.id}
                         href={`/hotels/${hotel.id}`} // Đảm bảo route này tồn tại trong Client App
