@@ -294,6 +294,7 @@ def generate_stays():
                 "amenities": selected_amenities,
                 "price": base_price,
                 "address": f"{random.randint(1, 999)} Đường {loc_display}, Việt Nam",
+                "destination": loc_display,
                 "reviewStar": round(random.uniform(3.8, 5.0), 1),
                 "reviewCount": random.randint(10, 500),
                 "viewCount": random.randint(100, 2000),

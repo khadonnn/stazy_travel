@@ -161,6 +161,7 @@ model Hotel {
   
   // Location & Map
   address       String
+  destination     String   // "nha_trang", "da_nang" - Hỗ trợ gợi ý theo địa điểm
   map           Json     // { lat: ..., lng: ... }
   nearbyLandmarks String[] // ["cho_dem", "vinpearl"] -> Hỗ trợ gợi ý theo địa điểm
 
