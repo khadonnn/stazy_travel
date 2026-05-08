@@ -54,7 +54,7 @@ export default function TeamScene() {
         role: "MSSV: 24210137",
         description: "Kỹ sư phần mềm senior với chuyên môn về hệ thống quản lý",
         avatar: "/khadon.jpg",
-        skills: ["Full-stack Development", "Backend Development", "DevOps"],
+        skills: ["Full-stack", "Database ", "DevOps"],
       },
       {
         id: 3,
@@ -62,11 +62,7 @@ export default function TeamScene() {
         role: "MSSV: 24210137",
         description: "Chuyên gia vận hành với kinh nghiệm sâu rộng",
         avatar: "/khadon.jpg",
-        skills: [
-          "Frontend Dev",
-          "Full-stack Development",
-          "Process Optimization",
-        ],
+        skills: ["Frontend Dev", "Full-stack", "Process Optimization"],
       },
       {
         id: 4,

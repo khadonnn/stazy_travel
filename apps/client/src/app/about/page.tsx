@@ -1,34 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { ArrowUp } from "lucide-react";
-import HeroScene from "./sections/HeroScene";
-import StoryScene from "./sections/StoryScene";
-// import MissionScene from "./sections/MissionScene"; // Hidden - not relevant
-import ServicesScene from "./sections/ServicesScene";
-import ValuesScene from "./sections/ValuesScene";
-import TeamScene from "./sections/TeamScene";
-import FinalScene from "./sections/FinalScene";
+import HeroSection from "./sections/HeroSection";
+import MissionSection from "./sections/MissionSection";
+import WhyStazySection from "./sections/WhyStazySection";
+import StatsSection from "./sections/StatsSection";
+import TeamSection from "./sections/TeamSection";
+import CTASection from "./sections/CTASection";
+import AnimatedParticles from "./sections/AnimatedParticles";
 
 export default function AboutPage() {
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    // Force scroll to top on page load/reload
     window.history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
 
-    // Clear localStorage cache to force reload from JSON file
-    // Remove this after confirming data loads correctly
-    localStorage.removeItem("hotel-stazy-about-data");
-    console.log("🔄 About data cache cleared - loading fresh data from JSON");
-
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 500);
+      setShowScrollTop(window.scrollY > 600);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    // Global GSAP smooth scroll setup
+    ScrollTrigger.config({ limitCallbacks: true });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
   }, []);
 
   const scrollToTop = () => {
@@ -36,26 +41,63 @@ export default function AboutPage() {
   };
 
   return (
-    <main className="overflow-x-hidden bg-black">
-      <HeroScene />
-      <StoryScene />
-      {/* <MissionScene /> */}
-      <ServicesScene />
-      <ValuesScene />
-      <TeamScene />
-      <FinalScene />
+    <main
+      ref={mainRef}
+      className="relative min-h-screen bg-zinc-950 text-white selection:bg-white/10"
+    >
+      {/* Global particles background */}
+      <AnimatedParticles />
 
-      {/* Scroll to Top Button */}
+      {/* Subtle radial gradient for depth */}
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <div
+          className="
+      absolute left-1/4 top-0
+      h-[600px] w-[600px]
+      -translate-x-1/2
+      rounded-full
+      bg-emerald-400/[0.08]
+      blur-[140px]
+    "
+        />
+
+        <div
+          className="
+      absolute bottom-1/4 right-0
+      h-[500px] w-[500px]
+      rounded-full
+      bg-sky-400/[0.07]
+      blur-[120px]
+    "
+        />
+      </div>
+
+      {/* Subtle grain texture overlay */}
+      <div
+        className="pointer-events-none fixed inset-0 z-50 opacity-[0.012]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      <HeroSection />
+      <MissionSection />
+      <WhyStazySection />
+      <StatsSection />
+      <TeamSection />
+      <CTASection />
+
+      {/* Scroll to Top */}
       <button
         onClick={scrollToTop}
-        className={`fixed bottom-30 right-8 z-50 p-4 rounded-full bg-[#4fae9b] text-white shadow-2xl hover:bg-[#3d8a7a] transition-all duration-300 ${
+        className={`fixed bottom-8 right-8 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-zinc-900/80 text-white shadow-xl backdrop-blur-md transition-all duration-500 hover:bg-zinc-800/80 ${
           showScrollTop
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-16 pointer-events-none"
+            ? "translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-4 opacity-0"
         }`}
         aria-label="Scroll to top"
       >
-        <ArrowUp className="w-6 h-6" />
+        <ArrowUp className="h-4 w-4" />
       </button>
     </main>
   );
