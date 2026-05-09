@@ -10,15 +10,11 @@ import numpy as np
 INPUT_FILE = "jsons/__interactions.json"
 OUTPUT_FILE = "jsons/__recommendations.json"
 
-# Trọng số Implicit Feedback (Khớp với luận văn & data sinh ra)
+# Trọng số Implicit Feedback (Khớp với evaluate.py & recommend.py)
 WEIGHT_MAP = {
-    "VIEW": 1.0,            # Xem: Thể hiện sự tò mò nhẹ
-    "LIKE": 3.0,            # Thích: Quan tâm rõ ràng
-    "CLICK_BOOK_NOW": 4.0,  # Intent cao
+    "CLICK_BOOK_NOW": 2.0,  # Intent: Click nút đặt phòng
+    "ADD_TO_WISHLIST": 3.0, # Wishlist: Quan tâm rõ ràng
     "BOOK": 5.0,            # Conversion: Tương tác mạnh nhất
-    "SEARCH_QUERY": 0.5,    # (Nếu có)
-    "share": 2.0,           # (Nếu có)
-    "CANCEL": -5.0          # (Nếu có) - Phạt nặng
 }
 
 def load_data():

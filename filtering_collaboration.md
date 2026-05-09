@@ -483,11 +483,9 @@ INPUT_FILE = "jsons/__interactions.json"
 OUTPUT_FILE = "jsons/__recommendations.json"
 
 WEIGHT_MAP = {
-    "VIEW": 1.0,
-    "LIKE": 3.0,
-    "CLICK_BOOK_NOW": 4.0,
-    "BOOK": 5.0,
-    "CANCEL": -5.0
+    "CLICK_BOOK_NOW": 2.0,  # Intent: Click nút đặt phòng
+    "ADD_TO_WISHLIST": 3.0, # Wishlist: Quan tâm rõ ràng
+    "BOOK": 5.0,            # Conversion: Tương tác mạnh nhất
 }
 
 def main():

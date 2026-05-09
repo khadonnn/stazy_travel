@@ -1,35 +1,35 @@
 {
-  "timestamp": "2026-05-06T17:33:20.444516",
+  "timestamp": "2026-05-09T13:20:50.504403",
   "system": "Explicit CF (Rating Prediction)",
   "data_stats": {
-    "total_ratings": 1526,
+    "total_ratings": 1586,
     "rating_distribution": {
-      "2": 141,
-      "3": 337,
-      "1": 62,
-      "4": 577,
-      "5": 409
+      "5": 442,
+      "2": 166,
+      "4": 594,
+      "3": 328,
+      "1": 56
     },
-    "train_count": 915,
-    "test_count": 306
+    "train_count": 951,
+    "test_count": 318
   },
   "matrix_stats": {
     "train_shape": [
       200,
       255
     ],
-    "sparsity_pct": 98.23
+    "sparsity_pct": 98.16
   },
   "cf_results": {
-    "rmse": 1.2852,
-    "mae": 1.0116
+    "rmse": 1.2453,
+    "mae": 1.0095
   },
   "baseline_results": {
-    "rmse": 1.233,
-    "mae": 0.987
+    "rmse": 1.2187,
+    "mae": 0.9918
   },
   "improvement_pct": {
-    "rmse": -4.23,
-    "mae": -2.49
+    "rmse": -2.18,
+    "mae": -1.79
   }
 }
