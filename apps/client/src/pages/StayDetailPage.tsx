@@ -46,6 +46,7 @@ import { getRandomDescription } from "@/lib/utils/stayDes";
 import ModalDetail from "@/components/ModelDetail";
 import CategoryBadge from "@/shared/CategoryBadge";
 import { useCartStore } from "@/store/useCartStore";
+import { useChatContextStore } from "@/store/useChatContextStore";
 import { formatPrice } from "@/lib/utils/formatPrice";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -104,6 +105,10 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
   const [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false);
   const [refreshComments, setRefreshComments] = useState(0);
   const addItem = useCartStore((state) => state.addItem);
+
+  // Chat context store - set hotel context for smart chatbox
+  const setCurrentHotelContext = useChatContextStore((s) => s.setCurrentHotel);
+  const clearHotelContext = useChatContextStore((s) => s.clearHotelContext);
 
   // --- 1. FETCH DỮ LIỆU TỪ BACKEND ---
   useEffect(() => {
@@ -192,6 +197,42 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     };
   }, [stayData?.id]);
 
+  // --- 1b. SET CHAT CONTEXT WHEN HOTEL DATA IS LOADED ---
+  useEffect(() => {
+    if (!stayData) return;
+
+    // Use destination field directly from DB data
+    const destination = (stayData as any).destination || "";
+
+    setCurrentHotelContext({
+      id: stayData.id,
+      name: stayData.title,
+      address: stayData.address,
+      price: Number(stayData.price) || 0,
+      rating: stayData.reviewStar ?? 0,
+      image: stayData.featuredImage,
+      slug: slug,
+      destination: destination,
+      category:
+        typeof stayData.category === "object"
+          ? (stayData.category as any)?.name
+          : stayData.category,
+      amenities: Array.isArray(stayData.amenities)
+        ? stayData.amenities.map((a: any) =>
+            typeof a === "object" ? a.name || a.id : String(a),
+          )
+        : undefined,
+      description:
+        typeof stayData.description === "string"
+          ? stayData.description
+          : undefined,
+      map: stayData.map ?? null,
+    });
+
+    // Note: Do NOT clear context on unmount here.
+    // Context is cleared by ChatBox when the user navigates away from hotel pages.
+  }, [stayData?.id, slug]);
+
   useEffect(() => {
     const checkAvailability = async () => {
       // 1. Chỉ check khi đã chọn đủ ngày và có dữ liệu hotel
@@ -205,7 +246,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       try {
         // Gọi API kiểm tra (bạn cần tạo endpoint này ở Backend Booking Service như bài trước)
         // GET /api/check-availability?hotelId=1&checkIn=...&checkOut=...
-        const res = await axios.get("/api/check-availability", {
+        const res = await axios.get("/check-availability", {
           params: {
             hotelId: stayData.id,
             checkIn: checkInDate.toISOString(), // Chuyển về string ISO

@@ -13,6 +13,7 @@ import {
   MapPin,
   Sparkles,
 } from "lucide-react";
+import SuggestedChips from "./SuggestedChips";
 import { useBookingStore } from "@/store/useBookingStore";
 import Link from "next/link";
 import { io, Socket } from "socket.io-client";
@@ -61,6 +62,21 @@ interface ExploreChatBoxProps {
   initialMessages?: StoreChatMessage[];
   /** Current hotels from parent for dynamic tag extraction */
   currentHotels?: ExploreHotel[];
+  /** Hide the default header (when parent renders a context-aware header) */
+  hideHeader?: boolean;
+  /** Whether we're in context-aware mode (hotel detail page) */
+  isContextAware?: boolean;
+  /** Current hotel context for SuggestedChips and greeting */
+  currentHotel?: {
+    id: number;
+    name: string;
+    address: string;
+    price: number;
+    rating: number;
+    image?: string;
+    slug: string;
+    destination?: string;
+  } | null;
 }
 
 /**
@@ -81,6 +97,9 @@ export default function ExploreChatBox({
   initialQuery,
   initialMessages,
   currentHotels: parentHotels = [],
+  hideHeader = false,
+  isContextAware = false,
+  currentHotel,
 }: ExploreChatBoxProps) {
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -95,6 +114,26 @@ export default function ExploreChatBox({
 
   const currentUserId = user?.id || "user_seed_6";
   const currentUserName = user?.fullName || user?.firstName || "Khách hàng";
+
+  // Build initial greeting based on context
+  const initialGreeting =
+    isContextAware && currentHotel
+      ? {
+          id: 1,
+          sender: "ai" as const,
+          text: `🏨 Xin chào! Tôi thấy bạn đang xem **${currentHotel.name}** tại ${currentHotel.address}. Hãy chọn một gợi ý bên dưới hoặc hỏi tôi bất cứ điều gì!`,
+        }
+      : {
+          id: 1,
+          sender: "ai" as const,
+          text: "🤖 Chào bạn! Tôi là Stazy AI. Hãy cho tôi biết bạn muốn tìm khách sạn ở đâu?",
+          suggestions: [
+            "Khách sạn Đà Lạt",
+            "Resort Nha Trang",
+            "Homestay Đà Nẵng",
+            "Villa Vũng Tàu",
+          ],
+        };
 
   const [messages, setMessages] = useState<Message[]>(
     initialMessages && initialMessages.length > 0
@@ -123,19 +162,7 @@ export default function ExploreChatBox({
             : undefined,
           suggestions: m.suggestions,
         }))
-      : [
-          {
-            id: 1,
-            sender: "ai" as const,
-            text: "🤖 Chào bạn! Tôi là Stazy AI. Hãy cho tôi biết bạn muốn tìm khách sạn ở đâu?",
-            suggestions: [
-              "Khách sạn Đà Lạt",
-              "Resort Nha Trang",
-              "Homestay Đà Nẵng",
-              "Villa Vũng Tàu",
-            ],
-          },
-        ],
+      : [initialGreeting],
   );
 
   // Read hotels from store as fallback (for initial mount when parent hasn't passed them yet)
@@ -179,6 +206,11 @@ export default function ExploreChatBox({
       socket.disconnect();
     };
   }, [currentUserId]);
+
+  // Handle chip click directly (no CustomEvent needed)
+  const handleChipClick = (prompt: string) => {
+    handleSendMessage(prompt);
+  };
 
   // Auto-scroll
   useEffect(() => {
@@ -251,11 +283,17 @@ export default function ExploreChatBox({
         return { sender: m.sender, text: m.text };
       });
 
+      // Inject hotel context into the message when in context-aware mode
+      const contextualMessage =
+        isContextAware && currentHotel
+          ? `[Context: User đang xem khách sạn "${currentHotel.name}" tại ${currentHotel.address}, giá ${currentHotel.price}đ/đêm, rating ${currentHotel.rating}. Trả lời dựa trên thông tin khách sạn này.]\n\n${trimmedMessage}`
+          : trimmedMessage;
+
       const res = await fetch(`${AI_SERVICE_URL}/agent/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: trimmedMessage,
+          message: contextualMessage,
           user_id: currentUserId,
           history: formattedHistory,
         }),
@@ -275,6 +313,21 @@ export default function ExploreChatBox({
 
         const hotels = data.data?.hotels || [];
 
+        // Post-process: bold hotel names in the AI response text
+        let responseText = data.agent_response || "";
+        if (hotels.length > 0) {
+          hotels.forEach((h: any) => {
+            if (h.title) {
+              // Bold the hotel name wherever it appears in the response
+              const escaped = h.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+              responseText = responseText.replace(
+                new RegExp(escaped, "gi"),
+                `**${h.title}**`,
+              );
+            }
+          });
+        }
+
         // Generate contextual suggestions
         const suggestions: string[] = [];
         if (hotels.length > 0) {
@@ -288,7 +341,7 @@ export default function ExploreChatBox({
           {
             id: Date.now() + 1,
             sender: "ai",
-            text: data.agent_response,
+            text: responseText,
             data: {
               hotels: hotels,
               bookingLink: data.data?.booking_link,
@@ -297,7 +350,7 @@ export default function ExploreChatBox({
           },
         ]);
 
-        // Notify parent about hotels for map display
+        // Notify parent about hotels for map display (column 2 & 3 auto-update)
         if (hotels.length > 0 && onHotelsFound) {
           onHotelsFound(hotels);
         }
@@ -323,33 +376,35 @@ export default function ExploreChatBox({
       layoutId="main-chat-box"
       className="flex flex-col h-full w-full bg-gray-50/50"
     >
-      {/* --- HEADER (#3B7F70 Stazy Green) --- */}
-      <div className="h-16 flex items-center px-4 border-b border-gray-200 bg-[#3B7F70] text-white shrink-0">
-        <div className="flex items-center gap-2 flex-1">
-          <div className="bg-white/20 p-2 rounded-lg">
-            <Sparkles className="w-5 h-5 text-white" />
+      {/* --- HEADER (hide when parent provides context-aware header) --- */}
+      {!hideHeader && (
+        <div className="h-16 flex items-center px-4 border-b border-gray-200 bg-[#3B7F70] text-white shrink-0">
+          <div className="flex items-center gap-2 flex-1">
+            <div className="bg-white/20 p-2 rounded-lg">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-white text-sm">
+                {isSupportMode ? "Nhân viên hỗ trợ" : "Trợ lý AI Trip"}
+              </h2>
+              <p className="text-xs text-white/70 flex items-center gap-1">
+                <span
+                  className={`w-1.5 h-1.5 rounded-full animate-pulse ${isSupportMode ? "bg-blue-300" : "bg-green-300"}`}
+                />
+                {isSupportMode ? "Live Support" : "Đang hỗ trợ tìm kiếm..."}
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="font-semibold text-white text-sm">
-              {isSupportMode ? "Nhân viên hỗ trợ" : "Trợ lý AI Trip"}
-            </h2>
-            <p className="text-xs text-white/70 flex items-center gap-1">
-              <span
-                className={`w-1.5 h-1.5 rounded-full animate-pulse ${isSupportMode ? "bg-blue-300" : "bg-green-300"}`}
-              />
-              {isSupportMode ? "Live Support" : "Đang hỗ trợ tìm kiếm..."}
-            </p>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleSupportMode}
+            className="h-7 text-xs border-white/30 text-white bg-white/10 hover:bg-white/20"
+          >
+            {isSupportMode ? "Dùng AI" : "Gặp nhân viên"}
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={toggleSupportMode}
-          className="h-7 text-xs border-white/30 text-white bg-white/10 hover:bg-white/20"
-        >
-          {isSupportMode ? "Dùng AI" : "Gặp nhân viên"}
-        </Button>
-      </div>
+      )}
 
       {/* --- CHAT AREA --- */}
       <div
@@ -402,40 +457,52 @@ export default function ExploreChatBox({
 
               {/* Hotel cards (horizontal scroll) */}
               {msg.sender === "ai" && msg.data?.hotels && (
-                <div className="flex gap-2 overflow-x-auto pb-2 snap-x">
-                  {msg.data.hotels.map((hotel) => (
-                    <Link
-                      href={`/hotels/${hotel.slug}`}
-                      key={hotel.id}
-                      className="snap-center"
-                    >
-                      <Card className="w-44 shrink-0 cursor-pointer hover:shadow-md transition-shadow">
-                        <div className="h-20 bg-gray-200 w-full relative overflow-hidden rounded-t-xl">
-                          <img
-                            src={hotel.image || "https://placehold.co/400x300"}
-                            className="w-full h-full object-cover"
-                          />
-                          {hotel.rating > 0 && (
-                            <Badge className="absolute top-1 right-1 bg-white/90 text-black text-[10px]">
-                              ⭐ {hotel.rating}
-                            </Badge>
-                          )}
-                        </div>
-                        <CardContent className="p-2">
-                          <h4 className="font-bold text-xs truncate">
-                            {hotel.title}
-                          </h4>
-                          <div className="font-bold text-green-600 text-xs mt-1">
-                            {new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(hotel.price)}
+                <>
+                  <div className="flex gap-2 overflow-x-auto pb-2 snap-x">
+                    {msg.data.hotels.map((hotel) => (
+                      <Link
+                        href={`/hotels/${hotel.slug}`}
+                        key={hotel.id}
+                        className="snap-center"
+                      >
+                        <Card className="w-44 shrink-0 cursor-pointer hover:shadow-md transition-shadow">
+                          <div className="h-20 bg-gray-200 w-full relative overflow-hidden rounded-t-xl">
+                            <img
+                              src={
+                                hotel.image || "https://placehold.co/400x300"
+                              }
+                              className="w-full h-full object-cover"
+                            />
+                            {hotel.rating > 0 && (
+                              <Badge className="absolute top-1 right-1 bg-white/90 text-black text-[10px]">
+                                ⭐ {hotel.rating}
+                              </Badge>
+                            )}
                           </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  ))}
-                </div>
+                          <CardContent className="p-2">
+                            <h4 className="font-bold text-xs truncate">
+                              {hotel.title}
+                            </h4>
+                            <div className="font-bold text-green-600 text-xs mt-1">
+                              {new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(hotel.price)}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                  {/* "Xem trên bản đồ" button - updates column 2 & map */}
+                  <button
+                    onClick={() => onHotelsFound?.(msg.data!.hotels!)}
+                    className="flex items-center justify-center gap-1.5 w-full px-3 py-2 bg-[#3B7F70]/10 text-[#3B7F70] border border-[#3B7F70]/20 rounded-xl text-xs font-semibold hover:bg-[#3B7F70]/20 transition"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    Xem trên bản đồ ({msg.data.hotels.length} kết quả)
+                  </button>
+                </>
               )}
 
               {/* Booking link */}
@@ -484,6 +551,16 @@ export default function ExploreChatBox({
                   </button>
                 ))}
           </div>
+        </div>
+      )}
+
+      {/* --- SUGGESTED CHIPS (only in context-aware mode, above input) --- */}
+      {isContextAware && currentHotel && (
+        <div className="px-4 py-2 border-t border-gray-100 bg-white shrink-0">
+          <SuggestedChips
+            destination={currentHotel.destination}
+            onChipClick={handleChipClick}
+          />
         </div>
       )}
 

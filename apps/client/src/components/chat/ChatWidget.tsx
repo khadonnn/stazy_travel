@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { BotMessageSquare, Expand, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import ChatBox from "./ChatBox";
-import { motion, AnimatePresence } from "motion/react"; // hoặc "framer-motion" tùy phiên bản bạn dùng
+import { motion, AnimatePresence } from "motion/react";
+import { useChatContextStore } from "@/store/useChatContextStore";
+import { useExploreStore, type ChatMessage } from "@/store/useExploreStore";
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const disabledRoutes = ["/about", "/login", "/register"];
 
@@ -35,6 +38,40 @@ export default function ChatWidget() {
       y: 0,
       scale: 1,
     },
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  // Navigate to the full explore/chat page with context preserved
+  const handleExpand = () => {
+    const currentHotel = useChatContextStore.getState().currentHotel;
+    const setExploreHotels = useExploreStore.getState().setHotels;
+
+    let url = `/chat/explore-${Date.now()}`;
+
+    // If we have a current hotel context (user is on Hotel Detail page),
+    // pass hotelId as query param so the full page can detect context
+    if (currentHotel) {
+      url += `?hotelId=${currentHotel.id}`;
+      // Also transfer hotel to explore store for column 2 & map
+      setExploreHotels([
+        {
+          id: currentHotel.id,
+          title: currentHotel.name,
+          price: currentHotel.price,
+          address: currentHotel.address,
+          rating: currentHotel.rating,
+          image: currentHotel.image,
+          slug: currentHotel.slug,
+          description: currentHotel.description,
+          map: currentHotel.map ?? null,
+        },
+      ]);
+    }
+
+    router.push(url);
   };
 
   return (
@@ -65,12 +102,17 @@ export default function ChatWidget() {
                 </h3>
 
                 <div className="ml-auto flex gap-2">
-                  <button className="p-1 rounded-full hover:bg-[#2e6459] cursor-pointer">
+                  <button
+                    onClick={handleExpand}
+                    className="p-1 rounded-full hover:bg-[#2e6459] cursor-pointer"
+                    title="Mở rộng"
+                  >
                     <Expand className="w-5 h-5" />
                   </button>
                   <button
-                    onClick={() => setIsOpen(false)}
+                    onClick={handleClose}
                     className="p-1 rounded-full hover:bg-[#2e6459] cursor-pointer"
+                    title="Đóng"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -92,18 +134,13 @@ export default function ChatWidget() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{
                 scale: [1, 2.2],
-                opacity: [0, 0.6, 0], // Xuất hiện mờ -> Đậm -> Biến mất hoàn toàn
+                opacity: [0, 0.6, 0],
               }}
               transition={{
                 duration: 3,
                 repeat: Infinity,
                 ease: "easeOut",
                 delay: delay,
-                // CHỐT HẠ: times giúp kiểm soát chính xác thời điểm của từng mốc opacity
-                // [0, 0.1, 0.95] nghĩa là:
-                // 0%: opacity 0 (bắt đầu)
-                // 10%: đạt độ đậm 0.6 (hiện ra nhanh)
-                // 95%: đã phải về 0 hoàn toàn (để 5% còn lại nó "tàng hình" trước khi lặp lại)
                 times: [0, 0.1, 0.95],
               }}
             />

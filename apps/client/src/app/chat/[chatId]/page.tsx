@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import {
   Star,
   MapPin,
@@ -10,9 +10,12 @@ import {
   Map as MapIcon,
   X,
   Eye,
+  Bot,
 } from "lucide-react";
 import ExploreChatBox from "@/components/chat/ExploreChatBox";
 import { useExploreStore, type ExploreHotel } from "@/store/useExploreStore";
+import { useChatContextStore } from "@/store/useChatContextStore";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
 
 // Dynamic import for map (avoid SSR issues with Leaflet)
@@ -28,6 +31,11 @@ const ExploreMap = dynamic(() => import("@/components/chat/ExploreMap"), {
 export default function ExploreWorkspacePage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
+
+  // --- CONTEXT DETECTION VIA URL PARAM ---
+  const hotelIdParam = searchParams?.get("hotelId");
+  const isContextAware = !!hotelIdParam;
 
   // Centralized store
   const storeHotels = useExploreStore((s) => s.hotels);
@@ -36,15 +44,33 @@ export default function ExploreWorkspacePage() {
   const setActiveHotelId = useExploreStore((s) => s.setActiveHotelId);
   const clearAll = useExploreStore((s) => s.clearAll);
 
+  // Chat context store (from hotel detail page)
+  const chatContextHotel = useChatContextStore((s) => s.currentHotel);
+
   const [hotels, setHotels] = useState<ExploreHotel[]>(storeHotels);
   const [selectedHotel, setSelectedHotel] = useState<ExploreHotel | null>(null);
 
-  // Clear store on unmount
-  useEffect(() => {
-    return () => {
-      clearAll();
-    };
-  }, [clearAll]);
+  // Derive currentHotel for context-aware mode
+  // Priority: chatContextHotel (from store) > first hotel in list (from store transfer)
+  const currentHotel = isContextAware
+    ? chatContextHotel ||
+      (storeHotels.length > 0 && storeHotels[0]
+        ? {
+            id: storeHotels[0].id,
+            name: storeHotels[0].title,
+            address: storeHotels[0].address,
+            price: storeHotels[0].price,
+            rating: storeHotels[0].rating,
+            image: storeHotels[0].image,
+            slug: storeHotels[0].slug,
+            destination: (storeHotels[0] as any).destination || "",
+          }
+        : null)
+    : null;
+
+  // Note: Do NOT clear store on unmount - it causes a race condition
+  // where old page clears data before new page can read it.
+  // Store is cleared on explicit Close button click instead.
 
   // Callback when AI returns hotel results in explore page
   const handleHotelsFound = useCallback(
@@ -81,10 +107,35 @@ export default function ExploreWorkspacePage() {
           CỘT 1: CHATBOX AI (Rộng 350px)
           ========================================== */}
       <div className="w-[350px] flex flex-col border-r border-gray-200 bg-gray-50/50 flex-shrink-0 z-20">
+        {/* Context-Aware Header */}
+        {isContextAware && currentHotel ? (
+          <div className="h-16 flex items-center px-4 border-b border-gray-200 bg-[#3B7F70] text-white shrink-0">
+            <div className="flex items-center gap-2 flex-1">
+              <Avatar className="w-8 h-8">
+                <AvatarFallback className="bg-white/20 text-white font-bold">
+                  <Bot size={16} />
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h2 className="font-semibold text-white text-sm">
+                  AI · {currentHotel.name}
+                </h2>
+                <p className="text-xs text-white/70 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-green-300" />
+                  Contextual AI
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         <ExploreChatBox
           onHotelsFound={handleHotelsFound}
           initialMessages={storeMessages.length > 0 ? storeMessages : undefined}
           currentHotels={hotels}
+          hideHeader={isContextAware}
+          isContextAware={isContextAware}
+          currentHotel={currentHotel}
         />
       </div>
 
@@ -95,9 +146,11 @@ export default function ExploreWorkspacePage() {
         {/* Header */}
         <div className="h-16 flex items-center justify-between px-5 border-b border-gray-200 bg-white shrink-0">
           <h2 className="font-bold text-gray-800 text-sm">
-            {hotels.length > 0
-              ? `${hotels.length} kết quả tìm được`
-              : "Kết quả tìm kiếm"}
+            {isContextAware && currentHotel
+              ? `So sánh: ${currentHotel.name}`
+              : hotels.length > 0
+                ? `${hotels.length} kết quả tìm được`
+                : "Kết quả tìm kiếm"}
           </h2>
           <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-md transition">
             <SlidersHorizontal className="w-5 h-5" />
@@ -110,7 +163,9 @@ export default function ExploreWorkspacePage() {
             <div className="flex flex-col items-center justify-center h-full text-gray-400">
               <MapIcon className="w-12 h-12 mb-3 opacity-30" />
               <p className="text-sm text-center">
-                Chưa có kết quả. Hãy thử tìm kiếm ở cột chat bên trái!
+                {isContextAware
+                  ? "Đang tải thông tin khách sạn..."
+                  : "Chưa có kết quả. Hãy thử tìm kiếm ở cột chat bên trái!"}
               </p>
             </div>
           ) : (
@@ -124,7 +179,7 @@ export default function ExploreWorkspacePage() {
                     : "border-gray-100 hover:border-amber-300 hover:shadow-md"
                 }`}
               >
-                {/* Ảnh khách sạn (h-44, full width) */}
+                {/* Ảnh khách sạn */}
                 <div className="relative h-44 bg-gray-200 overflow-hidden">
                   <img
                     src={
@@ -137,7 +192,7 @@ export default function ExploreWorkspacePage() {
                         "https://placehold.co/600x400?text=Hotel";
                     }}
                   />
-                  {/* Price overlay (bottom-right) */}
+                  {/* Price overlay */}
                   <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg">
                     <span className="text-sm font-bold">
                       {new Intl.NumberFormat("vi-VN", {
@@ -147,7 +202,7 @@ export default function ExploreWorkspacePage() {
                     </span>
                     <span className="text-xs opacity-80"> /đêm</span>
                   </div>
-                  {/* Rating badge (top-left) */}
+                  {/* Rating badge */}
                   {hotel.rating > 0 && (
                     <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg flex items-center gap-1 text-xs font-semibold text-amber-600">
                       <Star className="w-3 h-3 fill-amber-500" />
@@ -205,7 +260,9 @@ export default function ExploreWorkspacePage() {
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-gray-600 font-medium flex items-center gap-2">
               <MapIcon className="w-5 h-5 text-[#3B7F70]" />
-              Bản đồ sẽ hiển thị khi có kết quả
+              {isContextAware
+                ? "Đang tải vị trí khách sạn..."
+                : "Bản đồ sẽ hiển thị khi có kết quả"}
             </div>
           </div>
         )}
