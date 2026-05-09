@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-06T18:04:39.179446",
+  "timestamp": "2026-05-09T16:36:14.569233",
   "model_type": "SVD (Optimized)",
   "best_params": {
     "n_factors": 50,
@@ -8,23 +8,23 @@
     "reg_all": 0.1
   },
   "data_stats": {
-    "total_ratings": 7240,
+    "total_ratings": 7401,
     "unique_users": 200,
     "unique_hotels": 255,
     "score_distribution": {
-      "1.0": 60,
-      "2.0": 2510,
-      "3.0": 3359,
-      "4.0": 566,
-      "5.0": 745
+      "1.0": 56,
+      "2.0": 2552,
+      "3.0": 3453,
+      "4.0": 573,
+      "5.0": 767
     }
   },
   "evaluation": {
-    "optimized_rmse": 0.9520907824188377,
-    "optimized_mae": 0.7236533846822242,
-    "baseline_rmse": 0.9634503909344054,
-    "baseline_mae": 0.7348900707388358,
-    "rmse_improvement_pct": 1.1790548452163239,
-    "mae_improvement_pct": 1.529029511218547
+    "optimized_rmse": 0.9529916539503047,
+    "optimized_mae": 0.717470975481373,
+    "baseline_rmse": 0.9586208368100422,
+    "baseline_mae": 0.7279710338934038,
+    "rmse_improvement_pct": 0.5872168268811502,
+    "mae_improvement_pct": 1.442373105956349
   }
 }

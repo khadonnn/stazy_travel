@@ -17,7 +17,7 @@ export default async function RootLayout({
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                 <SidebarProvider defaultOpen={defaultOpen}>
                     <AppSidebar />
-                    <main className="w-full">
+                    <main className="w-full overflow-y-auto [&::-webkit-scrollbar]:w-[2px] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-white/[0.08] [&::-webkit-scrollbar-track]:bg-transparent">
                         <Navbar />
                         <div className="px-4"> {children}</div>
                         <Toaster />

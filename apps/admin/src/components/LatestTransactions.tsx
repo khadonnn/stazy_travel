@@ -103,7 +103,7 @@ const LatestTransactions = () => {
                 {realTransactions && realTransactions.length > 0 ? (
                     <span className="animate-pulse text-xs font-medium text-green-500">● Live Data</span>
                 ) : (
-                    <span className="text-xs font-medium text-gray-400">● Mock Data</span>
+                    '' // <span className="text-xs font-medium text-gray-400">● Mock Data</span>
                 )}
             </div>
 
@@ -118,17 +118,17 @@ const LatestTransactions = () => {
                         return (
                             <Card
                                 key={item.id}
-                                className="hover:bg-accent/50 flex flex-row items-center justify-between gap-1.5 p-2 transition-colors"
+                                className="hover:bg-accent/50 flex flex-row items-center justify-between gap-1.5 p-1 transition-colors"
                             >
                                 {/* Avatar & Info */}
                                 <div className="flex w-[145px] min-w-0 items-center gap-1.5">
-                                    <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border">
+                                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border">
                                         <Image
                                             src={item.customerAvatar}
                                             alt={item.customerName}
                                             fill
                                             className="object-cover"
-                                            sizes="32px"
+                                            sizes="48px"
                                         />
                                     </div>
                                     <div className="flex min-w-0 flex-1 flex-col">

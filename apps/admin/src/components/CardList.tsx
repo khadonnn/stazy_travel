@@ -148,7 +148,7 @@ const CardList = ({ title }: { title: string }) => {
     // Nếu là Booking List: lấy bookingData thật, nếu rỗng thì lấy mockBookings
     const realData = isHotelList ? hotelData : bookingData;
     const listData = realData && realData.length > 0 ? realData : isHotelList ? mockHotels : mockBookings;
-
+    console.log('CardList Rendered with Data:', listData);
     const getStatusClasses = (status: string) => {
         switch (status) {
             case 'Confirmed':
@@ -161,7 +161,7 @@ const CardList = ({ title }: { title: string }) => {
                 return 'secondary';
         }
     };
-
+    const truncate = (text: string, max = 18) => (text.length > max ? `${text.slice(0, max)}...` : text);
     return (
         <div className="w-full">
             <div className="mb-6 flex items-center justify-between">
@@ -174,7 +174,7 @@ const CardList = ({ title }: { title: string }) => {
                 )}
             </div>
 
-            <ScrollArea className="max-h-[400px] overflow-y-auto pr-4">
+            <ScrollArea className="border-r border-white/[0.04] [&>[data-radix-scroll-area-viewport]]:pr-4 [&>[data-radix-scroll-area-viewport]]:[scrollbar-color:rgba(255,255,255,0.08)_transparent] [&>[data-radix-scroll-area-viewport]]:[scrollbar-width:thin] [&>[data-radix-scroll-area-viewport]::-webkit-scrollbar]:w-[2px] [&>[data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb]:rounded-full [&>[data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb]:bg-transparent hover:[&>[data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb]:bg-white/[0.08] [&>[data-radix-scroll-area-viewport]::-webkit-scrollbar-track]:bg-transparent">
                 <div className="flex flex-col gap-3">
                     {listData.map((item: any) => {
                         if (isHotelList) {
@@ -182,7 +182,7 @@ const CardList = ({ title }: { title: string }) => {
                             return (
                                 <Card
                                     key={item.id}
-                                    className="hover:bg-accent/50 flex flex-row items-center justify-between gap-3 p-3 transition"
+                                    className="hover:bg-accent/50 flex flex-row items-center justify-between gap-3 p-1 transition"
                                 >
                                     <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border">
                                         <Image
@@ -202,7 +202,7 @@ const CardList = ({ title }: { title: string }) => {
                                                     variant="secondary"
                                                     className="h-5 w-fit max-w-[120px] truncate px-1.5 text-[10px]"
                                                 >
-                                                    {item.address}
+                                                    {truncate(item.address)}
                                                 </Badge>
                                                 <div className="text-muted-foreground mt-1 text-xs">
                                                     <span className="text-foreground font-bold underline decoration-dotted underline-offset-2">
@@ -211,7 +211,7 @@ const CardList = ({ title }: { title: string }) => {
                                                     <span className="ml-1 text-[10px]">({item.viewCount} views)</span>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-1 text-xs font-semibold">
+                                            <div className="mr-1 flex items-center gap-1 text-xs font-semibold">
                                                 ⭐ {item.reviewStar}
                                             </div>
                                         </div>

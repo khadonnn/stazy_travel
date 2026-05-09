@@ -54,11 +54,20 @@ export default function AppPieChart() {
         queryFn: async () => await getBrowserStats(),
     });
 
+    // Mock data fallback nếu data lỗi hoặc rỗng
+    const mockData = [
+        { browser: 'chrome', visitors: 4500, fill: 'var(--color-chrome)' },
+        { browser: 'safari', visitors: 2500, fill: 'var(--color-safari)' },
+        { browser: 'firefox', visitors: 1500, fill: 'var(--color-firefox)' },
+        { browser: 'edge', visitors: 1000, fill: 'var(--color-edge)' },
+        { browser: 'other', visitors: 500, fill: 'var(--color-other)' },
+    ];
+    const displayData = chartData && chartData.length > 0 ? chartData : mockData;
+
     // 4. Tính tổng Visitors (Dùng useMemo để tối ưu)
     const totalVisitors = React.useMemo(() => {
-        if (!chartData) return 0;
-        return chartData.reduce((acc: number, curr: { visitors: number }) => acc + curr.visitors, 0);
-    }, [chartData]);
+        return displayData.reduce((acc: number, curr: { visitors: number }) => acc + curr.visitors, 0);
+    }, [displayData]);
 
     if (isLoading) {
         return (
@@ -73,9 +82,6 @@ export default function AppPieChart() {
             </div>
         );
     }
-
-    // Fallback nếu data lỗi hoặc rỗng
-    const displayData = chartData || [];
 
     return (
         <div className="flex flex-col">

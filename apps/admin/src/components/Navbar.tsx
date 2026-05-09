@@ -83,7 +83,11 @@ const Navbar = () => {
                 <DropdownMenu>
                     <DropdownMenuTrigger>
                         <Avatar className="cursor-pointer transition hover:opacity-80">
-                            <AvatarImage src="https://avatars.githubusercontent.com/u/146587461?v=4&size=64" />
+                            <AvatarImage
+                                src="/logo2.jpg"
+                                alt="User Avatar"
+                                className="object-cover object-[center_25%]"
+                            />
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
                     </DropdownMenuTrigger>

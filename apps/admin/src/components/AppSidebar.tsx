@@ -35,6 +35,7 @@ import {
     History,
     Database,
     Bot,
+    Brain,
 } from 'lucide-react';
 
 import {
@@ -217,15 +218,16 @@ const AppSidebar = () => {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild size="lg">
-                            <Link href="/" className="flex items-center">
+                            <Link href="/" className="flex items-center gap-2">
                                 <Image
-                                    src="/assets/images/logo1.png"
+                                    src="/logo.png"
                                     alt="logo"
-                                    width={30}
-                                    height={30}
-                                    className="shink-0 h-8 w-auto rounded-full object-cover"
+                                    width={32}
+                                    height={32}
+                                    className="h-10 w-10 rounded-full object-contain"
                                 />
-                                <span className="font-bold tracking-wider">KHADON</span>
+
+                                <span className="text-sm font-bold tracking-[0.2em]">KHADON</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -399,7 +401,7 @@ const AppSidebar = () => {
                                 <SidebarMenuSubItem>
                                     <SidebarMenuSubButton asChild>
                                         <Link href="/ai-management">
-                                            <BrainCircuit className="size-4" />
+                                            <Brain className="size-4" />
                                             <span>Quản lý AI Model</span>
                                         </Link>
                                     </SidebarMenuSubButton>
