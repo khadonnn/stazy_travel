@@ -6,22 +6,39 @@ export interface WordCloudItem {
     value: number;
 }
 
-export async function getWordCloudData(): Promise<WordCloudItem[]> {
+/**
+ * Lấy dữ liệu Word Cloud từ Review.comment
+ * Hỗ trợ filter theo sentiment (POSITIVE/NEGATIVE/NEUTRAL) để phân tích Hybrid.
+ * Dùng on-the-fly processing (không cần lưu extractedKeywords vào DB).
+ */
+export async function getWordCloudData(
+    sentimentFilter?: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL',
+): Promise<WordCloudItem[]> {
     try {
-        // Lấy tất cả comments từ Review
+        // Build where clause - filter theo sentiment nếu có
+        const where: Record<string, unknown> = {
+            comment: { not: null },
+        };
+        if (sentimentFilter) {
+            where.sentiment = sentimentFilter;
+        }
+
+        // Lấy comments từ Review (giới hạn 2000 để tối ưu performance)
         const reviews = await prisma.review.findMany({
-            where: {
-                comment: { not: null },
-            },
-            select: { comment: true },
+            where,
+            select: { comment: true, sentiment: true },
+            take: 2000,
+            orderBy: { createdAt: 'desc' },
         });
 
         if (reviews.length === 0) return [];
 
         // Đếm tần suất từ khóa
         const wordCount = new Map<string, number>();
-        // Các stopwords tiếng Việt
+
+        // Stopwords tiếng Việt (mở rộng từ vietnamese-stopwords.txt)
         const stopwords = new Set([
+            // Đại từ & từ nối phổ biến
             'và',
             'của',
             'là',
@@ -45,13 +62,70 @@ export async function getWordCloudData(): Promise<WordCloudItem[]> {
             'nếu',
             'để',
             'khi',
-            'hay',
             'cũng',
             'như',
             'đang',
             'vẫn',
             'nữa',
             'từ',
+            'còn',
+            'nên',
+            'vào',
+            'ra',
+            'lại',
+            'lên',
+            'xuống',
+            'sau',
+            'trước',
+            'trên',
+            'dưới',
+            'giữa',
+            'ngoài',
+            'trong',
+            'đến',
+            'tới',
+            'qua',
+            'hơn',
+            'nhất',
+            'thứ',
+            'mỗi',
+            'nhiều',
+            'ít',
+            'hết',
+            'cả',
+            'bởi',
+            'tuy',
+            'mà',
+            'nếu',
+            'hoặc',
+            'vậy',
+            'thế',
+            // Stopwords chức năng
+            'làm',
+            'đi',
+            'ấy',
+            'ạ',
+            'ơi',
+            'nhé',
+            'nha',
+            'à',
+            'ừ',
+            'đây',
+            'đâu',
+            'nào',
+            'sao',
+            'bao',
+            'biết',
+            'chỉ',
+            'chưa',
+            'đang',
+            'phải',
+            'thì',
+            'vẫn',
+            'rằng',
+            'ngay',
+            'lúc',
+            // English stopwords
             'the',
             'a',
             'an',
@@ -61,7 +135,6 @@ export async function getWordCloudData(): Promise<WordCloudItem[]> {
             'were',
             'be',
             'been',
-            'being',
             'have',
             'has',
             'had',
@@ -72,26 +145,15 @@ export async function getWordCloudData(): Promise<WordCloudItem[]> {
             'would',
             'could',
             'should',
-            'may',
-            'might',
-            'shall',
-            'can',
-            'need',
-            'dare',
-            'ought',
             'and',
             'or',
             'but',
             'if',
-            'while',
             'of',
             'at',
             'by',
             'for',
             'with',
-            'about',
-            'between',
-            'through',
             'to',
             'from',
             'in',
@@ -102,7 +164,6 @@ export async function getWordCloudData(): Promise<WordCloudItem[]> {
             'not',
             'so',
             'as',
-            'its',
             'my',
             'his',
             'her',
@@ -113,18 +174,22 @@ export async function getWordCloudData(): Promise<WordCloudItem[]> {
             'just',
             'than',
             'more',
-            'most',
             'some',
-            'any',
-            'all',
+            'we',
+            'you',
+            'they',
+            'he',
+            'she',
+            'no',
+            'yes',
         ]);
 
         reviews.forEach((r) => {
             if (!r.comment) return;
-            // Tách từ, normalize
+            // Tách từ, normalize, giữ Unicode tiếng Việt
             const words = r.comment
                 .toLowerCase()
-                .replace(/[^\p{L}\p{N}\s]/gu, ' ') // Giữ chữ Unicode (tiếng Việt)
+                .replace(/[^\p{L}\p{N}\s]/gu, ' ')
                 .split(/\s+/)
                 .filter((w) => w.length >= 2 && !stopwords.has(w));
 

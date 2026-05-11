@@ -2,14 +2,20 @@
 
 import { prisma, InteractionType } from "@repo/product-db";
 import { revalidatePath } from "next/cache";
+import { randomUUID } from "crypto";
 
 // --- 1. HÀM GET (Thay thế cho API GET cũ) ---
-export async function getReviews(hotelId: number) {
+export async function getReviews(
+  hotelId: number,
+  skip: number = 0,
+  take: number = 12,
+) {
   try {
     const reviews = await prisma.review.findMany({
       where: { hotelId: hotelId },
-      orderBy: { createdAt: "desc" }, // Mới nhất lên đầu
-      take: 20, // Lấy 20 cái
+      orderBy: { createdAt: "desc" },
+      skip: skip,
+      take: take,
       include: {
         user: {
           select: { name: true, avatar: true },
@@ -20,6 +26,18 @@ export async function getReviews(hotelId: number) {
   } catch (error) {
     console.error("Lỗi lấy review:", error);
     return [];
+  }
+}
+
+// --- 1b. HÀM ĐẾM TỔNG REVIEWS ---
+export async function getReviewCount(hotelId: number) {
+  try {
+    const count = await prisma.review.count({
+      where: { hotelId: hotelId },
+    });
+    return count;
+  } catch (error) {
+    return 0;
   }
 }
 
@@ -40,6 +58,7 @@ export async function submitReview(formData: FormData) {
     // ... (Code lưu Review và Interaction giữ nguyên) ...
     await prisma.review.create({
       data: {
+        bookingId: randomUUID(), // Generate unique bookingId cho constraint
         userId,
         hotelId,
         rating,

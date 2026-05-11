@@ -46,6 +46,31 @@ def generate_tuning_params(base_rmse):
 # =========================================================
 # DYNAMIC REVIEW GENERATOR (MIX & MATCH)
 # =========================================================
+def generate_explicit_sentiments(rating, sentiment):
+    """
+    Tạo explicitSentiments (aspect-based sentiment) cho Hybrid Model.
+    Trả về JSON object: { "service": "POSITIVE", "price": "NEGATIVE", ... }
+    """
+    aspects = ["service", "room", "location", "price", "amenities", "cleanliness"]
+    chosen_aspects = random.sample(aspects, k=random.randint(2, 5))
+
+    explicit_data = {}
+    for aspect in chosen_aspects:
+        if sentiment == "POSITIVE":
+            explicit_data[aspect] = random.choices(
+                ["POSITIVE", "NEUTRAL"], weights=[0.85, 0.15]
+            )[0]
+        elif sentiment == "NEUTRAL":
+            explicit_data[aspect] = random.choices(
+                ["POSITIVE", "NEUTRAL", "NEGATIVE"], weights=[0.3, 0.4, 0.3]
+            )[0]
+        else:
+            explicit_data[aspect] = random.choices(
+                ["NEGATIVE", "NEUTRAL"], weights=[0.8, 0.2]
+            )[0]
+    return explicit_data
+
+
 def generate_dynamic_review(sentiment):
     """Tạo comment đa dạng dựa trên sentiment"""
     if sentiment == "POSITIVE":
@@ -294,6 +319,7 @@ for user in users:
                 # Generate dynamic comment
                 comment = generate_dynamic_review(sentiment)
                 
+                explicit_sentiments = generate_explicit_sentiments(rating, sentiment)
                 reviews.append({
                     "id": str(uuid.uuid4()),
                     "bookingId": booking_id,
@@ -302,6 +328,8 @@ for user in users:
                     "rating": rating,
                     "comment": comment,
                     "sentiment": sentiment,
+                    "explicitSentiments": explicit_sentiments,
+                    "nlpProcessed": True,
                     "createdAt": review_timestamp.isoformat(),
                     "updatedAt": review_timestamp.isoformat()
                 })
@@ -356,6 +384,7 @@ for user in users:
                 
                 click_comment = generate_dynamic_review(click_sentiment)
                 
+                click_explicit = generate_explicit_sentiments(click_rating, click_sentiment)
                 reviews.append({
                     "id": str(uuid.uuid4()),
                     "bookingId": None,
@@ -364,6 +393,8 @@ for user in users:
                     "rating": click_rating,
                     "comment": click_comment,
                     "sentiment": click_sentiment,
+                    "explicitSentiments": click_explicit,
+                    "nlpProcessed": True,
                     "createdAt": click_review_timestamp.isoformat(),
                     "updatedAt": click_review_timestamp.isoformat()
                 })

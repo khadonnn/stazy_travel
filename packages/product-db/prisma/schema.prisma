@@ -465,25 +465,35 @@ model Favorite {
   @@index([hotelId])
   @@map("favorites")
 }
+enum ReviewSentiment {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+}
+
 model Review {
-  id        String   @id @default(uuid())
-  bookingId         String        @unique @db.VarChar(255)  // Business ID từ MongoDB
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  hotelId   Int
-  hotel     Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
-  
-  rating    Int      // 1-5 sao
-  comment   String?  @db.Text // Nội dung bình luận (Dùng cho Word Cloud)
-  
-  // Sentiment Analysis (AI có thể phân tích tích cực/tiêu cực sau này)
-  sentiment String?  // "POSITIVE", "NEGATIVE", "NEUTRAL"
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                 String           @id @default(uuid())
+  bookingId          String           @unique @db.VarChar(255) // Ràng buộc gốc từ MongoDB
+
+  userId             String
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  hotelId            Int
+  hotel              Hotel            @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  rating             Int              // Core cho Collaborative Filtering
+  comment            String?          @db.Text // Nguồn raw text cho Word Cloud Python xử lý
+
+  sentiment          ReviewSentiment? // Đánh giá cảm xúc chung
+  explicitSentiments Json?            // Trọng số cho Hybrid Model (Aspect-based sentiment)
+
+  nlpProcessed       Boolean          @default(false) // Flag đánh dấu đã gọi AI phân tích chưa
+
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 
   @@index([hotelId])
+  @@index([userId])
   @@map("reviews")
 }
 model DailyStat {

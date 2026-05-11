@@ -771,9 +771,9 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
         </h2>
         <Separator className="my-4" />
 
-        <div className="space-y-5">
+        {/* <div className="space-y-5">
           <FiveStar iconClass="w-6 h-6" className="space-x-0.5" />
-        </div>
+        </div> */}
 
         <div className="divide-y divide-neutral-200 dark:divide-neutral-800 mt-6">
           {/* Danh sách bình luận */}

@@ -298,11 +298,13 @@ async function main() {
     }
   }
 
-  // --- 5.5 SEED REVIEWS ---
-  // Sync với Interaction type RATING
-  // Logic: mỗi review → tạo 1 booking riêng (booking xảy ra trước, review sau trải nghiệm)
-  const reviewsData = readJson("__reviews.json");
-  console.log(`💬 Đang xử lý ${reviewsData.length} Reviews...`);
+  // --- 5.5 SEED REVIEWS (Hybrid: real Vietnamese reviews + explicitSentiments) ---
+  // Dùng __reviews_real_vi.json (15k+ bình luận tiếng Việt thật từ Reviews.csv)
+  // đã được phân tích sentiment & aspect-based bằng rule-based NLP
+  const reviewsData = readJson("__reviews_real_vi.json");
+  console.log(
+    `💬 Đang xử lý ${reviewsData.length} Reviews (Hybrid - real Vietnamese data)...`,
+  );
 
   for (const review of reviewsData) {
     if (
@@ -338,13 +340,15 @@ async function main() {
         },
       });
 
-      // Tạo review gắn với booking vừa tạo
+      // Tạo review gắn với booking vừa tạo (Hybrid schema)
       await prisma.review.create({
         data: {
           bookingId: booking.id,
           rating: review.rating,
           comment: review.comment,
-          sentiment: review.sentiment,
+          sentiment: review.sentiment, // POSITIVE | NEGATIVE | NEUTRAL (enum)
+          explicitSentiments: review.explicitSentiments || undefined, // Aspect-based JSON cho Hybrid Model
+          nlpProcessed: review.nlpProcessed ?? true, // Đánh dấu đã qua NLP
           createdAt: new Date(review.createdAt),
           user: { connect: { id: review.userId } },
           hotel: { connect: { id: review.hotelId } },

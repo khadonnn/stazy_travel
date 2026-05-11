@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 // === IMPORT RECHARTS COMPONENTS ===
 import AppAreaChart from '@/components/charts/AppAreaChart';
 import AppBarChart from '@/components/charts/AppBarChart';
@@ -13,6 +14,7 @@ import FunnelChart from '@/components/charts/FunnelChart';
 import HistogramChart from '@/components/charts/HistogramChart';
 import SparsityHeatmap from '@/components/charts/SparsityHeatmap';
 import WordCloudChart from '@/components/charts/WordCloudPlaceholder';
+import TopNBarChart from '@/components/charts/TopNBarChart';
 
 // Server Actions
 import { getInteractionStats } from '../actions/get-interaction-stats';
@@ -27,11 +29,14 @@ import { getFunnelStats } from '../actions/get-funnel-stats';
 import { getActivityHistogram } from '../actions/get-activity-histogram';
 import { getSparsityStats } from '../actions/get-sparsity-stats';
 import { getWordCloudData } from '../actions/get-word-cloud-data';
+import { getSentimentStats } from '../actions/get-sentiment-stats';
 
 import { formatPercent } from '@/lib/utils';
 import TodayStats from '@/components/dashboard/TodayStats';
 
+// =========================================
 // Component KPI Card
+// =========================================
 const KPICard = ({
     title,
     value,
@@ -54,6 +59,65 @@ const KPICard = ({
     </Card>
 );
 
+// =========================================
+// Component Aspect Sentiment Mini-Chart (inline)
+// =========================================
+function AspectSentimentTable({
+    data,
+}: {
+    data: Array<{ aspect: string; POSITIVE: number; NEUTRAL: number; NEGATIVE: number }>;
+}) {
+    if (!data || data.length === 0) {
+        return (
+            <div className="text-muted-foreground flex h-full items-center justify-center">
+                Chưa có dữ liệu aspect sentiment
+            </div>
+        );
+    }
+
+    const maxTotal = Math.max(...data.map((d) => d.POSITIVE + d.NEUTRAL + d.NEGATIVE));
+
+    return (
+        <div className="space-y-3">
+            {data.map((item) => {
+                const total = item.POSITIVE + item.NEUTRAL + item.NEGATIVE;
+                const posPct = total > 0 ? (item.POSITIVE / total) * 100 : 0;
+                const neuPct = total > 0 ? (item.NEUTRAL / total) * 100 : 0;
+                const negPct = total > 0 ? (item.NEGATIVE / total) * 100 : 0;
+
+                return (
+                    <div key={item.aspect} className="space-y-1">
+                        <div className="flex items-center justify-between text-sm">
+                            <span className="font-medium capitalize">{item.aspect}</span>
+                            <span className="text-muted-foreground text-xs">{total} mentions</span>
+                        </div>
+                        <div className="bg-muted flex h-3 w-full overflow-hidden rounded-full">
+                            <div
+                                className="bg-green-500 transition-all"
+                                style={{ width: `${posPct}%` }}
+                                title={`Positive: ${Math.round(posPct)}%`}
+                            />
+                            <div
+                                className="bg-yellow-500 transition-all"
+                                style={{ width: `${neuPct}%` }}
+                                title={`Neutral: ${Math.round(neuPct)}%`}
+                            />
+                            <div
+                                className="bg-red-500 transition-all"
+                                style={{ width: `${negPct}%` }}
+                                title={`Negative: ${Math.round(negPct)}%`}
+                            />
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
+// =========================================
+// MAIN PAGE
+// =========================================
 export default async function AnalyticsPage() {
     // Fetch tất cả data song song
     const [
@@ -69,6 +133,7 @@ export default async function AnalyticsPage() {
         histogramData,
         sparsityData,
         wordCloudData,
+        sentimentStats,
     ] = await Promise.all([
         getInteractionStats(),
         getLatestSystemMetric(),
@@ -82,6 +147,7 @@ export default async function AnalyticsPage() {
         getActivityHistogram(),
         getSparsityStats(),
         getWordCloudData(),
+        getSentimentStats(),
     ]);
 
     const totalViews = chartData.reduce((acc: any, curr: any) => acc + curr.Views, 0);
@@ -116,19 +182,31 @@ export default async function AnalyticsPage() {
         },
     ];
 
+    // Tính positive ratio cho sentiment
+    const positiveCount = sentimentStats.overall.find((s) => s.name === 'POSITIVE')?.value ?? 0;
+    const negativeCount = sentimentStats.overall.find((s) => s.name === 'NEGATIVE')?.value ?? 0;
+    const totalSentiment = positiveCount + negativeCount;
+    const positiveRatio = totalSentiment > 0 ? Math.round((positiveCount / totalSentiment) * 100) : 0;
+
     return (
         <div className="space-y-6 p-8 pt-6">
-            <h2 className="text-3xl font-bold tracking-tight">Analytics & Model Performance</h2>
-            <p className="text-muted-foreground">
-                Dashboard phân tích hành vi người dùng (Implicit/Explicit Feedback) và hiệu suất của Hệ thống gợi ý
-                (Collaborative Filtering).
-            </p>
+            <div className="flex items-center gap-3">
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight">Hybrid Recommendation Analytics</h2>
+                    <p className="text-muted-foreground">
+                        Dashboard phân tích hành vi người dùng (Implicit/Explicit Feedback), hiệu suất Collaborative
+                        Filtering, và Aspect-Based Sentiment Analysis cho hệ thống gợi ý Hybrid.
+                    </p>
+                </div>
+            </div>
 
             <Separator className="my-4" />
 
+            {/* ============================================= */}
             {/* HÀNG 1: MODEL PERFORMANCE (KPIs) */}
+            {/* ============================================= */}
             <h3 className="mb-3 text-xl font-semibold">
-                🎯 Chỉ số Hiệu suất Mô hình (Model Performance & Metrics KPIs)
+                🎯 Chỉ số Hiệu suất Mô hình CF (Model Performance & Metrics KPIs)
             </h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {dynamicKPIs.map((kpi, index) => (
@@ -138,7 +216,44 @@ export default async function AnalyticsPage() {
 
             <Separator className="my-4" />
 
-            {/* HÀNG 2: XU HƯỚNG HÀNH VI CHÍNH (Area Chart) */}
+            {/* ============================================= */}
+            {/* HÀNG 2: HYBRID SENTIMENT OVERVIEW */}
+            {/* ============================================= */}
+            <h3 className="mb-3 text-xl font-semibold">
+                🧠 Phân tích Sentiment Hybrid (Collaborative Filtering + Aspect-Based)
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <KPICard
+                    title="Tổng Reviews đã Phân tích"
+                    value={sentimentStats.totalReviews.toLocaleString()}
+                    description={`${sentimentStats.nlpProcessedCount.toLocaleString()} đã qua NLP processing`}
+                    color="text-purple-500"
+                />
+                <KPICard
+                    title="Điểm TB (Rating)"
+                    value={sentimentStats.avgRating.toFixed(1) + ' ⭐'}
+                    description="Trung bình rating trên tất cả reviews"
+                    color="text-yellow-500"
+                />
+                <KPICard
+                    title="Tỷ lệ Positive"
+                    value={positiveRatio + '%'}
+                    description={`${positiveCount} positive / ${negativeCount} negative`}
+                    color={positiveRatio >= 70 ? 'text-green-500' : 'text-orange-500'}
+                />
+                <KPICard
+                    title="Aspect Coverage"
+                    value={sentimentStats.byAspect.length.toString() + ' khía cạnh'}
+                    description="Số khía cạnh được phân tích (service, room, price...)"
+                    color="text-cyan-500"
+                />
+            </div>
+
+            <Separator className="my-4" />
+
+            {/* ============================================= */}
+            {/* HÀNG 3: XU HƯỚNG HÀNH VI CHÍNH (Area Chart) */}
+            {/* ============================================= */}
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
                 <Card className="min-w-0 lg:col-span-2">
                     <CardHeader>
@@ -162,7 +277,9 @@ export default async function AnalyticsPage() {
 
             <Separator className="my-4" />
 
-            {/* HÀNG 3: PHÂN TÍCH TẦN SUẤT & PHÂN PHỐI DỮ LIỆU */}
+            {/* ============================================= */}
+            {/* HÀNG 4: PHÂN TÍCH TẦN SUẤT & PHÂN PHỐI */}
+            {/* ============================================= */}
             <h3 className="mb-3 text-xl font-semibold">📊 Tần suất & Phân loại Hành vi</h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card className="min-w-0 lg:col-span-1">
@@ -198,8 +315,48 @@ export default async function AnalyticsPage() {
 
             <Separator className="my-4" />
 
-            {/* HÀNG 4: ĐÁNH GIÁ MÔ HÌNH GỢI Ý (EVALUATION) */}
-            <h3 className="mb-3 text-xl font-semibold">📉 Đánh giá Hiệu suất Mô hình (Evaluation)</h3>
+            {/* ============================================= */}
+            {/* HÀNG 5: ASPECT-BASED SENTIMENT (Hybrid Core) */}
+            {/* ============================================= */}
+            <h3 className="mb-3 text-xl font-semibold">
+                💬 Aspect-Based Sentiment Analysis{' '}
+                <Badge variant="secondary" className="ml-2">
+                    Hybrid Core
+                </Badge>
+            </h3>
+            <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+                <Card className="min-w-0 lg:col-span-1">
+                    <CardHeader>
+                        <CardTitle>Phân bố Cảm xúc Tổng quan</CardTitle>
+                        <CardDescription>
+                            Tỷ lệ POSITIVE / NEUTRAL / NEGATIVE trên tất cả reviews (Explicit Feedback).
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex h-[350px] items-center justify-center">
+                        <AppPieChart data={sentimentStats.overall.map((s) => ({ name: s.name, value: s.value }))} />
+                    </CardContent>
+                </Card>
+
+                <Card className="min-w-0 lg:col-span-2">
+                    <CardHeader>
+                        <CardTitle>Sentiment theo Từng Khía cạnh (Aspect)</CardTitle>
+                        <CardDescription>
+                            Trọng số aspect-based sentiment cho Hybrid Recommendation Model. Dữ liệu từ
+                            explicitSentiments field.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="h-[350px] overflow-y-auto">
+                        <AspectSentimentTable data={sentimentStats.byAspect} />
+                    </CardContent>
+                </Card>
+            </div>
+
+            <Separator className="my-4" />
+
+            {/* ============================================= */}
+            {/* HÀNG 6: ĐÁNH GIÁ MÔ HÌNH CF (EVALUATION) */}
+            {/* ============================================= */}
+            <h3 className="mb-3 text-xl font-semibold">📉 Đánh giá Hiệu suất CF (Evaluation)</h3>
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
                 <Card className="min-w-0">
                     <CardHeader>
@@ -224,7 +381,9 @@ export default async function AnalyticsPage() {
 
             <Separator className="my-4" />
 
-            {/* HÀNG 5: CORE RECOMMENDATION INSIGHTS */}
+            {/* ============================================= */}
+            {/* HÀNG 7: CORE RECOMMENDATION INSIGHTS */}
+            {/* ============================================= */}
             <h3 className="mb-3 text-xl font-semibold">🔍 Giám sát dữ liệu Gợi ý: Sparsity & Top Contributors</h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <Card className="min-w-0 lg:col-span-1">
@@ -260,7 +419,9 @@ export default async function AnalyticsPage() {
 
             <Separator className="my-4" />
 
-            {/* HÀNG 6: PHÂN TÍCH HÀNH VI (Funnel, Histogram) */}
+            {/* ============================================= */}
+            {/* HÀNG 8: PHÂN TÍCH HÀNH VI (Funnel, Histogram) */}
+            {/* ============================================= */}
             <h3 className="mb-3 text-xl font-semibold">🔬 Phân tích Hành vi Chiều sâu</h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
                 <Card className="min-w-0">
@@ -288,13 +449,17 @@ export default async function AnalyticsPage() {
 
             <Separator className="my-4" />
 
-            {/* HÀNG 7: ADVANCED INSIGHTS (Bubble & Word Cloud) */}
-            <h3 className="mb-3 text-xl font-semibold">🌟 Item Feature Analysis & Sentiment Insights</h3>
+            {/* ============================================= */}
+            {/* HÀNG 9: ITEM FEATURES & WORD CLOUD */}
+            {/* ============================================= */}
+            <h3 className="mb-3 text-xl font-semibold">🌟 Item Feature Analysis & Explicit Feedback Insights</h3>
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
                 <Card className="min-w-0 lg:col-span-2">
                     <CardHeader>
                         <CardTitle>Phân tích Thuộc tính Khách sạn (Bubble)</CardTitle>
-                        <CardDescription>Bookings (X), Rating (Y), Tiện nghi (Size).</CardDescription>
+                        <CardDescription>
+                            Bookings (X), Rating (Y), Tiện nghi (Size). Dữ liệu dùng cho Content-Based Filtering.
+                        </CardDescription>
                     </CardHeader>
                     <CardContent className="h-[350px]">
                         <BubbleChart data={bubbleData} />
@@ -304,7 +469,9 @@ export default async function AnalyticsPage() {
                 <Card className="min-w-0 lg:col-span-1">
                     <CardHeader>
                         <CardTitle>Từ khóa Phổ biến trong Bình luận</CardTitle>
-                        <CardDescription>Trực quan hóa Explicit Feedback (Comments).</CardDescription>
+                        <CardDescription>
+                            On-the-fly Word Cloud từ Review.comment (Explicit Feedback). Không cần lưu embedding.
+                        </CardDescription>
                     </CardHeader>
                     <CardContent className="flex h-[350px] items-center justify-center">
                         <WordCloudChart data={wordCloudData} />
