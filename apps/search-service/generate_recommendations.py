@@ -7,22 +7,95 @@ import numpy as np
 # ---------------------------------------------------------
 # 1. CẤU HÌNH & TRỌNG SỐ
 # ---------------------------------------------------------
-INPUT_FILE = "jsons/__interactions.json"
+INPUT_INTERACTIONS_FILE = "jsons/__interactions.json"
+INPUT_REVIEWS_FILE = "jsons/__reviews_real_vi.json"  # Reviews tiếng Việt thật (explicit feedback)
 OUTPUT_FILE = "jsons/__recommendations.json"
 
 # Trọng số Implicit Feedback (Khớp với evaluate.py & recommend.py)
 WEIGHT_MAP = {
+    "VIEW": 0.5,            # Xem chi tiết (tín hiệu yếu)
     "CLICK_BOOK_NOW": 2.0,  # Intent: Click nút đặt phòng
     "ADD_TO_WISHLIST": 3.0, # Wishlist: Quan tâm rõ ràng
+    "RATE_POSITIVE": 4.5,   # Rating >= 4 sao (Explicit positive)
     "BOOK": 5.0,            # Conversion: Tương tác mạnh nhất
+    "RATE_NEGATIVE": -3.0,  # Rating <= 2 sao (Explicit negative signal)
 }
 
 def load_data():
-    if not os.path.exists(INPUT_FILE):
-        print(f"❌ Không tìm thấy file {INPUT_FILE}. Hãy chạy generate_interactions.py trước.")
+    """
+    Load CẢ 2 nguồn dữ liệu và merge:
+    1. __interactions.json (implicit signals từ generate_mock_interactions.py)
+    2. __reviews_real_vi.json (explicit ratings từ generate_reviews_from_csv.py)
+    
+    Logic merge (giống train_svd.py & recommend.py):
+    - Implicit signals → weight theo WEIGHT_MAP
+    - Explicit ratings (1-5⭐) → GHI ĐÈ implicit nếu cùng (user, hotel) pair
+    """
+    # Load implicit interactions
+    interactions = []
+    if os.path.exists(INPUT_INTERACTIONS_FILE):
+        with open(INPUT_INTERACTIONS_FILE, "r", encoding="utf-8") as f:
+            interactions = json.load(f)
+        print(f"   📥 Loaded {len(interactions)} implicit interactions từ {INPUT_INTERACTIONS_FILE}")
+    else:
+        print(f"❌ Không tìm thấy {INPUT_INTERACTIONS_FILE}")
         return None
-    with open(INPUT_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+
+    # Load explicit reviews (tiếng Việt thật từ CSV)
+    reviews = []
+    if os.path.exists(INPUT_REVIEWS_FILE):
+        with open(INPUT_REVIEWS_FILE, "r", encoding="utf-8") as f:
+            reviews = json.load(f)
+        print(f"   📥 Loaded {len(reviews)} explicit reviews từ {INPUT_REVIEWS_FILE}")
+    else:
+        print(f"   ⚠️ Không tìm thấy {INPUT_REVIEWS_FILE} (sẽ chỉ dùng implicit)")
+
+    # --- MERGE: Tạo unified (userId, hotelId) → score ---
+    merged = {}  # key=(userId, hotelId) → {type, weight, source}
+
+    # 1. Implicit signals
+    for inter in interactions:
+        uid = inter.get("userId")
+        hid = inter.get("hotelId")
+        itype = inter.get("type")
+        if not uid or not hid or itype not in WEIGHT_MAP:
+            continue
+        key = f"{uid}_{hid}"
+        merged[key] = {
+            "userId": uid,
+            "hotelId": hid,
+            "type": itype,
+            "weight": WEIGHT_MAP[itype],
+            "source": "implicit"
+        }
+
+    # 2. Explicit ratings → GHI ĐÈ implicit (explicit takes precedence)
+    for rev in reviews:
+        uid = rev.get("userId")
+        hid = rev.get("hotelId")
+        rating = rev.get("rating")
+        if not uid or not hid or not rating:
+            continue
+        key = f"{uid}_{hid}"
+        # Explicit rating GHI ĐÈ implicit
+        merged[key] = {
+            "userId": uid,
+            "hotelId": hid,
+            "type": "EXPLICIT_RATING",
+            "weight": float(rating),
+            "source": "explicit"
+        }
+
+    # Convert to list (format như __interactions.json để code bên dưới không đổi)
+    merged_list = list(merged.values())
+
+    # Stats
+    implicit_count = sum(1 for v in merged.values() if v["source"] == "implicit")
+    explicit_count = sum(1 for v in merged.values() if v["source"] == "explicit")
+    print(f"   ✅ Merged: {len(merged_list)} unique (user, hotel) pairs")
+    print(f"      Implicit: {implicit_count} | Explicit (override): {explicit_count}")
+
+    return merged_list
 
 def get_popular_items(df, top_n=5):
     """
@@ -48,10 +121,18 @@ def main():
     original_len = len(df)
     df = df[df['hotelId'].notna()] # Bỏ dòng không có hotelId
     
-    # Tính điểm trọng số
-    df['weight'] = df['type'].map(WEIGHT_MAP).fillna(1.0)
+    # Trọng số đã được tính sẵn từ merge logic:
+    # - Implicit → WEIGHT_MAP[type]
+    # - Explicit → float(rating) (1-5)
+    # Chỉ map nếu weight chưa có sẵn (backward compatible với file cũ)
+    if 'weight' not in df.columns or df['weight'].isna().all():
+        df['weight'] = df['type'].map(WEIGHT_MAP).fillna(1.0)
+    else:
+        # Fill NaN weight bằng WEIGHT_MAP fallback
+        df['weight'] = df['weight'].fillna(df['type'].map(WEIGHT_MAP).fillna(1.0))
     
     print(f"📊 Dữ liệu đầu vào: {len(df)} interactions hợp lệ.")
+    print(f"   📊 Weight stats: min={df['weight'].min():.1f}, max={df['weight'].max():.1f}, mean={df['weight'].mean():.2f}")
 
     # 2. Xây dựng User-Item Matrix
     # index=UserId, columns=HotelId, values=Sum(Weight)

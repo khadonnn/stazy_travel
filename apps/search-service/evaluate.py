@@ -141,9 +141,12 @@ def evaluate_implicit():
     print("\n[2/7] Converting implicit signals to ratings...")
     
     signal_weights = {
+        "VIEW": 0.5,
         "CLICK_BOOK_NOW": 2.0,
         "ADD_TO_WISHLIST": 3.0,
-        "BOOK": 5.0
+        "RATE_POSITIVE": 4.5,
+        "BOOK": 5.0,
+        "RATE_NEGATIVE": -3.0,
     }
     
     interactions = []

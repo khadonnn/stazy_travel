@@ -26,6 +26,8 @@ import {
   CheckCircle2,
   Calendar,
   GalleryVerticalEnd,
+  Flame,
+  Star,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -57,6 +59,8 @@ import {
 } from "@/components/ui/tooltip";
 import { AuthorType } from "@repo/types";
 import { trackInteraction } from "@/lib/utils/analytics";
+import { getSimilarHotels } from "@/actions/get-similar-hotels";
+import FadeIn from "@/components/ui/fade-in";
 interface StayDetailPageClientProps {
   params: {
     slug: string;
@@ -104,6 +108,11 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
 
   const [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false);
   const [refreshComments, setRefreshComments] = useState(0);
+  const [similarHotels, setSimilarHotels] = useState<any[]>([]);
+  const [loadingSimilar, setLoadingSimilar] = useState(false);
+  const [actualReviewCount, setActualReviewCount] = useState<number | null>(
+    null,
+  );
   const addItem = useCartStore((state) => state.addItem);
 
   // Chat context store - set hotel context for smart chatbox
@@ -176,6 +185,25 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       fetchData();
     }
   }, [slug]);
+  // --- 1c. FETCH SIMILAR HOTELS ---
+  useEffect(() => {
+    if (!stayData?.id) return;
+
+    const fetchSimilar = async () => {
+      setLoadingSimilar(true);
+      try {
+        const hotels = await getSimilarHotels(stayData.id);
+        setSimilarHotels(hotels || []);
+      } catch (err) {
+        console.error("Error fetching similar hotels:", err);
+      } finally {
+        setLoadingSimilar(false);
+      }
+    };
+
+    fetchSimilar();
+  }, [stayData?.id]);
+
   // --- 2. LOGIC THEO DÕI VIEW HOTEL ---
   useEffect(() => {
     // Chỉ track khi đã có dữ liệu hotel (có ID)
@@ -767,7 +795,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     return (
       <div className="listingSection__wrap">
         <h2 className="text-2xl font-semibold">
-          Đánh giá ({reviewCount} đánh giá)
+          Đánh giá ({actualReviewCount ?? reviewCount} đánh giá)
         </h2>
         <Separator className="my-4" />
 
@@ -780,6 +808,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
           <CommentListClient
             hotelId={stayData.id}
             refreshKey={refreshComments}
+            onCountLoaded={setActualReviewCount}
           />
 
           {/* Form thêm bình luận */}
@@ -869,6 +898,95 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
             </ul>
           </div>
         </div>
+      </div>
+    );
+  };
+
+  const renderSimilarHotels = () => {
+    if (!similarHotels || similarHotels.length === 0) return null;
+
+    return (
+      <div className="listingSection__wrap !space-y-6">
+        <div className="mb-8">
+          {/* Eyebrow (Dòng chữ nhỏ ở trên cùng) */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-px w-8 bg-zinc-400/40" />
+            <span className="flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-zinc-500">
+              Khách sạn tương đồng
+              <Flame className="w-3.5 h-3.5 text-red-500 fill-red-500 animate-pulse" />
+            </span>
+          </div>
+
+          {/* Tiêu đề chính */}
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900">
+            Cùng gu nghỉ dưỡng của bạn
+          </h2>
+
+          {/* Đoạn mô tả */}
+          <p className="mt-3 text-sm text-zinc-400 max-w-xl leading-relaxed">
+            Khách sạn cung cấp trải nghiệm tương đồng.
+          </p>
+        </div>
+
+        {/* Grid hiển thị similar hotels */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {similarHotels.map((hotel: any, index: number) => (
+            <FadeIn delay={index * 100} key={hotel.id}>
+              <Link
+                href={`/hotels/${hotel.slug}`}
+                className="group block rounded-xl overflow-hidden border border-neutral-200 hover:shadow-lg transition-shadow cursor-pointer"
+              >
+                <div className="relative h-44 overflow-hidden">
+                  <img
+                    src={hotel.featuredImage || "/placeholder.jpg"}
+                    alt={hotel.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  {hotel.saleOffPercent > 0 && (
+                    <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                      -{hotel.saleOffPercent}%
+                    </span>
+                  )}
+                </div>
+                <div className="p-3 space-y-1.5">
+                  <h3 className="text-sm font-semibold line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    {hotel.title}
+                  </h3>
+                  <div className="flex items-center gap-1 text-xs text-neutral-500">
+                    <MapPin className="w-3 h-3" />
+                    <span className="line-clamp-1">{hotel.address}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                      <span className="text-xs font-medium">
+                        {hotel.reviewStar?.toFixed(1) || "N/A"}
+                      </span>
+                      <span className="text-xs text-neutral-400">
+                        ({hotel.reviewCount || 0})
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-primary-600">
+                      {formatPrice(hotel.price)}
+                      <span className="text-xs font-normal text-neutral-400">
+                        /đêm
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </FadeIn>
+          ))}
+        </div>
+
+        {loadingSimilar && (
+          <div className="flex justify-center py-6">
+            <div className="flex items-center gap-2 text-neutral-400 text-sm">
+              <div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />
+              Đang tìm khách sạn tương tự...
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -1004,6 +1122,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
           {renderSection6()}
           {renderSection7()}
           {renderSection8()}
+          {renderSimilarHotels()}
         </div>
 
         {/* SIDEBAR */}

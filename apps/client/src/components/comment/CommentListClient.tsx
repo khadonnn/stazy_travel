@@ -6,7 +6,7 @@ import { Star, MessageCircle, X } from "lucide-react";
 import { format } from "date-fns";
 import { getReviews, getReviewCount } from "@/app/hotels/[slug]/actions/review";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 10;
 
 // Component con hiển thị 1 dòng (Thuần UI)
 const CommentListing = ({ data }: { data: any }) => {
@@ -159,9 +159,11 @@ const AllReviewsModal = ({
 export default function CommentListClient({
   hotelId,
   refreshKey,
+  onCountLoaded,
 }: {
   hotelId: number;
   refreshKey?: number;
+  onCountLoaded?: (count: number) => void;
 }) {
   const [reviews, setReviews] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -180,6 +182,7 @@ export default function CommentListClient({
         setReviews(data);
         setTotalCount(count);
         setHasMore(count > PAGE_SIZE);
+        if (onCountLoaded) onCountLoaded(count);
       } catch (error) {
         console.error("Error loading reviews:", error);
       } finally {

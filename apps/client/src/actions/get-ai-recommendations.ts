@@ -21,7 +21,16 @@ export async function getAIRecommendations() {
     const interactionCount = await prisma.interaction.count({
       where: {
         userId: user.id,
-        type: { in: ["VIEW", "LIKE", "BOOK", "RATING"] },
+        type: {
+          in: [
+            "VIEW",
+            "LIKE",
+            "BOOK",
+            "RATING",
+            "ADD_TO_WISHLIST",
+            "CLICK_BOOK_NOW",
+          ],
+        },
       },
     });
 

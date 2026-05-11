@@ -46,11 +46,14 @@ def prepare_training_data():
         print("❌ No interactions file found!")
         return None
     
-    # Implicit signal weights (aligned with evaluate.py)
+    # Implicit signal weights (aligned with evaluate.py & recommend.py)
     signal_weights = {
+        "VIEW": 0.5,
         "CLICK_BOOK_NOW": 2.0,
         "ADD_TO_WISHLIST": 3.0,
-        "BOOK": 5.0
+        "RATE_POSITIVE": 4.5,
+        "BOOK": 5.0,
+        "RATE_NEGATIVE": -3.0,
     }
     
     # Collect implicit scores

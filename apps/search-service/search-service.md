@@ -40,7 +40,7 @@ python generate_users.py || uv run generate_users.py
 python generate_data.py || uv run generate_data.py
 uv run generate_reviews_from_csv.py
 
-<!-- python generate_mock_interactions.py || uv run generate_mock_interactions.py (giả lập)  -->
+python generate_mock_interactions.py || uv run generate_mock_interactions.py (giả lập)
 
 python generate_recommendations.py || uv run generate_recommendations.py
 

@@ -19,9 +19,15 @@ MODEL_PATH = "jsons/recsys_model.pkl"
 HOTELS_FILE = "jsons/__homeStay.json"
 INTERACTIONS_FILE = "jsons/__interactions.json"
 
-# Hybrid weights
+# Hybrid weights (4 pillars of Hybrid Recommendation)
+CONTENT_WEIGHT = 0.40        # Content Similarity: 40% (same city, stars, price, amenities)
+COLLABORATIVE_WEIGHT = 0.30  # Collaborative Filtering: 30% (user behavior patterns)
+SENTIMENT_WEIGHT = 0.20      # Aspect Sentiment: 20% (service, room, price sentiment)
+POPULARITY_WEIGHT = 0.10     # Popularity: 10% (avg rating safety)
+
+# Legacy SVD+Content hybrid (for svd_recommend strategy)
 SVD_WEIGHT = 0.6
-CONTENT_WEIGHT = 0.4
+CONTENT_WEIGHT_SVD = 0.4
 
 # Content feature weights
 PRICE_WEIGHT = 0.3
@@ -85,9 +91,12 @@ def _build_user_item_matrix():
         return None
 
     signal_weights = {
+        "VIEW": 0.5,
         "CLICK_BOOK_NOW": 2.0,
         "ADD_TO_WISHLIST": 3.0,
-        "BOOK": 5.0
+        "RATE_POSITIVE": 4.5,
+        "BOOK": 5.0,
+        "RATE_NEGATIVE": -3.0,
     }
 
     # Aggregate: (userId, hotelId) -> weighted score
@@ -199,7 +208,14 @@ def build_user_profile(user_id: str) -> dict:
     amenity_counts = defaultdict(int)
     prices = []
 
-    weight_map = {"BOOK": 3.0, "ADD_TO_WISHLIST": 2.0, "CLICK_BOOK_NOW": 1.0}
+    weight_map = {
+        "VIEW": 0.5,
+        "CLICK_BOOK_NOW": 2.0,
+        "ADD_TO_WISHLIST": 3.0,
+        "RATE_POSITIVE": 4.5,
+        "BOOK": 5.0,
+        "RATE_NEGATIVE": -3.0,
+    }
 
     for inter in user_inters:
         hotel = hotels.get(inter['hotelId'])
@@ -313,7 +329,7 @@ def svd_recommend(user_id: str, hotels: list, top_k: int = 5) -> list:
         content_score = compute_content_score(user_profile, hotel)
         svd_normalized = (svd_score - 1) / 4
 
-        hybrid_score = SVD_WEIGHT * svd_normalized + CONTENT_WEIGHT * content_score
+        hybrid_score = SVD_WEIGHT * svd_normalized + CONTENT_WEIGHT_SVD * content_score
 
         predictions.append({
             "data": hotel,
