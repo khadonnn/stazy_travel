@@ -1,50 +1,38 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+
+interface SparsityDataProps {
+    totalUsers: number;
+    totalItems: number;
+    totalInteractions: number;
+    sparsity: number;
+}
+
+interface SparsityHeatmapProps {
+    data?: SparsityDataProps;
+}
 
 const ROWS = 20;
 const COLS = 20;
 
-// Định nghĩa kiểu dữ liệu cho state để TypeScript không báo lỗi
-type MatrixData = {
-    id: number;
-    row: number;
-    col: number;
-    type: number;
-};
+const SparsityHeatmap = ({ data }: SparsityHeatmapProps) => {
+    // Generate visualization matrix based on real sparsity rate
+    const sparsityRate = data?.sparsity ?? 100;
+    const interactionRate = (100 - sparsityRate) / 100;
 
-const SparsityHeatmap = () => {
-    // 1. State lưu dữ liệu (Khởi tạo là null để biết đang loading)
-    const [data, setData] = useState<{ matrix: MatrixData[]; sparsity: string } | null>(null);
-
-    // 2. Chuyển logic Math.random() vào useEffect
-    useEffect(() => {
-        let filledCount = 0;
-        const totalCells = ROWS * COLS;
-
-        const generatedMatrix = Array.from({ length: totalCells }, (_, i) => {
-            // Logic random giữ nguyên
-            const isInteraction = Math.random() > 0.85;
-            if (isInteraction) filledCount++;
-
-            const type = isInteraction ? (Math.random() > 0.5 ? 2 : 1) : 0;
-
-            return {
-                id: i,
-                row: Math.floor(i / COLS),
-                col: i % COLS,
-                type: type,
-            };
-        });
-
-        const sparsityRate = ((totalCells - filledCount) / totalCells) * 100;
-
-        // Cập nhật state sau khi component đã mount
-        setData({
-            matrix: generatedMatrix,
-            sparsity: sparsityRate.toFixed(1),
-        });
-    }, []); // [] rỗng để chỉ chạy 1 lần khi mount
+    const matrix = Array.from({ length: ROWS * COLS }, (_, i) => {
+        // Use deterministic pattern based on sparsity rate
+        const rand = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+        const isInteraction = rand - Math.floor(rand) < interactionRate;
+        const type = isInteraction ? (i % 3 === 0 ? 2 : 1) : 0;
+        return {
+            id: i,
+            row: Math.floor(i / COLS),
+            col: i % COLS,
+            type,
+        };
+    });
 
     const getColor = (type: number) => {
         switch (type) {
@@ -57,7 +45,6 @@ const SparsityHeatmap = () => {
         }
     };
 
-    // 3. Render trạng thái Loading (Skeleton) khi chưa có dữ liệu để tránh lỗi Hydration
     if (!data) {
         return (
             <div className="flex h-full w-full animate-pulse flex-col items-center justify-center p-2">
@@ -74,11 +61,10 @@ const SparsityHeatmap = () => {
         <div className="flex h-full w-full flex-col items-center justify-center p-2">
             <div className="mb-3 flex w-full items-center justify-between px-1">
                 <div className="text-muted-foreground text-md font-medium">
-                    Matrix: {ROWS} Users x {COLS} Items
+                    Matrix: {data.totalUsers} Users x {data.totalItems} Items
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground text-xs">Độ thưa (Sparsity):</span>
-                    {/* Bây giờ data.sparsity được lấy từ state client-side hoàn toàn */}
+                    <span className="text-muted-foreground text-xs">Độ thưa:</span>
                     <span className="text-sm font-bold text-red-400">{data.sparsity}%</span>
                 </div>
             </div>
@@ -92,7 +78,7 @@ const SparsityHeatmap = () => {
                     width: '100%',
                 }}
             >
-                {data.matrix.map((cell) => (
+                {matrix.map((cell) => (
                     <div
                         key={cell.id}
                         className={`h-full w-full rounded-[1px] transition-colors duration-200 ${getColor(cell.type)}`}
@@ -116,6 +102,10 @@ const SparsityHeatmap = () => {
                     <span className="h-4 w-4 rounded-[1px] bg-yellow-500"></span>
                     <span>Booking</span>
                 </div>
+            </div>
+
+            <div className="text-muted-foreground mt-2 flex w-full justify-center gap-3 text-[10px]">
+                <span>Tổng interactions: {data.totalInteractions.toLocaleString()}</span>
             </div>
         </div>
     );

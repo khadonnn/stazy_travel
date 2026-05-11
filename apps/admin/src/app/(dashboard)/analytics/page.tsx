@@ -1,6 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import dynamic from 'next/dynamic';
 // === IMPORT RECHARTS COMPONENTS ===
 import AppAreaChart from '@/components/charts/AppAreaChart';
 import AppBarChart from '@/components/charts/AppBarChart';
@@ -8,34 +7,42 @@ import AppPieChart from '@/components/charts/AppPieChart';
 import AlgorithmComparisonChart from '@/components/charts/AlgorithmComparisonChart';
 import EvaluationLineChart from '@/components/charts/EvaluationLineChart';
 import UserGroupComparisonChart from '@/components/charts/UserGroupComparisonChart';
-// Dữ liệu Top N được code thành CardList, nên không cần TopNBarChart ở đây
-import CardList from '@/components/CardList'; // Dùng cho Top Recommended/Top Users
+import CardList from '@/components/CardList';
 import BubbleChart from '@/components/charts/BubbleChart';
-import FunnelChart from '@/components/charts/FunnelChart'; // MỚI
-import HistogramChart from '@/components/charts/HistogramChart'; // MỚI
+import FunnelChart from '@/components/charts/FunnelChart';
+import HistogramChart from '@/components/charts/HistogramChart';
 import SparsityHeatmap from '@/components/charts/SparsityHeatmap';
-import { getInteractionStats } from '../actions/get-interaction-stats';
 import WordCloudChart from '@/components/charts/WordCloudPlaceholder';
+
+// Server Actions
+import { getInteractionStats } from '../actions/get-interaction-stats';
 import { getLatestSystemMetric } from '../actions/get-system-metrics';
 import { getBubbleChartData } from './actions/get-bubble-data';
+import { getInteractionTypeStats } from '../actions/get-interaction-type-stats';
+import { getRatingDistribution } from '../actions/get-rating-distribution';
+import { getUserGroupStats } from '../actions/get-user-group-stats';
+import { getEvaluationHistory } from '../actions/get-evaluation-history';
+import { getAlgorithmStats } from '../actions/get-algorithm-stats';
+import { getFunnelStats } from '../actions/get-funnel-stats';
+import { getActivityHistogram } from '../actions/get-activity-histogram';
+import { getSparsityStats } from '../actions/get-sparsity-stats';
+import { getWordCloudData } from '../actions/get-word-cloud-data';
+
 import { formatPercent } from '@/lib/utils';
 import TodayStats from '@/components/dashboard/TodayStats';
-// Hàm format tiền tệ (Giữ nguyên)
-
-// Dữ liệu giả lập cho KPI (Model Performance)
-const modelKPIs = [
-    {
-        title: 'RMSE (Độ lỗi dự đoán Rating)',
-        value: '0.875',
-        description: 'Đánh giá Matrix Factorization',
-        color: 'text-red-500',
-    },
-    { title: 'Precision@5', value: '72.4%', description: 'Tỷ lệ gợi ý đúng trong Top 5', color: 'text-green-500' },
-    { title: 'Recall@5', value: '58.1%', description: 'Tỷ lệ items đã được tìm thấy', color: 'text-blue-500' },
-];
 
 // Component KPI Card
-const KPICard = ({ title, value, description, color }: (typeof modelKPIs)[0]) => (
+const KPICard = ({
+    title,
+    value,
+    description,
+    color,
+}: {
+    title: string;
+    value: string;
+    description: string;
+    color: string;
+}) => (
     <Card className="shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{title}</CardTitle>
@@ -46,22 +53,48 @@ const KPICard = ({ title, value, description, color }: (typeof modelKPIs)[0]) =>
         </CardContent>
     </Card>
 );
+
 export default async function AnalyticsPage() {
-    const [chartData, latestMetric, bubbleData] = await Promise.all([
+    // Fetch tất cả data song song
+    const [
+        chartData,
+        latestMetric,
+        bubbleData,
+        interactionTypeStats,
+        ratingDistribution,
+        userGroupStats,
+        evaluationHistory,
+        algorithmStats,
+        funnelData,
+        histogramData,
+        sparsityData,
+        wordCloudData,
+    ] = await Promise.all([
         getInteractionStats(),
         getLatestSystemMetric(),
         getBubbleChartData(),
+        getInteractionTypeStats(),
+        getRatingDistribution(),
+        getUserGroupStats(),
+        getEvaluationHistory(),
+        getAlgorithmStats(),
+        getFunnelStats(),
+        getActivityHistogram(),
+        getSparsityStats(),
+        getWordCloudData(),
     ]);
+
     const totalViews = chartData.reduce((acc: any, curr: any) => acc + curr.Views, 0);
     const totalBookings = chartData.reduce((acc: any, curr: any) => acc + curr.Bookings, 0);
     const totalCancels = chartData.reduce((acc: any, curr: any) => acc + curr.Cancellations, 0);
-    // Nếu chưa có dữ liệu trong DB (lần đầu chạy), dùng số mặc định
+
     const metrics = latestMetric || {
         rmse: 0,
         precisionAt5: 0,
         recallAt5: 0,
         algorithm: 'N/A',
     };
+
     const dynamicKPIs = [
         {
             title: 'RMSE (Độ lỗi)',
@@ -82,6 +115,7 @@ export default async function AnalyticsPage() {
             color: 'text-blue-500',
         },
     ];
+
     return (
         <div className="space-y-6 p-8 pt-6">
             <h2 className="text-3xl font-bold tracking-tight">Analytics & Model Performance</h2>
@@ -104,9 +138,8 @@ export default async function AnalyticsPage() {
 
             <Separator className="my-4" />
 
-            {/* HÀNG 2: XU HƯỚNG HÀNH VI CHÍNH (Area Chart - Chiếm Full Width) */}
+            {/* HÀNG 2: XU HƯỚNG HÀNH VI CHÍNH (Area Chart) */}
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
-                {/* 1. BIỂU ĐỒ (Chiếm 2/3 chiều rộng -> col-span-2) */}
                 <Card className="min-w-0 lg:col-span-2">
                     <CardHeader>
                         <CardTitle>Xu hướng Tương tác (6 tháng qua)</CardTitle>
@@ -121,12 +154,8 @@ export default async function AnalyticsPage() {
                     </CardContent>
                 </Card>
 
-                {/* 2. TODAY STATS (Chiếm 1/3 chiều rộng còn lại) */}
                 <div className="flex flex-col gap-4">
-                    {/* Tiêu đề nhỏ cho phần này nếu thích */}
                     <h3 className="text-lg font-semibold lg:hidden">Thống kê hôm nay</h3>
-
-                    {/*  Truyền class grid-cols-1 để các thẻ xếp chồng lên nhau (dọc) */}
                     <TodayStats className="grid-cols-1 md:grid-cols-1 lg:grid-cols-1" />
                 </div>
             </div>
@@ -136,36 +165,33 @@ export default async function AnalyticsPage() {
             {/* HÀNG 3: PHÂN TÍCH TẦN SUẤT & PHÂN PHỐI DỮ LIỆU */}
             <h3 className="mb-3 text-xl font-semibold">📊 Tần suất & Phân loại Hành vi</h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {/* 3.1 Implicit Actions Frequency - Bar Chart (1 cột) */}
                 <Card className="min-w-0 lg:col-span-1">
                     <CardHeader>
                         <CardTitle>Tần suất Hành động Ngầm</CardTitle>
                         <CardDescription>Click, View, Search, Wishlist, v.v.</CardDescription>
                     </CardHeader>
                     <CardContent className="flex h-[350px] items-center justify-center">
-                        <AppBarChart />
+                        <AppBarChart data={interactionTypeStats} />
                     </CardContent>
                 </Card>
 
-                {/* 3.2 Explicit Feedback Distribution - Pie Chart (1 cột) */}
                 <Card className="min-w-0 lg:col-span-1">
                     <CardHeader>
                         <CardTitle>Phân phối Rating</CardTitle>
                         <CardDescription>Tỷ lệ các mức đánh giá (1 sao - 5 sao).</CardDescription>
                     </CardHeader>
                     <CardContent className="flex h-[350px] items-center justify-center">
-                        <AppPieChart />
+                        <AppPieChart data={ratingDistribution} />
                     </CardContent>
                 </Card>
 
-                {/* 3.3 User Group Comparison - Grouped Bar Chart (2 cột) */}
                 <Card className="min-w-0 lg:col-span-2">
                     <CardHeader>
                         <CardTitle>So sánh Hành vi giữa các Nhóm Người dùng</CardTitle>
                         <CardDescription>Views/Bookings của (Đã đặt) vs (Vãng lai).</CardDescription>
                     </CardHeader>
                     <CardContent className="flex h-[350px] items-center justify-center">
-                        <UserGroupComparisonChart />
+                        <UserGroupComparisonChart data={userGroupStats} />
                     </CardContent>
                 </Card>
             </div>
@@ -175,35 +201,32 @@ export default async function AnalyticsPage() {
             {/* HÀNG 4: ĐÁNH GIÁ MÔ HÌNH GỢI Ý (EVALUATION) */}
             <h3 className="mb-3 text-xl font-semibold">📉 Đánh giá Hiệu suất Mô hình (Evaluation)</h3>
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-                {/* 4.1 CF Tuning (Metrics vs K) - Line Chart (2 cột) */}
                 <Card className="min-w-0">
                     <CardHeader>
                         <CardTitle>Tinh chỉnh Siêu tham số CF (Metrics vs K)</CardTitle>
                         <CardDescription>RMSE, Precision, Recall khi thay đổi số lượng láng giềng (K).</CardDescription>
                     </CardHeader>
                     <CardContent className="h-[350px]">
-                        <EvaluationLineChart />
+                        <EvaluationLineChart data={evaluationHistory} />
                     </CardContent>
                 </Card>
 
-                {/* 4.2 Algorithm Comparison - Bar Chart (2 cột) */}
                 <Card className="min-w-0">
                     <CardHeader>
                         <CardTitle>So sánh Hiệu suất giữa các Thuật toán</CardTitle>
                         <CardDescription>User-based CF vs Item-based CF vs Matrix Factorization.</CardDescription>
                     </CardHeader>
                     <CardContent className="flex h-[350px] items-center justify-center">
-                        <AlgorithmComparisonChart />
+                        <AlgorithmComparisonChart data={algorithmStats} />
                     </CardContent>
                 </Card>
             </div>
 
             <Separator className="my-4" />
 
-            {/* HÀNG 5: CORE RECOMMENDATION INSIGHTS (Giống giao diện ảnh ban đầu: List + Sparsity) */}
+            {/* HÀNG 5: CORE RECOMMENDATION INSIGHTS */}
             <h3 className="mb-3 text-xl font-semibold">🔍 Giám sát dữ liệu Gợi ý: Sparsity & Top Contributors</h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {/* 5.1 Top Items được Gợi ý (Sử dụng CardList) */}
                 <Card className="min-w-0 lg:col-span-1">
                     <CardHeader>
                         <CardTitle>Top Items được Gợi ý Nhiều nhất</CardTitle>
@@ -214,7 +237,6 @@ export default async function AnalyticsPage() {
                     </CardContent>
                 </Card>
 
-                {/* 5.2 Top Users (Sử dụng CardList) */}
                 <Card className="min-w-0 lg:col-span-1">
                     <CardHeader>
                         <CardTitle>Top Người dùng Tương tác Mạnh nhất</CardTitle>
@@ -225,24 +247,22 @@ export default async function AnalyticsPage() {
                     </CardContent>
                 </Card>
 
-                {/* 5.3 Data Sparsity/Heatmap */}
                 <Card className="min-w-0 lg:col-span-1">
                     <CardHeader>
                         <CardTitle>Data Sparsity (Độ thưa thớt dữ liệu)</CardTitle>
                         <CardDescription>Visualizing User-Item Interaction Matrix.</CardDescription>
                     </CardHeader>
                     <CardContent className="h-[300px]">
-                        <SparsityHeatmap />
+                        <SparsityHeatmap data={sparsityData} />
                     </CardContent>
                 </Card>
             </div>
 
             <Separator className="my-4" />
 
-            {/* HÀNG 6: PHÂN TÍCH HÀNH VI CÒN THIẾU (Funnel, Histogram) */}
+            {/* HÀNG 6: PHÂN TÍCH HÀNH VI (Funnel, Histogram) */}
             <h3 className="mb-3 text-xl font-semibold">🔬 Phân tích Hành vi Chiều sâu</h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-                {/* 6.1 Funnel Chart (Phân tích chuyển đổi) */}
                 <Card className="min-w-0">
                     <CardHeader>
                         <CardTitle>Phân tích Luồng Chuyển đổi</CardTitle>
@@ -251,18 +271,17 @@ export default async function AnalyticsPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex h-[350px] items-center justify-center">
-                        <FunnelChart />
+                        <FunnelChart data={funnelData} />
                     </CardContent>
                 </Card>
 
-                {/* 6.2 Histogram (Phân bố tần suất) */}
                 <Card className="min-w-0">
                     <CardHeader>
-                        <CardTitle>Phân bố Tần suất Lượt xem</CardTitle>
-                        <CardDescription>Số lượng người dùng theo nhóm lượt xem.</CardDescription>
+                        <CardTitle>Phân bố Tần suất Hoạt động</CardTitle>
+                        <CardDescription>Số lượng người dùng theo nhóm tần suất tương tác.</CardDescription>
                     </CardHeader>
                     <CardContent className="flex h-[350px] items-center justify-center">
-                        <HistogramChart />
+                        <HistogramChart data={histogramData} />
                     </CardContent>
                 </Card>
             </div>
@@ -272,7 +291,6 @@ export default async function AnalyticsPage() {
             {/* HÀNG 7: ADVANCED INSIGHTS (Bubble & Word Cloud) */}
             <h3 className="mb-3 text-xl font-semibold">🌟 Item Feature Analysis & Sentiment Insights</h3>
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
-                {/* 7.1 Bubble Chart: Item Feature Analysis (2 cột) */}
                 <Card className="min-w-0 lg:col-span-2">
                     <CardHeader>
                         <CardTitle>Phân tích Thuộc tính Khách sạn (Bubble)</CardTitle>
@@ -283,14 +301,13 @@ export default async function AnalyticsPage() {
                     </CardContent>
                 </Card>
 
-                {/* 7.2 Word Cloud (Placeholder) */}
                 <Card className="min-w-0 lg:col-span-1">
                     <CardHeader>
                         <CardTitle>Từ khóa Phổ biến trong Bình luận</CardTitle>
                         <CardDescription>Trực quan hóa Explicit Feedback (Comments).</CardDescription>
                     </CardHeader>
                     <CardContent className="flex h-[350px] items-center justify-center">
-                        <WordCloudChart />
+                        <WordCloudChart data={wordCloudData} />
                     </CardContent>
                 </Card>
             </div>

@@ -1,9 +1,16 @@
 'use client';
 
 import { TrendingUp } from 'lucide-react';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartLegend,
+    ChartLegendContent,
+    ChartTooltip,
+    ChartTooltipContent,
+} from '@/components/ui/chart';
 import { useQuery } from '@tanstack/react-query';
 
 //  Import action mới vừa tạo
@@ -64,8 +71,8 @@ export function AppAreaChart() {
                 <CardDescription>Thống kê đơn hàng và hủy phòng trong 30 ngày qua</CardDescription>
             </CardHeader>
 
-            <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-                <AreaChart accessibilityLayer data={displayData} margin={{ left: 12, right: 12 }}>
+            <ChartContainer config={chartConfig} className="min-h-[200px] w-full overflow-hidden">
+                <AreaChart accessibilityLayer data={displayData} margin={{ top: 10, left: 12, right: 12, bottom: 0 }}>
                     <CartesianGrid vertical={false} />
 
                     <XAxis
@@ -79,6 +86,9 @@ export function AppAreaChart() {
                             return `${d.getDate()}/${d.getMonth() + 1}`;
                         }}
                     />
+
+                    {/* YAxis ẩn để kiểm soát scale, tránh tràn */}
+                    <YAxis hide domain={[0, 'auto']} />
 
                     <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
 
@@ -116,6 +126,9 @@ export function AppAreaChart() {
                         strokeWidth={2}
                         stackId="2"
                     />
+
+                    {/* Legend chú thích màu sắc */}
+                    <ChartLegend content={<ChartLegendContent />} />
                 </AreaChart>
             </ChartContainer>
 
