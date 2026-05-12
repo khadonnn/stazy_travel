@@ -13,7 +13,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useNotificationStore } from '@/store/useNotificationStore';
 
 const SOCKET_URL = 'http://localhost:3005';
-const API_URL = process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || 'http://localhost:8001/chat';
+const API_URL = process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL || 'http://localhost:8001';
 
 type Message = {
     id: string;
@@ -95,7 +95,7 @@ export default function AdminSupportChat() {
                 const token = await getToken();
 
                 // 1. Lấy tin nhắn
-                const res = await fetch(`${API_URL}/messages/messages/${selectedUserId}`, {
+                const res = await fetch(`${API_URL}/messages/${selectedUserId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                     signal: controller.signal, //  Gắn signal
                 });
@@ -126,7 +126,7 @@ export default function AdminSupportChat() {
                 }
 
                 // 3. Đánh dấu đã đọc & Update Badge Sidebar
-                await fetch(`${API_URL}/messages/messages/mark-read`, {
+                await fetch(`${API_URL}/messages/mark-read`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ export default function AdminSupportChat() {
                     signal: controller.signal,
                 });
 
-                const statsRes = await fetch(`${API_URL}/messages/messages/stats/unread`, {
+                const statsRes = await fetch(`${API_URL}/messages/stats/unread`, {
                     headers: { Authorization: `Bearer ${token}` },
                     signal: controller.signal,
                 });
@@ -266,7 +266,7 @@ export default function AdminSupportChat() {
     const activeSession = sessions.find((s) => s.userId === selectedUserId);
 
     return (
-        <div className="m-4 flex h-[calc(100vh-2rem)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg transition-colors duration-300 dark:border-zinc-800 dark:bg-zinc-950">
+        <div className="m-4 flex h-[calc(100vh-6rem)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg transition-colors duration-300 dark:border-zinc-800 dark:bg-zinc-950">
             {/* Sidebar Left */}
             <div className="flex w-80 flex-col border-r border-slate-200 bg-slate-50 transition-colors dark:border-zinc-800 dark:bg-zinc-900/50">
                 {/* ... Header Sidebar (Giữ nguyên code cũ của bạn) ... */}

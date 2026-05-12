@@ -272,19 +272,17 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       setAvailabilityMsg("");
 
       try {
-        // Gọi API kiểm tra (bạn cần tạo endpoint này ở Backend Booking Service như bài trước)
-        // GET /api/check-availability?hotelId=1&checkIn=...&checkOut=...
-        const res = await axios.get("/check-availability", {
+        const res = await axios.get("/api/check-availability", {
           params: {
             hotelId: stayData.id,
-            checkIn: checkInDate.toISOString(), // Chuyển về string ISO
+            checkIn: checkInDate.toISOString(),
             checkOut: checkOutDate.toISOString(),
           },
         });
 
-        // Backend trả về { available: true/false, message: "..." }
         if (res.data.available) {
           setIsAvailable(true);
+          setAvailabilityMsg("");
         } else {
           setIsAvailable(false);
           setAvailabilityMsg(
@@ -298,8 +296,9 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
           setIsAvailable(false);
           setAvailabilityMsg("Ngày bạn chọn đã có người đặt.");
         } else {
-          // Lỗi khác thì tạm thời cho phép hoặc hiện lỗi connection
-          // setIsAvailable(true);
+          // Lỗi khác (404, 502, 500...) → cho phép đặt, không block user
+          setIsAvailable(true);
+          setAvailabilityMsg("");
         }
       } finally {
         setIsChecking(false);
@@ -541,7 +540,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       <div className="listingSection__wrap !space-y-6">
         <div className="flex justify-between items-center">
           <CategoryBadge category={category} />
-          <LikeSaveBtns />
+          <LikeSaveBtns hotelId={stayData?.id} />
         </div>
 
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">

@@ -629,15 +629,15 @@ importers:
       '@fastify/cors':
         specifier: ^11.2.0
         version: 11.2.0
-      '@repo/booking-db':
-        specifier: workspace:*
-        version: link:../../packages/booking-db
       '@repo/bullmq':
         specifier: workspace:*
         version: link:../../packages/bullmq
       '@repo/kafka':
         specifier: workspace:*
         version: link:../../packages/kafka
+      '@repo/product-db':
+        specifier: workspace:*
+        version: link:../../packages/product-db
       dotenv:
         specifier: ^16.4.0
         version: 16.6.1

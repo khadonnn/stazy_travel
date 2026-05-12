@@ -496,6 +496,38 @@ model Review {
   @@index([userId])
   @@map("reviews")
 }
+// =========================================
+// 6. MODEL: CHAT MESSAGES (Admin Support)
+// =========================================
+
+enum SenderRole {
+  USER
+  ADMIN
+  AI
+}
+
+model ChatMessage {
+  id        String     @id @default(uuid())
+  userId    String
+  sender    SenderRole
+  text      String?
+  images    String[]
+  isRead    Boolean    @default(false)
+  metadata  Json?      // { hotels, bookingLink, userName }
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+// =========================================
+// 7. MODEL: DAILY STATS
+// =========================================
+
 model DailyStat {
   id        Int      @id @default(autoincrement())
   date      DateTime @unique @db.Date 

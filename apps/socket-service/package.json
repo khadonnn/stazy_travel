@@ -13,7 +13,7 @@
   "dependencies": {
     "@clerk/fastify": "^2.6.9",
     "@fastify/cors": "^11.2.0",
-    "@repo/booking-db": "workspace:*",
+    "@repo/product-db": "workspace:*",
     "@repo/bullmq": "workspace:*",
     "@repo/kafka": "workspace:*",
     "dotenv": "^16.4.0",

@@ -28,6 +28,7 @@ import { viVN } from "@clerk/localizations";
 import BackgroundWave from "@/components/BackgroundWave";
 import { syncUserToDB } from "@/lib/clerk-sync";
 import { OnboardingModal } from "@/components/onboarding-modal";
+import ScrollToTop from "@/hooks/ScrollToTop";
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -65,6 +66,7 @@ export default async function RootLayout({
           <div className="fixed bottom-4 right-4 z-9999">
             <ChatWidget />
           </div>
+          <ScrollToTop hideRoutes={["/sign-in", "/sign-up", "/admin"]} />
         </body>
       </html>
     </ClerkProvider>

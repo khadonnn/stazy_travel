@@ -257,7 +257,7 @@ export default async function AnalyticsPage() {
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
                 <Card className="min-w-0 lg:col-span-2">
                     <CardHeader>
-                        <CardTitle>Xu hướng Tương tác (6 tháng qua)</CardTitle>
+                        <CardTitle>Xu hướng tương tác trong ngày</CardTitle>
                         <CardDescription>
                             Tổng hợp: <span className="font-bold text-green-500">{totalViews} Views</span> •{' '}
                             <span className="font-bold text-blue-500">{totalBookings} Bookings</span> •{' '}

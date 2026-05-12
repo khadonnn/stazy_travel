@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "@repo/product-db";
-import { getHold } from "../utils/redis-hold";
+import { getHold, RoomHoldError } from "../utils/redis-hold";
 
 /**
  * Route kiểm tra availability - READ-ONLY API
@@ -54,24 +54,33 @@ export default async function availabilityRoutes(fastify: FastifyInstance) {
       // =============================================
       // LỚP 1: KIỂM TRA POSTGRESQL (Source of Truth)
       // =============================================
-      // Logic trùng lịch (Overlap Detection):
-      // (StartA < EndB) && (EndA > StartA)
-      const conflictingBooking = await prisma.booking.findFirst({
-        where: {
-          hotelId: hotelIdNum,
-          status: { in: ["PENDING", "CONFIRMED"] },
-          // Overlap logic
-          checkIn: { lt: checkOutDate },
-          checkOut: { gt: checkInDate },
-        },
-        select: {
-          bookingId: true,
-          status: true,
-          checkIn: true,
-          checkOut: true,
-          guestName: true,
-        },
-      });
+      let conflictingBooking: any = null;
+
+      try {
+        conflictingBooking = await prisma.booking.findFirst({
+          where: {
+            hotelId: hotelIdNum,
+            status: { in: ["PENDING", "CONFIRMED"] },
+            // Overlap logic: (StartA < EndB) && (EndA > StartB)
+            checkIn: { lt: checkOutDate },
+            checkOut: { gt: checkInDate },
+          },
+          select: {
+            bookingId: true,
+            status: true,
+            checkIn: true,
+            checkOut: true,
+            guestName: true,
+          },
+        });
+      } catch (dbError) {
+        console.error("⚠️ Prisma query failed:", dbError);
+        // Fallback: nếu DB lỗi, trả available=true để không block user
+        return reply.status(200).send({
+          available: true,
+          message: "Không thể kiểm tra DB, cho phép đặt phòng.",
+        });
+      }
 
       // Nếu đã có booking trong DB → Không available
       if (conflictingBooking) {
@@ -90,8 +99,14 @@ export default async function availabilityRoutes(fastify: FastifyInstance) {
       // =============================================
       // LỚP 2: KIỂM TRA REDIS HOLD (Temporary Hold)
       // =============================================
-      // Kiểm tra xem có user nào đang "giữ chỗ" trong 10 phút không
-      const activeHold = await getHold(hotelIdNum, checkInDate, checkOutDate);
+      let activeHold: any = null;
+
+      try {
+        activeHold = await getHold(hotelIdNum, checkInDate, checkOutDate);
+      } catch (redisError) {
+        console.error("⚠️ Redis getHold failed (non-blocking):", redisError);
+        // Fallback: nếu Redis lỗi, bỏ qua hold check, vẫn cho phép
+      }
 
       if (activeHold) {
         // Tính thời gian còn lại của hold
@@ -121,10 +136,10 @@ export default async function availabilityRoutes(fastify: FastifyInstance) {
         message: "Phòng còn trống, bạn có thể đặt!",
       });
     } catch (error) {
-      console.error("❌ Check availability error:", error);
-      return reply.status(500).send({
-        error: "Internal server error",
-        available: true, // Fallback: Cho phép đặt nếu lỗi server
+      console.error("❌ Check availability unexpected error:", error);
+      return reply.status(200).send({
+        available: true,
+        message: "Không thể kiểm tra, cho phép đặt phòng.",
       });
     }
   });
