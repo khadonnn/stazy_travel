@@ -367,9 +367,11 @@ async function main() {
         date: new Date(stat.date),
         totalRevenue: stat.totalRevenue,
         totalBookings: stat.totalBookings,
+        totalCancels: stat.totalCancels || 0,
         totalViews: stat.totalViews,
-        conversionRate: stat.conversionRate,
-        // Nếu có trường khác trong schema thì map vào đây
+        totalClickBook: stat.totalClickBook || 0,
+        totalLikes: stat.totalLikes || 0,
+        totalSearch: stat.totalSearch || 0,
       })),
       skipDuplicates: true,
     });
@@ -383,11 +385,17 @@ async function main() {
     const formattedMetrics = metricsData.map((m: any) => ({
       algorithm: "SVD",
       rmse: m.rmse,
+      mae: m.mae || 0,
       precisionAt5: m.precisionAt5,
       recallAt5: m.recallAt5,
+      ndcgAt5: m.ndcgAt5 || 0,
+      baselineRmse: m.baselineRmse || 0,
+      baselineMae: m.baselineMae || 0,
+      baselinePrecision: m.baselinePrecision || 0,
+      baselineRecall: m.baselineRecall || 0,
+      baselineNdcg: m.baselineNdcg || 0,
       datasetSize: m.datasetSize || 0,
-      executionTimeMs: m.executionTimeMs || 0, // MỚI: Thời gian chạy
-      // MỚI: Lưu params tuning (K vs RMSE) vào JSON
+      executionTimeMs: m.executionTimeMs || 0,
       tuningParams: m.tuningParams ? m.tuningParams : {},
       createdAt: new Date(m.createdAt),
     }));

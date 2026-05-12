@@ -388,16 +388,18 @@ model Interaction {
 }
 
 enum InteractionType {
-  VIEW            // Xem chi tiết
+  VIEW            // Xem chi detail (Implicit signal, weight 0.5)
   LIKE            // Thả tim
   SHARE           // Chia sẻ
-  ADD_TO_WISHLIST // Thêm vào wishlist (Implicit signal)
-  BOOK            // Đặt phòng thành công
-  CLICK_BOOK_NOW  // Bấm nút đặt nhưng chưa thanh toán (High intent)
-  CANCEL  // Hủy (Negative signal)
+  ADD_TO_WISHLIST // Thêm vào wishlist (Implicit signal, weight 3.0)
+  BOOK            // Đặt phòng thành công (Implicit signal, weight 5.0)
+  CLICK_BOOK_NOW  // Bấm nút đặt nhưng chưa thanh toán (Implicit signal, weight 2.0)
+  CANCEL          // Hủy (Negative signal)
   SEARCH_QUERY    // Tìm kiếm (Lưu vào metadata)
   FILTER_APPLIED  // Lọc
-  RATING
+  RATING          // Đánh giá chung
+  RATE_POSITIVE   // Đánh giá tích cực 4-5 sao (Implicit signal, weight 4.5)
+  RATE_NEGATIVE   // Đánh giá tiêu cực 1-2 sao (Implicit signal, weight -3.0)
 }
 
 // Bảng riêng để lưu Recommendation Cache
@@ -431,8 +433,15 @@ model SystemMetric {
   
   // Các chỉ số đánh giá mô hình AI
   rmse         Float    // Độ lỗi (Root Mean Square Error)
+  mae          Float    @default(0) // Lỗi tuyệt đối trung bình (Mean Absolute Error)
   precisionAt5 Float    // Độ chính xác trong Top 5
   recallAt5    Float    // Độ bao phủ trong Top 5
+  ndcgAt5      Float    @default(0) // Normalized Discounted Cumulative Gain @5
+  baselineRmse Float?   @default(0) // Baseline RMSE (User Mean)
+  baselineMae  Float?   @default(0) // Baseline MAE (User Mean)
+  baselinePrecision Float? @default(0) // Baseline Precision (Top Popular)
+  baselineRecall    Float? @default(0) // Baseline Recall (Top Popular)
+  baselineNdcg      Float? @default(0) // Baseline NDCG (Top Popular)
   
   // Metadata thêm (nếu cần)
   algorithm    String   @default("SVD") // Tên thuật toán: SVD, KNN, NeuralCF...

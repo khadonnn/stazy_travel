@@ -267,8 +267,10 @@ for user in users:
         timestamp = base_date + timedelta(days=random.randint(0, 364), hours=random.randint(0, 23))
         date_key = timestamp.strftime("%Y-%m-%d")
         
-        if random.random() < 0.3 * match_strength:
-            # BOOK
+        rand = random.random()
+        
+        if rand < 0.15 * match_strength:
+            # BOOK (highest intent, ~10-15% of interactions)
             interaction_type = "BOOK"
             rating = compute_rating(user_segment, hotel_segment)
             
@@ -342,8 +344,8 @@ for user in users:
                 daily_agg[date_key]["totalCancels"] += 1
                 daily_agg[date_key]["totalRevenue"] -= price
         
-        elif random.random() < 0.5:
-            # ADD_TO_WISHLIST
+        elif rand < 0.40:
+            # ADD_TO_WISHLIST (~25% of interactions)
             interactions.append({
                 "id": str(uuid.uuid4()),
                 "userId": user_id,
@@ -356,8 +358,8 @@ for user in users:
             })
             daily_agg[date_key]["totalLikes"] += 1
         
-        else:
-            # CLICK_BOOK_NOW
+        elif rand < 0.65:
+            # CLICK_BOOK_NOW (~25% of interactions)
             interactions.append({
                 "id": str(uuid.uuid4()),
                 "userId": user_id,
@@ -369,35 +371,48 @@ for user in users:
                 "metadata": {}
             })
             daily_agg[date_key]["totalClickBook"] += 1
-            
-            # 25% of CLICK_BOOK_NOW users also leave a rating/review (browsing feedback)
-            if random.random() < 0.25:
-                click_rating = compute_rating(user_segment, hotel_segment)
-                click_review_timestamp = timestamp + timedelta(days=random.randint(0, 3))
-                
-                if click_rating >= 4:
-                    click_sentiment = random.choices(['POSITIVE', 'NEUTRAL'], weights=[0.7, 0.3])[0]
-                elif click_rating == 3:
-                    click_sentiment = random.choices(['NEUTRAL', 'POSITIVE', 'NEGATIVE'], weights=[0.5, 0.3, 0.2])[0]
-                else:
-                    click_sentiment = random.choices(['NEGATIVE', 'NEUTRAL'], weights=[0.6, 0.4])[0]
-                
-                click_comment = generate_dynamic_review(click_sentiment)
-                
-                click_explicit = generate_explicit_sentiments(click_rating, click_sentiment)
-                reviews.append({
-                    "id": str(uuid.uuid4()),
-                    "bookingId": None,
-                    "userId": user_id,
-                    "hotelId": hotel_id,
-                    "rating": click_rating,
-                    "comment": click_comment,
-                    "sentiment": click_sentiment,
-                    "explicitSentiments": click_explicit,
-                    "nlpProcessed": True,
-                    "createdAt": click_review_timestamp.isoformat(),
-                    "updatedAt": click_review_timestamp.isoformat()
-                })
+        
+        elif rand < 0.80:
+            # VIEW (~15% of interactions - browsing, weakest signal)
+            interactions.append({
+                "id": str(uuid.uuid4()),
+                "userId": user_id,
+                "hotelId": hotel_id,
+                "sessionId": str(uuid.uuid4()),
+                "type": "VIEW",
+                "rating": None,
+                "timestamp": timestamp.isoformat(),
+                "metadata": {"dwellTimeSec": random.randint(5, 120)}
+            })
+            daily_agg[date_key]["totalViews"] += 1
+        
+        elif rand < 0.90:
+            # RATE_POSITIVE (~10% - user rates 4-5 stars without booking)
+            rate_rating = random.choice([4, 5])
+            interactions.append({
+                "id": str(uuid.uuid4()),
+                "userId": user_id,
+                "hotelId": hotel_id,
+                "sessionId": str(uuid.uuid4()),
+                "type": "RATE_POSITIVE",
+                "rating": rate_rating,
+                "timestamp": timestamp.isoformat(),
+                "metadata": {}
+            })
+        
+        else:
+            # RATE_NEGATIVE (~10% - user rates 1-2 stars without booking)
+            rate_rating = random.choice([1, 2])
+            interactions.append({
+                "id": str(uuid.uuid4()),
+                "userId": user_id,
+                "hotelId": hotel_id,
+                "sessionId": str(uuid.uuid4()),
+                "type": "RATE_NEGATIVE",
+                "rating": rate_rating,
+                "timestamp": timestamp.isoformat(),
+                "metadata": {}
+            })
 
 print(f"   ✅ Generated {len(interactions)} interactions")
 print(f"   ✅ Generated {len(reviews)} reviews")
@@ -438,10 +453,22 @@ for i in range(29, -1, -1):
     base_rmse = 0.95 - (i * 0.005)
     base_rmse = max(0.80, base_rmse + random.uniform(-0.02, 0.02))
 
+    base_mae = base_rmse * 0.82 + random.uniform(-0.01, 0.01)
+    precision = round(70 + random.uniform(-5, 5), 2)
+    recall = round(60 + random.uniform(-5, 5), 2)
+    ndcg = round(precision * 0.85 + random.uniform(-2, 2), 2)
+
     metric_entry = {
         "rmse": round(base_rmse, 4),
-        "precisionAt5": round(70 + random.uniform(-5, 5), 2),
-        "recallAt5": round(60 + random.uniform(-5, 5), 2),
+        "mae": round(base_mae, 4),
+        "precisionAt5": precision,
+        "recallAt5": recall,
+        "ndcgAt5": ndcg,
+        "baselineRmse": round(base_rmse * 1.05, 4),
+        "baselineMae": round(base_mae * 1.04, 4),
+        "baselinePrecision": round(precision * 0.75, 2),
+        "baselineRecall": round(recall * 0.70, 2),
+        "baselineNdcg": round(ndcg * 0.78, 2),
         "algorithm": "SVD",
         "datasetSize": len(interactions),
         "executionTimeMs": random.randint(100, 500),

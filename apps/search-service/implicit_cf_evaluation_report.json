@@ -1,36 +1,39 @@
 {
-  "timestamp": "2026-05-12T08:25:27.188246",
+  "timestamp": "2026-05-12T22:17:41.895400",
   "system": "Implicit CF (Ranking)",
   "data_stats": {
-    "total_interactions": 7982,
+    "total_interactions": 7875,
     "signal_distribution": {
-      "CLICK_BOOK_NOW": 3538,
-      "BOOK": 1006,
-      "ADD_TO_WISHLIST": 3438
+      "VIEW": 1153,
+      "ADD_TO_WISHLIST": 2636,
+      "CLICK_BOOK_NOW": 1985,
+      "RATE_NEGATIVE": 766,
+      "RATE_POSITIVE": 807,
+      "BOOK": 528
     },
-    "train_count": 4789,
-    "test_count": 1597
+    "train_count": 4725,
+    "test_count": 1575
   },
   "matrix_stats": {
     "train_shape": [
       200,
       255
     ],
-    "sparsity_pct": 91.07
+    "sparsity_pct": 91.19
   },
   "cf_results": {
-    "precision_at_k": 0.0302,
-    "recall_at_k": 0.0185,
-    "ndcg_at_k": 0.0267
+    "precision_at_k": 0.0482,
+    "recall_at_k": 0.0335,
+    "ndcg_at_k": 0.0453
   },
   "baseline_results": {
-    "precision_at_k": 0.0231,
-    "recall_at_k": 0.0146,
-    "ndcg_at_k": 0.0235
+    "precision_at_k": 0.0312,
+    "recall_at_k": 0.0201,
+    "ndcg_at_k": 0.0322
   },
   "improvement_pct": {
-    "precision": 30.43,
-    "recall": 26.37,
-    "ndcg": 13.42
+    "precision": 54.84,
+    "recall": 67.05,
+    "ndcg": 40.91
   }
 }

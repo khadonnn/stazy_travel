@@ -156,29 +156,43 @@ export default async function AnalyticsPage() {
 
     const metrics = latestMetric || {
         rmse: 0,
+        mae: 0,
         precisionAt5: 0,
         recallAt5: 0,
+        ndcgAt5: 0,
         algorithm: 'N/A',
     };
 
     const dynamicKPIs = [
         {
-            title: 'RMSE (Độ lỗi)',
-            value: metrics.rmse ? metrics.rmse.toFixed(3) : 'N/A',
-            description: `Đánh giá thuật toán ${metrics.algorithm || 'CF'}`,
+            title: 'RMSE (Độ lỗi dự đoán)',
+            value: metrics.rmse ? metrics.rmse.toFixed(4) : 'N/A',
+            description: `√(Σ(ŷ-y)²/N) — Thuật toán ${metrics.algorithm || 'CF'}`,
             color: 'text-red-500',
         },
         {
-            title: 'Precision@5',
+            title: 'MAE (Lỗi tuyệt đối TB)',
+            value: metrics.mae ? metrics.mae.toFixed(4) : 'N/A',
+            description: 'Σ|ŷ-y|/N — Mean Absolute Error',
+            color: 'text-orange-500',
+        },
+        {
+            title: 'Precision@5 (Chính xác)',
             value: formatPercent(metrics.precisionAt5),
-            description: 'Tỷ lệ gợi ý đúng trong Top 5',
+            description: '|Gợi ý đúng ∩ Test| / 5 — Ranking',
             color: 'text-green-500',
         },
         {
-            title: 'Recall@5',
+            title: 'Recall@5 (Bao phủ)',
             value: formatPercent(metrics.recallAt5),
-            description: 'Độ bao phủ items đã tìm thấy',
+            description: '|Gợi ý đúng ∩ Test| / |Test| — Ranking',
             color: 'text-blue-500',
+        },
+        {
+            title: 'NDCG@5 (Chất lượng xếp hạng)',
+            value: metrics.ndcgAt5 ? metrics.ndcgAt5.toFixed(4) : 'N/A',
+            description: 'DCG/IDCG — Discounted Cumulative Gain',
+            color: 'text-purple-500',
         },
     ];
 

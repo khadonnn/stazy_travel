@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getAIStatus, forceRetrainAI } from '@/actions/aiActions';
+import { getLatestSystemMetric } from '@/app/(dashboard)/actions/get-system-metrics';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -36,16 +37,36 @@ interface AIStatus {
     model_file_size_mb: number;
 }
 
+interface SystemMetricData {
+    rmse: number;
+    mae: number;
+    precisionAt5: number;
+    recallAt5: number;
+    ndcgAt5: number;
+    baselineRmse: number;
+    baselineMae: number;
+    baselinePrecision: number;
+    baselineRecall: number;
+    baselineNdcg: number;
+    algorithm: string;
+    datasetSize: number;
+    createdAt: string;
+}
+
 export default function AIManagementPage() {
     const [status, setStatus] = useState<AIStatus | null>(null);
+    const [metrics, setMetrics] = useState<SystemMetricData | null>(null);
     const [loading, setLoading] = useState(true);
     const [retraining, setRetraining] = useState(false);
 
     const fetchStatus = async () => {
         setLoading(true);
         try {
-            const data = await getAIStatus();
+            const [data, metricData] = await Promise.all([getAIStatus(), getLatestSystemMetric()]);
             setStatus(data);
+            if (metricData) {
+                setMetrics(metricData as unknown as SystemMetricData);
+            }
         } catch (error) {
             console.error('Failed to fetch AI status:', error);
         } finally {
@@ -156,8 +177,10 @@ export default function AIManagementPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{eval_?.optimized_rmse?.toFixed(4) || '—'}</div>
+                        <p className="text-muted-foreground text-xs">√(Σ(ŷ-y)²/N) — Root Mean Square Error</p>
                         <p className="text-xs text-green-600">
-                            Cải thiện {eval_?.rmse_improvement_pct?.toFixed(1) || 0}% so với baseline
+                            Baseline: {eval_?.baseline_rmse?.toFixed(4) || '—'} → Cải thiện{' '}
+                            {eval_?.rmse_improvement_pct?.toFixed(1) || 0}%
                         </p>
                     </CardContent>
                 </Card>
@@ -169,8 +192,10 @@ export default function AIManagementPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{eval_?.optimized_mae?.toFixed(4) || '—'}</div>
+                        <p className="text-muted-foreground text-xs">Σ|ŷ-y|/N — Mean Absolute Error</p>
                         <p className="text-xs text-green-600">
-                            Cải thiện {eval_?.mae_improvement_pct?.toFixed(1) || 0}% so với baseline
+                            Baseline: {eval_?.baseline_mae?.toFixed(4) || '—'} → Cải thiện{' '}
+                            {eval_?.mae_improvement_pct?.toFixed(1) || 0}%
                         </p>
                     </CardContent>
                 </Card>
@@ -192,8 +217,100 @@ export default function AIManagementPage() {
                 </Card>
             </div>
 
+            {/* Ranking Metrics (Implicit CF) */}
+            <h2 className="mt-6 text-lg font-semibold">📊 Chỉ số Ranking (Implicit CF — System A)</h2>
+            <p className="text-muted-foreground mb-3 text-sm">
+                Đánh giá khả năng gợi ý đúng khách sạn trong Top-K. Dữ liệu từ 6 loại tín hiệu ngầm định (VIEW,
+                CLICK_BOOK_NOW, ADD_TO_WISHLIST, RATE_POSITIVE, BOOK, RATE_NEGATIVE).
+            </p>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Precision@5</CardTitle>
+                        <CardDescription className="text-xs">|Relevant ∩ Recommended@5| / 5</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold text-green-600">
+                            {metrics?.precisionAt5?.toFixed(1) || '—'}%
+                        </div>
+                        <p className="text-muted-foreground text-xs">Tỷ lệ item đúng trong 5 gợi ý đầu</p>
+                        <p className="text-xs text-blue-600">
+                            Baseline (Top Popular): {metrics?.baselinePrecision?.toFixed(1) || '—'}%
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Recall@5</CardTitle>
+                        <CardDescription className="text-xs">|Relevant ∩ Recommended@5| / |Relevant|</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold text-blue-600">{metrics?.recallAt5?.toFixed(1) || '—'}%</div>
+                        <p className="text-muted-foreground text-xs">Tỷ lệ item đúng được tìm thấy</p>
+                        <p className="text-xs text-blue-600">
+                            Baseline (Top Popular): {metrics?.baselineRecall?.toFixed(1) || '—'}%
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">NDCG@5</CardTitle>
+                        <CardDescription className="text-xs">
+                            DCG@5 / IDCG@5 — Discounted Cumulative Gain
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold text-purple-600">{metrics?.ndcgAt5?.toFixed(4) || '—'}</div>
+                        <p className="text-muted-foreground text-xs">Chất lượng xếp hạng (ranking quality)</p>
+                        <p className="text-xs text-blue-600">
+                            Baseline (Top Popular): {metrics?.baselineNdcg?.toFixed(4) || '—'}
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Prediction Metrics (Explicit CF) */}
+            <h2 className="mt-6 text-lg font-semibold">📈 Chỉ số Dự đoán (Explicit CF — System B)</h2>
+            <p className="text-muted-foreground mb-3 text-sm">
+                Đánh giá khả năng dự đoán điểm đánh giá (rating prediction). Dữ liệu từ reviews (1-5 sao).
+            </p>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">RMSE — Root Mean Square Error</CardTitle>
+                        <CardDescription className="text-xs">√(Σ(ŷᵢ - yᵢ)² / N)</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold text-red-600">
+                            {eval_?.optimized_rmse?.toFixed(4) || '—'}
+                        </div>
+                        <p className="text-muted-foreground text-xs">Giá trị thấp hơn = dự đoán chính xác hơn</p>
+                        <p className="text-xs text-green-600">
+                            Baseline (User Mean): {eval_?.baseline_rmse?.toFixed(4) || '—'} → Cải thiện{' '}
+                            {eval_?.rmse_improvement_pct?.toFixed(1) || 0}%
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">MAE — Mean Absolute Error</CardTitle>
+                        <CardDescription className="text-xs">Σ|ŷᵢ - yᵢ| / N</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold text-orange-600">
+                            {eval_?.optimized_mae?.toFixed(4) || '—'}
+                        </div>
+                        <p className="text-muted-foreground text-xs">Lỗi tuyệt đối trung bình trên mỗi dự đoán</p>
+                        <p className="text-xs text-green-600">
+                            Baseline (User Mean): {eval_?.baseline_mae?.toFixed(4) || '—'} → Cải thiện{' '}
+                            {eval_?.mae_improvement_pct?.toFixed(1) || 0}%
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+
             {/* Model Configuration */}
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -247,6 +364,34 @@ export default function AIManagementPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Signal Weights Reference */}
+            <Card className="mt-6">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Zap className="h-5 w-5" />
+                        Trọng số Tín hiệu Ngầm định (Implicit Signal Weights)
+                    </CardTitle>
+                    <CardDescription>signal_weights dùng trong Collaborative Filtering</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+                        {[
+                            { name: 'VIEW', weight: '0.5', color: 'bg-gray-100 text-gray-700' },
+                            { name: 'CLICK_BOOK_NOW', weight: '2.0', color: 'bg-blue-100 text-blue-700' },
+                            { name: 'ADD_TO_WISHLIST', weight: '3.0', color: 'bg-pink-100 text-pink-700' },
+                            { name: 'RATE_POSITIVE', weight: '4.5', color: 'bg-green-100 text-green-700' },
+                            { name: 'BOOK', weight: '5.0', color: 'bg-emerald-100 text-emerald-700' },
+                            { name: 'RATE_NEGATIVE', weight: '-3.0', color: 'bg-red-100 text-red-700' },
+                        ].map((signal) => (
+                            <div key={signal.name} className={`rounded-lg p-3 text-center ${signal.color}`}>
+                                <p className="text-xs font-medium">{signal.name}</p>
+                                <p className="text-lg font-bold">{signal.weight}</p>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }
