@@ -1,0 +1,116 @@
+// =========================================
+// FLOW 9: PRODUCT SERVICE
+// Quản lý khách sạn, danh mục (Hotel CRUD + Approval + Vector Indexing)
+// Bảng: User -> Hotel -> Category
+// =========================================
+
+Enum Role {
+  USER
+  AUTHOR
+  ADMIN
+}
+
+Enum HotelStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+Enum TripType {
+  BUSINESS
+  FAMILY
+  COUPLE
+  SOLO
+  GROUP
+}
+
+Table User {
+  id varchar [primary key]
+  email varchar [unique]
+  name varchar
+  role Role [default: 'USER']
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Hotel {
+  id integer [primary key]
+  authorId varchar
+  categoryId integer
+  slug varchar [unique]
+  title varchar
+  roomName varchar [default: 'Standard Room']
+  featuredImage varchar
+  galleryImgs varchar[]
+  description text
+  fullDescription text [null]
+  address varchar
+  destination varchar
+  map json
+  nearbyLandmarks varchar[]
+  price decimal(12,2)
+  saleOff varchar [null]
+  saleOffPercent integer [default: 0]
+  maxGuests integer
+  bedrooms integer
+  bathrooms integer
+  amenities varchar[]
+  tags varchar[]
+  suitableFor TripType[]
+  accessibility varchar[]
+  reviewStar float [default: 0]
+  reviewCount integer [default: 0]
+  viewCount integer [default: 0]
+  commentCount integer [default: 0]
+  cancellationRate float [default: 0.0]
+  like boolean [default: false]
+  isAds boolean [default: false]
+  status HotelStatus [default: 'DRAFT']
+  submittedAt timestamp [null]
+  approvedBy varchar [null]
+  approvedAt timestamp [null]
+  rejectionReason text [null]
+  imageVector vector [null]
+  policies text [null]
+  policiesVector vector [null]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Category {
+  id integer [primary key]
+  name varchar
+  slug varchar [unique]
+  description text [null]
+  color varchar [null]
+  icon varchar [null]
+  thumbnail varchar [null]
+  count integer [default: 0]
+}
+
+Table Interaction {
+  id integer [primary key]
+  userId varchar
+  hotelId integer [null]
+  type varchar [default: 'VIEW']
+  timestamp timestamp [default: `now()`]
+}
+
+Table Review {
+  id varchar [primary key]
+  bookingId varchar(255) [unique]
+  userId varchar
+  hotelId integer
+  rating integer
+  comment text [null]
+  createdAt timestamp [default: `now()`]
+}
+
+Ref: Hotel.authorId > User.id
+Ref: Hotel.categoryId > Category.id
+Ref: Interaction.userId > User.id [delete: cascade]
+Ref: Interaction.hotelId > Hotel.id [delete: cascade]
+Ref: Review.userId > User.id [delete: cascade]
+Ref: Review.hotelId > Hotel.id [delete: cascade]

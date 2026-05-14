@@ -1,0 +1,104 @@
+// =========================================
+// FLOW 7: HOTEL APPROVAL WORKFLOW
+// Duyệt khách sạn (Author -> Admin Approval -> AI Vector Indexing)
+// Bảng: User -> AuthorRequest -> Hotel -> Category
+// =========================================
+
+Enum Role {
+  USER
+  AUTHOR
+  ADMIN
+}
+
+Enum AuthorRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+Enum HotelStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+Table User {
+  id varchar [primary key]
+  email varchar [unique]
+  name varchar
+  role Role [default: 'USER']
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table AuthorRequest {
+  id varchar [primary key]
+  userId varchar
+  businessName varchar
+  businessType varchar
+  taxCode varchar [null]
+  phone varchar
+  email varchar
+  address varchar
+  identityCard varchar
+  identityImages varchar[]
+  reason text [null]
+  status AuthorRequestStatus [default: 'PENDING']
+  reviewedBy varchar [null]
+  reviewedAt timestamp [null]
+  rejectionReason text [null]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Hotel {
+  id integer [primary key]
+  authorId varchar
+  categoryId integer
+  slug varchar [unique]
+  title varchar
+  roomName varchar [default: 'Standard Room']
+  featuredImage varchar
+  galleryImgs varchar[]
+  description text
+  fullDescription text [null]
+  address varchar
+  destination varchar
+  map json
+  nearbyLandmarks varchar[]
+  price decimal(12,2)
+  saleOff varchar [null]
+  saleOffPercent integer [default: 0]
+  maxGuests integer
+  bedrooms integer
+  bathrooms integer
+  amenities varchar[]
+  tags varchar[]
+  status HotelStatus [default: 'DRAFT']
+  submittedAt timestamp [null]
+  approvedBy varchar [null]
+  approvedAt timestamp [null]
+  rejectionReason text [null]
+  imageVector vector [null]
+  policies text [null]
+  policiesVector vector [null]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Category {
+  id integer [primary key]
+  name varchar
+  slug varchar [unique]
+  description text [null]
+  color varchar [null]
+  icon varchar [null]
+  thumbnail varchar [null]
+  count integer [default: 0]
+}
+
+Ref: AuthorRequest.userId > User.id [delete: cascade]
+Ref: Hotel.authorId > User.id
+Ref: Hotel.categoryId > Category.id

@@ -1,0 +1,46 @@
+// =========================================
+// FLOW 4: SENTIMENT ANALYSIS - NLP
+// Phân tích cảm xúc đánh giá (Aspect-based Sentiment Analysis)
+// Bảng: User -> Review -> Hotel
+// =========================================
+
+Enum ReviewSentiment {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+}
+
+Table User {
+  id varchar [primary key]
+  email varchar [unique]
+  name varchar
+  createdAt timestamp [default: `now()`]
+}
+
+Table Review {
+  id varchar [primary key]
+  bookingId varchar(255) [unique]
+  userId varchar
+  hotelId integer
+  rating integer
+  comment text [null]
+  sentiment ReviewSentiment [null]
+  explicitSentiments json [null]
+  nlpProcessed boolean [default: false]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Hotel {
+  id integer [primary key]
+  title varchar
+  slug varchar [unique]
+  featuredImage varchar
+  reviewStar float [default: 0]
+  reviewCount integer [default: 0]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Ref: Review.userId > User.id [delete: cascade]
+Ref: Review.hotelId > Hotel.id [delete: cascade]

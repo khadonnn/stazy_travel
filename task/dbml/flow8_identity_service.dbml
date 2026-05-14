@@ -1,0 +1,127 @@
+// =========================================
+// FLOW 8: IDENTITY SERVICE
+// Quản lý người dùng và sở thích
+// Bảng: User -> UserPreference -> AuthorRequest -> Favorite -> ChatMessage
+// =========================================
+
+Enum Role {
+  USER
+  AUTHOR
+  ADMIN
+}
+
+Enum AuthorRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+Enum SenderRole {
+  USER
+  ADMIN
+  AI
+}
+
+Table User {
+  id varchar [primary key]
+  email varchar [unique]
+  password varchar [null]
+  name varchar
+  nickname varchar [null]
+  phone varchar [null]
+  gender varchar [null]
+  dob timestamp [null]
+  address varchar [null]
+  avatar varchar [null]
+  bgImage varchar [null]
+  jobName varchar [null]
+  desc text [null]
+  role Role [default: 'USER']
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table UserPreference {
+  id integer [primary key]
+  userId varchar [unique]
+  interestedCategories varchar[]
+  favoriteAmenities varchar[]
+  favoriteCities varchar[]
+  avgPriceExpect decimal(12,2) [null]
+  preferredRatingMin float [null]
+  pastBookingCount integer [default: 0]
+  lastBookingAt timestamp [null]
+  updatedAt timestamp
+}
+
+Table AuthorRequest {
+  id varchar [primary key]
+  userId varchar
+  businessName varchar
+  businessType varchar
+  taxCode varchar [null]
+  phone varchar
+  email varchar
+  address varchar
+  identityCard varchar
+  identityImages varchar[]
+  reason text [null]
+  status AuthorRequestStatus [default: 'PENDING']
+  reviewedBy varchar [null]
+  reviewedAt timestamp [null]
+  rejectionReason text [null]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Favorite {
+  id integer [primary key]
+  userId varchar
+  hotelId integer
+  createdAt timestamp [default: `now()`]
+}
+
+Table Hotel {
+  id integer [primary key]
+  title varchar
+  slug varchar [unique]
+  featuredImage varchar
+  price decimal(12,2)
+  reviewStar float [default: 0]
+}
+
+Table ChatMessage {
+  id varchar [primary key]
+  userId varchar
+  sender SenderRole
+  text varchar [null]
+  images varchar[]
+  isRead boolean [default: false]
+  metadata json [null]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table SearchQueryLog {
+  id integer [primary key]
+  userId varchar [null]
+  query varchar
+  filters json [null]
+  timestamp timestamp [default: `now()`]
+}
+
+Table Recommendation {
+  id integer [primary key]
+  userId varchar [unique]
+  hotelIds integer[]
+  score json [null]
+  updatedAt timestamp
+}
+
+Ref: UserPreference.userId - User.id [delete: cascade]
+Ref: AuthorRequest.userId > User.id [delete: cascade]
+Ref: Favorite.userId > User.id [delete: cascade]
+Ref: Favorite.hotelId > Hotel.id [delete: cascade]
+Ref: ChatMessage.userId > User.id
+Ref: SearchQueryLog.userId > User.id [delete: set null]
+Ref: Recommendation.userId - User.id [delete: cascade]

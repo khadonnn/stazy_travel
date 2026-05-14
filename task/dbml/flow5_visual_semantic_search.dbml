@@ -1,0 +1,68 @@
+// =========================================
+// FLOW 5: VISUAL SEARCH & SEMANTIC SEARCH
+// Tìm kiếm bằng hình ảnh (CLIP) và ngữ nghĩa (Sentence-BERT) qua pgvector
+// Bảng: Hotel (vector fields) -> SearchQueryLog -> Interaction -> User
+// =========================================
+
+Enum InteractionType {
+  VIEW
+  LIKE
+  SHARE
+  ADD_TO_WISHLIST
+  BOOK
+  CLICK_BOOK_NOW
+  CANCEL
+  SEARCH_QUERY
+  FILTER_APPLIED
+  RATING
+  RATE_POSITIVE
+  RATE_NEGATIVE
+}
+
+Table User {
+  id varchar [primary key]
+  email varchar [unique]
+  name varchar
+  createdAt timestamp [default: `now()`]
+}
+
+Table Hotel {
+  id integer [primary key]
+  authorId varchar
+  title varchar
+  slug varchar [unique]
+  featuredImage varchar
+  galleryImgs varchar[]
+  description text
+  address varchar
+  destination varchar
+  price decimal(12,2)
+  amenities varchar[]
+  policies text [null]
+  imageVector vector [null]
+  policiesVector vector [null]
+  reviewStar float [default: 0]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table SearchQueryLog {
+  id integer [primary key]
+  userId varchar [null]
+  query varchar
+  filters json [null]
+  timestamp timestamp [default: `now()`]
+}
+
+Table Interaction {
+  id integer [primary key]
+  userId varchar
+  hotelId integer [null]
+  type InteractionType [default: 'SEARCH_QUERY']
+  metadata json [null]
+  timestamp timestamp [default: `now()`]
+}
+
+Ref: SearchQueryLog.userId > User.id [delete: set null]
+Ref: Interaction.userId > User.id [delete: cascade]
+Ref: Interaction.hotelId > Hotel.id [delete: cascade]

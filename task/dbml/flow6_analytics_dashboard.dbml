@@ -1,0 +1,64 @@
+// =========================================
+// FLOW 6: ANALYTICS & DASHBOARD
+// Thống kê kinh doanh & Đánh giá mô hình AI
+// Bảng: Interaction -> DailyStat -> SystemMetric
+// =========================================
+
+Enum InteractionType {
+  VIEW
+  LIKE
+  SHARE
+  ADD_TO_WISHLIST
+  BOOK
+  CLICK_BOOK_NOW
+  CANCEL
+  SEARCH_QUERY
+  FILTER_APPLIED
+  RATING
+  RATE_POSITIVE
+  RATE_NEGATIVE
+}
+
+Table Interaction {
+  id integer [primary key]
+  userId varchar
+  hotelId integer [null]
+  type InteractionType [default: 'VIEW']
+  rating integer [null]
+  metadata json [null]
+  timestamp timestamp [default: `now()`]
+}
+
+Table DailyStat {
+  id integer [primary key]
+  date timestamp [unique]
+  totalRevenue decimal(12,2) [default: 0]
+  totalBookings integer [default: 0]
+  totalCancels integer [default: 0]
+  totalViews integer [default: 0]
+  totalClickBook integer [default: 0]
+  totalLikes integer [default: 0]
+  totalSearch integer [default: 0]
+  miscInteractions json [null]
+  createdAt timestamp [default: `now()`]
+}
+
+Table SystemMetric {
+  id varchar [primary key]
+  rmse float
+  mae float [default: 0]
+  precisionAt5 float
+  recallAt5 float
+  ndcgAt5 float [default: 0]
+  baselineRmse float [default: 0]
+  baselineMae float [default: 0]
+  baselinePrecision float [default: 0]
+  baselineRecall float [default: 0]
+  baselineNdcg float [default: 0]
+  algorithm varchar [default: 'SVD']
+  datasetSize integer [null]
+  executionTimeMs integer [null]
+  trainingHistory json [null]
+  tuningParams json [null]
+  createdAt timestamp [default: `now()`]
+}

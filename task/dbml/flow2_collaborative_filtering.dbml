@@ -1,0 +1,84 @@
+// =========================================
+// FLOW 2: COLLABORATIVE FILTERING - SVD
+// Gợi ý dựa trên hành vi người dùng (Implicit + Explicit Feedback)
+// Bảng: User -> Interaction -> Hotel -> Recommendation -> SystemMetric
+// =========================================
+
+Enum InteractionType {
+  VIEW
+  LIKE
+  SHARE
+  ADD_TO_WISHLIST
+  BOOK
+  CLICK_BOOK_NOW
+  CANCEL
+  SEARCH_QUERY
+  FILTER_APPLIED
+  RATING
+  RATE_POSITIVE
+  RATE_NEGATIVE
+}
+
+Table User {
+  id varchar [primary key]
+  email varchar [unique]
+  name varchar
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Interaction {
+  id integer [primary key]
+  userId varchar
+  sessionId varchar(255) [null]
+  hotelId integer [null]
+  type InteractionType [default: 'VIEW']
+  rating integer [null]
+  metadata json [null]
+  timestamp timestamp [default: `now()`]
+}
+
+Table Hotel {
+  id integer [primary key]
+  title varchar
+  slug varchar [unique]
+  featuredImage varchar
+  price decimal(12,2)
+  reviewStar float [default: 0]
+  reviewCount integer [default: 0]
+  status varchar [default: 'APPROVED']
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Recommendation {
+  id integer [primary key]
+  userId varchar [unique]
+  hotelIds integer[]
+  score json [null]
+  updatedAt timestamp
+}
+
+Table SystemMetric {
+  id varchar [primary key]
+  rmse float
+  mae float [default: 0]
+  precisionAt5 float
+  recallAt5 float
+  ndcgAt5 float [default: 0]
+  baselineRmse float [default: 0]
+  baselineMae float [default: 0]
+  baselinePrecision float [default: 0]
+  baselineRecall float [default: 0]
+  baselineNdcg float [default: 0]
+  algorithm varchar [default: 'SVD']
+  datasetSize integer [null]
+  executionTimeMs integer [null]
+  trainingHistory json [null]
+  tuningParams json [null]
+  createdAt timestamp [default: `now()`]
+}
+
+Ref: Interaction.userId > User.id [delete: cascade]
+Ref: Interaction.hotelId > Hotel.id [delete: cascade]
+Ref: Recommendation.userId - User.id [delete: cascade]

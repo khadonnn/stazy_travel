@@ -1,0 +1,154 @@
+// =========================================
+// FLOW 3: BOOKING + PAYMENT
+// Đặt phòng & Thanh toán (Saga Orchestration + Transactional Outbox)
+// Bảng: User -> Booking -> Hotel -> Review -> OutboxMessage -> Interaction
+// =========================================
+
+Enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+Enum PaymentMethod {
+  STRIPE
+  PAYPAL
+  VNPAY
+  BANK_TRANSFER
+  CASH_ON_CHECKIN
+}
+
+Enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+Enum OutboxStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
+}
+
+Enum InteractionType {
+  VIEW
+  LIKE
+  SHARE
+  ADD_TO_WISHLIST
+  BOOK
+  CLICK_BOOK_NOW
+  CANCEL
+  SEARCH_QUERY
+  FILTER_APPLIED
+  RATING
+  RATE_POSITIVE
+  RATE_NEGATIVE
+}
+
+Enum ReviewSentiment {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+}
+
+Table User {
+  id varchar [primary key]
+  email varchar [unique]
+  name varchar
+  phone varchar [null]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Hotel {
+  id integer [primary key]
+  authorId varchar
+  title varchar
+  slug varchar [unique]
+  featuredImage varchar
+  price decimal(12,2)
+  maxGuests integer
+  reviewStar float [default: 0]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Booking {
+  id varchar [primary key]
+  bookingId varchar(255) [null]
+  userId varchar
+  hotelId integer
+  guestName varchar
+  guestEmail varchar
+  guestPhone varchar
+  adults integer [default: 1]
+  children integer [default: 0]
+  bookingSnapshot json [null]
+  contactDetails json [null]
+  checkIn timestamp
+  checkOut timestamp
+  nights integer
+  basePrice decimal(12,2)
+  discount decimal(12,2) [default: 0]
+  totalAmount decimal(12,2)
+  currency varchar [default: 'VND']
+  paymentMethod PaymentMethod [default: 'STRIPE']
+  paymentStatus PaymentStatus [default: 'PENDING']
+  paymentIntentId varchar(255) [null]
+  stripeSessionId varchar(255) [null]
+  paymentFailureReason text [null]
+  status BookingStatus [default: 'PENDING']
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table OutboxMessage {
+  id varchar [primary key]
+  dedupKey varchar [unique]
+  aggregateType varchar
+  aggregateId varchar
+  eventType varchar
+  topic varchar
+  payload json
+  status OutboxStatus [default: 'PENDING']
+  attempts integer [default: 0]
+  availableAt timestamp [default: `now()`]
+  processedAt timestamp [null]
+  lastError text [null]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Review {
+  id varchar [primary key]
+  bookingId varchar(255) [unique]
+  userId varchar
+  hotelId integer
+  rating integer
+  comment text [null]
+  sentiment ReviewSentiment [null]
+  explicitSentiments json [null]
+  nlpProcessed boolean [default: false]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Interaction {
+  id integer [primary key]
+  userId varchar
+  hotelId integer [null]
+  type InteractionType [default: 'VIEW']
+  metadata json [null]
+  timestamp timestamp [default: `now()`]
+}
+
+Ref: Booking.userId > User.id [delete: cascade]
+Ref: Booking.hotelId > Hotel.id [delete: cascade]
+Ref: Hotel.authorId > User.id
+Ref: Review.userId > User.id [delete: cascade]
+Ref: Review.hotelId > Hotel.id [delete: cascade]
+Ref: Interaction.userId > User.id [delete: cascade]
+Ref: Interaction.hotelId > Hotel.id [delete: cascade]

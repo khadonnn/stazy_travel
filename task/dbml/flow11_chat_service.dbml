@@ -1,0 +1,53 @@
+// =========================================
+// FLOW 11: CHAT SUPPORT SERVICE
+// Hỗ trợ khách hàng trực tuyến (User <-> Admin/AI)
+// Bảng: User -> ChatMessage
+// =========================================
+
+Enum SenderRole {
+  USER
+  ADMIN
+  AI
+}
+
+Table User {
+  id varchar [primary key]
+  email varchar [unique]
+  name varchar
+  avatar varchar [null]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table ChatMessage {
+  id varchar [primary key]
+  userId varchar
+  sender SenderRole
+  text varchar [null]
+  images varchar[]
+  isRead boolean [default: false]
+  metadata json [null]
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Booking {
+  id varchar [primary key]
+  userId varchar
+  hotelId integer
+  guestName varchar
+  status varchar
+  totalAmount decimal(12,2)
+  createdAt timestamp [default: `now()`]
+}
+
+Table Hotel {
+  id integer [primary key]
+  title varchar
+  slug varchar [unique]
+  featuredImage varchar
+}
+
+Ref: ChatMessage.userId > User.id
+Ref: Booking.userId > User.id [delete: cascade]
+Ref: Booking.hotelId > Hotel.id [delete: cascade]

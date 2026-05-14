@@ -1,0 +1,73 @@
+// =========================================
+// FLOW 1: CONTENT-BASED FILTERING
+// Gợi ý dựa trên sở thích tường minh (Explicit Preferences)
+// Bảng: User -> UserPreference -> Hotel -> Category
+// =========================================
+
+Enum Role {
+  USER
+  AUTHOR
+  ADMIN
+}
+
+Enum HotelStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+Table User {
+  id varchar [primary key]
+  email varchar [unique]
+  name varchar
+  role Role [default: 'USER']
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table UserPreference {
+  id integer [primary key]
+  userId varchar [unique]
+  interestedCategories varchar[]
+  favoriteAmenities varchar[]
+  favoriteCities varchar[]
+  avgPriceExpect decimal(12,2) [null]
+  preferredRatingMin float [null]
+  pastBookingCount integer [default: 0]
+  lastBookingAt timestamp [null]
+  updatedAt timestamp
+}
+
+Table Hotel {
+  id integer [primary key]
+  authorId varchar
+  categoryId integer
+  slug varchar [unique]
+  title varchar
+  featuredImage varchar
+  address varchar
+  destination varchar
+  price decimal(12,2)
+  amenities varchar[]
+  tags varchar[]
+  reviewStar float [default: 0]
+  reviewCount integer [default: 0]
+  status HotelStatus [default: 'DRAFT']
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp
+}
+
+Table Category {
+  id integer [primary key]
+  name varchar
+  slug varchar [unique]
+  description text [null]
+  icon varchar [null]
+  count integer [default: 0]
+}
+
+Ref: UserPreference.userId - User.id [delete: cascade]
+Ref: Hotel.authorId > User.id
+Ref: Hotel.categoryId > Category.id
