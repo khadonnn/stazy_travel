@@ -1,0 +1,76 @@
+{
+  "canvas": {
+    "aspect_ratio": "16:9",
+    "background_color": "#F3F4F0",
+    "primary_brand_color": "#1E5A44"
+  },
+  "layers_stack": [
+    {
+      "z_index": 1,
+      "name": "Background Layer (Sky)",
+      "type": "Solid Color",
+      "value": "#F3F4F0",
+      "description": "Lớp màu nền phẳng làm bầu trời vô cực, tạo không gian trống (negative space) giúp hiển thị chữ sắc nét."
+    },
+    {
+      "z_index": 10,
+      "name": "Typography Layer",
+      "type": "DOM Text Elements",
+      "font_family": "Cy Grotesk Wide",
+      "color": "#1E5A44",
+      "positioning": {
+        "alignment": "center",
+        "margin_top": "8vh"
+      },
+      "elements": {
+        "slogan_line_1": {
+          "text": "VI VU MÊ SAY",
+          "font_weight": "Bold",
+          "letter_spacing": "0.4em"
+        },
+        "slogan_line_2": {
+          "text": "CHẠM LÀ ĐẶT NGAY",
+          "font_weight": "Bold",
+          "letter_spacing": "0.4em"
+        },
+        "main_title": {
+          "text": "STAZY",
+          "font_weight": "900 (Black)",
+          "letter_spacing": "-0.03em",
+          "font_size": "14vw",
+          "overlap_behavior": "Nằm dưới rặng núi, phần chân chữ bị che khuất khoảng 15-20% để tạo hiệu ứng chiều sâu 3D."
+        }
+      }
+    },
+    {
+      "z_index": 20,
+      "name": "Foreground Layer (Landscape)",
+      "type": "Image (PNG with Alpha Transparency)",
+      "asset_source": "/assets/hero/mountain_water.png",
+      "processing": "File ảnh đã gộp chung cả núi và nước, chỉ bóc tách và xóa hoàn toàn phần bầu trời gốc thành trong suốt.",
+      "layout_properties": {
+        "width": "100%",
+        "height": "100%",
+        "object_fit": "cover",
+        "object_position": "bottom"
+      }
+    },
+    {
+      "z_index": 30,
+      "name": "UI Overlays",
+      "type": "DOM Elements",
+      "elements": {
+        "header": {
+          "left_text": "STAZY TRAVEL",
+          "right_text": "2026",
+          "divider": "Đường kẻ mảnh kèm chấm tròn định vị ở chính giữa"
+        },
+        "footer": {
+          "text": "Page 2 sur 25",
+          "position": "bottom-right"
+        }
+      }
+    }
+  ],
+  "assembly_note": "Cấu trúc 3 lớp (Nền phẳng -> Chữ -> Ảnh gộp núi nước đã xóa trời) là mô hình tối ưu nhất để hiện thực hóa hiệu ứng Sandwich mà không lo bị lệch hay vỡ pixel khi thay đổi kích thước trình duyệt."
+}
