@@ -3,26 +3,33 @@
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/chart';
 
-const chartData = [
-    { month: 'January', desktop: 186, mobile: 80 },
-    { month: 'February', desktop: 305, mobile: 200 },
-    { month: 'March', desktop: 237, mobile: 120 },
-    { month: 'April', desktop: 73, mobile: 190 },
-    { month: 'May', desktop: 209, mobile: 130 },
-    { month: 'June', desktop: 214, mobile: 140 },
+const defaultChartData = [
+    { month: 'January', bookings: 0, hotels: 0 },
+    { month: 'February', bookings: 0, hotels: 0 },
+    { month: 'March', bookings: 0, hotels: 0 },
+    { month: 'April', bookings: 0, hotels: 0 },
+    { month: 'May', bookings: 0, hotels: 0 },
+    { month: 'June', bookings: 0, hotels: 0 },
 ];
+
 const chartConfig = {
-    desktop: {
-        label: 'Desktop',
+    bookings: {
+        label: 'Bookings',
         color: 'var(--chart-1)',
     },
-    mobile: {
-        label: 'Mobile',
+    hotels: {
+        label: 'Hotels',
         color: 'var(--chart-2)',
     },
 } satisfies ChartConfig;
 
-const AppLineChart = () => {
+interface AppLineChartProps {
+    data?: { month: string; bookings: number; hotels: number }[];
+}
+
+const AppLineChart = ({ data }: AppLineChartProps) => {
+    const chartData = data && data.length > 0 ? data : defaultChartData;
+
     return (
         <ChartContainer config={chartConfig} className="mt-6">
             <LineChart
@@ -43,8 +50,8 @@ const AppLineChart = () => {
                 />
                 <YAxis tickLine={false} axisLine={false} tickMargin={8} />
                 <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-                <Line dataKey="desktop" type="monotone" stroke="var(--color-desktop)" strokeWidth={2} dot={false} />
-                <Line dataKey="mobile" type="monotone" stroke="var(--color-mobile)" strokeWidth={2} dot={false} />
+                <Line dataKey="bookings" type="monotone" stroke="var(--color-bookings)" strokeWidth={2} dot={false} />
+                <Line dataKey="hotels" type="monotone" stroke="var(--color-hotels)" strokeWidth={2} dot={false} />
             </LineChart>
         </ChartContainer>
     );
