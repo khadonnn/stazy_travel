@@ -1,6 +1,16 @@
 // =========================================
+// STAZY BOOKING SYSTEM - DBML
+// =========================================
+
+Project StazyBooking {
+database_type: "PostgreSQL"
+Note: "Hotel booking + AI recommendation system"
+}
+
+// =========================================
 // ENUMS
 // =========================================
+
 Enum Role {
 USER
 AUTHOR
@@ -29,13 +39,6 @@ SOLO
 GROUP
 }
 
-Enum OutboxStatus {
-PENDING
-PROCESSING
-SENT
-FAILED
-}
-
 Enum BookingStatus {
 PENDING
 CONFIRMED
@@ -56,6 +59,13 @@ PENDING
 SUCCEEDED
 FAILED
 REFUNDED
+}
+
+Enum OutboxStatus {
+PENDING
+PROCESSING
+SENT
+FAILED
 }
 
 Enum InteractionType {
@@ -86,599 +96,510 @@ AI
 }
 
 // =========================================
-// TABLES
+// 1. USERS & PREFERENCES
 // =========================================
 
-Table User {
-id varchar [primary key]
-email varchar [unique]
-password varchar [null]
-name varchar
-nickname varchar [null]
-phone varchar [null]
-gender varchar [null]
-dob timestamp [null]
-address varchar [null]
-avatar varchar [null]
-bgImage varchar [null]
-jobName varchar [null]
-desc text [null]
-role Role [default: 'USER']
-createdAt timestamp [default: `now()`]
-updatedAt timestamp
-}
+Table users {
+id uuid [pk]
+email varchar [unique, not null]
+password varchar
 
-Table AuthorRequest {
-id varchar [primary key]
-userId varchar
-businessName varchar
-businessType varchar
-taxCode varchar [null]
+// Profile
+name varchar [not null]
+nickname varchar
 phone varchar
-email varchar
+gender varchar
+dob timestamp
 address varchar
-identityCard varchar
-identityImages varchar[]
-reason text [null]
+
+// Media
+avatar varchar
+bg_image varchar
+
+// Bio
+job_name varchar
+desc text
+
+role Role [default: 'USER']
+
+created_at timestamp [default: `now()`]
+updated_at timestamp
+
+Note: "System users"
+}
+
+Table author_requests {
+id uuid [pk]
+
+user_id uuid [not null]
+
+// Business Info
+business_name varchar [not null]
+business_type varchar [not null]
+tax_code varchar
+phone varchar [not null]
+email varchar [not null]
+address varchar [not null]
+
+identity_card varchar [not null]
+identity_images text[]
+
+reason text
+
 status AuthorRequestStatus [default: 'PENDING']
-reviewedBy varchar [null]
-reviewedAt timestamp [null]
-rejectionReason text [null]
-createdAt timestamp [default: `now()`]
-updatedAt timestamp
+
+reviewed_by uuid
+reviewed_at timestamp
+rejection_reason text
+
+created_at timestamp [default: `now()`]
+updated_at timestamp
+
+indexes {
+user_id
+status
+}
 }
 
-Table UserPreference {
-id integer [primary key]
-userId varchar [unique]
-interestedCategories varchar[]
-favoriteAmenities varchar[]
-favoriteCities varchar[]
-avgPriceExpect decimal(12,2) [null]
-preferredRatingMin float [null]
-pastBookingCount integer [default: 0]
-lastBookingAt timestamp [null]
-updatedAt timestamp
+Table user_preferences {
+id serial [pk]
+
+user_id uuid [unique, not null]
+
+interested_categories text[]
+favorite_amenities text[]
+favorite_cities text[]
+
+avg_price_expect decimal(12,2)
+preferred_rating_min float
+
+past_booking_count int [default: 0]
+last_booking_at timestamp
+
+updated_at timestamp
+
+Note: "AI personalization & behavioral insights"
 }
 
-Table Hotel {
-id integer [primary key]
-authorId varchar
-categoryId integer
-slug varchar [unique]
-title varchar
-roomName varchar [default: 'Standard Room']
-featuredImage varchar
-galleryImgs varchar[]
+// =========================================
+// 2. HOTEL & CATEGORY
+// =========================================
+
+Table categories {
+id serial [pk]
+
+name varchar [not null]
+slug varchar [unique, not null]
+
 description text
-fullDescription text [null]
-address varchar
-destination varchar
+color varchar
+icon varchar
+thumbnail varchar
+
+count int [default: 0]
+}
+
+Table hotels {
+id serial [pk]
+
+// Relations
+author_id uuid [not null]
+category_id int [not null]
+
+// Basic Info
+slug varchar [unique, not null]
+title varchar [not null]
+
+room_name varchar [default: 'Standard Room']
+
+featured_image varchar [not null]
+gallery_imgs text[]
+
+description text [not null]
+full_description text
+
+// Location
+address varchar [not null]
+destination varchar [not null]
+
 map json
-nearbyLandmarks varchar[]
-price decimal(12,2)
-saleOff varchar [null]
-saleOffPercent integer [default: 0]
-maxGuests integer
-bedrooms integer
-bathrooms integer
-amenities varchar[]
-tags varchar[]
-suitableFor TripType[]
-accessibility varchar[]
-reviewStar float [default: 0]
-reviewCount integer [default: 0]
-viewCount integer [default: 0]
-commentCount integer [default: 0]
-cancellationRate float [default: 0.0]
+nearby_landmarks text[]
+
+// Pricing
+price decimal(12,2) [not null]
+
+sale_off varchar
+sale_off_percent int [default: 0]
+
+// Room Info
+max_guests int
+bedrooms int
+bathrooms int
+
+// Attributes
+amenities text[]
+tags text[]
+suitable_for TripType[]
+accessibility text[]
+
+// Stats
+review_star float [default: 0]
+review_count int [default: 0]
+view_count int [default: 0]
+comment_count int [default: 0]
+
+cancellation_rate float [default: 0]
+
+// Flags
 like boolean [default: false]
-isAds boolean [default: false]
+is_ads boolean [default: false]
+
+// Approval Workflow
 status HotelStatus [default: 'DRAFT']
-submittedAt timestamp [null]
-approvedBy varchar [null]
-approvedAt timestamp [null]
-rejectionReason text [null]
-imageVector vector [null]
-policies text [null]
-policiesVector vector [null]
-createdAt timestamp [default: `now()`]
-updatedAt timestamp
+
+submitted_at timestamp
+approved_by uuid
+approved_at timestamp
+
+rejection_reason text
+
+// AI / Vector
+image_vector vector(512)
+policies text
+policies_vector vector(512)
+
+created_at timestamp [default: `now()`]
+updated_at timestamp
+
+indexes {
+status
+(author_id, status)
 }
 
-Table Category {
-id integer [primary key]
-name varchar
-slug varchar [unique]
-description text [null]
-color varchar [null]
-icon varchar [null]
-thumbnail varchar [null]
-count integer [default: 0]
+Note: "Core hotel entity"
 }
 
-Table Booking {
-id varchar [primary key]
-bookingId varchar(255) [null]
-userId varchar
-hotelId integer
-guestName varchar
-guestEmail varchar
-guestPhone varchar
-adults integer [default: 1]
-children integer [default: 0]
-bookingSnapshot json [null]
-contactDetails json [null]
-checkIn timestamp
-checkOut timestamp
-nights integer
-basePrice decimal(12,2)
+// =========================================
+// 3. BOOKINGS & PAYMENTS
+// =========================================
+
+Table bookings {
+id uuid [pk]
+
+booking_id varchar(255)
+
+user_id uuid [not null]
+hotel_id int [not null]
+
+// Guest Info
+guest_name varchar [not null]
+guest_email varchar [not null]
+guest_phone varchar [not null]
+
+adults int [default: 1]
+children int [default: 0]
+
+// Snapshot
+booking_snapshot json
+contact_details json
+
+// Schedule
+check_in timestamp [not null]
+check_out timestamp [not null]
+
+nights int [not null]
+
+// Payment
+base_price decimal(12,2) [not null]
 discount decimal(12,2) [default: 0]
-totalAmount decimal(12,2)
+
+total_amount decimal(12,2) [not null]
+
 currency varchar [default: 'VND']
-paymentMethod PaymentMethod [default: 'STRIPE']
-paymentStatus PaymentStatus [default: 'PENDING']
-paymentIntentId varchar(255) [null]
-stripeSessionId varchar(255) [null]
-paymentFailureReason text [null]
+
+payment_method PaymentMethod [default: 'STRIPE']
+payment_status PaymentStatus [default: 'PENDING']
+
+payment_intent_id varchar(255)
+stripe_session_id varchar(255)
+
+payment_failure_reason text
+
 status BookingStatus [default: 'PENDING']
-createdAt timestamp [default: `now()`]
-updatedAt timestamp
+
+created_at timestamp [default: `now()`]
+updated_at timestamp
+
+indexes {
+user_id
+hotel_id
+status
+}
 }
 
-Table OutboxMessage {
-id varchar [primary key]
-dedupKey varchar [unique]
-aggregateType varchar
-aggregateId varchar
-eventType varchar
+Table outbox_messages {
+id uuid [pk]
+
+dedup_key varchar [unique]
+
+aggregate_type varchar
+aggregate_id varchar
+
+event_type varchar
 topic varchar
+
 payload json
+
 status OutboxStatus [default: 'PENDING']
-attempts integer [default: 0]
-availableAt timestamp [default: `now()`]
-processedAt timestamp [null]
-lastError text [null]
-createdAt timestamp [default: `now()`]
-updatedAt timestamp
+
+attempts int [default: 0]
+
+available_at timestamp [default: `now()`]
+processed_at timestamp
+
+last_error text
+
+created_at timestamp [default: `now()`]
+updated_at timestamp
+
+indexes {
+(status, available_at)
+(aggregate_type, aggregate_id)
+}
 }
 
-Table ProcessedEvent {
-eventId varchar [primary key]
+Table processed_events {
+event_id varchar [pk]
+
 topic varchar
-createdAt timestamp [default: `now()`]
+
+created_at timestamp [default: `now()`]
+
+indexes {
+created_at
+}
 }
 
-Table Interaction {
-id integer [primary key]
-userId varchar
-sessionId varchar(255) [null]
-hotelId integer [null]
+// =========================================
+// 4. AI & ANALYTICS
+// =========================================
+
+Table interactions {
+id serial [pk]
+
+user_id uuid [not null]
+hotel_id int
+
+session_id varchar(255)
+
 type InteractionType [default: 'VIEW']
-rating integer [null]
-metadata json [null]
+
+rating int
+metadata json
+
+timestamp timestamp [default: `now()`]
+
+indexes {
+(user_id, type)
+hotel_id
+}
+
+Note: "Tracking implicit & explicit user behavior"
+}
+
+Table recommendations {
+id serial [pk]
+
+user_id uuid [unique, not null]
+
+hotel_ids int[]
+score json
+
+updated_at timestamp
+
+Note: "Cached recommendation results"
+}
+
+Table search_query_logs {
+id serial [pk]
+
+user_id uuid
+
+query varchar [not null]
+filters json
+
 timestamp timestamp [default: `now()`]
 }
 
-Table Recommendation {
-id integer [primary key]
-userId varchar [unique]
-hotelIds integer[]
-score json [null]
-updatedAt timestamp
-}
+Table system_metrics {
+id uuid [pk]
 
-Table SearchQueryLog {
-id integer [primary key]
-userId varchar [null]
-query varchar
-filters json [null]
-timestamp timestamp [default: `now()`]
-}
-
-Table SystemMetric {
-id varchar [primary key]
-rmse float
+rmse float [not null]
 mae float [default: 0]
-precisionAt5 float
-recallAt5 float
-ndcgAt5 float [default: 0]
-baselineRmse float [default: 0]
-baselineMae float [default: 0]
-baselinePrecision float [default: 0]
-baselineRecall float [default: 0]
-baselineNdcg float [default: 0]
+
+precision_at5 float [not null]
+recall_at5 float [not null]
+
+ndcg_at5 float [default: 0]
+
+baseline_rmse float [default: 0]
+baseline_mae float [default: 0]
+
+baseline_precision float [default: 0]
+baseline_recall float [default: 0]
+baseline_ndcg float [default: 0]
+
 algorithm varchar [default: 'SVD']
-datasetSize integer [null]
-executionTimeMs integer [null]
-trainingHistory json [null]
-tuningParams json [null]
-createdAt timestamp [default: `now()`]
-}
 
-Table Favorite {
-id integer [primary key]
-userId varchar
-hotelId integer
-createdAt timestamp [default: `now()`]
-}
+dataset_size int
+execution_time_ms int
 
-Table Review {
-id varchar [primary key]
-bookingId varchar(255) [unique]
-userId varchar
-hotelId integer
-rating integer
-comment text [null]
-sentiment ReviewSentiment [null]
-explicitSentiments json [null]
-nlpProcessed boolean [default: false]
-createdAt timestamp [default: `now()`]
-updatedAt timestamp
-}
+training_history json
+tuning_params json
 
-Table ChatMessage {
-id varchar [primary key]
-userId varchar
-sender SenderRole
-text varchar [null]
-images varchar[]
-isRead boolean [default: false]
-metadata json [null]
-createdAt timestamp [default: `now()`]
-updatedAt timestamp
-}
+created_at timestamp [default: `now()`]
 
-Table DailyStat {
-id integer [primary key]
-date timestamp [unique]
-totalRevenue decimal(12,2) [default: 0]
-totalBookings integer [default: 0]
-totalCancels integer [default: 0]
-totalViews integer [default: 0]
-totalClickBook integer [default: 0]
-totalLikes integer [default: 0]
-totalSearch integer [default: 0]
-miscInteractions json [null]
-createdAt timestamp [default: `now()`]
+Note: "AI model evaluation metrics"
 }
 
 // =========================================
-// RELATIONSHIPS (REFS)
+// 5. FAVORITES & REVIEWS
 // =========================================
 
-Ref: AuthorRequest.userId > User.id [delete: cascade]
-Ref: UserPreference.userId - User.id [delete: cascade] // 1-to-1
-Ref: Recommendation.userId - User.id [delete: cascade] // 1-to-1
-Ref: SearchQueryLog.userId > User.id [delete: set null]
+Table favorites {
+id serial [pk]
 
-Ref: Hotel.authorId > User.id
-Ref: Hotel.categoryId > Category.id
+user_id uuid [not null]
+hotel_id int [not null]
 
-Ref: Booking.userId > User.id [delete: cascade]
-Ref: Booking.hotelId > Hotel.id [delete: cascade]
+created_at timestamp [default: `now()`]
 
-Ref: Interaction.userId > User.id [delete: cascade]
-Ref: Interaction.hotelId > Hotel.id [delete: cascade]
-
-Ref: Favorite.userId > User.id [delete: cascade]
-Ref: Favorite.hotelId > Hotel.id [delete: cascade]
-
-Ref: Review.userId > User.id [delete: cascade]
-Ref: Review.hotelId > Hotel.id [delete: cascade]
-
-// =========================================
-// FLOW 1: CONTENT-BASED FILTERING (Gợi ý theo sở thích)
-// Bảng: User -> UserPreference -> Hotel -> Category
-// =========================================
-
-Ref: UserPreference.userId - User.id [delete: cascade]
-Ref: Hotel.categoryId > Category.id
-
-Table UserPreference {
-id integer [primary key]
-userId varchar [unique]
-interestedCategories varchar[]
-favoriteAmenities varchar[]
-favoriteCities varchar[]
+indexes {
+(user_id, hotel_id) [unique]
+user_id
+hotel_id
+}
 }
 
-Table Hotel {
-id integer [primary key]
-categoryId integer
-amenities varchar[]
-destination varchar
-reviewStar float
-status HotelStatus
+Table reviews {
+id uuid [pk]
+
+booking_id varchar(255) [unique]
+
+user_id uuid [not null]
+hotel_id int [not null]
+
+rating int [not null]
+
+comment text
+
+sentiment ReviewSentiment
+
+explicit_sentiments json
+
+nlp_processed boolean [default: false]
+
+created_at timestamp [default: `now()`]
+updated_at timestamp
+
+indexes {
+hotel_id
+user_id
 }
 
-Table Category {
-id integer [primary key]
-slug varchar [unique]
-name varchar
+Note: "Review + NLP sentiment analysis"
 }
 
 // =========================================
-// FLOW 2: COLLABORATIVE FILTERING - SVD (Gợi ý dựa trên hành vi)
-// Bảng: User -> Interaction -> Hotel -> Recommendation -> SystemMetric
+// 6. CHAT SUPPORT
 // =========================================
 
-Table User {
-id varchar [primary key]
+Table chat_messages {
+id uuid [pk]
+
+user_id uuid [not null]
+
+sender SenderRole [not null]
+
+text text
+
+images text[]
+
+is_read boolean [default: false]
+
+metadata json
+
+created_at timestamp [default: `now()`]
+updated_at timestamp
+
+indexes {
+user_id
+is_read
+created_at
 }
-
-Table Interaction {
-id integer [primary key]
-userId varchar
-hotelId integer [null]
-type InteractionType
-rating integer [null]
-metadata json [null]
-timestamp timestamp
-}
-
-Table Hotel {
-id integer [primary key]
-title varchar
-reviewStar float
-}
-
-Table Recommendation {
-id integer [primary key]
-userId varchar [unique]
-hotelIds integer[]
-score json [null]
-updatedAt timestamp
-}
-
-Table SystemMetric {
-id varchar [primary key]
-rmse float
-mae float
-precisionAt5 float
-recallAt5 float
-ndcgAt5 float
-algorithm varchar
-createdAt timestamp
-}
-
-Ref: Interaction.userId > User.id [delete: cascade]
-Ref: Interaction.hotelId > Hotel.id [delete: cascade]
-Ref: Recommendation.userId - User.id [delete: cascade]
-
-// =========================================
-// FLOW 3: BOOKING + PAYMENT (Đặt phòng & Thanh toán)
-// Bảng: User -> Booking -> Hotel -> Review -> Interaction
-// =========================================
-
-Table User {
-id varchar [primary key]
-name varchar
-email varchar
-}
-
-Table Hotel {
-id integer [primary key]
-title varchar
-price decimal(12,2)
-authorId varchar
-}
-
-Table Booking {
-id varchar [primary key]
-userId varchar
-hotelId integer
-guestName varchar
-guestEmail varchar
-guestPhone varchar
-checkIn timestamp
-checkOut timestamp
-nights integer
-basePrice decimal(12,2)
-totalAmount decimal(12,2)
-paymentMethod PaymentMethod
-paymentStatus PaymentStatus
-paymentIntentId varchar(255) [null]
-stripeSessionId varchar(255) [null]
-paymentFailureReason text [null]
-status BookingStatus
-createdAt timestamp
-updatedAt timestamp
-}
-
-Table OutboxMessage {
-id varchar [primary key]
-dedupKey varchar [unique]
-aggregateType varchar
-aggregateId varchar
-eventType varchar
-payload json
-status OutboxStatus
-createdAt timestamp
-}
-
-Table Review {
-id varchar [primary key]
-bookingId varchar(255) [unique]
-userId varchar
-hotelId integer
-rating integer
-comment text [null]
-createdAt timestamp
-}
-
-Table Interaction {
-id integer [primary key]
-userId varchar
-hotelId integer [null]
-type InteractionType
-timestamp timestamp
-}
-
-Ref: Booking.userId > User.id [delete: cascade]
-Ref: Booking.hotelId > Hotel.id [delete: cascade]
-Ref: Review.userId > User.id [delete: cascade]
-Ref: Review.hotelId > Hotel.id [delete: cascade]
-Ref: Interaction.userId > User.id [delete: cascade]
-Ref: Interaction.hotelId > Hotel.id [delete: cascade]
-
-// =========================================
-// FLOW 4: SENTIMENT ANALYSIS - NLP (Phân tích cảm xúc)
-// Bảng: User -> Review -> Hotel
-// =========================================
-
-Table User {
-id varchar [primary key]
-}
-
-Table Review {
-id varchar [primary key]
-bookingId varchar(255) [unique]
-userId varchar
-hotelId integer
-rating integer
-comment text [null]
-sentiment ReviewSentiment [null]
-explicitSentiments json [null]
-nlpProcessed boolean [default: false]
-createdAt timestamp
-updatedAt timestamp
-}
-
-Table Hotel {
-id integer [primary key]
-reviewStar float
-reviewCount integer
-}
-
-Ref: Review.userId > User.id [delete: cascade]
-Ref: Review.hotelId > Hotel.id [delete: cascade]
-
-// =========================================
-// FLOW 5: VISUAL SEARCH & SEMANTIC SEARCH (Tìm kiếm vector)
-// Bảng: Hotel (vector fields) -> SearchQueryLog -> Interaction
-// =========================================
-
-Table Hotel {
-id integer [primary key]
-title varchar
-featuredImage varchar
-policies text [null]
-imageVector vector [null]
-policiesVector vector [null]
-}
-
-Table SearchQueryLog {
-id integer [primary key]
-userId varchar [null]
-query varchar
-filters json [null]
-timestamp timestamp
-}
-
-Table Interaction {
-id integer [primary key]
-userId varchar
-hotelId integer [null]
-type InteractionType
-metadata json [null]
-timestamp timestamp
 }
 
 // =========================================
-// FLOW 6: ANALYTICS & DASHBOARD (Thống kê & Đánh giá mô hình)
-// Bảng: Interaction -> DailyStat -> SystemMetric
+// 7. DAILY STATS
 // =========================================
 
-Table Interaction {
-id integer [primary key]
-userId varchar
-hotelId integer [null]
-type InteractionType
-rating integer [null]
-metadata json [null]
-timestamp timestamp
-}
+Table daily_stats {
+id serial [pk]
 
-Table DailyStat {
-id integer [primary key]
-date timestamp [unique]
-totalRevenue decimal(12,2)
-totalBookings integer
-totalCancels integer
-totalViews integer
-totalClickBook integer
-totalLikes integer
-totalSearch integer
-miscInteractions json [null]
-createdAt timestamp
-}
+date date [unique]
 
-Table SystemMetric {
-id varchar [primary key]
-rmse float
-mae float
-precisionAt5 float
-recallAt5 float
-ndcgAt5 float
-baselineRmse float [default: 0]
-baselineMae float [default: 0]
-baselinePrecision float [default: 0]
-baselineRecall float [default: 0]
-baselineNdcg float [default: 0]
-algorithm varchar [default: 'SVD']
-datasetSize integer [null]
-executionTimeMs integer [null]
-trainingHistory json [null]
-tuningParams json [null]
-createdAt timestamp
+// Business
+total_revenue decimal(12,2) [default: 0]
+
+total_bookings int [default: 0]
+total_cancels int [default: 0]
+
+// Funnel
+total_views int [default: 0]
+total_click_book int [default: 0]
+
+// Engagement
+total_likes int [default: 0]
+total_search int [default: 0]
+
+misc_interactions json
+
+created_at timestamp [default: `now()`]
 }
 
 // =========================================
-// FLOW 7: HOTEL APPROVAL WORKFLOW (Duyệt khách sạn)
-// Bảng: User -> Hotel -> Category -> AuthorRequest
+// RELATIONSHIPS
 // =========================================
 
-Table User {
-id varchar [primary key]
-name varchar
-role Role
-}
+// Users
+Ref: author_requests.user_id > users.id
+Ref: user_preferences.user_id - users.id
 
-Table AuthorRequest {
-id varchar [primary key]
-userId varchar
-businessName varchar
-businessType varchar
-status AuthorRequestStatus
-reviewedBy varchar [null]
-reviewedAt timestamp [null]
-rejectionReason text [null]
-createdAt timestamp
-}
+// Hotels
+Ref: hotels.author_id > users.id
+Ref: hotels.category_id > categories.id
 
-Table Hotel {
-id integer [primary key]
-authorId varchar
-categoryId integer
-slug varchar [unique]
-title varchar
-status HotelStatus
-submittedAt timestamp [null]
-approvedBy varchar [null]
-approvedAt timestamp [null]
-rejectionReason text [null]
-imageVector vector [null]
-policiesVector vector [null]
-createdAt timestamp
-updatedAt timestamp
-}
+// Bookings
+Ref: bookings.user_id > users.id
+Ref: bookings.hotel_id > hotels.id
 
-Table Category {
-id integer [primary key]
-name varchar
-slug varchar [unique]
-}
+// Interactions
+Ref: interactions.user_id > users.id
+Ref: interactions.hotel_id > hotels.id
 
-Ref: AuthorRequest.userId > User.id [delete: cascade]
-Ref: Hotel.authorId > User.id
-Ref: Hotel.categoryId > Category.id
+// Recommendations
+Ref: recommendations.user_id - users.id
+
+// Search Logs
+Ref: search_query_logs.user_id > users.id
+
+// Favorites
+Ref: favorites.user_id > users.id
+Ref: favorites.hotel_id > hotels.id
+
+// Reviews
+Ref: reviews.user_id > users.id
+Ref: reviews.hotel_id > hotels.id
+
+// Chat
+Ref: chat_messages.user_id > users.id
