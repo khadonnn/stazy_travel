@@ -172,7 +172,10 @@ def search_hotels_rag(intent_obj):
     cur = conn.cursor()
     query = 'SELECT id, title, price, address, "reviewStar", "featuredImage", slug, map, description FROM hotels WHERE 1=1'
     params = []
-    if intent_obj.target_hotel_name:
+    # For CONSULTATION/RECOMMENDATION/LOCAL_GUIDE/ITINERARY: prioritize location over target_hotel_name
+    comparison_intents = {"CONSULTATION", "RECOMMENDATION", "LOCAL_GUIDE", "ITINERARY"}
+    print(f"[search_hotels_rag] intent={intent_obj.intent_type} | location={intent_obj.location} | target_hotel={intent_obj.target_hotel_name}")
+    if intent_obj.target_hotel_name and intent_obj.intent_type not in comparison_intents:
         query += " AND title ILIKE %s"
         params.append(f"%{intent_obj.target_hotel_name}%")
     else:
@@ -222,6 +225,17 @@ def _llm_generate(system_prompt, user_text, temperature=0.3):
         messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_text}],
         temperature=temperature)
     return completion.choices[0].message.content
+
+def _build_hotel_context(hotels):
+    """Build a context string from real hotel data for LLM prompt"""
+    if not hotels:
+        return "[DATABASE HOTELS]\n(empty - no hotels found)\n"
+    lines = ["[DATABASE HOTELS]"]
+    for i, h in enumerate(hotels, 1):
+        price_fmt = f"{int(h['price']):,} VND"
+        rating_str = f", rating {h['rating']}" if h.get("rating") else ""
+        lines.append(f"{i}. {h['title']} - gia {price_fmt}/dem{rating_str} - dia chi: {h['address']}")
+    return "\n".join(lines)
 
 # --- ENTERPRISE ORCHESTRATOR PIPELINE ---
 def run_agent_logic(user_text, user_id):
@@ -311,7 +325,29 @@ LICH SU: {history_text}"""
                 response["agent_response"] = f"Xin loi, khong tim thay **{routing.target_hotel_name}**."
 
     elif routing.intent_type == "CONSULTATION":
+        # Search for relevant hotels when location or context is available
+        consultation_hotels = search_hotels_rag(routing)
+        # Fallback: if no location found but have target_hotel_name, extract location from hotel address
+        if (not consultation_hotels or len(consultation_hotels) <= 1) and routing.target_hotel_name and not routing.location:
+            try:
+                conn = get_db_connection()
+                cur = conn.cursor()
+                cur.execute('SELECT address FROM hotels WHERE title ILIKE %s LIMIT 1', (f"%{routing.target_hotel_name}%",))
+                row = cur.fetchone()
+                cur.close(); conn.close()
+                if row and row[0]:
+                    # Extract city/region from address (e.g., "Vũng Tàu" from "123 Beach Rd, Vũng Tàu")
+                    addr_parts = str(row[0]).split(",")
+                    fallback_location = addr_parts[-1].strip() if len(addr_parts) > 1 else addr_parts[0].strip()
+                    routing.location = fallback_location
+                    print(f"[CONSULTATION] Fallback location from hotel address: {fallback_location}")
+                    consultation_hotels = search_hotels_rag(routing)
+            except Exception as e:
+                print(f"[CONSULTATION] Fallback location error: {e}")
+        hotel_ctx = _build_hotel_context(consultation_hotels)
         prompt = compose_prompt("CONSULTATION", history_text, today)
+        if hotel_ctx:
+            prompt = f"{prompt}\n\n{hotel_ctx}"
         try:
             response["agent_response"] = _llm_generate(prompt, routing.normalized_text)
         except:
@@ -321,6 +357,8 @@ LICH SU: {history_text}"""
                     break
             else:
                 response["agent_response"] = "Minh chua co danh sach KS de tu van. Ban muon tim o dau?"
+        if consultation_hotels:
+            response["data"]["hotels"] = consultation_hotels
 
     elif routing.intent_type == "FAQ":
         prompt = compose_prompt("FAQ", history_text, today, faq_context=faq_context)
@@ -337,11 +375,18 @@ LICH SU: {history_text}"""
             response["agent_response"] = ai_content if ai_content else "Minh co the giup ban tim phong. Ban can gi?"
 
     elif routing.intent_type == "LOCAL_GUIDE":
+        # Search for hotels in the area for map display
+        local_hotels = search_hotels_rag(routing)
+        hotel_ctx = _build_hotel_context(local_hotels)
         prompt = compose_prompt("LOCAL_GUIDE", history_text, today)
+        if hotel_ctx:
+            prompt = f"{prompt}\n\n{hotel_ctx}"
         try:
             response["agent_response"] = _llm_generate(prompt, routing.normalized_text)
         except:
             response["agent_response"] = "De goi y dia diem quanh khach san, ban cho minh biet khu vuc ban dang xem nhe!"
+        if local_hotels:
+            response["data"]["hotels"] = local_hotels
 
     elif routing.intent_type == "MANAGE_BOOKING":
         prompt = compose_prompt("MANAGE_BOOKING", history_text, today)
@@ -351,25 +396,48 @@ LICH SU: {history_text}"""
             response["agent_response"] = "De quan ly don dat phong, ban vao muc Don dat phong trong tai khoan nhe."
 
     elif routing.intent_type == "RECOMMENDATION":
+        # Search for relevant hotels when location or context is available
+        recommendation_hotels = search_hotels_rag(routing)
+        hotel_ctx = _build_hotel_context(recommendation_hotels)
         prompt = compose_prompt("RECOMMENDATION", history_text, today)
+        if hotel_ctx:
+            prompt = f"{prompt}\n\n{hotel_ctx}"
         try:
             response["agent_response"] = _llm_generate(prompt, routing.normalized_text)
         except:
             response["agent_response"] = "Ban dang plan chuyen di cho dip nao? Cap doi, gia dinh, hay solo?"
+        if recommendation_hotels:
+            response["data"]["hotels"] = recommendation_hotels
 
     elif routing.intent_type == "ITINERARY":
+        # Search for hotels in the area for map display
+        itinerary_hotels = search_hotels_rag(routing)
+        hotel_ctx = _build_hotel_context(itinerary_hotels)
         prompt = compose_prompt("ITINERARY", history_text, today)
+        if hotel_ctx:
+            prompt = f"{prompt}\n\n{hotel_ctx}"
         try:
             response["agent_response"] = _llm_generate(prompt, routing.normalized_text)
         except:
             response["agent_response"] = "De len lich trinh, ban cho minh biet: di may ngay? Budget khoang bao nhieu?"
+        if itinerary_hotels:
+            response["data"]["hotels"] = itinerary_hotels
 
     else:
+        # For GENERAL and other intents, also try to search if location is present
+        other_hotels = []
+        if routing.location:
+            other_hotels = search_hotels_rag(routing)
+        hotel_ctx = _build_hotel_context(other_hotels)
         prompt = compose_prompt(routing.intent_type, history_text, today)
+        if hotel_ctx:
+            prompt = f"{prompt}\n\n{hotel_ctx}"
         try:
             response["agent_response"] = _llm_generate(prompt, routing.normalized_text)
         except:
             response["agent_response"] = ai_content if ai_content else "Minh co the giup ban tim phong. Ban can gi?"
+        if other_hotels:
+            response["data"]["hotels"] = other_hotels
 
     save_message_to_context(user_id, "user", user_text)
     save_message_to_context(user_id, "assistant", response["agent_response"])

@@ -150,7 +150,7 @@ export default function HostProfilePage() {
         />
         {/* Ảnh chính - preload rồi mới hiển thị */}
         <img
-          src={bgSrc}
+          src={fallbackBg}
           alt="Cover"
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
             bgLoaded ? "opacity-100" : "opacity-0"

@@ -545,6 +545,41 @@ def popular_recommend(hotels: list, top_k: int = 5) -> list:
     return sorted_by_rating[:top_k]
 
 
+def diverse_recommend(hotels: list, top_k: int = 5) -> list:
+    """
+    Diversity-aware recommendation: picks top hotels from DIFFERENT destinations.
+    Ensures results are not biased to a single location.
+    """
+    print("🌍 [Diverse] Selecting top hotels from different destinations.")
+    
+    # Group hotels by destination
+    by_dest = defaultdict(list)
+    for h in hotels:
+        dest = h.get('destination') or h.get('address', '').split(',')[-1].strip() or 'unknown'
+        by_dest[dest].append(h)
+    
+    # Sort each destination group by rating
+    for dest in by_dest:
+        by_dest[dest].sort(key=lambda h: h.get('reviewStar', 0), reverse=True)
+    
+    # Round-robin pick from each destination
+    result = []
+    dest_keys = sorted(by_dest.keys(), key=lambda d: -max(h.get('reviewStar', 0) for h in by_dest[d]))
+    
+    while len(result) < top_k:
+        added = False
+        for dest in dest_keys:
+            if len(result) >= top_k:
+                break
+            if by_dest[dest]:
+                result.append(by_dest[dest].pop(0))
+                added = True
+        if not added:
+            break
+    
+    return result[:top_k]
+
+
 # =========================================================
 # SIMILAR HOTELS (for detail page)
 # =========================================================
@@ -632,7 +667,21 @@ def get_recommendations_for_user(
         if not results:
             results = popular_recommend(hotels, top_k)
 
-        return results
+        # ALWAYS mix in diverse hotels to prevent location bias
+        diverse_results = diverse_recommend(hotels, top_k)
+        
+        # Merge: SVD results first, then diverse (deduplicated)
+        seen_ids = set()
+        merged = []
+        for h in results + diverse_results:
+            h_id = h.get('id')
+            if h_id not in seen_ids:
+                seen_ids.add(h_id)
+                merged.append(h)
+        merged = merged[:top_k * 2]  # Return up to 2x top_k for diversity pool
+        
+        print(f"🔀 [Hybrid] Merged {len(results)} SVD + {len(diverse_results)} diverse → {len(merged)} final")
+        return merged
 
     except Exception as e:
         print(f"❌ Recommendation error: {e}")

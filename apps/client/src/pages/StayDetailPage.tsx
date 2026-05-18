@@ -272,34 +272,36 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       setAvailabilityMsg("");
 
       try {
-        const res = await axios.get("/api/check-availability", {
-          params: {
-            hotelId: stayData.id,
-            checkIn: checkInDate.toISOString(),
-            checkOut: checkOutDate.toISOString(),
-          },
-        });
+        const res = await fetch(
+          `/api/check-availability?hotelId=${stayData.id}&checkIn=${checkInDate.toISOString()}&checkOut=${checkOutDate.toISOString()}`,
+          { cache: "no-store" },
+        );
 
-        if (res.data.available) {
+        if (!res.ok) {
+          // API error (400, 404, 500, 502...) - don't block user
+          console.warn("Check availability API returned", res.status);
           setIsAvailable(true);
           setAvailabilityMsg("");
-        } else {
+          setIsChecking(false);
+          return;
+        }
+
+        const data = await res.json();
+
+        if (data.available === false) {
           setIsAvailable(false);
           setAvailabilityMsg(
-            res.data.message || "Phòng đã kín lịch trong ngày này.",
+            data.message || "Phòng đã kín lịch trong ngày này.",
           );
-        }
-      } catch (error: any) {
-        console.error("Check availability error:", error);
-        // Nếu lỗi 409 (Conflict) nghĩa là trùng lịch
-        if (error.response?.status === 409) {
-          setIsAvailable(false);
-          setAvailabilityMsg("Ngày bạn chọn đã có người đặt.");
         } else {
-          // Lỗi khác (404, 502, 500...) → cho phép đặt, không block user
           setIsAvailable(true);
           setAvailabilityMsg("");
         }
+      } catch (error: any) {
+        // Network error, service down, etc - don't block user
+        console.warn("Check availability error:", error.message);
+        setIsAvailable(true);
+        setAvailabilityMsg("");
       } finally {
         setIsChecking(false);
       }
@@ -347,7 +349,11 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       router.push(`/sign-in?redirect_url=${redirectUrl}`);
       return;
     }
-    if (!stayData || isDisabled) return;
+    if (!stayData) return;
+    if (isDisabled) {
+      toast.warning("Vui lòng chọn ngày nhận và trả phòng trước khi đặt!");
+      return;
+    }
     if (!isAvailable) {
       toast.error("Phòng này đã có người đặt trong khoảng thời gian bạn chọn!");
       return;
@@ -994,7 +1000,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
     if (!stayData) return null;
 
     return (
-      <Card className="shadow-xl sticky top-28">
+      <Card className="shadow-xl sticky top-28 overflow-visible">
         <CardHeader className="pb-4">
           <div className="flex justify-between items-start ">
             <div>
@@ -1015,10 +1021,10 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <form className="flex flex-col border border-neutral-200 dark:border-neutral-700 rounded-3xl">
-            <StayDatesRangeInput className="flex-1 z-[11]" />
+          <form className="flex flex-col border border-neutral-200 dark:border-neutral-700 rounded-3xl relative z-30">
+            <StayDatesRangeInput className="flex-1 z-[50]" />
             <div className="w-full border-b border-neutral-200 dark:border-neutral-700"></div>
-            <GuestsInput className="flex-1" />
+            <GuestsInput className="flex-1 z-[50]" />
           </form>
 
           <div className="space-y-3">
@@ -1109,9 +1115,9 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       )}
 
       {/* MAIN CONTENT */}
-      <main className="relative z-10 mt-11 flex flex-col lg:flex-row">
+      <main className="relative mt-11 flex flex-col lg:flex-row">
         {/* CONTENT */}
-        <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10 ">
+        <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10">
           {renderSection1()}
           {renderSection2()}
           {renderSection3()}
@@ -1124,8 +1130,8 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
           {renderSimilarHotels()}
         </div>
 
-        {/* SIDEBAR */}
-        <div className="hidden lg:block flex-grow mt-14 lg:mt-0">
+        {/* SIDEBAR - z-20 ensures it's always above content for date picker & button clicks */}
+        <div className="hidden lg:block flex-grow mt-14 lg:mt-0 relative z-20">
           {renderSidebar()}
         </div>
       </main>
