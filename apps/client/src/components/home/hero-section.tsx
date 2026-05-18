@@ -1,57 +1,172 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import StaySearchForm from "@/components/StaySearchForm";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from "motion/react";
 
 export default function HeroSection() {
   const router = useRouter();
+  const heroRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [dustActive, setDustActive] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
+
+  const pointerX = useMotionValue(0.5);
+  const pointerY = useMotionValue(0.5);
+
+  const springX = useSpring(pointerX, {
+    stiffness: 120,
+    damping: 18,
+    mass: 0.6,
+  });
+  const springY = useSpring(pointerY, {
+    stiffness: 120,
+    damping: 18,
+    mass: 0.6,
+  });
+
+  const rotateY = useTransform(springX, [0, 1], ["-14deg", "14deg"]);
+  const rotateX = useTransform(springY, [0, 1], ["10deg", "-10deg"]);
+  const titleLift = useTransform(springY, [0, 1], ["6px", "-6px"]);
+  const imageLift = useTransform(springY, [0, 1], ["10px", "-16px"]);
+  const imageScale = useTransform(springX, [0, 1], [1, 1.06]);
 
   // Đảm bảo Math.random() chỉ chạy trên Client-side để tránh lệch cấu trúc render với Server
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (shouldReduceMotion || !heroRef.current) return;
+
+    const rect = heroRef.current.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+
+    pointerX.set(Math.max(0, Math.min(1, x)));
+    pointerY.set(Math.max(0, Math.min(1, y)));
+  };
+
+  const resetPointer = () => {
+    pointerX.set(0.5);
+    pointerY.set(0.5);
+  };
+
   return (
-    <section className="relative w-full mb-20 px-10 mt-20">
-      <div className="relative w-full max-w-7xl mx-auto overflow-hidden rounded-3xl bg-[#f3f4f0] aspect-video">
+    <section className="relative mb-20 w-full px-10 mt-20">
+      <div
+        ref={heroRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={resetPointer}
+        className="relative mx-auto aspect-video w-full max-w-7xl overflow-hidden rounded-3xl bg-[#f3f4f0]"
+        style={{ perspective: 1600 }}
+      >
         {/* === Top Divider Line === */}
         <div className="absolute top-5 left-1/2 -translate-x-1/2 w-[96%] h-px bg-[rgba(30,90,68,0.2)] z-40">
           <div className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-[7px] h-[7px] rounded-full bg-[#1e5a44]" />
         </div>
 
         {/* === Header Row === */}
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 w-[92%] flex justify-between items-center z-45 font-[family-name:var(--font-archivo)] text-xs font-extrabold text-[#1e5a44] tracking-[0.15em] uppercase">
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 w-[92%] flex justify-between items-center z-45 font-(family-name:--font-archivo) text-xs font-extrabold text-[#1e5a44] tracking-[0.15em] uppercase">
           <span>STAZY TRAVEL</span>
           <span>2026</span>
         </div>
 
         {/* === LỚP 1 (z-10) — Text Layer === */}
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-start pt-[5vh] pointer-events-none">
-          <div className="font-[family-name:var(--font-archivo)] text-[clamp(0.7rem,1.2vw,1rem)] font-extrabold text-[#1e5a44] tracking-[0.35em] uppercase text-center leading-relaxed">
+        <motion.div
+          className="absolute inset-0 z-10 flex flex-col items-center justify-start pt-[5vh] pointer-events-none"
+          style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        >
+          <motion.div
+            className="text-center font-(family-name:--font-archivo) text-[clamp(0.7rem,1.2vw,1rem)] font-extrabold uppercase leading-relaxed tracking-[0.35em] text-[#1e5a44]"
+            style={{ y: titleLift, translateZ: 36 }}
+            initial={
+              shouldReduceMotion
+                ? undefined
+                : { opacity: 0, y: 14, rotateX: 10 }
+            }
+            animate={
+              shouldReduceMotion ? undefined : { opacity: 1, y: 0, rotateX: 0 }
+            }
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          >
             <div>VI VU MÊ SAY</div>
             <div>CHẠM LÀ ĐẶT NGAY</div>
-          </div>
-          <h1 className="font-[family-name:var(--font-archivo)] text-[clamp(4rem,13vw,11rem)] font-black text-[#1e5a44] tracking-[-0.04em] uppercase text-center leading-[0.8] mt-[1.5vh]">
+          </motion.div>
+          <motion.h1
+            className="mt-[1.5vh] text-center font-(family-name:--font-archivo) text-[clamp(4rem,13vw,11rem)] font-black uppercase leading-[0.8] tracking-[-0.04em] text-[#1e5a44]"
+            style={{
+              y: titleLift,
+              translateZ: 90,
+              textShadow:
+                "0 1px 0 rgba(255,255,255,0.65), 0 20px 35px rgba(30, 90, 68, 0.15)",
+            }}
+            initial={
+              shouldReduceMotion
+                ? undefined
+                : { opacity: 0, y: 34, scale: 0.96 }
+            }
+            animate={
+              shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }
+            }
+            transition={{
+              duration: 1.05,
+              ease: [0.22, 1, 0.36, 1],
+              delay: 0.08,
+            }}
+            whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
+          >
             STAZY
-          </h1>
-        </div>
+          </motion.h1>
+        </motion.div>
 
         {/* === LỚP 2 (z-20) — Mountain & Water === */}
-        <div className="absolute left-0 right-0 bottom-0 h-[90%] z-20 pointer-events-none">
-          <Image
-            src="/assets/hero/moutain_water.png"
-            alt="Mountain and water landscape"
-            fill
-            priority
-            quality={100}
-            unoptimized
-            className="object-cover object-bottom !w-full !h-full [image-rendering:crisp-edges]"
-          />
-        </div>
+        <motion.div
+          className="absolute left-0 right-0 bottom-0 z-20 h-[80%] pointer-events-none"
+          style={{
+            rotateX,
+            rotateY,
+            scale: imageScale,
+            y: imageLift,
+            transformStyle: "preserve-3d",
+          }}
+          initial={
+            shouldReduceMotion ? undefined : { opacity: 0, y: 30, scale: 0.98 }
+          }
+          animate={
+            shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }
+          }
+          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
+        >
+          <motion.div
+            className="absolute inset-0"
+            style={{
+              translateZ: 24,
+              filter: "drop-shadow(0 30px 45px rgba(30, 90, 68, 0.12))",
+            }}
+            animate={shouldReduceMotion ? undefined : { y: [0, -8, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Image
+              src="/assets/hero/moutain_water.png"
+              alt="Mountain and water landscape"
+              fill
+              priority
+              quality={100}
+              unoptimized
+              className="object-cover object-bottom w-full! h-full! [image-rendering:crisp-edges]"
+            />
+          </motion.div>
+        </motion.div>
 
         {/* === LỚP 3a (z-30) — Search Form === */}
         <div className="absolute left-1/2 -translate-x-1/2 bottom-8 w-full max-w-6xl px-6 z-30 flex flex-col items-center">
@@ -60,165 +175,147 @@ export default function HeroSection() {
 
         {/* === LỚP 3b (z-35) — CTA Button với Hiệu ứng Hạt Bụi Ẩn Bên Trong === */}
         {/* === LỚP 3b (z-35) — CTA Button với Hiệu ứng Hạt Bụi Hoàn Hảo === */}
+        {/* === LỚP 3b — CTA Button với Dust Effect === */}
+        {/* === DUST EFFECT - Premium Version === */}
+        {/* === DUST EFFECT - Premium Version === */}
         <div className="absolute inset-0 z-35 flex items-center justify-center pointer-events-none">
-          {/* CONTAINER VỎ NGOÀI: Nhận nhiệm vụ làm nền xanh, bo góc, đổ bóng và CẮT BỤI TRÀN (overflow-hidden) */}
-          <div className="relative translate-y-24 inline-block group pointer-events-auto overflow-hidden rounded-full bg-green-800 transition-all duration-300 hover:scale-105 shadow-lg">
-            {/* HỆ THỐNG HẠT BỤI: Bây giờ mang z-10 (Nằm trên nền xanh nhưng dưới chữ) */}
+          <div
+            className="relative translate-y-24 inline-block group pointer-events-auto overflow-hidden rounded-full bg-green-800/95 backdrop-blur-sm transition-all duration-300 hover:scale-[1.06] shadow-2xl"
+            onMouseEnter={() => setDustActive(true)}
+            onMouseLeave={() => setDustActive(false)}
+          >
+            {/* Dust Particles - Sang trọng & Tự nhiên */}
             {mounted &&
-              Array.from({ length: 20 }).map((_, i) => {
-                const size = 2.5 + Math.random() * 2; // Kích thước hạt nhỏ mịn hạt lựu
+              Array.from({ length: 18 }).map((_, i) => {
+                const isOrb = i < 5;
+                const size = isOrb
+                  ? 7 + Math.random() * 13
+                  : 1.4 + Math.random() * 2.8;
+
+                const duration = isOrb
+                  ? 3.8 + Math.random() * 2.4
+                  : 2.1 + Math.random() * 2.2;
+
+                const delay = -Math.random() * (isOrb ? 3 : 2.2);
+
                 return (
                   <span
                     key={i}
-                    className="dust-particle absolute rounded-full pointer-events-none bg-white z-10"
+                    className={
+                      isOrb
+                        ? "dust-orb absolute rounded-full pointer-events-none z-10"
+                        : "dust-particle absolute rounded-full pointer-events-none z-10"
+                    }
                     style={{
-                      left: `${10 + Math.random() * 80}%`,
-                      top: `${40 + Math.random() * 40}%`,
+                      left: `${22 + Math.random() * 56}%`,
+                      bottom: `${12 + Math.random() * 18}%`, // Spawn từ dưới
                       width: `${size}px`,
                       height: `${size}px`,
-                      animationDelay: `-${Math.random() * 2}s`,
-                      animationDuration: `${1.0 + Math.random() * 1.2}s`,
-                      boxShadow: "0 0 6px #ffffff, 0 0 12px #ffffff", // Trắng sáng chói
+
+                      animationName: dustActive
+                        ? isOrb
+                          ? "orbFloatPremium"
+                          : "dustDriftPremium"
+                        : "none",
+
+                      animationDelay: `${delay}s`,
+                      animationDuration: `${duration}s`,
+                      animationTimingFunction:
+                        "cubic-bezier(0.25, 0.1, 0.25, 1)",
+                      animationIterationCount: "infinite",
+                      animationFillMode: "forwards",
+
+                      opacity: dustActive ? (isOrb ? 0.75 : 0.85) : 0,
+                      filter: isOrb
+                        ? `blur(${2 + Math.random() * 3}px)`
+                        : "blur(0.8px)",
+                      boxShadow: isOrb
+                        ? "0 0 20px rgba(255,255,255,0.85), 0 0 40px rgba(180,240,200,0.5)"
+                        : "0 0 8px rgba(255,255,255,0.95)",
                     }}
                   />
                 );
               })}
 
-            {/* BUTTON THẬT: Mang z-20, nền TRONG SUỐT (bg-transparent) để lộ bụi bơi phía sau */}
+            {/* Button */}
             <button
               onClick={() => router.push("/search-service")}
               type="button"
-              className="relative z-20 inline-flex items-center justify-center px-10 py-3.5 font-[family-name:var(--font-archivo)] text-lg font-black text-white bg-transparent uppercase tracking-[0.2em] cursor-pointer whitespace-nowrap"
+              className="relative z-20 inline-flex items-center justify-center px-11 py-4 font-(family-name:--font-archivo) text-lg font-black text-white bg-transparent uppercase tracking-[0.2em] cursor-pointer whitespace-nowrap transition-colors"
             >
               Bắt đầu khám phá
-              <Sparkles className="ml-2 w-[1.1rem] h-[1.1rem]" />
+              <Sparkles className="ml-2.5 w-5 h-5" />
             </button>
           </div>
-
-          {/* SỬ DỤNG THẺ STYLE TIÊU CHUẨN: Đảm bảo chạy mượt 100% trong Next.js App Router */}
-          <style>{`
-    /* Trạng thái mặc định: Ẩn hoàn toàn và đứng yên */
-    .dust-particle {
-      position: absolute;
-      opacity: 0;
-      will-change: transform, opacity;
-    }
-
-    /* CHỈ KHI HOVER vào group vỏ ngoài thì bụi mới kích hoạt animation */
-    .group:hover .dust-particle {
-      animation-name: flyAroundInside;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: infinite;
-    }
-
-    /* Quỹ đạo cuộn mượt mà trọn vẹn trong lòng nút bấm */
-    @keyframes flyAroundInside {
-      0% {
-        transform: translate3d(0, 0, 0) scale(0.5);
-        opacity: 0;
-      }
-      20% {
-        opacity: 1; /* Phát sáng chói lọi khi bắt đầu bay */
-      }
-      50% {
-        /* Loe rộng sang phải, nâng lên nhẹ */
-        transform: translate3d(20px, -12px, 0) scale(1.2); 
-      }
-      80% {
-        /* Cuộn sang trái, nâng cao lên sát viền trên */
-        opacity: 0.8;
-        transform: translate3d(-20px, -28px, 0) scale(0.8); 
-      }
-      100% {
-        /* Thu nhỏ bóp gọn góc rồi tan biến hoàn toàn trước khi chạm viền capsule */
-        transform: translate3d(10px, -42px, 0) scale(0.2); 
-        opacity: 0;
-      }
-    }
-
-    /* --- Leaflet Custom Popup Overrides (Giữ nguyên cho bản đồ) --- */
-    .custom-popup .leaflet-popup-content-wrapper {
-      background: transparent !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-      border-radius: 0 !important;
-    }
-    .custom-popup .leaflet-popup-content {
-      margin: 0 !important;
-      width: auto !important;
-    }
-    .custom-popup .leaflet-popup-close-button {
-      color: white !important;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-      z-index: 100;
-      top: 12px !important;
-      right: 12px !important;
-    }
-    .custom-popup .leaflet-popup-tip-container {
-      margin-top: -2px;
-    }
-    .custom-popup .leaflet-popup-tip {
-      background-color: white !important;
-    }
-  `}</style>
         </div>
-      </div>{" "}
-      {/* << CÁI NÀY CHÍNH LÀ THẺ ĐÓNG CỦA HERO CONTAINER BỊ THIẾU */}
-      {/* STYLE BLOCK: Đã sửa lại comment chuẩn CSS (dùng /* */
-      /* thay vì //) */}
+      </div>
       <style jsx global>{`
-        /* Trạng thái mặc định: Ẩn hoàn toàn và đứng yên */
-        .dust-particle {
-          position: absolute;
-          pointer-events: none;
-          opacity: 0;
+        .floating-particle {
+          background: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(255, 255, 255, 0.18) 45%,
+            rgba(255, 255, 255, 0.05) 70%,
+            transparent 100%
+          );
+
+          mix-blend-mode: screen;
+
           will-change: transform, opacity;
-          animation: none;
         }
 
-        /* CHỈ KHI HOVER vào nút (.group) thì bụi mới kích hoạt bay */
-        .group:hover .dust-particle {
-          animation-name: flyAroundInside;
-          animation-timing-function: ease-in-out;
-          animation-iteration-count: infinite;
-        }
-
-        /* Tinh chỉnh biên độ để bụi bay cuộn bên trong lớp nền xanh của nút rồi tự biến mất */
-        @keyframes flyAroundInside {
+        @keyframes dustDriftPremium {
           0% {
-            transform: translate3d(0, 0, 0) scale(0.5);
+            transform: translate3d(0, 10px, 0) scale(0.4) rotate(0deg);
+            opacity: 0;
+          }
+          12% {
+            opacity: 0.9;
+          }
+          38% {
+            transform: translate3d(18px, -48px, 0) scale(1.18) rotate(55deg);
+          }
+          65% {
+            transform: translate3d(-22px, -92px, 0) scale(0.92) rotate(165deg);
+          }
+          100% {
+            transform: translate3d(12px, -138px, 0) scale(0.35) rotate(310deg);
+            opacity: 0;
+          }
+        }
+
+        @keyframes orbFloatPremium {
+          0% {
+            transform: translate3d(0, 8px, 0) scale(0.7);
             opacity: 0;
           }
           15% {
-            opacity: 0.9; /* Bắt đầu chói sáng rực rỡ */
+            opacity: 0.92;
           }
-          50% {
-            /* Loe rộng sang phải, dịch chuyển nhẹ lên trên */
-            transform: translate3d(25px, -15px, 0) scale(1.1);
+          45% {
+            transform: translate3d(26px, -55px, 0) scale(1.25);
           }
-          80% {
-            /* Cuộn sang trái, nâng cao lên sát mép trên nút */
-            opacity: 0.7;
-            transform: translate3d(-25px, -30px, 0) scale(0.8);
+          72% {
+            transform: translate3d(-18px, -105px, 0) scale(0.95);
           }
           100% {
-            /* Chạm tới giới hạn trên, thu nhỏ thành điểm sáng biến mất */
-            transform: translate3d(10px, -45px, 0) scale(0.3);
+            transform: translate3d(15px, -155px, 0) scale(0.6);
             opacity: 0;
           }
         }
 
-        /* --- Leaflet Custom Popup Overrides --- */
         .custom-popup .leaflet-popup-content-wrapper {
           background: transparent !important;
           box-shadow: none !important;
           padding: 0 !important;
           border-radius: 0 !important;
         }
+
         .custom-popup .leaflet-popup-content {
           margin: 0 !important;
           width: auto !important;
         }
+
         .custom-popup .leaflet-popup-close-button {
           color: white !important;
           text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
@@ -226,12 +323,15 @@ export default function HeroSection() {
           top: 12px !important;
           right: 12px !important;
         }
+
         .custom-popup .leaflet-popup-close-button:hover {
           color: #f3f4f6 !important;
         }
+
         .custom-popup .leaflet-popup-tip-container {
           margin-top: -2px;
         }
+
         .custom-popup .leaflet-popup-tip {
           background-color: white !important;
           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);

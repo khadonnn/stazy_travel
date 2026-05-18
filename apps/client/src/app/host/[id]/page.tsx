@@ -59,6 +59,8 @@ export default function HostProfilePage() {
   const [hostData, setHostData] = useState<HostData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [bgLoaded, setBgLoaded] = useState(false);
+  const [bgError, setBgError] = useState(false);
 
   useEffect(() => {
     const fetchHostData = async () => {
@@ -131,15 +133,33 @@ export default function HostProfilePage() {
   const defaultBg =
     "https://images.unsplash.com/photo-1613339027986-b94d85708995?q=80&w=1074&auto=format&fit=crop";
   const defaultAvatar = "/assets/user2.avif";
+  const fallbackBg = "/assets/background1.avif";
+  const bgSrc = hostData.bgImage || defaultBg;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* ==================== HERO SECTION ==================== */}
       <div className="relative h-[380px] md:h-[480px] w-full overflow-hidden">
+        {/* Fallback image - hiển thị ngay lập tức */}
         <img
-          src={hostData.bgImage || defaultBg}
+          src={fallbackBg}
+          alt="Cover fallback"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+            bgLoaded ? "opacity-0" : "opacity-100"
+          }`}
+        />
+        {/* Ảnh chính - preload rồi mới hiển thị */}
+        <img
+          src={bgSrc}
           alt="Cover"
-          className="absolute inset-0 h-full w-full object-cover"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+            bgLoaded ? "opacity-100" : "opacity-0"
+          }`}
+          onLoad={() => setBgLoaded(true)}
+          onError={() => {
+            setBgError(true);
+            setBgLoaded(false);
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
 

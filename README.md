@@ -86,7 +86,8 @@ STAZY là một hệ thống đặt phòng khách sạn được xây dựng the
 - Port: `3005`
 - Framework: Fastify 5 + Socket.io
 - Features: Real-time chat, notifications
-- Database: MongoDB (Messages)
+- Database: PostgreSQL (Prisma - ChatMessage)
+- Integration: Kafka consumer (`booking.confirmed`), BullMQ
 
 #### 6. **Email Service** (Node.js)
 
@@ -111,53 +112,76 @@ STAZY là một hệ thống đặt phòng khách sạn được xây dựng the
   - Port: `5432`
 - **Redis**: Caching & distributed locks
   - Port: `6379`
-- **MongoDB**: Messages & chat data
+- **MongoDB**: Legacy (booking-db package, unused in routes)
 - **Docker**: Container orchestration
 
 ## 🏗 Kiến trúc hệ thống
 
 ```
-┌─────────────┐         ┌─────────────┐
-│   Client    │         │    Admin    │
-│  (Next.js)  │         │  (Next.js)  │
-│   :3002     │         │   :3003     │
-└──────┬──────┘         └──────┬──────┘
-       │                       │
-       ├───────────────────────┤
-       │                       │
-┌──────▼───────────────────────▼──────┐
-│         API Gateway Layer           │
-└──────┬──────┬──────┬──────┬─────────┘
-       │      │      │      │
-   ┌───▼──┐┌──▼──┐┌──▼──┐┌──▼───┐
-   │Product││Booking││Payment││Search│
-   │:8000  ││:8001 ││:8002││:8008 │
-   └───┬──┘└──┬──┘└──┬──┘└──┬───┘
-       │      │      │      │
-       └──────┴──┬───┴──────┘
-                 │
-         ┌───────▼────────┐
-         │  Kafka Cluster │
-         │   :9094-9096   │
-         └───────┬────────┘
-                 │
-    ┌────────────┼────────────┐
-    │            │            │
-┌───▼───┐   ┌───▼────┐  ┌───▼────┐
-│Socket │   │Email   │  │ Other  │
-│:3005  │   │Service │  │Services│
-└───┬───┘   └────────┘  └────────┘
-    │
-    │
-┌───▼─────────────────────────────────┐
-│      Data & Cache Layer             │
-│  ┌──────────┐ ┌─────────┐ ┌──────┐ │
-│  │PostgreSQL│ │ MongoDB │ │ Redis│ │
-│  │  :5432   │ │ :27017  │ │:6379 │ │
-│  │ pgvector │ │Messages │ │Cache │ │
-│  └──────────┘ └─────────┘ └──────┘ │
-└─────────────────────────────────────┘
+┌──────────────┐           ┌──────────────┐
+│   Client     │           │    Admin     │
+│  (Next.js)   │           │  (Next.js)   │
+│    :3002     │           │    :3003     │
+└──────┬───────┘           └──────┬───────┘
+       │                          │
+       ├──────────────────────────┤
+       │                          │
+┌──────▼──────────────────────────▼──────┐
+│        API Gateway (Fastify)           │
+│               :3000                    │
+└──┬────────┬────────┬────────┬──────────┘
+   │        │        │        │
+┌──▼───┐ ┌──▼────┐ ┌─▼───┐ ┌──▼───┐
+│Prod. │ │Booking│ │Pay. │ │Search│
+│:8000 │ │:8001  │ │:8002│ │:8008 │
+│Express│ │Fastify│ │Hono │ │Py/   │
+│      │ │       │ │     │ │FastAPI│
+└──┬───┘ └──┬────┘ └─┬───┘ └──────┘
+   │        │        │
+   │   ┌────┘        │
+   │   │             │
+┌──▼───▼─────────────▼──────────┐
+│       Kafka Cluster           │
+│        :9094-9096             │
+│  Topics: hotel.created/deleted│
+│          booking-events       │
+│          payment-events       │
+│          booking.confirmed    │
+│          user.created         │
+└──┬────────┬────────┬──────────┘
+   │        │        │
+┌──▼───┐ ┌──▼───┐ ┌──▼────┐
+│Email │ │Socket│ │BullMQ │
+│:8003 │ │:3005 │ │Workers│
+│SMTP  │ │Socket│ │(Redis)│
+│      │ │  .io │ │       │
+└──────┘ └──┬───┘ └───────┘
+             │
+┌────────────▼──────────────────────────┐
+│         Data & Cache Layer            │
+│                                       │
+│ ┌────────────┐ ┌─────────┐ ┌───────┐ │
+│ │ PostgreSQL │ │ MongoDB │ │ Redis │ │
+│ │   :5432    │ │ (Legacy)│ │ :6379 │ │
+│ │            │ │         │ │       │ │
+│ │ Shared DB  │ │ Unused  │ │Redlock│ │
+│ │ (Prisma)   │ │ in      │ │Room   │ │
+│ │ + pgvector │ │ routes  │ │Hold   │ │
+│ │            │ │         │ │BullMQ │ │
+│ └────────────┘ └─────────┘ └───────┘ │
+└───────────────────────────────────────┘
 ```
+
+**Luồng sự kiện chính:**
+
+| Event Flow                                                                  | Mô tả                         |
+| --------------------------------------------------------------------------- | ----------------------------- |
+| `POST /hotels` → Kafka `hotel.created` → Payment → Stripe Product           | Admin tạo KS → đồng bộ Stripe |
+| `POST /bookings` → Redis Lock + Outbox → Kafka `booking-events`             | User đặt phòng → Saga Pattern |
+| `booking-events` → Payment → Stripe Webhook → Kafka `PAYMENT_PROCESSED`     | Thanh toán thành công         |
+| `PAYMENT_PROCESSED` → Booking (BullMQ) → Kafka `booking.confirmed` → Socket | Xác nhận → Thông báo realtime |
+| `PAYMENT_PROCESSED` → Email (BullMQ) → Gửi email xác nhận                   | Gửi mail đặt phòng thành công |
+| `POST /check-availability` → Redis `getHold()`                              | Kiểm tra phòng + hold status  |
 
 ## 💻 Yêu cầu hệ thống
 
@@ -338,7 +362,7 @@ CLERK_PUBLISHABLE_KEY=pk_test_xxx
 
 ```env
 PORT=3005
-MONGODB_URI=mongodb://localhost:27017/bookings
+DATABASE_URL=postgresql://admin:123456@localhost:5432/products
 KAFKA_BROKERS=localhost:9094,localhost:9095,localhost:9096
 ```
 
@@ -452,6 +476,10 @@ stazy/
 │   │   └── package.json
 │   │
 │   └── email-service/             # Email Worker
+│   │    ├── src/
+│   │    └── package.json
+│   │
+│   └── gateway/             #  api controll
 │       ├── src/
 │       └── package.json
 │
