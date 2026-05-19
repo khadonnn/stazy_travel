@@ -113,7 +113,7 @@ RECENCY_WEIGHT_7_10 = 0.3     # Interactions 7-10
 # Session intent
 SELECTED_HOTEL_WINDOW = 3      # Last N high-intent interactions
 RECENCY_WINDOW = 10            # Last N interactions for weighted recency
-SESSION_DECAY_MINUTES = 30     # Session expires after 30min inactivity
+SESSION_DECAY_MINUTES = 120    # Session expires after 2 hours (was 30 min)
 SESSION_DEST_THRESHOLD = 0.6   # Long-term fallback threshold
 
 # Confidence-based destination multipliers (prevent recommendation collapse)
@@ -271,13 +271,15 @@ def get_recency_weight(position: int) -> float:
 def _time_decay_weight(interaction_ts_str: str, now_ts: float) -> float:
     """
     Time-decay weight for interaction age:
-      <5 min  → 1.0  (full weight)
-      5-15 min → 0.7
-      15-30 min → 0.4
-      >30 min → 0.0 (ignored)
+      <5 min    → 1.0  (full weight)
+      5-15 min  → 0.8
+      15-30 min → 0.6
+      30-60 min → 0.4
+      60-120 min→ 0.25
+      >120 min  → 0.1  (never zero out - old interactions still count)
     """
     if not interaction_ts_str:
-        return 0.5
+        return 0.3
     try:
         inter_ts = time.mktime(
             time.strptime(interaction_ts_str[:19], "%Y-%m-%dT%H:%M:%S")
@@ -286,13 +288,17 @@ def _time_decay_weight(interaction_ts_str: str, now_ts: float) -> float:
         if minutes_ago < 5:
             return 1.0
         elif minutes_ago < 15:
-            return 0.7
+            return 0.8
         elif minutes_ago < 30:
+            return 0.6
+        elif minutes_ago < 60:
             return 0.4
+        elif minutes_ago < 120:
+            return 0.25
         else:
-            return 0.0
+            return 0.1
     except:
-        return 0.5
+        return 0.3
 
 
 def detect_intent(user_id: str) -> dict:
@@ -856,79 +862,94 @@ def get_recommendations_for_user(
     strategy: str = 'svd'
 ) -> list:
     """
-    Multi-strategy recommendation with INTENT LAYERING.
+    Multi-strategy recommendation with HARD SESSION ROUTING.
     
-    Intent hierarchy (highest → lowest priority):
-    1. SELECTED HOTELS (explicit selection: CLICK_BOOK_NOW, ADD_TO_WISHLIST, BOOK)
-       → 2x multiplicative boost
-    2. WEIGHTED RECENCY (last 10 interactions with decay weights)
-       → ~1.5x multiplicative boost
-    3. LONG-TERM PROFILE (historical preference)
-       → 1.3x multiplicative boost
+    When strong session intent detected (2+ high-intent interactions):
+      → ONLY candidates from session destination allowed
+      → Cross-city diversity is DISABLED
     
-    Session DECAY: expires after 30min inactivity.
-    Diversity: INTRA-destination when session active, cross-destination otherwise.
+    When medium/weak intent:
+      → Session destination ranked first, others follow
+    
+    When no intent:
+      → Cross-destination diversity
     """
     try:
         hotels = hotel_vectors or get_all_hotels()
         if not hotels:
             return []
 
-        strategy_fn = STRATEGY_MAP.get(strategy, svd_recommend)
         print(f"\n🎯 [Recommend] User={user_id} | Strategy={strategy} | Top-K={top_k}")
 
-        results = strategy_fn(user_id, hotels, top_k)
-        if not results:
-            results = popular_recommend(hotels, top_k)
-
         # =========================================================
-        # INTENT LAYERING: Detect session intent
+        # STEP 1: Detect intent FIRST (before candidate generation)
         # =========================================================
         intent = detect_intent(user_id)
         session_dest = None
+        intent_source = None
         dest_multiplier = 1.0
 
         if intent:
             session_dest = intent['destination']
+            intent_source = intent['source']
             dest_multiplier = intent['multiplier']
+            print(f"🎯 [Recommend] SESSION DEST: \"{session_dest}\" source={intent_source} multiplier={dest_multiplier}")
 
         # =========================================================
-        # RETRIEVAL-STAGE FILTERING + SESSION-AWARE DIVERSITY
+        # STEP 2: HARD SESSION ROUTING for strong intent
         # =========================================================
-        if session_dest and intent and intent['source'] == 'selected':
-            # Strong session intent: pre-filter to same destination
-            same_dest = [h for h in results
-                         if (h.get('destination') or '').lower() == session_dest.lower()]
-
-            if len(same_dest) >= top_k:
-                results = same_dest[:top_k * 2]
-                print(f"✅ [Recommend] All results from session dest: \"{session_dest}\"")
+        if session_dest and intent_source == 'selected':
+            # HARD FILTER: Only hotels from session destination
+            session_hotels = [h for h in hotels
+                              if (h.get('destination') or '').lower() == session_dest.lower()]
+            
+            print(f"🔒 [HARD ROUTING] Session=\"{session_dest}\" | "
+                  f"Pool: {len(session_hotels)}/{len(hotels)} hotels")
+            
+            if len(session_hotels) >= top_k:
+                # Enough session-destination hotels → use them exclusively
+                strategy_fn = STRATEGY_MAP.get(strategy, svd_recommend)
+                results = strategy_fn(user_id, session_hotels, top_k)
+                if not results:
+                    results = sorted(session_hotels, key=lambda h: h.get('reviewStar', 0), reverse=True)[:top_k]
+                
+                final_dests = [h.get('destination', '') for h in results[:top_k]]
+                print(f"✅ [HARD ROUTING] {len(results)} results, all from \"{session_dest}\": {final_dests}")
+                return results[:top_k]
             else:
-                # Get more from session destination
-                dest_pool = diverse_recommend(hotels, top_k, session_dest)
-                seen_ids = set(h.get('id') for h in same_dest)
-                for h in dest_pool:
-                    if h.get('id') not in seen_ids:
-                        same_dest.append(h)
-                        seen_ids.add(h.get('id'))
-                # Only add other destinations if absolutely needed
-                if len(same_dest) < top_k:
-                    others = [h for h in results if h.get('id') not in seen_ids]
-                    for h in others:
-                        if len(same_dest) < top_k * 2:
-                            same_dest.append(h)
-                            seen_ids.add(h.get('id'))
-                results = same_dest[:top_k * 2]
-                print(f"🔀 [Recommend] {len([h for h in results if (h.get('destination') or '').lower() == session_dest.lower()])} "
-                      f"from \"{session_dest}\" + fillers")
-        elif session_dest:
-            # Medium intent (recency/long-term): moderate filtering
+                # Not enough from session dest → session dest first, then fill
+                print(f"⚠️ [HARD ROUTING] Only {len(session_hotels)} from \"{session_dest}\", adding fillers")
+                strategy_fn = STRATEGY_MAP.get(strategy, svd_recommend)
+                all_results = strategy_fn(user_id, hotels, top_k * 3)
+                if not all_results:
+                    all_results = popular_recommend(hotels, top_k * 3)
+                
+                same_dest = [h for h in all_results
+                             if (h.get('destination') or '').lower() == session_dest.lower()]
+                others = [h for h in all_results
+                          if (h.get('destination') or '').lower() != session_dest.lower()]
+                results = same_dest + others
+                final_dests = [h.get('destination', '') for h in results[:top_k]]
+                print(f"🔀 [HARD ROUTING] {len(same_dest)} from \"{session_dest}\" + fillers: {final_dests}")
+                return results[:top_k]
+
+        # =========================================================
+        # STEP 3: Medium intent → soft preference (boost, not filter)
+        # =========================================================
+        strategy_fn = STRATEGY_MAP.get(strategy, svd_recommend)
+        results = strategy_fn(user_id, hotels, top_k * 3)
+        if not results:
+            results = popular_recommend(hotels, top_k * 3)
+
+        if session_dest and intent_source in ('recency', 'longterm'):
+            # Soft preference: session dest first, but allow others
             same_dest = [h for h in results
                          if (h.get('destination') or '').lower() == session_dest.lower()]
             others = [h for h in results
                       if (h.get('destination') or '').lower() != session_dest.lower()]
             results = (same_dest + others)[:top_k * 2]
-            print(f"🔀 [Recommend] Moderate dest preference: \"{session_dest}\"")
+            final_dests = [h.get('destination', '') for h in results[:top_k]]
+            print(f"🔀 [Recommend] Soft preference: \"{session_dest}\": {final_dests}")
         else:
             # No session intent → cross-destination diversity
             diverse_results = diverse_recommend(hotels, top_k)
@@ -940,9 +961,10 @@ def get_recommendations_for_user(
                     seen_ids.add(h_id)
                     merged.append(h)
             results = merged[:top_k * 2]
-            print(f"🔀 [Recommend] No session intent → diverse results")
+            final_dests = [h.get('destination', '') for h in results[:top_k]]
+            print(f"🔀 [Recommend] No session intent → diverse: {final_dests}")
 
-        return results
+        return results[:top_k]
 
     except Exception as e:
         print(f"❌ Recommendation error: {e}")

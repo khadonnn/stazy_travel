@@ -206,21 +206,20 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
 
   // --- 2. LOGIC THEO DÕI VIEW HOTEL ---
   useEffect(() => {
-    // Chỉ track khi đã có dữ liệu hotel (có ID)
+    // Track VIEW ngay khi vào trang (không đợi 5s)
+    // Điều này đảm bảo detectSessionIntent() luôn có data mới
     if (!stayData?.id) return;
 
-    const startTime = Date.now();
-    // console.log(`👁️ Bắt đầu theo dõi: ${stayData.title}`);
+    trackInteraction(stayData.id, "VIEW", { duration: 0 });
+    // console.log(`� Đã gửi VIEW event cho ${stayData.title}`);
 
-    // Hàm cleanup chạy khi user rời trang hoặc đóng tab
+    const startTime = Date.now();
+    // Hàm cleanup: cập nhật duration khi user rời trang
     return () => {
       const endTime = Date.now();
-      const duration = Math.round((endTime - startTime) / 1000); // Tính giây
-
-      // Chỉ gửi nếu xem > 5 giây (để loại bỏ click nhầm/bounce)
+      const duration = Math.round((endTime - startTime) / 1000);
       if (duration > 5) {
-        trackInteraction("VIEW", stayData.id, { duration });
-        // console.log(`📡 Đã gửi VIEW event: ${duration}s`);
+        trackInteraction(stayData.id, "VIEW", { duration });
       }
     };
   }, [stayData?.id]);
@@ -358,7 +357,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
       toast.error("Phòng này đã có người đặt trong khoảng thời gian bạn chọn!");
       return;
     }
-    trackInteraction("CLICK_BOOK_NOW", stayData.id);
+    trackInteraction(stayData.id, "CLICK_BOOK_NOW");
     // Tính toán lại giá
     const pricePerNight = Number(stayData.price) || 0;
     const { nights } = calculatorPrice({ pricePerNight, date });

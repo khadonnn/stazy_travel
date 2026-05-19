@@ -2,7 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Briefcase, Calendar, Mail, Phone, Star } from "lucide-react";
+import {
+  MapPin,
+  Briefcase,
+  Calendar,
+  Mail,
+  Phone,
+  Star,
+  BadgeCheck,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -183,9 +191,9 @@ export default function HostProfilePage() {
                   alt={hostData.name}
                   className="w-32 h-32 md:w-44 md:h-44 rounded-full border-4 border-white shadow-2xl object-cover bg-white ring-2 ring-white/40"
                 />
-                <Badge className="absolute -bottom-2 right-2 bg-primary text-primary-foreground px-3 py-1 text-xs font-bold shadow-md">
+                <div className="absolute rounded-2xl -bottom-2 right-2 bg-primary text-primary-foreground px-3 py-1 text-xs font-bold shadow-md">
                   CHỦ NHÀ
-                </Badge>
+                </div>
               </div>
             </motion.div>
 
@@ -205,9 +213,9 @@ export default function HostProfilePage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5 }}
             >
-              <Button size="lg" className="shadow-lg">
+              {/* <Button size="lg" className="shadow-lg">
                 Liên hệ ngay
-              </Button>
+              </Button> */}
             </motion.div>
           </motion.div>
         </div>
@@ -254,18 +262,43 @@ export default function HostProfilePage() {
             <motion.div variants={itemVariants}>
               <Card className="border-none shadow-md">
                 <CardContent className="p-6">
-                  <h3 className="font-bold text-lg mb-4">Đã xác minh</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 text-green-600">
-                      <Mail className="w-5 h-5" />
-                      <span className="font-medium text-sm truncate">
-                        {hostData.email}
-                      </span>
+                  <div className="flex items-center gap-2 mb-5">
+                    <BadgeCheck className="w-5 h-5 text-blue-500" />
+                    <h3 className="font-semibold text-lg text-zinc-900">
+                      Đã xác minh
+                    </h3>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 rounded-full bg-zinc-100">
+                        <Mail className="w-4 h-4 text-zinc-600" />
+                      </div>
+
+                      <div className="min-w-0">
+                        <p className="text-xs text-zinc-500 mb-1">Email</p>
+
+                        <p className="font-medium text-sm text-zinc-800 truncate">
+                          {hostData.email}
+                        </p>
+                      </div>
                     </div>
+
                     {hostData.phone && (
-                      <div className="flex items-center gap-3 text-green-600">
-                        <Phone className="w-5 h-5" />
-                        <span className="font-medium">{hostData.phone}</span>
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 rounded-full bg-zinc-100">
+                          <Phone className="w-4 h-4 text-zinc-600" />
+                        </div>
+
+                        <div>
+                          <p className="text-xs text-zinc-500 mb-1">
+                            Số điện thoại
+                          </p>
+
+                          <p className="font-medium text-sm text-zinc-800">
+                            {hostData.phone}
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -276,7 +309,7 @@ export default function HostProfilePage() {
 
           {/* RIGHT COLUMN - Listings */}
           <div className="lg:col-span-2 space-y-8">
-            <motion.div
+            {/* <motion.div
               variants={itemVariants}
               className="flex items-center justify-between"
             >
@@ -286,10 +319,10 @@ export default function HostProfilePage() {
               <Badge variant="secondary" className="text-base px-4 py-1.5">
                 {hostData.hotels?.length || 0} chỗ nghỉ
               </Badge>
-            </motion.div>
+            </motion.div> */}
 
             {hostData.hotels && hostData.hotels.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 mt-16">
                 {hostData.hotels.map((hotel) => {
                   const borderColor = getRandomBorderColor();
                   return (

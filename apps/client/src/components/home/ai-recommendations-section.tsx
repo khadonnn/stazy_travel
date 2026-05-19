@@ -32,8 +32,13 @@ export default function AIRecommendationsSection() {
   const fetchRecommendations = useCallback(async (chipSignal?: string) => {
     try {
       setError(null);
+      console.log("[ai-recommend] 📞 Calling getAIRecommendations...");
       const result: AIRecommendationResult | null =
         await getAIRecommendations(chipSignal);
+      console.log(
+        "[ai-recommend] 📥 Result:",
+        result ? `${result.hotels.length} hotels` : "null",
+      );
       if (!mountedRef.current) return;
       if (result && result.hotels.length > 0) {
         setHotels(result.hotels);
@@ -109,8 +114,10 @@ export default function AIRecommendationsSection() {
     [activeChip, isReranking, fetchRecommendations],
   );
 
-  // Don't render anything for non-logged-in users
-  if (!isSignedIn) return null;
+  // Don't render until Clerk loads. If loaded but not signed in, hide.
+  if (isLoaded && !isSignedIn) return null;
+  // If Clerk not loaded yet, don't render (prevents hydration mismatch)
+  if (!isLoaded) return null;
 
   if (loading) {
     return (
@@ -218,29 +225,81 @@ export default function AIRecommendationsSection() {
             isReranking && "opacity-50 pointer-events-none",
           )}
         >
-          <BentoGrid className="lg:grid-cols-3">
-            {hotels.map((hotel, i) => {
-              let spanClass = "";
-              if (i === 0) spanClass = "lg:col-span-2 lg:row-span-2";
-              return (
-                <div key={hotel.id} className={cn(spanClass, "h-full")}>
-                  <BentoGridItem
-                    featured={i === 0}
-                    id={hotel.id}
-                    title={hotel.title}
-                    description={hotel.address}
-                    image={
-                      hotel.galleryImgs?.[0] ||
-                      "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
-                    }
-                    price={hotel.price}
-                    rating={hotel.reviewStar || 4.8}
-                    category={hotel.category?.name || "Khách sạn"}
-                  />
-                </div>
-              );
-            })}
-          </BentoGrid>
+          {/* 12-column grid, 2 rows, 4 cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-2 gap-4 auto-rows-[240px] lg:h-[500px]">
+            {/* Hotel 0: Large featured left card (6 cols × 2 rows) */}
+            <div className="lg:col-span-6 lg:row-span-2 h-[280px] lg:h-full">
+              {hotels[0] && (
+                <BentoGridItem
+                  featured={true}
+                  id={hotels[0].id}
+                  title={hotels[0].title}
+                  description={hotels[0].address}
+                  image={
+                    hotels[0].galleryImgs?.[0] ||
+                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
+                  }
+                  price={hotels[0].price}
+                  rating={hotels[0].reviewStar || 4.8}
+                  category={hotels[0].category?.name || "Khách sạn"}
+                />
+              )}
+            </div>
+
+            {/* Hotel 1: Medium top-right card (6 cols × 1 row) */}
+            <div className="lg:col-start-7 lg:col-span-6 h-[200px] lg:h-full">
+              {hotels[1] && (
+                <BentoGridItem
+                  id={hotels[1].id}
+                  title={hotels[1].title}
+                  description={hotels[1].address}
+                  image={
+                    hotels[1].galleryImgs?.[0] ||
+                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
+                  }
+                  price={hotels[1].price}
+                  rating={hotels[1].reviewStar || 4.8}
+                  category={hotels[1].category?.name || "Khách sạn"}
+                />
+              )}
+            </div>
+
+            {/* Hotel 2: Small card (3 cols × 1 row) */}
+            <div className="lg:col-start-7 lg:col-span-3 lg:row-start-2 h-[200px] lg:h-full">
+              {hotels[2] && (
+                <BentoGridItem
+                  id={hotels[2].id}
+                  title={hotels[2].title}
+                  description={hotels[2].address}
+                  image={
+                    hotels[2].galleryImgs?.[0] ||
+                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
+                  }
+                  price={hotels[2].price}
+                  rating={hotels[2].reviewStar || 4.8}
+                  category={hotels[2].category?.name || "Khách sạn"}
+                />
+              )}
+            </div>
+
+            {/* Hotel 3: Small card (3 cols × 1 row) */}
+            <div className="lg:col-start-10 lg:col-span-3 lg:row-start-2 h-[200px] lg:h-full">
+              {hotels[3] && (
+                <BentoGridItem
+                  id={hotels[3].id}
+                  title={hotels[3].title}
+                  description={hotels[3].address}
+                  image={
+                    hotels[3].galleryImgs?.[0] ||
+                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
+                  }
+                  price={hotels[3].price}
+                  rating={hotels[3].reviewStar || 4.8}
+                  category={hotels[3].category?.name || "Khách sạn"}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </section>

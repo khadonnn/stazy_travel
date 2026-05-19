@@ -208,7 +208,7 @@ Bảng 3: Kết quả đánh giá Explicit CF (Rating Prediction)
 | User-Based CF (Pearson) | (điền sau)  | (điền sau)  |
 | Cải thiện               | (điền sau)% | (điền sau)% |
 
-Cách chạy đánh giá:
+## Cách chạy đánh giá:
 
 - SVD Model: cd apps/search-service && uv run python train_svd.py
 - Implicit CF: cd apps/search-service && uv run python evaluate.py --mode implicit
