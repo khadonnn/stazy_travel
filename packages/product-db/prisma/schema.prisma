@@ -389,15 +389,12 @@ model Interaction {
 
 enum InteractionType {
   VIEW            // Xem chi detail (Implicit signal, weight 0.5)
-  LIKE            // Thả tim
-  SHARE           // Chia sẻ
   ADD_TO_WISHLIST // Thêm vào wishlist (Implicit signal, weight 3.0)
   BOOK            // Đặt phòng thành công (Implicit signal, weight 5.0)
   CLICK_BOOK_NOW  // Bấm nút đặt nhưng chưa thanh toán (Implicit signal, weight 2.0)
   CANCEL          // Hủy (Negative signal)
   SEARCH_QUERY    // Tìm kiếm (Lưu vào metadata)
   FILTER_APPLIED  // Lọc
-  RATING          // Đánh giá chung
   RATE_POSITIVE   // Đánh giá tích cực 4-5 sao (Implicit signal, weight 4.5)
   RATE_NEGATIVE   // Đánh giá tiêu cực 1-2 sao (Implicit signal, weight -3.0)
 }

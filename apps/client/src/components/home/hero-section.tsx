@@ -241,7 +241,7 @@ export default function HeroSection() {
             <button
               onClick={() => router.push("/search-service")}
               type="button"
-              className="relative z-20 inline-flex items-center justify-center px-11 py-4 font-(family-name:--font-archivo) text-lg font-black text-white bg-transparent uppercase tracking-[0.2em] cursor-pointer whitespace-nowrap transition-colors"
+              className="relative z-20 inline-flex items-center justify-center px-11 py-4 text-lg font-black text-white bg-transparent uppercase tracking-[0.25em] cursor-pointer whitespace-nowrap transition-colors"
             >
               Bắt đầu khám phá
               <Sparkles className="ml-2.5 w-5 h-5" />

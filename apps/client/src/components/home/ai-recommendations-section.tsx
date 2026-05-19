@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useUser } from "@clerk/nextjs";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { Sparkles, Loader2 } from "lucide-react";
 import {
@@ -12,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function AIRecommendationsSection() {
+  const { isSignedIn, isLoaded } = useUser();
   const [hotels, setHotels] = useState<RecommendedHotel[]>([]);
   const [chips, setChips] = useState<AIInsightChip[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,6 +50,12 @@ export default function AIRecommendationsSection() {
   }, []);
 
   useEffect(() => {
+    // Don't fetch recommendations if user is not signed in
+    if (!isLoaded || !isSignedIn) {
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
     const load = async () => {
       try {
@@ -57,10 +65,33 @@ export default function AIRecommendationsSection() {
       }
     };
     load();
+
+    // Auto-refresh when user performs HIGH-INTENT interactions
+    // Only fires for: ADD_TO_WISHLIST, BOOK, RATE_POSITIVE, RATE_NEGATIVE, CLICK_BOOK_NOW
+    // VIEW interactions do NOT trigger this (tracker.ts filters them out)
+    let refreshTimeout: ReturnType<typeof setTimeout> | null = null;
+    const handleInteraction = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      console.log(
+        "[ai-recommend] High-intent interaction, refreshing...",
+        detail,
+      );
+      if (!cancelled) {
+        // Debounce: wait 500ms for rapid interactions (e.g. multiple wishlist adds)
+        if (refreshTimeout) clearTimeout(refreshTimeout);
+        refreshTimeout = setTimeout(() => {
+          if (!cancelled) fetchRecommendations();
+        }, 500);
+      }
+    };
+    window.addEventListener("interaction:tracked", handleInteraction);
+
     return () => {
       cancelled = true;
+      if (refreshTimeout) clearTimeout(refreshTimeout);
+      window.removeEventListener("interaction:tracked", handleInteraction);
     };
-  }, [fetchRecommendations]);
+  }, [fetchRecommendations, isLoaded, isSignedIn]);
 
   const handleChipClick = useCallback(
     async (chip: AIInsightChip) => {
@@ -77,6 +108,9 @@ export default function AIRecommendationsSection() {
     },
     [activeChip, isReranking, fetchRecommendations],
   );
+
+  // Don't render anything for non-logged-in users
+  if (!isSignedIn) return null;
 
   if (loading) {
     return (

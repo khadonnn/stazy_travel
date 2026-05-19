@@ -91,7 +91,7 @@ export default function StayPage() {
               price_max: params.get("price_max"),
               bedrooms: params.get("bedrooms"),
             },
-          }
+          },
         );
 
         // D. Cập nhật State
@@ -111,7 +111,7 @@ export default function StayPage() {
 
     fetchStays();
 
-    // ⚠️ QUAN TRỌNG: Dependency là [searchParams]
+    //  QUAN TRỌNG: Dependency là [searchParams]
     // Bất cứ khi nào URL thay đổi (trang, lọc, sort), useEffect sẽ chạy lại
   }, [searchParams, currentPage]);
 
@@ -125,7 +125,7 @@ export default function StayPage() {
       // Đẩy URL mới -> Trigger useEffect ở trên
       router.push(`${pathname}?${params.toString()}`, { scroll: false });
     },
-    [searchParams, pathname, router]
+    [searchParams, pathname, router],
   );
 
   // ------------------- XỬ LÝ FILTER -------------------
@@ -136,7 +136,7 @@ export default function StayPage() {
 
   // ------------------- RENDER -------------------
   return (
-    <div className="space-y-6 px-4 mx-auto w-full mt-20">
+    <div className="space-y-6 px-4 mx-auto w-full mt-20 mb-10">
       {/* Truyền stays vào chỉ để tính maxPrice nếu cần, ko dùng để filter client-side nữa */}
       <StayFilter data={stays} onFilter={handleFilterChange} />
 

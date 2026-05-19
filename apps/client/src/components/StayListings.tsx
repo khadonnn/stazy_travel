@@ -79,9 +79,17 @@ export default function StayListing() {
     return <p className="text-center py-10">Đang tải dữ liệu...</p>;
   if (isError) console.error("Lỗi data");
 
-  const totalPages = Math.ceil(stays.length / ITEMS_PER_PAGE);
+  // Sắp xếp theo reviewCount giảm dần (nhiều đánh giá nhất sẽ hiển thị đầu)
+  const sortedStays = [...stays].sort(
+    (a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0),
+  );
+
+  const totalPages = Math.ceil(sortedStays.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentItems = stays.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentItems = sortedStays.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE,
+  );
 
   if (currentPage > totalPages && totalPages > 0) setCurrentPage(totalPages);
 
@@ -106,7 +114,7 @@ export default function StayListing() {
 
           {/* Đoạn mô tả (Có thể bỏ nếu không cần thiết) */}
           <p className="mt-3 text-sm text-zinc-400 max-w-xl leading-relaxed">
-            Những địa điểm lưu trú đang thu hút nhiều sự quan tâm
+            Những địa điểm lưu trú được nhiều du khách đánh giá nhất
           </p>
         </div>
 

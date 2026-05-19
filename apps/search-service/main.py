@@ -42,8 +42,8 @@ def scheduled_retrain():
     """Called by APScheduler at 3:00 AM daily"""
     print("\n⏰ [CRON] Scheduled SVD retrain started...")
     try:
-        from train_svd import main as train_main
-        train_main()
+        from train_real import train_and_save
+        train_and_save()
         reload_svd_model()
         print("⏰ [CRON] SVD retrain completed successfully!")
     except Exception as e:
@@ -304,8 +304,8 @@ async def force_retrain(background_tasks: BackgroundTasks):
         with retrain_lock:
             try:
                 print("\n🔧 [MANUAL] Force retrain triggered by admin...")
-                from train_svd import main as train_main
-                train_main()
+                from train_real import train_and_save
+                train_and_save()
                 reload_svd_model()
                 print("🔧 [MANUAL] Force retrain completed!")
             except Exception as e:
