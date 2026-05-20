@@ -749,26 +749,28 @@ export default function ChatboxPage() {
 
                 {/* Suggestion Chips */}
                 <div>
-                    <div className="border-t px-3 py-1.5">
+                    {/* Chips Area */}
+                    <div className="bg-muted/30 dark:bg-muted/10 border-t px-3 py-1.5">
                         <div className="mb-1 flex flex-wrap gap-1.5">
                             {SUGGESTION_CHIPS.map((chip) => (
                                 <button
                                     key={chip.label}
                                     onClick={() => handleChipClick(chip.query)}
                                     disabled={loading}
-                                    className="bg-muted/50 hover:bg-muted cursor-pointer rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors disabled:opacity-50"
+                                    className="bg-background hover:bg-muted dark:bg-background/60 cursor-pointer rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors disabled:opacity-50"
                                 >
                                     {chip.label}
                                 </button>
                             ))}
                         </div>
+
                         <div className="flex flex-wrap gap-1.5">
                             {ACTION_CHIPS.map((chip) => (
                                 <button
                                     key={chip.label}
                                     onClick={() => handleChipClick(chip.query)}
                                     disabled={loading}
-                                    className="cursor-pointer rounded-full border border-amber-200/80 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 shadow-sm transition-all duration-200 hover:bg-amber-100 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 dark:border-amber-500/20 dark:bg-amber-400/10 dark:text-amber-200 dark:backdrop-blur-sm dark:hover:border-amber-400/30 dark:hover:bg-amber-400/15"
+                                    className="cursor-pointer rounded-full border border-amber-200/80 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 shadow-sm transition-all duration-200 hover:bg-amber-100 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 dark:border-amber-500/20 dark:bg-amber-400/10 dark:text-amber-200 dark:hover:border-amber-400/30 dark:hover:bg-amber-400/15"
                                 >
                                     {chip.label}
                                 </button>
@@ -777,7 +779,7 @@ export default function ChatboxPage() {
                     </div>
 
                     {/* Input Area */}
-                    <div className="border-t px-3 py-2">
+                    <div className="bg-background border-t px-3 py-2">
                         <div className="flex gap-2">
                             <Input
                                 placeholder="Hỏi về doanh thu, booking, dự báo..."
@@ -787,6 +789,7 @@ export default function ChatboxPage() {
                                 disabled={loading}
                                 className="flex-1"
                             />
+
                             <Button onClick={handleSend} disabled={!input.trim() || loading} size="icon">
                                 <Send className="h-4 w-4" />
                             </Button>

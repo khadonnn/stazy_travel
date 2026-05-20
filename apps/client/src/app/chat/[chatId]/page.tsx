@@ -120,7 +120,7 @@ function ExploreWorkspacePage() {
       {/* ==========================================
           CỘT 1: CHATBOX AI (Rộng 350px)
           ========================================== */}
-      <div className="w-[350px] flex flex-col border-r border-gray-200 bg-gray-50/50 flex-shrink-0 z-20">
+      <div className="w-[350px] h-full flex flex-col border-r border-gray-200 bg-gray-50/50 flex-shrink-0 z-20 overflow-hidden">
         {/* Context-Aware Header */}
         {isContextAware && currentHotel ? (
           <div className="h-16 flex items-center px-4 border-b border-gray-200 bg-[#3B7F70] text-white shrink-0">

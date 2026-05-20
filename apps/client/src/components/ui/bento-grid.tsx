@@ -27,6 +27,7 @@ export const BentoGridItem = ({
   title,
   description,
   id,
+  slug,
   price,
   rating,
   image,
@@ -37,6 +38,7 @@ export const BentoGridItem = ({
   title?: string;
   description?: string;
   id: number;
+  slug?: string;
   price: number;
   rating: number;
   image: string;
@@ -45,7 +47,7 @@ export const BentoGridItem = ({
 }) => {
   return (
     <Link
-      href={`/hotels/${id}`}
+      href={`/hotels/${slug || id}`}
       className={cn(
         "group relative overflow-hidden rounded-xl",
         "block w-full h-full",

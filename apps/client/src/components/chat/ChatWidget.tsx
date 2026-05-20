@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { BotMessageSquare, Expand, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -15,6 +15,14 @@ export default function ChatWidget() {
   const router = useRouter();
 
   const disabledRoutes = ["/about", "/login", "/register"];
+
+  // Clear hotel context when user navigates away from hotel detail pages
+  useEffect(() => {
+    const clearHotelContext = useChatContextStore.getState().clearHotelContext;
+    if (pathname && !pathname.startsWith("/hotels/")) {
+      clearHotelContext();
+    }
+  }, [pathname]);
 
   // Hide widget on /chat/ pages (explore page has its own chat panel)
   if (

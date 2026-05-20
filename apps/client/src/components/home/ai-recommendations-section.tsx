@@ -20,39 +20,47 @@ export default function AIRecommendationsSection() {
   const [isReranking, setIsReranking] = useState(false);
   const [activeChip, setActiveChip] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hasMounted, setHasMounted] = useState(false);
   const mountedRef = useRef(true);
 
   useEffect(() => {
     mountedRef.current = true;
+    setHasMounted(true);
     return () => {
       mountedRef.current = false;
     };
   }, []);
 
-  const fetchRecommendations = useCallback(async (chipSignal?: string) => {
-    try {
-      setError(null);
-      console.log("[ai-recommend] 📞 Calling getAIRecommendations...");
-      const result: AIRecommendationResult | null =
-        await getAIRecommendations(chipSignal);
-      console.log(
-        "[ai-recommend] 📥 Result:",
-        result ? `${result.hotels.length} hotels` : "null",
-      );
-      if (!mountedRef.current) return;
-      if (result && result.hotels.length > 0) {
-        setHotels(result.hotels);
-        setChips(result.chips);
-      } else {
-        setHotels([]);
-        setChips([]);
+  const fetchRecommendations = useCallback(
+    async (chipSignal?: string, forceRefresh?: boolean) => {
+      try {
+        setError(null);
+        console.log(
+          `[ai-recommend] 📞 Calling getAIRecommendations (forceRefresh=${forceRefresh || false})...`,
+        );
+        const result: AIRecommendationResult | null =
+          await getAIRecommendations(chipSignal, forceRefresh);
+        console.log(
+          "[ai-recommend] 📥 Result:",
+          result ? `${result.hotels.length} hotels` : "null",
+        );
+        if (!mountedRef.current) return;
+        if (result && result.hotels.length > 0) {
+          setHotels(result.hotels);
+          setChips(result.chips);
+        } else {
+          // Server action should never return empty, but if it does, clear state
+          setHotels([]);
+          setChips([]);
+        }
+      } catch (e: any) {
+        if (!mountedRef.current) return;
+        console.error("Failed to fetch AI recommendations:", e);
+        setError("Không thể tải gợi ý. Vui lòng thử lại.");
       }
-    } catch (e: any) {
-      if (!mountedRef.current) return;
-      console.error("Failed to fetch AI recommendations:", e);
-      setError("Không thể tải gợi ý. Vui lòng thử lại.");
-    }
-  }, []);
+    },
+    [],
+  );
 
   useEffect(() => {
     // Don't fetch recommendations if user is not signed in
@@ -71,21 +79,22 @@ export default function AIRecommendationsSection() {
     };
     load();
 
-    // Auto-refresh when user performs HIGH-INTENT interactions
-    // Only fires for: ADD_TO_WISHLIST, BOOK, RATE_POSITIVE, RATE_NEGATIVE, CLICK_BOOK_NOW
-    // VIEW interactions do NOT trigger this (tracker.ts filters them out)
+    // Auto-refresh when user performs interactions that change intent
+    // High-intent: immediate refresh (ADD_TO_WISHLIST, BOOK, RATE_POSITIVE, RATE_NEGATIVE)
+    // Debounced: VIEW (2s debounce to consolidate rapid page views) and CLICK_BOOK_NOW
     let refreshTimeout: ReturnType<typeof setTimeout> | null = null;
     const handleInteraction = (e: Event) => {
       const detail = (e as CustomEvent).detail;
       console.log(
-        "[ai-recommend] High-intent interaction, refreshing...",
+        "[ai-recommend] 🔄 High-intent interaction detected, force refreshing...",
         detail,
       );
       if (!cancelled) {
         // Debounce: wait 500ms for rapid interactions (e.g. multiple wishlist adds)
         if (refreshTimeout) clearTimeout(refreshTimeout);
         refreshTimeout = setTimeout(() => {
-          if (!cancelled) fetchRecommendations();
+          // Force refresh to bypass cache — new interaction just happened
+          if (!cancelled) fetchRecommendations(undefined, true);
         }, 500);
       }
     };
@@ -114,10 +123,11 @@ export default function AIRecommendationsSection() {
     [activeChip, isReranking, fetchRecommendations],
   );
 
+  // Don't render anything until the component has mounted on the client.
+  // This prevents hydration mismatch because both server and client render null initially.
+  if (!hasMounted) return null;
   // Don't render until Clerk loads. If loaded but not signed in, hide.
-  if (isLoaded && !isSignedIn) return null;
-  // If Clerk not loaded yet, don't render (prevents hydration mismatch)
-  if (!isLoaded) return null;
+  if (!isLoaded || !isSignedIn) return null;
 
   if (loading) {
     return (
@@ -136,7 +146,7 @@ export default function AIRecommendationsSection() {
                   "bg-gray-100 rounded-xl animate-pulse",
                   i === 0
                     ? "lg:col-span-2 lg:row-span-2 h-[480px] md:h-[560px]"
-                    : "h-[240px] md:h-[280px]",
+                    : "h-60 md:h-[280px]",
                 )}
               />
             ))}
@@ -168,7 +178,7 @@ export default function AIRecommendationsSection() {
     );
   }
 
-  if (!hotels.length) return null;
+  if (hotels.length === 0) return null;
 
   return (
     <section className="relative py-24 px-5 md:px-8">
@@ -233,6 +243,7 @@ export default function AIRecommendationsSection() {
                 <BentoGridItem
                   featured={true}
                   id={hotels[0].id}
+                  slug={hotels[0].slug}
                   title={hotels[0].title}
                   description={hotels[0].address}
                   image={
@@ -251,6 +262,7 @@ export default function AIRecommendationsSection() {
               {hotels[1] && (
                 <BentoGridItem
                   id={hotels[1].id}
+                  slug={hotels[1].slug}
                   title={hotels[1].title}
                   description={hotels[1].address}
                   image={
@@ -269,6 +281,7 @@ export default function AIRecommendationsSection() {
               {hotels[2] && (
                 <BentoGridItem
                   id={hotels[2].id}
+                  slug={hotels[2].slug}
                   title={hotels[2].title}
                   description={hotels[2].address}
                   image={
@@ -287,6 +300,7 @@ export default function AIRecommendationsSection() {
               {hotels[3] && (
                 <BentoGridItem
                   id={hotels[3].id}
+                  slug={hotels[3].slug}
                   title={hotels[3].title}
                   description={hotels[3].address}
                   image={

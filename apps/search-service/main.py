@@ -182,21 +182,40 @@ async def search_text(data: dict):
 
 # C. GỢI Ý KHÁCH SẠN CHO NGƯỜI DÙNG (RECOMMENDATION)
 @app.get("/recommend/{user_id}")
-async def recommend(user_id: str, strategy: str = "svd", top_k: int = 5):
+async def recommend(user_id: str, strategy: str = "svd", top_k: int = 5, force_refresh: bool = False, destination: str = None, confidence: str = None):
     """
     Gợi ý dựa trên hành vi tương tác.
     Query params:
       - strategy: svd (default) | user_cf | item_cf | content | popular
       - top_k: số lượng kết quả (default=5)
+      - force_refresh: bypass cache (default=false)
+      - destination: session destination hint from client (overrides detect_intent)
+      - confidence: intent confidence from client (0.0-1.0)
     """
     try:
+        # If force_refresh, clear all cached results for this user
+        if force_refresh:
+            import src.recommend as _rm
+            keys_to_delete = [k for k, v in _rm._recommendation_cache.items() if v.get('userId') == user_id]
+            for k in keys_to_delete:
+                del _rm._recommendation_cache[k]
+            print(f"[recommend] FORCE_REFRESH: cleared {len(keys_to_delete)} cache entries for userId={user_id}")
+        
+        # Parse external intent hint from client
+        external_dest = destination or None
+        external_confidence = float(confidence) if confidence else None
+        if external_dest:
+            print(f"[recommend] Client intent hint: destination=\"{external_dest}\" confidence={external_confidence}")
+        
         results = get_recommendations_for_user(
             user_id, "mock_interactions.json", HOTEL_VECTORS,
-            top_k=top_k, strategy=strategy
+            top_k=top_k, strategy=strategy,
+            external_destination=external_dest,
+            external_confidence=external_confidence,
         )
 
         if not results:
-            return HOTEL_VECTORS[:top_k]
+            return []
 
         return results
     except Exception as e:

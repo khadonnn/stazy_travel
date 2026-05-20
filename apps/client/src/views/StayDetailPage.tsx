@@ -59,7 +59,7 @@ import {
 } from "@/components/ui/tooltip";
 import { AuthorType } from "@repo/types";
 import { trackInteraction } from "@/lib/utils/analytics";
-import { getSimilarHotels } from "@/actions/get-similar-hotels";
+import { getSimilarHotels } from "../actions/get-similar-hotels";
 import FadeIn from "@/components/ui/fade-in";
 interface StayDetailPageClientProps {
   params: {
@@ -69,6 +69,16 @@ interface StayDetailPageClientProps {
 
 const API_URL =
   process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL || "http://localhost:8000";
+
+function normalizeDest(dest: string): string {
+  return (dest || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
   const { slug } = params;
@@ -109,6 +119,8 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
   const [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false);
   const [refreshComments, setRefreshComments] = useState(0);
   const [similarHotels, setSimilarHotels] = useState<any[]>([]);
+  const [sameDestinationHotels, setSameDestinationHotels] = useState<any[]>([]);
+  const [relatedHotels, setRelatedHotels] = useState<any[]>([]);
   const [loadingSimilar, setLoadingSimilar] = useState(false);
   const [actualReviewCount, setActualReviewCount] = useState<number | null>(
     null,
@@ -191,9 +203,14 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
 
     const fetchSimilar = async () => {
       setLoadingSimilar(true);
+      setSimilarHotels([]);
+      setSameDestinationHotels([]);
+      setRelatedHotels([]);
       try {
-        const hotels = await getSimilarHotels(stayData.id);
-        setSimilarHotels(hotels || []);
+        const result = await getSimilarHotels(stayData.id);
+        setSimilarHotels(result?.similar || []);
+        setSameDestinationHotels(result?.sameDestination || []);
+        setRelatedHotels(result?.related || []);
       } catch (err) {
         console.error("Error fetching similar hotels:", err);
       } finally {
@@ -542,7 +559,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
 
   const renderSection1 = () => {
     return (
-      <div className="listingSection__wrap !space-y-6">
+      <div className="listingSection__wrap space-y-6!">
         <div className="flex justify-between items-center">
           <CategoryBadge category={category} />
           <LikeSaveBtns hotelId={stayData?.id} />
@@ -907,12 +924,51 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
   };
 
   const renderSimilarHotels = () => {
-    if (!similarHotels || similarHotels.length === 0) return null;
+    // Priority: 3 hotels from same-destination (local), then up to 5 similar hotels
+    const priorityHotels = sameDestinationHotels
+      .filter((hotel) => hotel?.id)
+      .slice(0, 3);
+
+    const seenIds = new Set(priorityHotels.map((hotel) => hotel.id));
+
+    // First take up to 5 similar hotels (exclude any already in priority)
+    const similarPriority = similarHotels
+      .filter((hotel) => {
+        if (!hotel?.id || seenIds.has(hotel.id)) return false;
+        seenIds.add(hotel.id);
+        return true;
+      })
+      .slice(0, 5);
+
+    // If similar hotels are fewer than 5, fill the remaining slots with related hotels
+    const remainingSlots = Math.max(
+      0,
+      8 - priorityHotels.length - similarPriority.length,
+    );
+
+    const relatedCandidates = [...relatedHotels, ...similarHotels];
+    const relatedFill = relatedCandidates
+      .filter((hotel) => {
+        if (!hotel?.id || seenIds.has(hotel.id)) return false;
+        seenIds.add(hotel.id);
+        return true;
+      })
+      .slice(0, remainingSlots);
+
+    const displayedHotels = [
+      ...priorityHotels,
+      ...similarPriority,
+      ...relatedFill,
+    ];
+
+    if (displayedHotels.length === 0) return null;
+
+    const sameDestinationCount = priorityHotels.length;
+    const similarCount = displayedHotels.length - sameDestinationCount;
 
     return (
-      <div className="listingSection__wrap !space-y-6">
+      <div className="listingSection__wrap space-y-6!">
         <div className="mb-8">
-          {/* Eyebrow (Dòng chữ nhỏ ở trên cùng) */}
           <div className="flex items-center gap-2 mb-3">
             <div className="h-px w-8 bg-zinc-400/40" />
             <span className="flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-zinc-500">
@@ -921,21 +977,24 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
             </span>
           </div>
 
-          {/* Tiêu đề chính */}
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900">
             Cùng gu nghỉ dưỡng của bạn
           </h2>
 
-          {/* Đoạn mô tả */}
           <p className="mt-3 text-sm text-zinc-400 max-w-xl leading-relaxed">
-            Khách sạn cung cấp trải nghiệm tương đồng.
+            Khách sạn được chọn lọc, khách sạn cùng địa điểm và khách sạn tương
+            đồng.
           </p>
+          <div className="mt-3 inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs text-zinc-500">
+            {sameDestinationCount >= 3
+              ? `3 khách sạn cùng địa điểm + ${similarCount} khách sạn tương đồng`
+              : `${sameDestinationCount} khách sạn cùng địa điểm + ${similarCount} khách sạn tương đồng`}
+          </div>
         </div>
 
-        {/* Grid hiển thị similar hotels */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {similarHotels.map((hotel: any, index: number) => (
-            <FadeIn delay={index * 100} key={hotel.id}>
+          {displayedHotels.map((hotel: any, index: number) => (
+            <FadeIn delay={index * 100} key={`${hotel.id}-${index}`}>
               <Link
                 href={`/hotels/${hotel.slug}`}
                 className="group block rounded-xl overflow-hidden border border-neutral-200 hover:shadow-lg transition-shadow cursor-pointer"
@@ -1021,9 +1080,9 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
 
         <CardContent className="space-y-4">
           <form className="flex flex-col border border-neutral-200 dark:border-neutral-700 rounded-3xl relative z-30">
-            <StayDatesRangeInput className="flex-1 z-[50]" />
+            <StayDatesRangeInput className="flex-1 z-50" />
             <div className="w-full border-b border-neutral-200 dark:border-neutral-700"></div>
-            <GuestsInput className="flex-1 z-[50]" />
+            <GuestsInput className="flex-1 z-50" />
           </form>
 
           <div className="space-y-3">
@@ -1130,7 +1189,7 @@ const StayDetailPageClient = ({ params }: StayDetailPageClientProps) => {
         </div>
 
         {/* SIDEBAR - z-20 ensures it's always above content for date picker & button clicks */}
-        <div className="hidden lg:block flex-grow mt-14 lg:mt-0 relative z-20">
+        <div className="hidden lg:block grow mt-14 lg:mt-0 relative z-20">
           {renderSidebar()}
         </div>
       </main>

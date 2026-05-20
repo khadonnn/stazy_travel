@@ -40,8 +40,9 @@ const IMMEDIATE_REFRESH_TYPES = new Set([
   "RATE_NEGATIVE",
 ]);
 
-// Debounced refresh types (CLICK_BOOK_NOW needs 2s debounce to avoid spam)
-const DEBOUNCED_REFRESH_TYPES = new Set(["CLICK_BOOK_NOW"]);
+// Debounced refresh types (VIEW needs debounce to avoid spam from rapid scrolling)
+// CLICK_BOOK_NOW also debounced to consolidate rapid clicks
+const DEBOUNCED_REFRESH_TYPES = new Set(["CLICK_BOOK_NOW", "VIEW"]);
 const DEBOUNCE_MS = 2000;
 
 // Module-level debounce timer for CLICK_BOOK_NOW
@@ -116,7 +117,9 @@ export const trackInteraction = async (
           new CustomEvent("interaction:tracked", { detail: eventPayload }),
         );
       } else if (DEBOUNCED_REFRESH_TYPES.has(canonicalType)) {
-        // Debounced refresh for CLICK_BOOK_NOW (user might just be exploring)
+        // Debounced refresh for VIEW and CLICK_BOOK_NOW
+        // VIEW: consolidate multiple rapid page views before refreshing
+        // CLICK_BOOK_NOW: user might just be exploring
         clearTimeout(_clickDebounceTimer);
         _clickDebounceTimer = setTimeout(() => {
           window.dispatchEvent(
@@ -124,7 +127,7 @@ export const trackInteraction = async (
           );
         }, DEBOUNCE_MS);
       }
-      // VIEW: no event dispatched (silent tracking only)
+      // No other types need refresh
     }
   } catch (err) {
     console.error("Tracking failed", err);
