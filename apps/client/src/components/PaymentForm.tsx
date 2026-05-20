@@ -121,7 +121,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onMethodSelect }) => {
   return (
     <form
       className="flex flex-col gap-6"
-      onSubmit={handleSubmit(handlePaymentForm)}
+      onSubmit={handleSubmit(handlePaymentForm as any)}
     >
       <div className="flex flex-col gap-3">
         <label className="text-md text-gray-500 font-medium">

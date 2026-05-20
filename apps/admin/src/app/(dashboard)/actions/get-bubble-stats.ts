@@ -9,17 +9,17 @@ export async function getBubbleStats() {
     // Cách tối ưu: Lấy top 50 khách sạn có interaction nhiều nhất
     const topInteractions = await prisma.interaction.groupBy({
         by: ['hotelId'],
-        _count: { _all: true },
-        _avg: { rating: true }, // Giả sử interaction có trường rating (nếu bạn đã thêm)
+        _count: { id: true },
+        _avg: { rating: true },
         orderBy: {
-            _count: { _all: 'desc' },
+            _count: { id: 'desc' },
         },
         take: 50,
     });
 
     // Lấy thêm thông tin chi tiết (Giá, Tên) từ bảng Hotel
     // Vì groupBy của Prisma chưa hỗ trợ include relation trực tiếp dễ dàng, ta query manual
-    const hotelIds = topInteractions.map((i) => i.hotelId);
+    const hotelIds = topInteractions.map((i) => i.hotelId).filter((id): id is number => id != null);
 
     const hotelsInfo = await prisma.hotel.findMany({
         where: { id: { in: hotelIds } },
@@ -35,8 +35,8 @@ export async function getBubbleStats() {
             return {
                 name: hotel.roomName,
                 x: Number(hotel.price), // Trục X: Giá
-                y: item._avg.rating || hotel.reviewStar || 0, // Trục Y: Rating trung bình từ interaction hoặc gốc
-                z: item._count._all, // Trục Z (Kích thước): Số lượng tương tác
+                y: item._avg?.rating || hotel.reviewStar || 0, // Trục Y: Rating trung bình từ interaction hoặc gốc
+                z: item._count?.id || 0, // Trục Z (Kích thước): Số lượng tương tác
             };
         })
         .filter(Boolean); // Loại bỏ null

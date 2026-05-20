@@ -1,5 +1,6 @@
 {
   "name": "payment-service",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "dev": "tsx --env-file=.env --watch src/index.ts",

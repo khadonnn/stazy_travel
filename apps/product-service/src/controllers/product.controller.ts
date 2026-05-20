@@ -233,6 +233,12 @@ export const createHotel = async (req: Request, res: Response) => {
         featuredImage: data.featuredImage,
         galleryImgs: data.galleryImgs || [], // Mặc định mảng rỗng nếu null
 
+        destination: data.destination || "other", // Required field
+        nearbyLandmarks: data.nearbyLandmarks || [],
+        tags: data.tags || [],
+        suitableFor: data.suitableFor || [],
+        accessibility: data.accessibility || [],
+
         amenities: data.amenities || [],
         maxGuests: Number(data.maxGuests),
         bedrooms: Number(data.bedrooms),

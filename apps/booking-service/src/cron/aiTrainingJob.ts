@@ -74,7 +74,15 @@ async function checkIfShouldTrain(): Promise<boolean> {
     const recentInteractions = await prisma.interaction.count({
       where: {
         timestamp: { gte: oneDayAgo },
-        type: { in: ["VIEW", "LIKE", "BOOK", "RATING"] },
+        type: {
+          in: [
+            "VIEW",
+            "ADD_TO_WISHLIST",
+            "BOOK",
+            "RATE_POSITIVE",
+            "RATE_NEGATIVE",
+          ],
+        },
       },
     });
 

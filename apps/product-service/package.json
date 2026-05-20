@@ -2,7 +2,7 @@
   "name": "product-service",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -27,6 +27,8 @@
     "@repo/typescript-config": "workspace:*",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "tsx": "^4.21.0"
+    "@types/node": "^20",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }

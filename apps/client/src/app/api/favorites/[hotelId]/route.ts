@@ -41,7 +41,7 @@ export async function DELETE(
       data: {
         userId,
         hotelId,
-        type: "LIKE", // Sử dụng LIKE hoặc có thể thêm REMOVE_FROM_WISHLIST
+        type: "ADD_TO_WISHLIST",
         metadata: { action: "remove_from_wishlist" },
         timestamp: new Date(),
       },

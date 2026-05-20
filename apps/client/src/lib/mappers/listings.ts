@@ -32,11 +32,12 @@ export interface StayApiResponse {
 // ✅ đặt tên rõ ràng là mapper
 export function mapStay(post: StayApiResponse): StayDataType {
   const category =
-    DEMO_STAY_CATEGORIES.find((cat) => cat.id === post.listingCategoryId) ||
+    DEMO_STAY_CATEGORIES.find((cat) => cat.id === post.categoryId) ||
     DEMO_STAY_CATEGORIES[0]!;
 
   return {
     ...post,
+    authorId: String(post.authorId),
     saleOff: post.saleOff, // giữ nguyên
     isAds: post.isAds ?? false, // backend trả gì thì lấy, default = false
     category,

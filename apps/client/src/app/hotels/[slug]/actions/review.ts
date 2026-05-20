@@ -70,7 +70,7 @@ export async function submitReview(formData: FormData) {
       data: {
         userId,
         hotelId,
-        type: InteractionType.RATING,
+        type: rating >= 4 ? "RATE_POSITIVE" : "RATE_NEGATIVE",
       },
     });
 

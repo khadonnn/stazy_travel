@@ -23,7 +23,15 @@ export const adminRoute = async (fastify: FastifyInstance) => {
         const { prisma } = await import("@repo/product-db");
         const totalInteractions = await prisma.interaction.count({
           where: {
-            type: { in: ["VIEW", "LIKE", "BOOK", "RATING"] },
+            type: {
+              in: [
+                "VIEW",
+                "ADD_TO_WISHLIST",
+                "BOOK",
+                "RATE_POSITIVE",
+                "RATE_NEGATIVE",
+              ],
+            },
           },
         });
 
