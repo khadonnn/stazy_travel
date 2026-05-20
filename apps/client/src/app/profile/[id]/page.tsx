@@ -1,6 +1,8 @@
 "use client";
 
-import ProfileUserPage from "@/pages/ProfileUserPage";
+export const dynamic = "force-dynamic";
+
+import ProfileUserPage from "@/components/ProfileUserPage";
 
 const STARS = [
   {

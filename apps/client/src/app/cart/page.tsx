@@ -1,11 +1,11 @@
-import CartPage from '@/pages/CartPage'
+import CartPage from "@/views/CartPage";
 
 const CartPageHome = () => {
   return (
     <>
-    <CartPage />
+      <CartPage />
     </>
-  )
-}
+  );
+};
 
-export default CartPageHome
+export default CartPageHome;

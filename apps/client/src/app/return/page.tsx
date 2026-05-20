@@ -1,11 +1,25 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, XCircle, Loader2, ArrowRight } from "lucide-react";
 
-export default function ReturnPage() {
+export default function ReturnPageWrapper() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center min-h-screen">
+          <Loader2 className="animate-spin w-8 h-8" />
+        </div>
+      }
+    >
+      <ReturnPage />
+    </Suspense>
+  );
+}
+
+function ReturnPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams?.get("session_id");
   const [status, setStatus] = useState<"loading" | "success" | "error">(

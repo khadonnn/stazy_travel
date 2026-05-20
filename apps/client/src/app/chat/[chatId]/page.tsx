@@ -28,7 +28,21 @@ const ExploreMap = dynamic(() => import("@/components/chat/ExploreMap"), {
   ),
 });
 
-export default function ExploreWorkspacePage() {
+export default function ExploreWorkspacePageWrapper() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="flex items-center justify-center h-screen">
+          <p>Đang tải...</p>
+        </div>
+      }
+    >
+      <ExploreWorkspacePage />
+    </React.Suspense>
+  );
+}
+
+function ExploreWorkspacePage() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();

@@ -1,10 +1,10 @@
-import SearchService from '@/pages/SearchServicePage';
+import SearchService from "@/views/SearchServicePage";
 
 const SearchPageAI = () => {
-    return (
-        <>
-            <SearchService />
-        </>
-    );
+  return (
+    <>
+      <SearchService />
+    </>
+  );
 };
 export default SearchPageAI;

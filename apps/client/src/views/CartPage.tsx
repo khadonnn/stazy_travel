@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -22,6 +22,15 @@ const steps = [
   { id: 3, title: "Phương thức thanh toán" },
   { id: 4, title: "Xác nhận & Trả tiền" },
 ];
+
+// Wrapper to satisfy useSearchParams() Suspense requirement
+export default function CartPageWrapper() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Đang tải...</div>}>
+      <CartPage />
+    </Suspense>
+  );
+}
 
 const CartPage = () => {
   // 1. Fix lỗi Hydration
@@ -272,5 +281,3 @@ const CartPage = () => {
     </div>
   );
 };
-
-export default CartPage;

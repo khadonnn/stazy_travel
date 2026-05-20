@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useCartStore } from "@/store/useCartStore";
 import { useBookingStore } from "@/store/useBookingStore";
@@ -19,7 +19,21 @@ type HotelData = {
   reviewStar?: number;
 };
 
-export default function CheckoutPage() {
+export default function CheckoutPageWrapper() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center min-h-screen">
+          <Loader2 className="animate-spin w-8 h-8" />
+        </div>
+      }
+    >
+      <CheckoutPage />
+    </Suspense>
+  );
+}
+
+function CheckoutPage() {
   const searchParams = useSearchParams();
   const { addItem, items, clearCart } = useCartStore();
   const { setDate, setGuests } = useBookingStore();

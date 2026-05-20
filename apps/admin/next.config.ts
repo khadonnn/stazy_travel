@@ -5,7 +5,31 @@ const nextConfig: NextConfig = {
         position: 'bottom-right', // ẩn icon build ở góc trái dưới
     },
     //  FIX: Exclude Prisma khỏi bundling để tránh warning spam
-    serverExternalPackages: ['@prisma/client', '@prisma/engines'],
+    serverExternalPackages: [
+        '@prisma/client',
+        '@prisma/engines',
+        '@prisma/adapter-pg',
+        'pg',
+        'pg-connection-string',
+        'mongoose',
+    ],
+    // Transpile workspace packages (they export .ts files)
+    transpilePackages: ['@repo/product-db', '@repo/types', '@repo/booking-db'],
+
+    // Turbopack config — alias server-only modules to stub for browser
+    turbopack: {
+        resolveAlias: {
+            '@repo/product-db': { browser: './src/stubs/product-db-stub.ts' },
+            '@repo/booking-db': { browser: './src/stubs/booking-db-stub.ts' },
+            pg: { browser: './src/stubs/product-db-stub.ts' },
+            '@prisma/adapter-pg': { browser: './src/stubs/product-db-stub.ts' },
+            '@prisma/client': { browser: './src/stubs/product-db-stub.ts' },
+            'pg-connection-string': { browser: './src/stubs/product-db-stub.ts' },
+            'node:module': { browser: './src/stubs/product-db-stub.ts' },
+            mongoose: { browser: './src/stubs/booking-db-stub.ts' },
+        },
+    },
+
     // Tắt source maps để tránh warning với mongoose
     productionBrowserSourceMaps: false,
     images: {

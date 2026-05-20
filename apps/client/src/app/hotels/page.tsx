@@ -1,6 +1,6 @@
 // File: app/hotels/page.tsx (Server Component)
 
-import StayPage from "@/pages/StayPage";
+import StayPage from "@/views/StayPage";
 import { Suspense } from "react";
 
 const HotelsPage = async () => {

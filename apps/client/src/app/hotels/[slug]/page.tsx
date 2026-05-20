@@ -1,5 +1,5 @@
 // File: apps/client/app/hotels/[slug]/page.tsx
-import StayDetailPageClient from "@/pages/StayDetailPage";
+import StayDetailPageClient from "@/views/StayDetailPage";
 import { notFound } from "next/navigation";
 
 export default async function Page({

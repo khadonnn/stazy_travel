@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "tsx --env-file=.env src/index.ts",
     "dev": "pnpm dlx tsx --env-file=.env --watch src/index.ts",
     "debug": "pnpm dlx tsx --env-file=.env --watch --inspect --tsconfig tsconfig.debug.json src/index.ts",
     "check-types": "tsc --noEmit"

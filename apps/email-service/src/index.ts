@@ -76,79 +76,100 @@ const extractPayload = (message: any): any => {
 
 const start = async () => {
   try {
-    const queues = await initializeQueues();
-    emailQueue = queues.email;
-    emailEventsQueue = queues.emailEvents;
+    // Initialize BullMQ queues (requires Redis)
+    try {
+      const queues = await initializeQueues();
+      emailQueue = queues.email;
+      emailEventsQueue = queues.emailEvents;
 
-    emailWorker = createEmailWorker();
-    emailEventsWorker = createEmailEventsWorker();
+      emailWorker = createEmailWorker();
+      emailEventsWorker = createEmailEventsWorker();
 
-    setupEmailQueueObservability(queues.email);
-    setupEmailEventsQueueObservability(queues.emailEvents);
+      setupEmailQueueObservability(queues.email);
+      setupEmailEventsQueueObservability(queues.emailEvents);
 
-    console.log("✅ Email Queue initialized");
-    console.log("✅ Email Events Queue initialized");
+      console.log("✅ Email Queue initialized");
+      console.log("✅ Email Events Queue initialized");
+    } catch (queueError: any) {
+      console.warn(
+        "⚠️ BullMQ/Redis not available, queue features disabled:",
+        queueError.message,
+      );
+    }
 
-    await consumer.connect();
+    // Connect to Kafka (optional - service can work without it)
+    try {
+      await consumer.connect();
 
-    await consumer.subscribe([
-      {
-        topicName: "user.created",
-        topicHandler: async (message) => {
-          const queue = getEmailEventsQueue();
-          const eventId = extractEventId(message);
-          if (!queue || !eventId) {
-            console.warn("⚠️ [user.created] Missing queue/eventId, skipping");
-            return;
-          }
+      await consumer.subscribe([
+        {
+          topicName: "user.created",
+          topicHandler: async (message) => {
+            const queue = getEmailEventsQueue();
+            const eventId = extractEventId(message);
+            if (!queue || !eventId) {
+              console.warn("⚠️ [user.created] Missing queue/eventId, skipping");
+              return;
+            }
 
-          await enqueueEmailEvent(queue, {
-            eventId,
-            eventType: "WELCOME",
-            message,
-          });
+            await enqueueEmailEvent(queue, {
+              eventId,
+              eventType: "WELCOME",
+              message,
+            });
+          },
         },
-      },
-      {
-        topicName: "booking-events",
-        topicHandler: async (message) => {
-          const queue = getEmailEventsQueue();
-          const eventId = extractEventId(message);
-          if (!queue || !eventId) {
-            console.warn("⚠️ [booking-events] Missing queue/eventId, skipping");
-            return;
-          }
+        {
+          topicName: "booking-events",
+          topicHandler: async (message) => {
+            const queue = getEmailEventsQueue();
+            const eventId = extractEventId(message);
+            if (!queue || !eventId) {
+              console.warn(
+                "⚠️ [booking-events] Missing queue/eventId, skipping",
+              );
+              return;
+            }
 
-          await enqueueEmailEvent(queue, {
-            eventId,
-            eventType: "BOOKING_CREATED",
-            message,
-          });
+            await enqueueEmailEvent(queue, {
+              eventId,
+              eventType: "BOOKING_CREATED",
+              message,
+            });
+          },
         },
-      },
-      {
-        topicName: "payment-events",
-        topicHandler: async (message) => {
-          const queue = getEmailEventsQueue();
-          const eventId = extractEventId(message);
-          if (!queue || !eventId) {
-            console.warn("⚠️ [payment-events] Missing queue/eventId, skipping");
-            return;
-          }
+        {
+          topicName: "payment-events",
+          topicHandler: async (message) => {
+            const queue = getEmailEventsQueue();
+            const eventId = extractEventId(message);
+            if (!queue || !eventId) {
+              console.warn(
+                "⚠️ [payment-events] Missing queue/eventId, skipping",
+              );
+              return;
+            }
 
-          await enqueueEmailEvent(queue, {
-            eventId,
-            eventType: "PAYMENT_SUCCESS",
-            message,
-          });
+            await enqueueEmailEvent(queue, {
+              eventId,
+              eventType: "PAYMENT_SUCCESS",
+              message,
+            });
+          },
         },
-      },
-    ]);
+      ]);
 
-    console.log("🚀 Email Service is running & listening to topics...");
-  } catch (error) {
-    console.error("❌ Email Service Error:", error);
-    process.exit(1);
+      console.log("🚀 Email Service is running & listening to topics...");
+    } catch (kafkaError: any) {
+      console.warn(
+        "⚠️ Kafka not available, topic listening disabled:",
+        kafkaError.message,
+      );
+      console.log("📧 Email Service running in HTTP-only mode");
+    }
+  } catch (error: any) {
+    console.error("❌ Email Service Error:", error.message);
+    // Don't exit - HTTP server can still work
   }
 };
 
