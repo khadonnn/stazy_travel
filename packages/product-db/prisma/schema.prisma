@@ -533,7 +533,7 @@ enum SenderRole {
 
 model ChatMessage {
   id        String     @id @default(uuid())
-  roomId    String     // Phòng chat (phân biệt các cuộc trò chuyện)
+  roomId    String?     // Phòng chat (phân biệt các cuộc trò chuyện)
   userId    String
   sender    SenderRole
   text      String?
