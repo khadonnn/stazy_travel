@@ -83,6 +83,11 @@ export const columns: ColumnDef<ProductType>[] = [
                             <Badge variant="secondary" className="h-5 px-1 py-0 text-[10px]">
                                 {CATEGORY_MAP[item.categoryId ?? 7] || `Cat-${item.categoryId}`}
                             </Badge>
+                            {item.deletedAt && (
+                                <Badge variant="destructive" className="h-5 px-1 py-0 text-[10px]">
+                                    DELETED
+                                </Badge>
+                            )}
                             {item.isAds && (
                                 <Badge className="h-5 bg-yellow-500 px-1 py-0 text-[10px] hover:bg-yellow-600">
                                     ADS

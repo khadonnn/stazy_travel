@@ -17,6 +17,7 @@ export const getHotels = async (req: Request, res: Response) => {
       page,
       sort,
     } = req.query;
+    const showDeleted = String(req.query.showDeleted) === "true";
 
     // --- HELPER PARSE SỐ AN TOÀN ---
     const parseNumber = (val: any) => {
@@ -32,6 +33,10 @@ export const getHotels = async (req: Request, res: Response) => {
 
     // 2. XÂY DỰNG WHERE
     const where: Prisma.HotelWhereInput = {};
+
+    if (!showDeleted) {
+      where.deletedAt = null;
+    }
 
     if (search && typeof search === "string" && search.trim() !== "") {
       where.OR = [
@@ -154,6 +159,15 @@ export const getHotel = async (req: Request, res: Response) => {
     // 🔍 2. Tạo where clause (Prisma WhereUniqueInput)
     // Nếu là số thì ép kiểu về Number, nếu là chữ thì giữ nguyên
     const whereClause = isNumeric ? { id: Number(id) } : { slug: id };
+
+    const existingHotel = await prisma.hotel.findUnique({
+      where: whereClause,
+      select: { id: true, deletedAt: true },
+    });
+
+    if (!existingHotel || existingHotel.deletedAt) {
+      return res.status(404).json({ message: "Không tìm thấy khách sạn này." });
+    }
 
     // ✅ 3. Gọi Prisma: Vừa tăng view, vừa lấy dữ liệu
     const hotel = await prisma.hotel.update({
@@ -343,14 +357,39 @@ export const deleteHotel = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const deletedHotel = await prisma.hotel.delete({
+    const deletedHotel = await prisma.hotel.update({
       where: { id: Number(id) },
+      data: { deletedAt: new Date() },
     });
 
     producer.send("hotel.deleted", { value: Number(id) });
-    return res.status(200).json(deletedHotel);
+    return res.status(200).json({
+      success: true,
+      message: "Đã xoá khách sạn (soft delete)",
+      data: deletedHotel,
+    });
   } catch (error) {
     return res.status(400).json({ message: "Cannot delete hotel" });
+  }
+};
+
+// 5b. RESTORE HOTEL
+export const restoreHotel = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const restoredHotel = await prisma.hotel.update({
+      where: { id: Number(id) },
+      data: { deletedAt: null },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Đã khôi phục khách sạn",
+      data: restoredHotel,
+    });
+  } catch (error) {
+    return res.status(400).json({ message: "Cannot restore hotel" });
   }
 };
 

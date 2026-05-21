@@ -13,8 +13,17 @@ export async function GET(request: Request) {
         const status = searchParams.get('status') as 'PENDING' | 'APPROVED' | 'REJECTED' | null;
         const page = parseInt(searchParams.get('page') ?? '1');
         const limit = parseInt(searchParams.get('limit') ?? '20');
+        const showDeleted = searchParams.get('showDeleted') === 'true';
 
-        const where = status ? { status } : {};
+        const where: Record<string, unknown> = {};
+
+        if (status) {
+            where.status = status;
+        }
+
+        if (!showDeleted) {
+            where.deletedAt = null;
+        }
 
         const [hotels, total] = await Promise.all([
             prisma.hotel.findMany({
@@ -29,7 +38,7 @@ export async function GET(request: Request) {
                 },
                 skip: (page - 1) * limit,
                 take: limit,
-                orderBy: { submittedAt: 'desc' },
+                orderBy: { createdAt: 'desc' },
             }),
             prisma.hotel.count({ where }),
         ]);

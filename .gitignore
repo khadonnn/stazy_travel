@@ -4,7 +4,10 @@
 node_modules
 .pnp
 .pnp.js
-
+node_modules/
+.pnpm-store/
+dist/
+.next/
 # Local env files
 .env
 .env.local

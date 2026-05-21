@@ -1,6 +1,6 @@
 'use client';
 
-import { LogOut, RefreshCw, Settings, User } from 'lucide-react';
+import { LogOut, RefreshCw, Settings, User, FileDown } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ModeToggle as Darkmode } from './Darkmode';
 import {
@@ -13,16 +13,20 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import MyClock from '@/components/MyClock';
-import { useUser, useClerk } from '@clerk/nextjs';
+import { useClerk } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
 import { useState } from 'react'; // Import thêm useState
+import { useExportStore } from '@/store/useExportStore';
+import { toast } from 'sonner';
 
 const Navbar = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
     const { signOut } = useClerk();
+    const onExportAction = useExportStore((state) => state.onExportAction);
+    const exportLabel = useExportStore((state) => state.exportLabel);
 
     // Theo dõi xem có query nào đang chạy ngầm không
     const isGlobalFetching = useIsFetching();
@@ -52,6 +56,26 @@ const Navbar = () => {
     // Icon sẽ xoay nếu: React Query đang fetch HOẶC ta đang bấm nút reload thủ công
     const isSpinning = isGlobalFetching > 0 || isManualRefreshing;
 
+    const [isExporting, setIsExporting] = useState(false);
+
+    const handleExport = async () => {
+        setIsExporting(true);
+        try {
+            if (!onExportAction) {
+                toast.error('Trang hiện tại chưa đăng ký chức năng xuất báo cáo');
+                return;
+            }
+
+            await onExportAction();
+            toast.success('Xuất báo cáo thành công!');
+        } catch (error) {
+            console.error('Export failed:', error);
+            toast.error('Xuất báo cáo thất bại');
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     return (
         <nav className="bg-background sticky top-0 z-10 flex items-center justify-between p-4">
             {/* LEFT */}
@@ -75,6 +99,31 @@ const Navbar = () => {
                         )}
                     />
                 </button>
+
+                {onExportAction && (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button
+                                disabled={isExporting}
+                                title={exportLabel ?? 'Xuất báo cáo'}
+                                className="hover:bg-muted rounded-full p-2 transition active:scale-95 disabled:opacity-50"
+                            >
+                                <FileDown
+                                    className={cn('h-5 w-5', isExporting ? 'animate-pulse text-green-500' : '')}
+                                />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56">
+                            <DropdownMenuLabel>Xuất báo cáo</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+
+                            <DropdownMenuItem className="cursor-pointer" onClick={handleExport}>
+                                <FileDown className="mr-2 h-4 w-4" />
+                                {exportLabel ?? 'Xuất báo cáo'}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
 
                 {/* THEME MENU */}
                 <Darkmode />

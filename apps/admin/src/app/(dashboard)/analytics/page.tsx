@@ -15,6 +15,7 @@ import HistogramChart from '@/components/charts/HistogramChart';
 import SparsityHeatmap from '@/components/charts/SparsityHeatmap';
 import WordCloudChart from '@/components/charts/WordCloudPlaceholder';
 import TopNBarChart from '@/components/charts/TopNBarChart';
+import ExportablePDFSection from '@/components/export/ExportablePDFSection';
 
 // Server Actions
 import { getInteractionStats } from '../actions/get-interaction-stats';
@@ -203,7 +204,7 @@ export default async function AnalyticsPage() {
     const positiveRatio = totalSentiment > 0 ? Math.round((positiveCount / totalSentiment) * 100) : 0;
 
     return (
-        <div className="space-y-6 p-8 pt-6">
+        <ExportablePDFSection filename="stazy_analytics" title="Báo cáo Phân tích" className="space-y-6 p-8 pt-6">
             <div className="flex items-center gap-3">
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">Hybrid Recommendation Analytics</h2>
@@ -492,6 +493,6 @@ export default async function AnalyticsPage() {
                     </CardContent>
                 </Card>
             </div>
-        </div>
+        </ExportablePDFSection>
     );
 }

@@ -23,6 +23,7 @@ export type User = {
     role: string;
     createdAt: Date;
     updatedAt: Date;
+    deletedAt?: Date | null;
 };
 import { Button } from '@/components/ui/button';
 import {
@@ -36,7 +37,7 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuSubContent,
 } from '@/components/ui/dropdown-menu';
-import { ArrowUpDown, MoreHorizontal, Shield, Trash2 } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal, Shield, Trash2, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 // Thêm vào phần imports
 import Image from 'next/image';
@@ -112,20 +113,29 @@ export const columns: ColumnDef<User>[] = [
         header: 'Role',
         cell: ({ row }) => {
             const role = row.getValue('role');
+            const user = row.original;
 
             return (
-                <div
-                    className={cn(
-                        `w-max rounded-md p-1 text-xs font-medium`,
-                        role === 'ADMIN' && 'bg-red-500/40 text-red-700 dark:bg-red-500/30 dark:text-red-400',
-                        role === 'HOST' &&
-                            'bg-purple-500/40 text-purple-700 dark:bg-purple-500/30 dark:text-purple-400',
-                        role === 'AUTHOR' &&
-                            'bg-purple-500/40 text-purple-700 dark:bg-purple-500/30 dark:text-purple-400',
-                        role === 'USER' && 'bg-green-500/40 text-green-700 dark:bg-green-500/30 dark:text-green-400',
+                <div className="flex items-center gap-2">
+                    <div
+                        className={cn(
+                            `w-max rounded-md p-1 text-xs font-medium`,
+                            role === 'ADMIN' && 'bg-red-500/40 text-red-700 dark:bg-red-500/30 dark:text-red-400',
+                            role === 'HOST' &&
+                                'bg-purple-500/40 text-purple-700 dark:bg-purple-500/30 dark:text-purple-400',
+                            role === 'AUTHOR' &&
+                                'bg-purple-500/40 text-purple-700 dark:bg-purple-500/30 dark:text-purple-400',
+                            role === 'USER' &&
+                                'bg-green-500/40 text-green-700 dark:bg-green-500/30 dark:text-green-400',
+                        )}
+                    >
+                        {role as string}
+                    </div>
+                    {user.deletedAt && (
+                        <span className="w-max rounded-md bg-gray-500/40 p-1 text-xs font-medium text-gray-700 dark:bg-gray-500/30 dark:text-gray-400">
+                            ĐÃ XOÁ
+                        </span>
                     )}
-                >
-                    {role as string}
                 </div>
             );
         },
@@ -141,6 +151,8 @@ export const columns: ColumnDef<User>[] = [
             const [showDeleteDialog, setShowDeleteDialog] = useState(false);
             const [isDeleting, setIsDeleting] = useState(false);
 
+            const isDeleted = !!user.deletedAt;
+
             const handleRoleChange = async (newRole: string) => {
                 if (isUpdating) return;
 
@@ -148,9 +160,6 @@ export const columns: ColumnDef<User>[] = [
                 try {
                     const token = await getToken();
                     const apiUrl = `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/users/${user.id}/role`;
-
-                    console.log('🔍 Calling API:', apiUrl);
-                    console.log('📦 Payload:', { role: newRole });
 
                     const response = await fetch(apiUrl, {
                         method: 'PATCH',
@@ -161,24 +170,16 @@ export const columns: ColumnDef<User>[] = [
                         body: JSON.stringify({ role: newRole }),
                     });
 
-                    console.log('📡 Response status:', response.status);
-
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({}));
-                        console.error('❌ Error response:', errorData);
                         throw new Error(errorData.message || 'Failed to update role');
                     }
 
-                    const result = await response.json();
-                    console.log('✅ Success:', result);
-
-                    // Show success toast
                     toast.success(`Đã đổi role thành ${newRole}`, {
                         description: `User ${user.name} giờ là ${newRole}`,
                         duration: 3000,
                     });
 
-                    // Invalidate query to refresh data
                     queryClient.invalidateQueries({ queryKey: ['users'] });
                 } catch (error) {
                     console.error('❌ Error updating role:', error);
@@ -194,14 +195,8 @@ export const columns: ColumnDef<User>[] = [
             const handleDeleteUser = async () => {
                 setIsDeleting(true);
                 try {
-                    const token = await getToken();
-                    const apiUrl = `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/users/${user.id}`;
-
-                    const response = await fetch(apiUrl, {
+                    const response = await fetch(`/api/users/${user.id}`, {
                         method: 'DELETE',
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
                     });
 
                     if (!response.ok) {
@@ -209,18 +204,48 @@ export const columns: ColumnDef<User>[] = [
                         throw new Error(errorData.message || 'Failed to delete user');
                     }
 
-                    toast.success('User deleted successfully', {
-                        description: `${user.name} has been removed`,
+                    toast.success('Đã xoá người dùng', {
+                        description: `${user.name} đã được đánh dấu xoá (soft delete)`,
                         duration: 3000,
                     });
 
-                    // Refresh data
                     queryClient.invalidateQueries({ queryKey: ['users'] });
                     setShowDeleteDialog(false);
                 } catch (error) {
                     console.error('❌ Error deleting user:', error);
-                    toast.error('Failed to delete user', {
-                        description: error instanceof Error ? error.message : 'Please try again',
+                    toast.error('Không thể xoá người dùng', {
+                        description: error instanceof Error ? error.message : 'Vui lòng thử lại',
+                        duration: 4000,
+                    });
+                } finally {
+                    setIsDeleting(false);
+                }
+            };
+
+            const handleRestoreUser = async () => {
+                setIsDeleting(true);
+                try {
+                    const response = await fetch(`/api/users/${user.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'restore' }),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.message || 'Failed to restore user');
+                    }
+
+                    toast.success('Đã khôi phục người dùng', {
+                        description: `${user.name} đã được khôi phục`,
+                        duration: 3000,
+                    });
+
+                    queryClient.invalidateQueries({ queryKey: ['users'] });
+                } catch (error) {
+                    console.error('❌ Error restoring user:', error);
+                    toast.error('Không thể khôi phục', {
+                        description: error instanceof Error ? error.message : 'Vui lòng thử lại',
                         duration: 4000,
                     });
                 } finally {
@@ -278,33 +303,44 @@ export const columns: ColumnDef<User>[] = [
                             </DropdownMenuItem>
 
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                                onClick={() => setShowDeleteDialog(true)}
-                                className="text-red-600 focus:bg-red-50 focus:text-red-700"
-                            >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete User
-                            </DropdownMenuItem>
+                            {isDeleted ? (
+                                <DropdownMenuItem
+                                    onClick={handleRestoreUser}
+                                    className="text-green-600 focus:bg-green-50 focus:text-green-700"
+                                    disabled={isDeleting}
+                                >
+                                    <RotateCcw className="mr-2 h-4 w-4" />
+                                    Khôi phục
+                                </DropdownMenuItem>
+                            ) : (
+                                <DropdownMenuItem
+                                    onClick={() => setShowDeleteDialog(true)}
+                                    className="text-red-600 focus:bg-red-50 focus:text-red-700"
+                                >
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Xoá (Soft Delete)
+                                </DropdownMenuItem>
+                            )}
                         </DropdownMenuContent>
                     </DropdownMenu>
 
                     <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogTitle>Xác nhận xoá người dùng?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    This will permanently delete <strong>{user.name}</strong> ({user.email}) and all
-                                    associated data. This action cannot be undone.
+                                    Người dùng <strong>{user.name}</strong> ({user.email}) sẽ bị đánh dấu xoá (soft
+                                    delete). Dữ liệu vẫn được giữ lại và có thể khôi phục sau.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                                <AlertDialogCancel disabled={isDeleting}>Huỷ</AlertDialogCancel>
                                 <AlertDialogAction
                                     onClick={handleDeleteUser}
                                     disabled={isDeleting}
                                     className="bg-red-600 hover:bg-red-700"
                                 >
-                                    {isDeleting ? 'Deleting...' : 'Delete'}
+                                    {isDeleting ? 'Đang xoá...' : 'Xoá'}
                                 </AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>

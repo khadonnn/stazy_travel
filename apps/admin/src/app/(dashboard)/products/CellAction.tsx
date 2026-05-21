@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
 import { toast } from 'sonner';
-import { MoreHorizontal, Edit, Trash, Copy, Loader2 } from 'lucide-react';
+import { MoreHorizontal, Edit, Trash, Copy, Loader2, RotateCcw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -36,6 +36,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     const { getToken } = useAuth();
     const [open, setOpen] = useState(false); // State mở popup xóa
     const [loading, setLoading] = useState(false);
+    const isDeleted = !!data.deletedAt;
 
     // 1. Hàm Xóa
     const onConfirm = async () => {
@@ -58,6 +59,31 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         } catch (error) {
             console.error(error);
             toast.error('Có lỗi xảy ra khi xóa.');
+        } finally {
+            setLoading(false);
+            setOpen(false);
+        }
+    };
+
+    const onRestore = async () => {
+        try {
+            setLoading(true);
+            const token = await getToken();
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/hotels/${data.id}/restore`, {
+                method: 'PATCH',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!res.ok) throw new Error('Khôi phục thất bại');
+
+            toast.success('Đã khôi phục khách sạn');
+            router.refresh();
+        } catch (error) {
+            console.error(error);
+            toast.error('Có lỗi xảy ra khi khôi phục.');
         } finally {
             setLoading(false);
             setOpen(false);
@@ -120,10 +146,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                         <Edit className="mr-2 h-4 w-4" /> Edit Details
                     </DropdownMenuItem>
 
-                    {/* Mở popup xóa */}
-                    <DropdownMenuItem onClick={() => setOpen(true)} className="text-red-600 focus:text-red-600">
-                        <Trash className="mr-2 h-4 w-4" /> Delete Product
-                    </DropdownMenuItem>
+                    {isDeleted ? (
+                        <DropdownMenuItem onClick={onRestore} className="text-green-600 focus:text-green-600">
+                            <RotateCcw className="mr-2 h-4 w-4" /> Restore Product
+                        </DropdownMenuItem>
+                    ) : (
+                        <DropdownMenuItem onClick={() => setOpen(true)} className="text-red-600 focus:text-red-600">
+                            <Trash className="mr-2 h-4 w-4" /> Delete Product
+                        </DropdownMenuItem>
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
         </>

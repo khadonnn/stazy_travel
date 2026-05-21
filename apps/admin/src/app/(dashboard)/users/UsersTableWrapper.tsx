@@ -7,18 +7,23 @@ import { DataTable } from './data-table';
 import { Search, Loader2 } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { exportToExcel } from '@/lib/export';
+import { useExportStore } from '@/store/useExportStore';
 
 const PRODUCT_API = process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL;
 
 export function UsersTableWrapper() {
     const { getToken } = useAuth();
     const [searchText, setSearchText] = useState('');
+    const [showDeleted, setShowDeleted] = useState(false);
+    const registerExportAction = useExportStore((state) => state.registerExportAction);
 
     const { data: users = [], isLoading } = useQuery<User[]>({
-        queryKey: ['users'], // Add queryKey for invalidation
+        queryKey: ['users', showDeleted],
         queryFn: async () => {
             const token = await getToken();
-            const response = await fetch(`${PRODUCT_API}/users?limit=100&page=1`, {
+            const response = await fetch(`${PRODUCT_API}/users?limit=100&page=1&showDeleted=${showDeleted}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -67,6 +72,23 @@ export function UsersTableWrapper() {
         });
     }, [users, searchText]);
 
+    useEffect(() => {
+        const exportAction = async () => {
+            exportToExcel(filteredData, 'stazy_users', 'Người dùng', {
+                id: 'ID',
+                name: 'Tên',
+                email: 'Email',
+                role: 'Vai trò',
+                createdAt: 'Ngày tạo',
+                deletedAt: 'Ngày xóa',
+            });
+        };
+
+        registerExportAction(exportAction, 'Xuất Excel');
+
+        return () => registerExportAction(null);
+    }, [filteredData, registerExportAction]);
+
     if (isLoading) {
         return (
             <div className="flex h-96 items-center justify-center">
@@ -79,14 +101,17 @@ export function UsersTableWrapper() {
     return (
         <div className="">
             <div className="bg-secondary mb-4 flex items-center justify-between rounded-md px-1 py-1">
-                <h1 className="px-2 font-semibold">All Users</h1>
-                {/*  Ô TÌM KIẾM */}
+                <div className="flex items-center gap-2 px-2">
+                    <h1 className="font-semibold">All Users</h1>
+                    <Button variant="outline" size="sm" onClick={() => setShowDeleted((value) => !value)}>
+                        {showDeleted ? 'Hide deleted' : 'Show deleted'}
+                    </Button>
+                </div>
                 <div className="relative w-1/3">
                     <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <input
                         placeholder="Search name or email..."
                         onChange={handleSearchChange}
-                        // Thêm padding-left (pl-10) để icon không bị che
                         className="w-full rounded-md border p-2 pl-10 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                 </div>

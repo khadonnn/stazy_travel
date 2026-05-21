@@ -14,14 +14,20 @@ export async function GET(request: Request) {
         const limit = parseInt(searchParams.get('limit') ?? '20');
         const search = searchParams.get('search') ?? '';
 
-        const where = search
-            ? {
-                  OR: [
-                      { name: { contains: search, mode: 'insensitive' as const } },
-                      { email: { contains: search, mode: 'insensitive' as const } },
-                  ],
-              }
-            : {};
+        const showDeleted = searchParams.get('showDeleted') === 'true';
+
+        const where: Record<string, unknown> = {};
+
+        if (!showDeleted) {
+            where.deletedAt = null;
+        }
+
+        if (search) {
+            where.OR = [
+                { name: { contains: search, mode: 'insensitive' as const } },
+                { email: { contains: search, mode: 'insensitive' as const } },
+            ];
+        }
 
         const [users, total] = await Promise.all([
             prisma.user.findMany({
@@ -33,6 +39,7 @@ export async function GET(request: Request) {
                     avatar: true,
                     role: true,
                     createdAt: true,
+                    deletedAt: true,
                 },
                 skip: (page - 1) * limit,
                 take: limit,

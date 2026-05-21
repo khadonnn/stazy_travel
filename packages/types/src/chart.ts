@@ -30,6 +30,7 @@ export type ProductType = {
   authorId: string;
   date: string; // "Oct 30, 2025"
   slug: string;
+  deletedAt?: string | Date | null;
 
   // Quan trọng: API trả về ID chứ không phải Object
   categoryId?: number;

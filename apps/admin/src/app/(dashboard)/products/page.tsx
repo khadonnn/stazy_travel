@@ -12,13 +12,15 @@ type ProductResponse = {
     };
 };
 
-// 1. Nhận params page và limit
-const getData = async (page: number, limit: number): Promise<ProductResponse> => {
+const getData = async (page: number, limit: number, showDeleted: boolean): Promise<ProductResponse> => {
     try {
         // Truyền query params lên backend
-        const res = await fetch(`${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/hotels?page=${page}&limit=${limit}`, {
-            cache: 'no-store',
-        });
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/hotels?page=${page}&limit=${limit}&showDeleted=${showDeleted}`,
+            {
+                cache: 'no-store',
+            },
+        );
         const json = await res.json();
 
         // Đảm bảo trả về đúng cấu trúc.
@@ -46,13 +48,15 @@ const ProductsPage = async (props: Props) => {
     // Lấy page và limit từ URL, mặc định là 1 và 10
     const page = Number(searchParams.page) || 1;
     const limit = Number(searchParams.limit) || 10;
+    const showDeleted = String(searchParams.showDeleted) === 'true';
 
-    const { data, pagination } = await getData(page, limit);
+    const { data, pagination } = await getData(page, limit, showDeleted);
 
     return (
         <div className="">
             <ProductsTableWrapper
                 initialData={data}
+                showDeleted={showDeleted}
                 // Truyền thêm thông tin phân trang xuống Client
                 pageCount={pagination.totalPages}
                 totalItems={pagination.total}

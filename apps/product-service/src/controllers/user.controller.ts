@@ -85,9 +85,14 @@ export const getUsers = async (req: Request, res: Response) => {
     const sortBy = (req.query.sortBy as string) || "createdAt";
     const sortOrder =
       (req.query.sortOrder as string)?.toLowerCase() === "asc" ? "asc" : "desc";
+    const showDeleted = String(req.query.showDeleted) === "true";
 
     // 2. Xây dựng điều kiện WHERE (nếu có tìm kiếm hoặc lọc role)
     const where: any = {};
+
+    if (!showDeleted) {
+      where.deletedAt = null;
+    }
 
     if (search) {
       where.OR = [
@@ -121,6 +126,7 @@ export const getUsers = async (req: Request, res: Response) => {
         jobName: true,
         desc: true,
         role: true,
+        deletedAt: true,
         createdAt: true,
         updatedAt: true,
         // ⚠️ Không select `password` — đảm bảo an toàn
@@ -197,6 +203,7 @@ export const getUserById = async (req: Request, res: Response) => {
         jobName: true,
         desc: true,
         role: true,
+        deletedAt: true,
         createdAt: true,
         updatedAt: true,
         // ⚠️ Không select `password`
@@ -230,6 +237,13 @@ export const getUserById = async (req: Request, res: Response) => {
             : false,
       },
     });
+
+    if (user?.deletedAt) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy người dùng với ID này.",
+      });
+    }
 
     console.log("🏨 Hotels found:", user?.hotels?.length || 0);
 
@@ -412,14 +426,15 @@ export const deleteUser = async (req: Request, res: Response) => {
       });
     }
 
-    // 🗑 Xóa user (và các bản ghi liên quan — Prisma tự động cascade nếu có `onDelete: Cascade`)
-    await prisma.user.delete({
+    // 🗑 Soft delete user để có thể khôi phục khi xóa nhầm
+    await prisma.user.update({
       where: { id },
+      data: { deletedAt: new Date() },
     });
 
     res.status(200).json({
       success: true,
-      message: "Xóa người dùng thành công",
+      message: "Xóa người dùng thành công (soft delete)",
       data: { id },
     });
   } catch (error: any) {
@@ -437,6 +452,62 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "Lỗi server khi xóa người dùng",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+export const restoreUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id || typeof id !== "string" || id.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "ID không hợp lệ.",
+      });
+    }
+
+    const restoredUser = await prisma.user.update({
+      where: { id },
+      data: { deletedAt: null },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        nickname: true,
+        phone: true,
+        gender: true,
+        dob: true,
+        address: true,
+        avatar: true,
+        bgImage: true,
+        jobName: true,
+        desc: true,
+        role: true,
+        deletedAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Khôi phục người dùng thành công",
+      data: restoredUser,
+    });
+  } catch (error: any) {
+    console.error("Restore user error:", error);
+
+    if (error.code === "P2025") {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy người dùng để khôi phục.",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Lỗi server khi khôi phục người dùng",
       error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }

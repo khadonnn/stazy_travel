@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BrainCircuit, RefreshCw, Activity, Database, Clock, Zap, CheckCircle2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import ExportablePDFSection from '@/components/export/ExportablePDFSection';
 
 interface AIStatus {
     status: string;
@@ -84,7 +85,6 @@ export default function AIManagementPage() {
             const result = await forceRetrainAI();
             if (result.success) {
                 toast.success(result.data.message || 'Huấn luyện đã bắt đầu chạy ngầm!');
-                // Poll status after 10 seconds
                 setTimeout(() => fetchStatus(), 10000);
             } else {
                 toast.error(result.error || 'Không thể kích hoạt huấn luyện');
@@ -128,7 +128,7 @@ export default function AIManagementPage() {
     const eval_ = status.evaluation;
 
     return (
-        <div className="space-y-6 p-6">
+        <ExportablePDFSection filename="stazy_ai-management" title="Báo cáo AI" className="space-y-6 p-6">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -151,7 +151,7 @@ export default function AIManagementPage() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Trạng thái</CardTitle>
+                        <CardTitle className="text-sm font-medium">Trạng thái hệ thống</CardTitle>
                         <Activity className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
@@ -177,7 +177,7 @@ export default function AIManagementPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{eval_?.optimized_rmse?.toFixed(4) || '—'}</div>
-                        <p className="text-muted-foreground text-xs">√(Σ(ŷ-y)²/N) — Root Mean Square Error</p>
+                        <p className="text-muted-foreground text-xs">Root Mean Square Error</p>
                         <p className="text-xs text-green-600">
                             Baseline: {eval_?.baseline_rmse?.toFixed(4) || '—'} → Cải thiện{' '}
                             {eval_?.rmse_improvement_pct?.toFixed(1) || 0}%
@@ -192,7 +192,7 @@ export default function AIManagementPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{eval_?.optimized_mae?.toFixed(4) || '—'}</div>
-                        <p className="text-muted-foreground text-xs">Σ|ŷ-y|/N — Mean Absolute Error</p>
+                        <p className="text-muted-foreground text-xs">Mean Absolute Error</p>
                         <p className="text-xs text-green-600">
                             Baseline: {eval_?.baseline_mae?.toFixed(4) || '—'} → Cải thiện{' '}
                             {eval_?.mae_improvement_pct?.toFixed(1) || 0}%
@@ -239,6 +239,7 @@ export default function AIManagementPage() {
                         </p>
                     </CardContent>
                 </Card>
+
                 <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium">Recall@5</CardTitle>
@@ -252,6 +253,7 @@ export default function AIManagementPage() {
                         </p>
                     </CardContent>
                 </Card>
+
                 <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium">NDCG@5</CardTitle>
@@ -291,6 +293,7 @@ export default function AIManagementPage() {
                         </p>
                     </CardContent>
                 </Card>
+
                 <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium">MAE — Mean Absolute Error</CardTitle>
@@ -392,6 +395,6 @@ export default function AIManagementPage() {
                     </div>
                 </CardContent>
             </Card>
-        </div>
+        </ExportablePDFSection>
     );
 }

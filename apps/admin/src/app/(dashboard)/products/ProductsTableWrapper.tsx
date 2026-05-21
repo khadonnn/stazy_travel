@@ -5,9 +5,13 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'; // Im
 import { columns } from './columns';
 import { DataTable } from './data-table';
 import { ProductType } from '@repo/types';
+import { Button } from '@/components/ui/button';
+import { exportToExcel } from '@/lib/export';
+import { useExportStore } from '@/store/useExportStore';
 
 interface ProductsTableWrapperProps {
     initialData: ProductType[];
+    showDeleted: boolean;
     pageCount: number; // Tổng số trang
     totalItems: number; // Tổng số dòng
     pageIndex: number; // Trang hiện tại (bắt đầu từ 0)
@@ -16,6 +20,7 @@ interface ProductsTableWrapperProps {
 
 export function ProductsTableWrapper({
     initialData,
+    showDeleted,
     pageCount,
     totalItems,
     pageIndex,
@@ -24,6 +29,7 @@ export function ProductsTableWrapper({
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const registerExportAction = useExportStore((state) => state.registerExportAction);
 
     // Hàm cập nhật URL khi chuyển trang
     const createQueryString = useCallback(
@@ -55,9 +61,48 @@ export function ProductsTableWrapper({
         );
     };
 
+    useEffect(() => {
+        const exportAction = async () => {
+            exportToExcel(initialData, 'stazy_hotels', 'Khách sạn', {
+                id: 'ID',
+                title: 'Tên KS',
+                slug: 'Slug',
+                status: 'Trạng thái',
+                destination: 'Điểm đến',
+                price: 'Giá',
+                reviewStar: 'Đánh giá',
+                createdAt: 'Ngày tạo',
+                deletedAt: 'Ngày xóa',
+            });
+        };
+
+        registerExportAction(exportAction, 'Xuất Excel');
+
+        return () => registerExportAction(null);
+    }, [initialData, registerExportAction]);
+
     return (
         <div>
-            {/* ... Phần Search giữ nguyên ... */}
+            <div className="bg-secondary mb-4 flex items-center justify-between rounded-md px-3 py-2">
+                <div className="flex items-center gap-2">
+                    <h1 className="font-semibold">All Hotels</h1>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                            router.push(
+                                `${pathname}?${createQueryString({
+                                    page: 1,
+                                    showDeleted: showDeleted ? null : 'true',
+                                })}`,
+                            );
+                        }}
+                    >
+                        {showDeleted ? 'Hide deleted' : 'Show deleted'}
+                    </Button>
+                </div>
+                {showDeleted && <span className="text-muted-foreground text-xs">Showing deleted hotels</span>}
+            </div>
 
             <DataTable
                 columns={columns}

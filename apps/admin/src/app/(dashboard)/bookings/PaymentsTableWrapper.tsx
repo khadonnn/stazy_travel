@@ -6,11 +6,14 @@ import { columns, Booking } from './columns';
 import { DataTable } from '@/app/(dashboard)/bookings/data-table';
 import { Search, Loader2 } from 'lucide-react';
 import { getAllBookingsFromPostgres } from '@/app/(dashboard)/actions/get-all-bookings-postgres';
+import { exportToExcel } from '@/lib/export';
+import { useExportStore } from '@/store/useExportStore';
 
 export function PaymentsTableWrapper() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchText, setSearchText] = useState('');
+    const registerExportAction = useExportStore((state) => state.registerExportAction);
 
     //  Fetch bookings từ PostgreSQL
     useEffect(() => {
@@ -60,6 +63,28 @@ export function PaymentsTableWrapper() {
             );
         });
     }, [bookings, searchText]);
+
+    useEffect(() => {
+        const exportAction = async () => {
+            exportToExcel(filteredData, 'stazy_bookings', 'Đặt phòng', {
+                id: 'ID',
+                userName: 'Tên KH',
+                userEmail: 'Email',
+                hotelName: 'Khách sạn',
+                checkIn: 'Check-in',
+                checkOut: 'Check-out',
+                nights: 'Số đêm',
+                totalPrice: 'Tổng tiền',
+                status: 'Trạng thái',
+                paymentMethod: 'Phương thức thanh toán',
+                createdAt: 'Ngày tạo',
+            });
+        };
+
+        registerExportAction(exportAction, 'Xuất Excel');
+
+        return () => registerExportAction(null);
+    }, [filteredData, registerExportAction]);
 
     if (isLoading) {
         return (

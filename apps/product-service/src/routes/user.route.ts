@@ -4,6 +4,7 @@ import {
   deleteUser,
   getUserById,
   getUsers,
+  restoreUser,
   updateUser,
 } from "../controllers/user.controller";
 
@@ -128,6 +129,7 @@ router.get("/:id/stats", async (req, res) => {
 // Other routes (/:id MUST be after /:id/role and /:id/stats)
 router.get("/:id", getUserById);
 router.delete("/:id", deleteUser);
+router.patch("/:id/restore", restoreUser);
 router.patch("/:id", updateUser);
 
 export default router;

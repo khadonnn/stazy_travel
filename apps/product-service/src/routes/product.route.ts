@@ -6,6 +6,7 @@ import {
   getRelatedHotels,
   updateHotel,
   deleteHotel,
+  restoreHotel,
   getHotelForAdmin,
   getMyHotels,
 } from "../controllers/product.controller";
@@ -31,6 +32,7 @@ router.get("/:id", getHotel);
 router.get("/:id/related", getRelatedHotels);
 router.put("/:id", shouldBeAdmin, updateHotel);
 router.delete("/:id", shouldBeAdmin, deleteHotel);
+router.patch("/:id/restore", shouldBeAdmin, restoreHotel);
 // router.put('/:id', requireAuth, requireAuthor, HotelController.updateHotel); // Chỉ tác giả mới được sửa
 // router.delete('/:id', requireAuth, requireAuthor, HotelController.deleteHotel);
 export default router;
