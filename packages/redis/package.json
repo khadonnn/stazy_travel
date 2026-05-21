@@ -1,0 +1,17 @@
+{
+  "name": "@repo/redis",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "type": "module",
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ioredis": "^5.9.2",
+    "rate-limiter-flexible": "^11.1.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^25.0.3"
+  }
+}

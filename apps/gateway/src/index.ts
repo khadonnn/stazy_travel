@@ -1,17 +1,59 @@
 import cors from "@fastify/cors";
 import proxy from "@fastify/http-proxy";
 import Fastify from "fastify";
+import { burstLimiter, globalLimiter, hardLimiter } from "@repo/redis";
 
 const PORT = 3000;
 const HOST = "0.0.0.0";
 
 const app = Fastify({
   logger: true,
+  trustProxy: true,
 });
 
 await app.register(cors, {
   origin: ["http://localhost:3002", "http://localhost:3003"],
   credentials: true,
+});
+
+app.addHook("onRequest", async (request, reply) => {
+  if (request.method === "OPTIONS" || request.url === "/health") {
+    return;
+  }
+
+  const forwardedFor = request.headers["x-forwarded-for"];
+  const clientIp =
+    (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor)
+      ?.split(",")[0]
+      ?.trim() ||
+    request.ip ||
+    request.socket.remoteAddress ||
+    "unknown";
+
+  const [burstResult, globalResult, hardResult] = await Promise.allSettled([
+    burstLimiter.consume(clientIp),
+    globalLimiter.consume(clientIp),
+    hardLimiter.consume(clientIp),
+  ]);
+
+  const hardBlocked = hardResult.status === "rejected";
+  const burstBlocked = burstResult.status === "rejected";
+  const globalBlocked = globalResult.status === "rejected";
+
+  if (hardBlocked) {
+    return reply.code(429).send({
+      success: false,
+      message: "Too many requests. IP temporarily blocked.",
+      retryAfter: 60 * 30,
+    });
+  }
+
+  if (burstBlocked || globalBlocked) {
+    return reply.code(429).send({
+      success: false,
+      message: "Too many requests",
+    });
+  }
 });
 
 await app.register(proxy, {

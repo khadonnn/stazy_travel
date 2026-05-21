@@ -537,6 +537,9 @@ importers:
       '@fastify/http-proxy':
         specifier: ^11.0.2
         version: 11.4.3
+      '@repo/redis':
+        specifier: workspace:*
+        version: link:../../packages/redis
       fastify:
         specifier: ^5.5.0
         version: 5.6.2
@@ -711,7 +714,7 @@ importers:
         version: 5.76.2
       ioredis:
         specifier: ^5.3.2
-        version: 5.9.2
+        version: 5.10.1
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
@@ -796,6 +799,22 @@ importers:
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
+
+  packages/redis:
+    dependencies:
+      ioredis:
+        specifier: ^5.9.2
+        version: 5.10.1
+      rate-limiter-flexible:
+        specifier: ^11.1.0
+        version: 11.1.0
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^25.0.3
+        version: 25.0.3
 
   packages/types:
     dependencies:
@@ -5271,6 +5290,9 @@ packages:
   range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
+
+  rate-limiter-flexible@11.1.0:
+    resolution: {integrity: sha512-lyyC0SqKz+dE5JoHZ4JMqdrM3LSZKBxzuAFAyKCYAnmHnPz/Rb6iDquxoL4CMipDXoR0G+QRhOzYWL3JKihbNw==}
 
   raw-body@3.0.2:
     resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
@@ -12265,6 +12287,8 @@ snapshots:
       safe-buffer: 5.2.1
 
   range-parser@1.2.1: {}
+
+  rate-limiter-flexible@11.1.0: {}
 
   raw-body@3.0.2:
     dependencies:
