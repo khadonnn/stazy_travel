@@ -2,66 +2,6 @@ import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@repo/product-db';
 import { NextResponse } from 'next/server';
 
-/**
- * @swagger
- * /api/users:
- *   get:
- *     tags:
- *       - Admin › Users
- *     summary: Lấy danh sách tất cả người dùng
- *     description: Trả về danh sách toàn bộ người dùng trong hệ thống. Yêu cầu quyền Admin.
- *     security:
- *       - ClerkAuth: []
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Số trang
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 20
- *         description: Số lượng kết quả trên mỗi trang
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: Tìm kiếm theo tên hoặc email
- *     responses:
- *       200:
- *         description: Danh sách người dùng
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 users:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       name:
- *                         type: string
- *                       email:
- *                         type: string
- *                       role:
- *                         type: string
- *                         enum: [USER, AUTHOR, ADMIN]
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                 total:
- *                   type: integer
- *       401:
- *         description: Chưa đăng nhập
- *       403:
- *         description: Không có quyền truy cập
- */
 export async function GET(request: Request) {
     try {
         const { userId } = await auth();

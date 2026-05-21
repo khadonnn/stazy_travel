@@ -2,53 +2,6 @@ import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@repo/product-db';
 import { NextResponse } from 'next/server';
 
-/**
- * @swagger
- * /api/stats:
- *   get:
- *     tags:
- *       - Admin › Stats
- *     summary: Lấy thống kê tổng quan Dashboard
- *     description: |
- *       Trả về các số liệu thống kê tổng quan:
- *       - Tổng người dùng
- *       - Tổng khách sạn
- *       - Tổng đặt phòng
- *       - Doanh thu (từ các booking COMPLETED)
- *       - Số khách sạn đang chờ duyệt
- *       - Số author request đang chờ duyệt
- *     security:
- *       - ClerkAuth: []
- *     responses:
- *       200:
- *         description: Dữ liệu thống kê
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 totalUsers:
- *                   type: integer
- *                   example: 1024
- *                 totalHotels:
- *                   type: integer
- *                   example: 256
- *                 totalBookings:
- *                   type: integer
- *                   example: 4096
- *                 totalRevenue:
- *                   type: number
- *                   format: float
- *                   example: 123456789
- *                 pendingHotels:
- *                   type: integer
- *                   example: 12
- *                 pendingAuthorRequests:
- *                   type: integer
- *                   example: 5
- *       401:
- *         description: Chưa đăng nhập
- */
 export async function GET() {
     try {
         const { userId } = await auth();

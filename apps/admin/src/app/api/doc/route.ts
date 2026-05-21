@@ -1,21 +1,11 @@
 import { createSwaggerSpec } from 'next-swagger-doc';
 import { NextResponse } from 'next/server';
 
-/**
- * @swagger
- * /api/doc:
- *   get:
- *     tags:
- *       - Internal
- *     summary: Lấy Swagger spec JSON
- *     description: Endpoint trả về OpenAPI 3.0 spec cho toàn bộ Stazy Monorepo
- *     responses:
- *       200:
- *         description: OpenAPI spec JSON
- */
 export async function GET() {
     const adminSpec = createSwaggerSpec({
-        apiFolder: 'src/app/api',
+        // Use a non-existent folder to disable auto-scanning of @swagger JSDoc.
+        // All paths are defined manually below to avoid /api/ prefix duplicates.
+        apiFolder: 'src/app/no-auto-scan',
         definition: {
             openapi: '3.0.0',
             info: {

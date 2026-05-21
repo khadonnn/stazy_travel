@@ -3,44 +3,6 @@ import { prisma } from '@repo/product-db';
 import { syncRoleToClerk } from '@/lib/auth/roles';
 import { NextResponse } from 'next/server';
 
-/**
- * @swagger
- * /api/author-requests/{id}/approve:
- *   patch:
- *     tags:
- *       - Admin › Author Requests
- *     summary: Phê duyệt yêu cầu trở thành tác giả
- *     description: |
- *       Admin phê duyệt yêu cầu. Hệ thống sẽ tự động:
- *       - Cập nhật trạng thái request thành APPROVED
- *       - Nâng role người dùng thành AUTHOR
- *       - Đồng bộ role lên Clerk
- *     security:
- *       - ClerkAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID của yêu cầu
- *     responses:
- *       200:
- *         description: Phê duyệt thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
- *       401:
- *         description: Chưa đăng nhập
- *       404:
- *         description: Không tìm thấy yêu cầu
- */
 export async function PATCH(_request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { userId } = await auth();

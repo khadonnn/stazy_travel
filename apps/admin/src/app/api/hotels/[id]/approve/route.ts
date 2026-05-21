@@ -2,40 +2,6 @@ import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@repo/product-db';
 import { NextResponse } from 'next/server';
 
-/**
- * @swagger
- * /api/hotels/{id}/approve:
- *   patch:
- *     tags:
- *       - Admin › Hotels
- *     summary: Phê duyệt khách sạn
- *     description: Admin phê duyệt một khách sạn đang ở trạng thái PENDING.
- *     security:
- *       - ClerkAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID của khách sạn
- *     responses:
- *       200:
- *         description: Phê duyệt thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
- *       401:
- *         description: Chưa đăng nhập
- *       404:
- *         description: Không tìm thấy khách sạn
- */
 export async function PATCH(_request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { userId } = await auth();

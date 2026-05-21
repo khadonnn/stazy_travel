@@ -2,50 +2,6 @@ import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@repo/product-db';
 import { NextResponse } from 'next/server';
 
-/**
- * @swagger
- * /api/author-requests/{id}/reject:
- *   patch:
- *     tags:
- *       - Admin › Author Requests
- *     summary: Từ chối yêu cầu trở thành tác giả
- *     security:
- *       - ClerkAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID của yêu cầu
- *     requestBody:
- *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               reason:
- *                 type: string
- *                 description: Lý do từ chối
- *                 example: Thông tin chưa đủ điều kiện
- *     responses:
- *       200:
- *         description: Từ chối thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
- *       401:
- *         description: Chưa đăng nhập
- *       404:
- *         description: Không tìm thấy yêu cầu
- */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { userId } = await auth();
