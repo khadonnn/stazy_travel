@@ -3,12 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const footerLinkClass =
   "text-gray-400 transition-colors duration-200 hover:text-white";
 
 const Footer = () => {
   const pathname = usePathname();
+  const t = useTranslations("Footer"); // <--- Khởi tạo namespace "Footer"
 
   const shouldHide =
     pathname?.startsWith("/search-service") ||
@@ -74,8 +76,7 @@ const Footer = () => {
             </Link>
 
             <p className="max-w-xs text-sm leading-relaxed text-gray-400">
-              Discover beautiful stays and unique hotel experiences around the
-              world.
+              {t("tagline")} {/* <--- Đa ngôn ngữ hóa câu mô tả */}
             </p>
 
             <p className="text-xs text-gray-500">© 2026 The Stazy Booking</p>
@@ -83,69 +84,75 @@ const Footer = () => {
 
           {/* Links */}
           <div className="space-y-4">
-            <p className="text-sm font-medium text-amber-50">Links</p>
+            <p className="text-sm font-medium text-amber-50">
+              {t("sections.links")}
+            </p>
 
             <div className="flex flex-col gap-3 text-sm">
               <Link href="/" className={footerLinkClass}>
-                Homepage
+                {t("links.homepage")}
               </Link>
 
               <Link href="/contact" className={footerLinkClass}>
-                Contact
+                {t("links.contact")}
               </Link>
 
               <Link href="/terms" className={footerLinkClass}>
-                Terms of Service
+                {t("links.terms")}
               </Link>
 
               <Link href="/privacy" className={footerLinkClass}>
-                Privacy Policy
+                {t("links.privacy")}
               </Link>
             </div>
           </div>
 
           {/* Hotels */}
           <div className="space-y-4">
-            <p className="text-sm font-medium text-amber-50">Hotels</p>
+            <p className="text-sm font-medium text-amber-50">
+              {t("sections.hotels")}
+            </p>
 
             <div className="flex flex-col gap-3 text-sm">
               <Link href="/hotels" className={footerLinkClass}>
-                All hotels
+                {t("hotels.all")}
               </Link>
 
               <Link href="/hotels" className={footerLinkClass}>
-                New hotels
+                {t("hotels.new")}
               </Link>
 
               <Link href="/hotels" className={footerLinkClass}>
-                Trend hotels
+                {t("hotels.trend")}
               </Link>
 
               <Link href="/hotels" className={footerLinkClass}>
-                Popular hotels
+                {t("hotels.popular")}
               </Link>
             </div>
           </div>
 
           {/* Info */}
           <div className="space-y-4">
-            <p className="text-sm font-medium text-amber-50">Info</p>
+            <p className="text-sm font-medium text-amber-50">
+              {t("sections.info")}
+            </p>
 
             <div className="flex flex-col gap-3 text-sm">
               <Link href="/" className={footerLinkClass}>
-                About
+                {t("info.about")}
               </Link>
 
               <Link href="/" className={footerLinkClass}>
-                Contact
+                {t("info.contact")}
               </Link>
 
               <Link href="/" className={footerLinkClass}>
-                Blog
+                {t("info.blog")}
               </Link>
 
               <Link href="/" className={footerLinkClass}>
-                Hosts
+                {t("info.hosts")}
               </Link>
             </div>
           </div>

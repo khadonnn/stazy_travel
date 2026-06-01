@@ -10,6 +10,7 @@ import { Calendar } from "@/components/ui/calendar";
 import ClearDataButton from "./ClearDataButton";
 import { cn } from "@/lib/utils";
 import { useBookingStore } from "@/store/useBookingStore";
+import { useLocale, useTranslations } from "next-intl"; // <--- 1. Import hook hệ thống i18n
 
 export interface StayDatesRangeInputProps {
   className?: string;
@@ -20,6 +21,9 @@ export default function StayDatesRangeInput({
   className = "lg:flex-[2]",
   fieldClassName = "px-4 py-2",
 }: StayDatesRangeInputProps) {
+  const currentLocale = useLocale(); // <--- 2. Lấy ngôn ngữ đang active (vi hoặc en)
+  const t = useTranslations("StayDatesRangeInput"); // <--- 3. Khởi tạo namespace
+
   // Lấy date từ store
   const date = useBookingStore((s) => s.date);
   const setDate = useBookingStore((s) => s.setDate);
@@ -28,10 +32,13 @@ export default function StayDatesRangeInput({
   const checkInDate = date?.from;
   const checkOutDate = date?.to;
 
-  // console.log('Check-in:', checkInDate);
-  // console.log('Check-out:', checkOutDate);
-
   const [open, setOpen] = React.useState(false);
+
+  // Cấu hình hiển thị format ngày rút gọn
+  const dateFormatOptions: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "2-digit",
+  };
 
   const renderInput = () => (
     <>
@@ -40,28 +47,26 @@ export default function StayDatesRangeInput({
       </div>
       <div className="flex-grow text-left">
         <span className="block xl:text-lg font-semibold">
+          {/* 4. Truyền động currentLocale vào hàm format ngày thay vì fix cứng "en-US" */}
           {checkInDate
-            ? `${checkInDate.toLocaleDateString("en-US", {
-                month: "short",
-                day: "2-digit",
-              })}`
-            : "Thêm ngày"}
+            ? `${checkInDate.toLocaleDateString(currentLocale, dateFormatOptions)}`
+            : t("addDates")}{" "}
+          {/* <--- Dịch chữ "Thêm ngày" */}
           {checkOutDate
             ? " - " +
-              checkOutDate.toLocaleDateString("en-US", {
-                month: "short",
-                day: "2-digit",
-              })
+              checkOutDate.toLocaleDateString(currentLocale, dateFormatOptions)
             : ""}
         </span>
         <span className="block mt-1 text-sm text-neutral-400 leading-none font-light">
-          Đặt phòng - Trả phòng
+          {t("dateRangeLabel")} {/* <--- Dịch chữ "Đặt phòng - Trả phòng" */}
         </span>
       </div>
     </>
   );
+
   const isSSR = typeof window === "undefined";
   const popoverKey = isSSR ? "ssr" : "csr";
+
   return (
     <Popover open={open} onOpenChange={setOpen} key={popoverKey}>
       <PopoverTrigger asChild>
@@ -72,7 +77,7 @@ export default function StayDatesRangeInput({
             "flex-1 z-10 flex relative items-center space-x-4 focus:outline-none",
             fieldClassName,
             className,
-            open && "cus-hero-field-focused"
+            open && "cus-hero-field-focused",
           )}
         >
           {renderInput()}
@@ -81,6 +86,7 @@ export default function StayDatesRangeInput({
       </PopoverTrigger>
 
       <PopoverContent className="w-auto p-0 bg-white dark:bg-neutral-800 rounded-3xl shadow-lg overflow-hidden">
+        {/* Để component lịch đồng bộ ngôn ngữ (Thứ, Tháng), bạn có thể truyền locale của date-fns vào đây nếu component Calendar của bạn có hỗ trợ prop locale */}
         <Calendar
           mode="range"
           selected={date}

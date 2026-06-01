@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
-import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { BentoGridItem } from "@/components/ui/bento-grid";
 import { Sparkles, Loader2 } from "lucide-react";
 import {
   getAIRecommendations,
@@ -11,9 +11,12 @@ import {
   type AIRecommendationResult,
 } from "@/actions/get-ai-recommendations";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export default function AIRecommendationsSection() {
   const { isSignedIn, isLoaded } = useUser();
+  const t = useTranslations("AIRecommendationsSection");
+
   const [hotels, setHotels] = useState<RecommendedHotel[]>([]);
   const [chips, setChips] = useState<AIInsightChip[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +29,7 @@ export default function AIRecommendationsSection() {
   useEffect(() => {
     mountedRef.current = true;
     setHasMounted(true);
+
     return () => {
       mountedRef.current = false;
     };
@@ -35,41 +39,48 @@ export default function AIRecommendationsSection() {
     async (chipSignal?: string, forceRefresh?: boolean) => {
       try {
         setError(null);
+
         console.log(
-          `[ai-recommend] 📞 Calling getAIRecommendations (forceRefresh=${forceRefresh || false})...`,
+          `[ai-recommend] 📞 Calling getAIRecommendations (forceRefresh=${
+            forceRefresh || false
+          })...`,
         );
+
         const result: AIRecommendationResult | null =
           await getAIRecommendations(chipSignal, forceRefresh);
+
         console.log(
           "[ai-recommend] 📥 Result:",
           result ? `${result.hotels.length} hotels` : "null",
         );
+
         if (!mountedRef.current) return;
+
         if (result && result.hotels.length > 0) {
           setHotels(result.hotels);
           setChips(result.chips);
         } else {
-          // Server action should never return empty, but if it does, clear state
           setHotels([]);
           setChips([]);
         }
-      } catch (e: any) {
+      } catch (e) {
         if (!mountedRef.current) return;
+
         console.error("Failed to fetch AI recommendations:", e);
-        setError("Không thể tải gợi ý. Vui lòng thử lại.");
+        setError(t("errorMessage"));
       }
     },
-    [],
+    [t],
   );
 
   useEffect(() => {
-    // Don't fetch recommendations if user is not signed in
     if (!isLoaded || !isSignedIn) {
       setLoading(false);
       return;
     }
 
     let cancelled = false;
+
     const load = async () => {
       try {
         await fetchRecommendations();
@@ -77,56 +88,71 @@ export default function AIRecommendationsSection() {
         if (!cancelled) setLoading(false);
       }
     };
+
     load();
 
-    // Auto-refresh when user performs interactions that change intent
-    // High-intent: immediate refresh (ADD_TO_WISHLIST, BOOK, RATE_POSITIVE, RATE_NEGATIVE)
-    // Debounced: VIEW (2s debounce to consolidate rapid page views) and CLICK_BOOK_NOW
     let refreshTimeout: ReturnType<typeof setTimeout> | null = null;
+
     const handleInteraction = (e: Event) => {
       const detail = (e as CustomEvent).detail;
+
       console.log(
         "[ai-recommend] 🔄 High-intent interaction detected, force refreshing...",
         detail,
       );
+
       if (!cancelled) {
-        // Debounce: wait 500ms for rapid interactions (e.g. multiple wishlist adds)
         if (refreshTimeout) clearTimeout(refreshTimeout);
+
         refreshTimeout = setTimeout(() => {
-          // Force refresh to bypass cache — new interaction just happened
-          if (!cancelled) fetchRecommendations(undefined, true);
+          if (!cancelled) {
+            fetchRecommendations(undefined, true);
+          }
         }, 500);
       }
     };
-    window.addEventListener("interaction:tracked", handleInteraction);
+
+    window.addEventListener(
+      "interaction:tracked",
+      handleInteraction as EventListener,
+    );
 
     return () => {
       cancelled = true;
-      if (refreshTimeout) clearTimeout(refreshTimeout);
-      window.removeEventListener("interaction:tracked", handleInteraction);
+
+      if (refreshTimeout) {
+        clearTimeout(refreshTimeout);
+      }
+
+      window.removeEventListener(
+        "interaction:tracked",
+        handleInteraction as EventListener,
+      );
     };
   }, [fetchRecommendations, isLoaded, isSignedIn]);
 
   const handleChipClick = useCallback(
     async (chip: AIInsightChip) => {
       if (isReranking) return;
+
       const isDeselecting = activeChip === chip.id;
       const newActive = isDeselecting ? null : chip.id;
+
       setActiveChip(newActive);
       setIsReranking(true);
+
       try {
         await fetchRecommendations(isDeselecting ? undefined : chip.signal);
       } finally {
-        if (mountedRef.current) setIsReranking(false);
+        if (mountedRef.current) {
+          setIsReranking(false);
+        }
       }
     },
     [activeChip, isReranking, fetchRecommendations],
   );
 
-  // Don't render anything until the component has mounted on the client.
-  // This prevents hydration mismatch because both server and client render null initially.
   if (!hasMounted) return null;
-  // Don't render until Clerk loads. If loaded but not signed in, hide.
   if (!isLoaded || !isSignedIn) return null;
 
   if (loading) {
@@ -138,6 +164,7 @@ export default function AIRecommendationsSection() {
             <div className="h-10 w-80 bg-gray-200 rounded animate-pulse mb-3" />
             <div className="h-4 w-96 bg-gray-100 rounded animate-pulse" />
           </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {[0, 1, 2].map((i) => (
               <div
@@ -161,17 +188,21 @@ export default function AIRecommendationsSection() {
       <section className="relative py-24 px-5 md:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <p className="text-sm text-zinc-400">{error}</p>
+
           <button
             onClick={() => {
               setError(null);
               setLoading(true);
+
               fetchRecommendations().finally(() => {
-                if (mountedRef.current) setLoading(false);
+                if (mountedRef.current) {
+                  setLoading(false);
+                }
               });
             }}
-            className="mt-3 text-sm text-[#3B7F70] hover:underline"
+            className="mt-3 text-sm text-[#3B7F70] hover:underline cursor-pointer"
           >
-            Thử lại
+            {t("tryAgain")}
           </button>
         </div>
       </section>
@@ -187,16 +218,19 @@ export default function AIRecommendationsSection() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <div className="h-px w-8 bg-zinc-400/40" />
+
               <span className="text-xs uppercase tracking-[0.2em] text-zinc-500 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500 animate-pulse" />
-                AI Personalized
+                {t("eyebrow")}
               </span>
             </div>
+
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900">
-              Dành riêng cho bạn
+              {t("title")}
             </h2>
+
             <p className="mt-3 text-sm text-zinc-400 max-w-xl leading-relaxed">
-              Gợi ý thông minh dựa trên hành vi và sở thích của bạn.
+              {t("description")}
             </p>
           </div>
 
@@ -205,6 +239,7 @@ export default function AIRecommendationsSection() {
               {isReranking && (
                 <Loader2 className="w-4 h-4 text-[#3B7F70] animate-spin" />
               )}
+
               {chips.map((chip) => (
                 <button
                   key={chip.id}
@@ -235,29 +270,26 @@ export default function AIRecommendationsSection() {
             isReranking && "opacity-50 pointer-events-none",
           )}
         >
-          {/* 12-column grid, 2 rows, 4 cards */}
           <div className="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-2 gap-4 auto-rows-[240px] lg:h-[500px]">
-            {/* Hotel 0: Large featured left card (6 cols × 2 rows) */}
             <div className="lg:col-span-6 lg:row-span-2 h-[280px] lg:h-full">
               {hotels[0] && (
                 <BentoGridItem
-                  featured={true}
+                  featured
                   id={hotels[0].id}
                   slug={hotels[0].slug}
                   title={hotels[0].title}
                   description={hotels[0].address}
                   image={
-                    hotels[0].galleryImgs?.[0] ||
+                    hotels[0].galleryImgs?.[0] ??
                     "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
                   }
                   price={hotels[0].price}
                   rating={hotels[0].reviewStar || 4.8}
-                  category={hotels[0].category?.name || "Khách sạn"}
+                  category={hotels[0].category?.name || t("defaultCategory")}
                 />
               )}
             </div>
 
-            {/* Hotel 1: Medium top-right card (6 cols × 1 row) */}
             <div className="lg:col-start-7 lg:col-span-6 h-[200px] lg:h-full">
               {hotels[1] && (
                 <BentoGridItem
@@ -266,17 +298,16 @@ export default function AIRecommendationsSection() {
                   title={hotels[1].title}
                   description={hotels[1].address}
                   image={
-                    hotels[1].galleryImgs?.[0] ||
+                    hotels[1].galleryImgs?.[0] ??
                     "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
                   }
                   price={hotels[1].price}
                   rating={hotels[1].reviewStar || 4.8}
-                  category={hotels[1].category?.name || "Khách sạn"}
+                  category={hotels[1].category?.name || t("defaultCategory")}
                 />
               )}
             </div>
 
-            {/* Hotel 2: Small card (3 cols × 1 row) */}
             <div className="lg:col-start-7 lg:col-span-3 lg:row-start-2 h-[200px] lg:h-full">
               {hotels[2] && (
                 <BentoGridItem
@@ -285,17 +316,16 @@ export default function AIRecommendationsSection() {
                   title={hotels[2].title}
                   description={hotels[2].address}
                   image={
-                    hotels[2].galleryImgs?.[0] ||
+                    hotels[2].galleryImgs?.[0] ??
                     "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
                   }
                   price={hotels[2].price}
                   rating={hotels[2].reviewStar || 4.8}
-                  category={hotels[2].category?.name || "Khách sạn"}
+                  category={hotels[2].category?.name || t("defaultCategory")}
                 />
               )}
             </div>
 
-            {/* Hotel 3: Small card (3 cols × 1 row) */}
             <div className="lg:col-start-10 lg:col-span-3 lg:row-start-2 h-[200px] lg:h-full">
               {hotels[3] && (
                 <BentoGridItem
@@ -304,12 +334,12 @@ export default function AIRecommendationsSection() {
                   title={hotels[3].title}
                   description={hotels[3].address}
                   image={
-                    hotels[3].galleryImgs?.[0] ||
+                    hotels[3].galleryImgs?.[0] ??
                     "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
                   }
                   price={hotels[3].price}
                   rating={hotels[3].reviewStar || 4.8}
-                  category={hotels[3].category?.name || "Khách sạn"}
+                  category={hotels[3].category?.name || t("defaultCategory")}
                 />
               )}
             </div>

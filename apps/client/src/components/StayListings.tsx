@@ -12,6 +12,7 @@ import { mapStay } from "@/lib/mappers/listings";
 import homeStayDataJson from "@/data/jsons/__homeStay.json";
 import { useQuery } from "@tanstack/react-query";
 import { HotelFrontend } from "@repo/types";
+import { useTranslations } from "next-intl";
 
 // IMPORT MOTION
 import { motion, AnimatePresence } from "motion/react";
@@ -33,17 +34,14 @@ const getRandomColor = () => {
 };
 
 const fetchStays = async (): Promise<HotelFrontend[]> => {
-  // ... (Logic cũ giữ nguyên để code gọn)
   const FORCE_FALLBACK = false;
   const mapStaticStays = () =>
     homeStayDataJson.slice(0, 8).map(
       (hotel) =>
         ({
-          // ... (mapping cũ) ...
           id: hotel.id,
           title: hotel.title,
           price: hotel.price ?? 500000,
-          // ... fake data mapping ...
         }) as unknown as HotelFrontend,
     );
 
@@ -61,6 +59,7 @@ const fetchStays = async (): Promise<HotelFrontend[]> => {
 };
 
 export default function StayListing() {
+  const t = useTranslations("StayListing"); // <--- Khởi tạo namespace "StayListing"
   const [currentPage, setCurrentPage] = useState(1);
   const [hoveredId, setHoveredId] = useState<string | number | null>(null);
   const [hoverColor, setHoverColor] = useState<string>("");
@@ -75,11 +74,9 @@ export default function StayListing() {
     staleTime: 1000 * 60 * 5,
   });
 
-  if (isLoading)
-    return <p className="text-center py-10">Đang tải dữ liệu...</p>;
+  if (isLoading) return <p className="text-center py-10">{t("loading")}</p>; // <--- Đa ngôn ngữ hóa loading
   if (isError) console.error("Lỗi data");
 
-  // Sắp xếp theo reviewCount giảm dần (nhiều đánh giá nhất sẽ hiển thị đầu)
   const sortedStays = [...stays].sort(
     (a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0),
   );
@@ -96,38 +93,36 @@ export default function StayListing() {
   return (
     <div className="space-y-6 px-4 sm:px-6 md:px-12 sm:space-y-8 mx-auto w-full">
       <div className="mb-8 flex items-end justify-between gap-4">
-        {/* Phần nội dung bên trái */}
         <div>
           {/* Eyebrow */}
           <div className="flex items-center gap-2 mb-3">
             <div className="h-px w-8 bg-zinc-400/40" />
             <span className="text-xs uppercase tracking-[0.2em] text-zinc-500 flex items-center gap-1.5">
-              Thịnh hành
+              {t("eyebrow")} {/* <--- Đa ngôn ngữ hóa "Thị hành" */}
               <Flame className="w-3.5 h-3.5 text-red-500 fill-red-500 animate-pulse" />
             </span>
           </div>
 
           {/* Tiêu đề chính */}
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900">
-            Nổi bật nhất
+            {t("title")} {/* <--- Đa ngôn ngữ hóa "Nổi bật nhất" */}
           </h2>
 
-          {/* Đoạn mô tả (Có thể bỏ nếu không cần thiết) */}
+          {/* Đoạn mô tả */}
           <p className="mt-3 text-sm text-zinc-400 max-w-xl leading-relaxed">
-            Những địa điểm lưu trú được nhiều du khách đánh giá nhất
+            {t("description")}{" "}
+            {/* <--- Đa ngôn ngữ hóa "Những địa điểm lưu trú được nhiều du khách đánh giá nhất" */}
           </p>
         </div>
 
-        {/* Nút Xem tất cả bên phải */}
+        {/* Nút Xem tất cả */}
         <div className="shrink-0 mb-1">
           <Link href="/hotels">
             <Button
               variant="link"
               className="text-zinc-500 hover:text-zinc-900 px-0 flex items-center gap-1"
             >
-              Xem tất cả
-              {/* Nếu bạn có import ArrowRight từ lucide-react thì thêm dòng dưới vào sẽ rất đẹp */}
-              {/* <ArrowRight className="w-4 h-4" /> */}
+              {t("viewAll")} {/* <--- Đa ngôn ngữ hóa "Xem tất cả" */}
             </Button>
           </Link>
         </div>
@@ -135,7 +130,8 @@ export default function StayListing() {
 
       {currentItems.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500">Không có dữ liệu.</p>
+          <p className="text-gray-500">{t("noData")}</p>{" "}
+          {/* <--- Đa ngôn ngữ hóa "Không có dữ liệu." */}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 justify-center">
@@ -144,7 +140,6 @@ export default function StayListing() {
               <div
                 className="relative group block h-full w-full"
                 onMouseEnter={() => {
-                  // 2. SỬA LỖI TRIGGER 2 LẦN: Chỉ random màu mới nếu ID khác với thẻ đang hover
                   if (hoveredId !== stay.id) {
                     setHoveredId(stay.id);
                     setHoverColor(getRandomColor());
@@ -155,8 +150,6 @@ export default function StayListing() {
                 <AnimatePresence>
                   {hoveredId === stay.id && (
                     <motion.span
-                      // 3. QUAN TRỌNG: Thêm 'pointer-events-none' để cái bóng "tàng hình" với con trỏ chuột,
-                      // chuột không chạm vào nó được nên sẽ không bị chớp giật sự kiện nữa.
                       className="absolute inset-0 block h-full w-full rounded-3xl -z-10 bg-opacity-20 pointer-events-none"
                       initial={{ scale: 0.95, opacity: 0 }}
                       animate={{

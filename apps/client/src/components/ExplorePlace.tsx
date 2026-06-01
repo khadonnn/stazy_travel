@@ -13,17 +13,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import FadeIn from "./ui/fade-in";
-
-// XÓA BỎ CÁC DÒNG IMPORT HÌNH ẢNH TRỰC TIẾP TỪ THƯ MỤC PUBLIC
-// import halongbay from '@/assets/travels/halongbay.jpeg';
-// ... (các import hình ảnh khác)
+import { useTranslations } from "next-intl";
 
 const places = [
   {
     id: 1,
     name: "Hạ Long Bay",
     count: 3000,
-    // SỬ DỤNG ĐƯỜNG DẪN URL TUYỆT ĐỐI TỪ public/
     thumbnail: "/assets/travels/halongbay.jpeg",
   },
   {
@@ -83,6 +79,8 @@ const places = [
 ];
 
 export function ExplorePlace() {
+  const t = useTranslations("ExplorePlace"); // <--- 2. Khởi tạo namespace "ExplorePlace"
+
   return (
     <div className="relative w-full px-14 mx-auto">
       <div className="flex items-center justify-between">
@@ -91,24 +89,25 @@ export function ExplorePlace() {
           <div className="flex items-center gap-2 mb-3">
             <div className="h-px w-8 bg-zinc-400/40" />
             <span className="text-xs uppercase tracking-[0.2em] text-zinc-500 flex items-center gap-1.5">
-              {/* Mình dùng emerald-500 cho cảm giác tích cực/du lịch */}
-              Xu hướng điểm đến
+              {t("eyebrow")} {/* <--- Dịch chữ "Xu hướng điểm đến" */}
               <TrendingUp className="w-3.5 h-3.5 text-orange-700" />{" "}
             </span>
           </div>
 
           {/* Tiêu đề chính */}
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900">
-            Khám phá địa điểm
+            {t("title")} {/* <--- Dịch chữ "Khám phá địa điểm" */}
           </h2>
 
           {/* Đoạn mô tả */}
           <p className="mt-3 text-sm text-zinc-400 max-w-xl leading-relaxed">
-            Tìm hiểu các khu vực hấp dẫn
+            {t("description")}{" "}
+            {/* <--- Dịch chữ "Tìm hiểu các khu vực hấp dẫn" */}
           </p>
         </div>
         <Link href="/hotels">
-          <Button variant="link">Xem tất cả</Button>
+          <Button variant="link">{t("viewAll")}</Button>{" "}
+          {/* <--- Dịch chữ "Xem tất cả" */}
         </Link>
       </div>
 
@@ -122,7 +121,6 @@ export function ExplorePlace() {
               <FadeIn className="h-full w-full" delay={index * 100}>
                 <Card className="overflow-hidden rounded-2xl shadow-sm">
                   <div className="overflow-hidden rounded-2xl">
-                    {/* Component Image sử dụng URL (string) */}
                     <Image
                       src={place.thumbnail}
                       alt={place.name}
@@ -137,7 +135,8 @@ export function ExplorePlace() {
                       className="text-sm text-muted-foreground"
                       suppressHydrationWarning
                     >
-                      {place.count.toLocaleString()}+ phòng
+                      {/* 3. Truyền biến số count vào chuỗi dịch để xử lý logic "phòng/rooms" */}
+                      {t("roomsCount", { count: place.count })}
                     </p>
                   </CardContent>
                 </Card>

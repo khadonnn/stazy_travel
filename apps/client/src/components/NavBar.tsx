@@ -1,7 +1,7 @@
 "use client";
 import SearchBar from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
-import { BadgeInfo, Bell, Plane, Map, Heart } from "lucide-react";
+import { BadgeInfo, Bell, Plane, Map, Heart, Languages } from "lucide-react"; // Thêm icon Languages để chọn ngôn ngữ
 import { usePathname } from "next/navigation";
 import {
   Tooltip,
@@ -13,22 +13,40 @@ import UserSetting from "@/components/UserSetting";
 import Image from "next/image";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import { SitemapSheet } from "@/components/sitemap/SitemapSheet";
-// TEMP
-const Navbar = () => {
-  const pathname = usePathname();
-  const hiddenRoutes = ["/search-service", "/full-screen", "/chat", "/about"];
+import { useTranslations } from "next-intl"; // <--- 1. Import hook dịch từ next-intl
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"; // Sử dụng Dropdown của shadcn/ui cho nút chuyển ngôn ngữ
+import { LanguagePicker } from "./language/LanguagePicker";
+interface NavbarProps {
+  changeLocaleAction: (nextLocale: string) => Promise<void>;
+}
+const Navbar = ({ changeLocaleAction }: NavbarProps) => {
+  const pathname = usePathname();
+  const t = useTranslations("Navbar"); // <--- 2. Khởi tạo dịch với namespace "Navbar"
+
+  const hiddenRoutes = ["/search-service", "/full-screen", "/chat", "/about"];
   const shouldHide = hiddenRoutes.some((route) => pathname?.startsWith(route));
 
   if (shouldHide) return null;
   const { isSignedIn, user, isLoaded } = useUser();
+
+  // 3. Hàm xử lý chuyển đổi ngôn ngữ bằng Cookie (Không đổi URL)
+  const changeLanguage = (nextLocale: string) => {
+    document.cookie = `locale=${nextLocale}; path=/; max-age=31536000;`;
+    window.location.reload(); // Refresh lại trang để Server nhận locale mới từ cookie
+  };
 
   if (!isLoaded) {
     return (
       <div className="w-full h-16 bg-white/80 backdrop-blur-md fixed top-0 z-50" />
     );
   }
+
   return (
     <div className="w-full flex items-center justify-between border border-gray-300/50 py-2 px-10 fixed top-0 z-50 bg-white/60 backdrop-blur-lg shadow-sm">
       {/* left */}
@@ -50,7 +68,8 @@ const Navbar = () => {
       <TooltipProvider>
         <div className="flex items-center gap-4">
           <SearchBar />
-          {/* Location */}
+
+          {/* About / Giới thiệu */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
@@ -61,56 +80,56 @@ const Navbar = () => {
               </Link>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Giới thiệu</p>
+              <p>{t("about")}</p> {/* <--- Dịch chữ "Giới thiệu" */}
             </TooltipContent>
           </Tooltip>
 
-          {/* Notifications */}
-
-          {/* plane */}
+          {/* Explore / Khám phá */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
                 href="/hotels"
                 className="hover:bg-accent rounded-md p-2 transition-colors"
               >
-                {/* Icon */}
                 <Plane className="w-5 h-5 text-gray-600" />
               </Link>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Khám phá</p>
+              <p>{t("explore")}</p> {/* <--- Dịch chữ "Khám phá" */}
             </TooltipContent>
           </Tooltip>
 
-          {/* Sitemap */}
+          {/* Favorites / Yêu thích */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
                 href="/favorites"
                 className="hover:bg-accent rounded-md p-2 transition-colors"
               >
-                {/* Icon */}
                 <Heart className="w-5 h-5 text-gray-600" />
               </Link>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Yêu thích</p>
+              <p>{t("favorites")}</p> {/* <--- Dịch chữ "Yêu thích" */}
             </TooltipContent>
           </Tooltip>
 
+          {/* Notifications / Thông báo */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <Bell className="w-5! h-5! text-gray-600" />
+              <button className="hover:bg-accent rounded-md p-2 transition-colors">
+                <Bell className="w-5 h-5 text-gray-600" />
+              </button>
             </TooltipTrigger>
-            {/* {!authUser && (
-                            <TooltipContent side='bottom'>
-                                <p>Thông báo</p>
-                            </TooltipContent>
-                        )} */}
+            <TooltipContent side="bottom">
+              <p>{t("notifications")}</p> {/* <--- Dịch chữ "Thông báo" */}
+            </TooltipContent>
           </Tooltip>
 
-          {/* Login */}
+          {/* 4. Nút Switch Ngôn Ngữ tích hợp thêm */}
+          <LanguagePicker changeLocaleAction={changeLocaleAction} />
+
+          {/* Auth / Đăng nhập */}
           {isSignedIn ? (
             <UserSetting />
           ) : (
@@ -119,7 +138,7 @@ const Navbar = () => {
                 variant="outline"
                 className="hidden md:inline-flex border-gray-300 hover:shadow-md"
               >
-                Đăng nhập
+                {t("login")} {/* <--- Dịch chữ "Đăng nhập" */}
               </Button>
             </Link>
           )}

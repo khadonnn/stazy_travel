@@ -1,0 +1,97 @@
+{
+  "Navbar": {
+    "about": "Giới thiệu",
+    "explore": "Khám phá",
+    "favorites": "Yêu thích",
+    "notifications": "Thông báo",
+    "login": "Đăng nhập"
+  },
+  "SearchBar": {
+    "searchPlaceholder": "Tìm kiếm..."
+  },
+  "HeroSection": {
+    "subtitleLine1": "VI VU MÊ SAY",
+    "subtitleLine2": "CHẠM LÀ ĐẶT NGAY",
+    "ctaButton": "Bắt đầu khám phá"
+  },
+  "LocationInput": {
+    "placeHolderDefault": "Địa điểm",
+    "descDefault": "Bạn muốn đi đâu?",
+    "recentSearches": "Tìm kiếm gần đây"
+  },
+  "StayDatesRangeInput": {
+    "addDates": "Thêm ngày",
+    "dateRangeLabel": "Đặt phòng - Trả phòng"
+  },
+  "GuestsInput": {
+    "guestCount": "{count, plural, =0 {0 khách} other {# khách}}",
+    "guestsLabel": "Khách",
+    "addGuests": "Thêm khách",
+    "adults": {
+      "label": "Người lớn",
+      "desc": "Từ 13 tuổi trở lên"
+    },
+    "children": {
+      "label": "Trẻ em",
+      "desc": "Từ 2 đến 12 tuổi"
+    },
+    "infants": {
+      "label": "Em bé",
+      "desc": "Dưới 2 tuổi"
+    }
+  },
+  "PersonalizedSection": {
+    "eyebrow": "Gợi ý cho bạn",
+    "title": "Khám phá theo sở thích của bạn",
+    "description": "Chọn lọc riêng dựa trên sở thích du lịch của bạn."
+  },
+  "ExplorePlace": {
+    "eyebrow": "Xu hướng điểm đến",
+    "title": "Khám phá địa điểm",
+    "description": "Tìm hiểu các khu vực hấp dẫn",
+    "viewAll": "Xem tất cả",
+    "roomsCount": "{count, number}+ phòng"
+  },
+  "AIRecommendationsSection": {
+    "eyebrow": "Đề xuất AI",
+    "title": "Dành riêng cho bạn",
+    "description": "Gợi ý thông minh dựa trên hành vi và sở thích của bạn.",
+    "errorMessage": "Không thể tải gợi ý. Vui lòng thử lại.",
+    "tryAgain": "Thử lại",
+    "defaultCategory": "Khách sạn"
+  },
+  "StayListing": {
+    "loading": "Đang tải dữ liệu...",
+    "eyebrow": "Thịnh hành",
+    "title": "Nổi bật nhất",
+    "description": "Những địa điểm lưu trú được nhiều du khách đánh giá nhất",
+    "viewAll": "Xem tất cả",
+    "noData": "Không có dữ liệu."
+  },
+  "Footer": {
+    "tagline": "Khám phá các điểm lưu trú tuyệt đẹp và trải nghiệm khách sạn độc đáo trên toàn thế giới.",
+    "sections": {
+      "links": "Liên kết",
+      "hotels": "Khách sạn",
+      "info": "Thông tin"
+    },
+    "links": {
+      "homepage": "Trang chủ",
+      "contact": "Liên hệ",
+      "terms": "Điều khoản dịch vụ",
+      "privacy": "Chính sách bảo mật"
+    },
+    "hotels": {
+      "all": "Tất cả khách sạn",
+      "new": "Khách sạn mới",
+      "trend": "Khách sạn xu hướng",
+      "popular": "Khách sạn phổ biến"
+    },
+    "info": {
+      "about": "Giới thiệu",
+      "contact": "Liên hệ",
+      "blog": "Blog",
+      "hosts": "Đối tác lưu trú"
+    }
+  }
+}

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Archivo } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
+import { cookies } from "next/headers";
 import "./globals.css";
 import Providers from "./providers";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -35,12 +39,24 @@ import BackgroundWave from "@/components/BackgroundWave";
 import { syncUserToDB } from "@/lib/clerk-sync";
 import { OnboardingModal } from "@/components/onboarding-modal";
 import ScrollToTop from "@/hooks/ScrollToTop";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   await syncUserToDB();
+
+  // 1. Lấy locale hiện tại từ Server để truyền động vào thẻ html
+  const locale = await getLocale();
+
+  // 2. SERVER ACTION: Hàm xử lý cập nhật Cookie trực tiếp trên Server Side
+  async function changeLocaleAction(nextLocale: string) {
+    "use server";
+    const store = await cookies();
+    store.set("locale", nextLocale);
+  }
+
   return (
     <ClerkProvider
       localization={viVN}
@@ -52,27 +68,31 @@ export default async function RootLayout({
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
     >
-      <html lang="en">
+      {/* 3. Đổi "en" thành {locale} để đồng bộ với ngôn ngữ hệ thống */}
+      <html lang={locale}>
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${archivo.variable} antialiased flex flex-col min-h-screen`}
         >
-          <Navbar />
+          <NextIntlClientProvider>
+            {/* 4. Truyền Server Action xuống cho Navbar nhận diện và sử dụng */}
+            <Navbar changeLocaleAction={changeLocaleAction} />
 
-          <main className=" flex-1">
-            <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/20" />
-              <BackgroundWave />
+            <main className=" flex-1">
+              <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/20" />
+                <BackgroundWave />
+              </div>
+              <Providers>{children}</Providers>
+              <OnboardingModal />
+            </main>
+            <div className="shrink-0">
+              <Footer />
             </div>
-            <Providers>{children}</Providers>
-            <OnboardingModal />
-          </main>
-          <div className="shrink-0">
-            <Footer />
-          </div>
-          <div className="fixed bottom-4 right-4 z-9999">
-            <ChatWidget />
-          </div>
-          <ScrollToTop hideRoutes={["/sign-in", "/sign-up", "/admin"]} />
+            <div className="fixed bottom-4 right-4 z-9999">
+              <ChatWidget />
+            </div>
+            <ScrollToTop hideRoutes={["/sign-in", "/sign-up", "/admin"]} />
+          </NextIntlClientProvider>
         </body>
       </html>
     </ClerkProvider>

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import {
   Popover,
@@ -9,6 +11,7 @@ import { UserPlus } from "lucide-react";
 import ButtonSubmit from "@/components/ButtonSubmit";
 import NcInputNumber from "@/components/NcInputNumber";
 import { useBookingStore } from "@/store/useBookingStore";
+import { useTranslations } from "next-intl"; // <--- 1. Import hook dịch từ next-intl
 
 export interface GuestsInputProps {
   fieldClassName?: string;
@@ -26,6 +29,8 @@ const GuestsInput = ({
   const { guests, setGuests, clearGuests } = useBookingStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  const t = useTranslations("GuestsInput"); // <--- 2. Khởi tạo namespace "GuestsInput"
 
   // Fix hydration mismatch: chỉ render Popover sau khi mounted
   useEffect(() => {
@@ -56,10 +61,11 @@ const GuestsInput = ({
             </div>
             <div className="grow">
               <span className="block xl:text-lg font-semibold">
-                {totalGuests || 0} khách
+                {/* 3. Áp dụng Pluralization để tự động thêm 's' cho tiếng Anh số nhiều */}
+                {t("guestCount", { count: totalGuests || 0 })}
               </span>
               <span className="block mt-1 text-sm text-neutral-400 leading-none font-light">
-                {totalGuests ? "Khách" : "Thêm khách"}
+                {totalGuests ? t("guestsLabel") : t("addGuests")}
               </span>
             </div>
           </div>
@@ -91,10 +97,11 @@ const GuestsInput = ({
               </div>
               <div className="grow">
                 <span className="block xl:text-lg font-semibold">
-                  {totalGuests || 0} khách
+                  {/* Dịch số lượng khách có đếm số nhiều */}
+                  {t("guestCount", { count: totalGuests || 0 })}
                 </span>
                 <span className="block mt-1 text-sm text-neutral-400 leading-none font-light">
-                  {totalGuests ? "Khách" : "Thêm khách"}
+                  {totalGuests ? t("guestsLabel") : t("addGuests")}
                 </span>
               </div>
 
@@ -117,30 +124,31 @@ const GuestsInput = ({
         sideOffset={8}
         className="w-full sm:min-w-[340px] max-w-sm bg-white dark:bg-neutral-800 p-4 sm:p-6 rounded-3xl shadow-xl border-0"
       >
+        {/* 4. Dịch hóa toàn bộ Label và Description của các cụm tăng giảm số lượng */}
         <NcInputNumber
           className="w-full"
           defaultValue={guests.adults}
           onChange={(value) => handleChangeData(value, "adults")}
           max={10}
           min={1}
-          label="Người lớn"
-          desc="Từ 13 tuổi trở lên"
+          label={t("adults.label")}
+          desc={t("adults.desc")}
         />
         <NcInputNumber
           className="w-full mt-6"
           defaultValue={guests.children}
           onChange={(value) => handleChangeData(value, "children")}
           max={4}
-          label="Trẻ em"
-          desc="Từ 2 đến 12 tuổi"
+          label={t("children.label")}
+          desc={t("children.desc")}
         />
         <NcInputNumber
           className="w-full mt-6"
           defaultValue={guests.infants}
           onChange={(value) => handleChangeData(value, "infants")}
           max={4}
-          label="Em bé"
-          desc="Dưới 2 tuổi"
+          label={t("infants.label")}
+          desc={t("infants.desc")}
         />
       </PopoverContent>
 

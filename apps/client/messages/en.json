@@ -1,0 +1,97 @@
+{
+  "Navbar": {
+    "about": "About",
+    "explore": "Explore",
+    "favorites": "Favorites",
+    "notifications": "Notifications",
+    "login": "Login"
+  },
+  "SearchBar": {
+    "searchPlaceholder": "Search..."
+  },
+  "HeroSection": {
+    "subtitleLine1": "EXPLORE THE WORLD WITH US",
+    "subtitleLine2": "FIND AMAZING EXPERIENCES",
+    "ctaButton": "START EXPLORING"
+  },
+  "LocationInput": {
+    "placeHolderDefault": "Location",
+    "descDefault": "Where are you going?",
+    "recentSearches": "Recent searches"
+  },
+  "StayDatesRangeInput": {
+    "addDates": "Add dates",
+    "dateRangeLabel": "Check-in - Check-out"
+  },
+  "GuestsInput": {
+    "guestCount": "{count, plural, =0 {0 guests} =1 {1 guest} other {# guests}}",
+    "guestsLabel": "Guests",
+    "addGuests": "Add guests",
+    "adults": {
+      "label": "Adults",
+      "desc": "Ages 13 or above"
+    },
+    "children": {
+      "label": "Children",
+      "desc": "Ages 2–12"
+    },
+    "infants": {
+      "label": "Infants",
+      "desc": "Under 2"
+    }
+  },
+  "PersonalizedSection": {
+    "eyebrow": "Recommended for you",
+    "title": "Explore based on your interests",
+    "description": "Tailored exclusively matching your unique travel preferences."
+  },
+  "ExplorePlace": {
+    "eyebrow": "Trending Destinations",
+    "title": "Explore Places",
+    "description": "Discover highly attractive regions",
+    "viewAll": "View all",
+    "roomsCount": "{count, number}+ rooms"
+  },
+  "AIRecommendationsSection": {
+    "eyebrow": "AI Personalized",
+    "title": "Exclusively For You",
+    "description": "Smart recommendations tailored strictly based on your behavior and unique preferences.",
+    "errorMessage": "Failed to load recommendations. Please try again.",
+    "tryAgain": "Try again",
+    "defaultCategory": "Hotel"
+  },
+  "StayListing": {
+    "loading": "Loading data...",
+    "eyebrow": "Trending",
+    "title": "Most Featured",
+    "description": "The accommodation properties with the highest review volume from travelers",
+    "viewAll": "View all",
+    "noData": "No data available."
+  },
+  "Footer": {
+    "tagline": "Discover beautiful stays and unique hotel experiences around the world.",
+    "sections": {
+      "links": "Links",
+      "hotels": "Hotels",
+      "info": "Info"
+    },
+    "links": {
+      "homepage": "Homepage",
+      "contact": "Contact",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy"
+    },
+    "hotels": {
+      "all": "All hotels",
+      "new": "New hotels",
+      "trend": "Trend hotels",
+      "popular": "Popular hotels"
+    },
+    "info": {
+      "about": "About",
+      "contact": "Contact",
+      "blog": "Blog",
+      "hosts": "Hosts"
+    }
+  }
+}

@@ -12,8 +12,9 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-
+import { useTranslations } from "next-intl";
 export default function HeroSection() {
+  const t = useTranslations("HeroSection");
   const router = useRouter();
   const heroRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -99,8 +100,8 @@ export default function HeroSection() {
             }
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div>VI VU MÊ SAY</div>
-            <div>CHẠM LÀ ĐẶT NGAY</div>
+            <div>{t("subtitleLine1")}</div>
+            <div>{t("subtitleLine2")}</div>
           </motion.div>
           <motion.h1
             className="mt-[1.5vh] text-center font-(family-name:--font-archivo) text-[clamp(4rem,13vw,11rem)] font-black uppercase leading-[0.8] tracking-[-0.04em] text-[#1e5a44]"
@@ -243,7 +244,7 @@ export default function HeroSection() {
               type="button"
               className="relative z-20 inline-flex items-center justify-center px-11 py-4 text-lg font-black text-white bg-transparent uppercase tracking-[0.25em] cursor-pointer whitespace-nowrap transition-colors"
             >
-              Bắt đầu khám phá
+              {t("ctaButton")}
               <Sparkles className="ml-2.5 w-5 h-5" />
             </button>
           </div>

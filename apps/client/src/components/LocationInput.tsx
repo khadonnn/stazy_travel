@@ -1,4 +1,5 @@
 "use client";
+
 import { Clock, MapPin } from "lucide-react";
 import { useState, useRef, useEffect, useId } from "react";
 import ClearDataButton from "./ClearDataButton";
@@ -8,6 +9,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { useBookingStore } from "@/store/useBookingStore";
+import { useTranslations } from "next-intl"; // <--- 1. Import hook dịch
 
 export interface LocationInputProps {
   placeHolder?: string;
@@ -19,8 +21,8 @@ export interface LocationInputProps {
 
 const LocationInput = ({
   autoFocus = false,
-  placeHolder = "Địa điểm",
-  desc = "Bạn muốn đi đâu?",
+  placeHolder, // Bỏ gán cứng để dùng i18n bên dưới
+  desc, // Bỏ gán cứng để dùng i18n bên dưới
   className = "nc-flex-1.5",
   divHideVerticalLineClass = "left-10 -right-0.5",
 }: LocationInputProps) => {
@@ -28,6 +30,12 @@ const LocationInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const popoverId = useId().replace(/:/g, "-");
   const { location, setLocation } = useBookingStore();
+
+  const t = useTranslations("LocationInput"); // <--- 2. Khởi tạo namespace "LocationInput"
+
+  // 3. Fallback chữ dịch tĩnh từ file JSON
+  const finalPlaceHolder = placeHolder || t("placeHolderDefault");
+  const finalDesc = desc || t("descDefault");
 
   const [value, setValue] = useState(location || "");
   const [isOpen, setIsOpen] = useState(autoFocus);
@@ -60,7 +68,7 @@ const LocationInput = ({
   const renderRecentSearches = () => (
     <>
       <h3 className="block mt-2 sm:mt-0 px-4 sm:px-8 font-semibold text-base sm:text-lg text-neutral-800 dark:text-neutral-100">
-        Tìm kiếm gần đây
+        {t("recentSearches")} {/* <--- 4. Thay bằng chữ dịch tĩnh */}
       </h3>
       <div className="mt-2">
         {[
@@ -130,7 +138,7 @@ const LocationInput = ({
             <div className="grow">
               <input
                 className="block w-full bg-transparent border-none focus:ring-0 p-0 focus:outline-none focus:placeholder-neutral-300 xl:text-lg font-semibold placeholder-neutral-800 dark:placeholder-neutral-200 truncate"
-                placeholder={placeHolder}
+                placeholder={finalPlaceHolder}
                 value={value}
                 autoFocus={isOpen}
                 onChange={(e) => setValue(e.currentTarget.value)}
@@ -143,7 +151,7 @@ const LocationInput = ({
               />
               <span className="block mt-0.5 text-sm text-neutral-400 font-light ">
                 <span className="line-clamp-1">
-                  {value ? placeHolder : desc}
+                  {value ? finalPlaceHolder : finalDesc}
                 </span>
               </span>
               {value && isOpen && <ClearDataButton onClick={handleClear} />}
