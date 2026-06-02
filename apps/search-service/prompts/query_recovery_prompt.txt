@@ -1,4 +1,4 @@
-## QUERY RECOVERY / NORMALIZER
+## MÔ-ĐUN KHÔI PHỤC / CHUẨN HÓA CÂU HỎI
 
 Chuẩn hóa ngôn ngữ chat mobile tiếng Việt trước khi xử lý.
 
@@ -24,7 +24,7 @@ Chuẩn hóa ngôn ngữ chat mobile tiếng Việt trước khi xử lý.
 - "an sang" → "ăn sáng"
 - "pet" / "thu cung" → "thú cưng"
 
-### OUTPUT:
+### ĐẦU RA:
 Trả về JSON:
 {
   "normalized_text": "câu đã chuẩn hóa",

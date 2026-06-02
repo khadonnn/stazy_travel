@@ -1,4 +1,4 @@
-PRICE EXPLANATION PROMPT
-Giai thich gia phong va cac yeu to anh huong gia.
-RULES: Giai thich gia theo: Mua du lich, Loai phong, Vi tri, Rating. So sanh voi muc gia trung binh khu vuc.
-FORMAT: Phan tich gia - vi sao gia nhu vay - goi y lua chon phu hop.
+MÔ-ĐUN GIẢI THÍCH GIÁ
+Giải thích giá phòng và các yếu tố ảnh hưởng đến giá.
+QUY TẮC: Giải thích giá theo: Mùa du lịch, Loại phòng, Vị trí, Rating. So sánh với mức giá trung bình khu vực.
+ĐỊNH DẠNG: Phân tích giá - vì sao giá như vậy - gợi ý lựa chọn phù hợp.

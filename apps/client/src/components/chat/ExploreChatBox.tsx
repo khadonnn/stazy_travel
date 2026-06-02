@@ -49,6 +49,19 @@ type Message = {
   data?: {
     hotels?: HotelResult[];
     bookingLink?: string;
+    tripPlan?: {
+      days?: number | null;
+      nights?: number | null;
+      budget?: number | null;
+      withinBudget?: boolean | null;
+      exceededAmount?: number | null;
+      costEstimation?: {
+        hotel: number;
+        food: number;
+        transport: number;
+        total: number;
+      };
+    };
   };
   suggestions?: string[];
 };
@@ -158,6 +171,7 @@ export default function ExploreChatBox({
                   accessibility: h.accessibility,
                 })),
                 bookingLink: m.data.bookingLink,
+                tripPlan: m.data.tripPlan,
               }
             : undefined,
           suggestions: m.suggestions,
@@ -345,6 +359,7 @@ export default function ExploreChatBox({
             data: {
               hotels: hotels,
               bookingLink: data.data?.booking_link,
+              tripPlan: data.data?.trip_plan,
             },
             suggestions: suggestions.length > 0 ? suggestions : undefined,
           },
@@ -503,6 +518,62 @@ export default function ExploreChatBox({
                     Xem trên bản đồ ({msg.data.hotels.length} kết quả)
                   </button>
                 </>
+              )}
+
+              {msg.sender === "ai" && msg.data?.tripPlan?.costEstimation && (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-950 shadow-sm">
+                  <div className="font-semibold text-amber-900">
+                    Uoc tinh chi phi chuyen di
+                  </div>
+                  <div className="mt-1 grid grid-cols-2 gap-x-3 gap-y-1">
+                    <span>So ngay: {msg.data.tripPlan.days ?? "-"}</span>
+                    <span>So dem: {msg.data.tripPlan.nights ?? "-"}</span>
+                    <span>
+                      Phong:{" "}
+                      {new Intl.NumberFormat("vi-VN").format(
+                        msg.data.tripPlan.costEstimation.hotel,
+                      )}{" "}
+                      VND
+                    </span>
+                    <span>
+                      An uong:{" "}
+                      {new Intl.NumberFormat("vi-VN").format(
+                        msg.data.tripPlan.costEstimation.food,
+                      )}{" "}
+                      VND
+                    </span>
+                    <span>
+                      Di chuyen:{" "}
+                      {new Intl.NumberFormat("vi-VN").format(
+                        msg.data.tripPlan.costEstimation.transport,
+                      )}{" "}
+                      VND
+                    </span>
+                    <span className="font-semibold">
+                      Tong:{" "}
+                      {new Intl.NumberFormat("vi-VN").format(
+                        msg.data.tripPlan.costEstimation.total,
+                      )}{" "}
+                      VND
+                    </span>
+                  </div>
+                  {msg.data.tripPlan.budget != null && (
+                    <div className="mt-2 border-t border-amber-200 pt-2">
+                      <span className="font-medium">
+                        Budget:{" "}
+                        {new Intl.NumberFormat("vi-VN").format(
+                          msg.data.tripPlan.budget,
+                        )}{" "}
+                        VND
+                      </span>
+                      <div>
+                        {msg.data.tripPlan.withinBudget
+                          ? "Nam trong ngan sach"
+                          : `Vuot ngan sach ${new Intl.NumberFormat("vi-VN").format(msg.data.tripPlan.exceededAmount || 0)} VND`}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
 
               {/* Booking link */}

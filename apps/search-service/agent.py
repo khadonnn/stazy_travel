@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import unicodedata
 import psycopg2
 import traceback
 from datetime import datetime, timedelta
@@ -10,6 +11,7 @@ from pydantic import BaseModel, Field
 from sentence_transformers import SentenceTransformer, util
 from dotenv import load_dotenv
 from src.utils.redis_client import get_redis_client
+from src.services.cost_estimation import estimate_trip_cost, build_cost_context
 
 load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -95,7 +97,7 @@ def retrieve_faq_context(user_text, top_k=2):
         print(f"Embedding failed: {e}")
     return ""
 
-def compose_prompt(intent_type, history_text, today, faq_context=""):
+def compose_prompt(intent_type, history_text, today, faq_context="", extra_context=""):
     safety = _load_text_file("safety_prompt.txt")
     personal = f"CONTEXT\nHom nay la {today}.\nLICH SU:\n{history_text}\n"
     intent_map = {
@@ -109,8 +111,11 @@ def compose_prompt(intent_type, history_text, today, faq_context=""):
     module_file = intent_map.get(intent_type, "general_prompt.txt")
     intent_module = _load_text_file(module_file)
     if intent_type == "FAQ":
-        intent_module = intent_module.replace("{faq_context}", faq_context or "Khong co thong tin FAQ.")
-    return f"{safety}\n\n{personal}\n\n{intent_module}"
+        intent_module = intent_module.replace("{faq_context}", faq_context or "Không có thông tin FAQ.")
+    prompt = f"{safety}\n\n{personal}\n\n{intent_module}"
+    if extra_context:
+        prompt = f"{prompt}\n\n{extra_context}"
+    return prompt
 
 # --- QUERY NORMALIZER ---
 VIETNAMESE_ABBR = {
@@ -123,6 +128,12 @@ VIETNAMESE_ABBR = {
 }
 PRICE_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*(tr|trieu|m)", re.IGNORECASE)
 PRICE_K_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*(k|ngan)", re.IGNORECASE)
+ITINERARY_DAYS_RE = re.compile(r"\b(\d+)\s*(?:ngay|day)\b", re.IGNORECASE)
+ITINERARY_NIGHTS_RE = re.compile(r"\b(\d+)\s*(?:dem|night)\b", re.IGNORECASE)
+ITINERARY_BUDGET_RE = re.compile(
+    r"(?:budget|ngan sach|chi phi|tong chi phi|cho|duoi|khong qua|toi da)\D{0,20}(\d{3,})",
+    re.IGNORECASE,
+)
 
 def normalize_query(text):
     n = text.lower().strip()
@@ -145,6 +156,9 @@ class RoutingResult(BaseModel):
     normalized_text: str
     intent_type: str
     location: Optional[str] = None
+    budget: Optional[int] = None
+    trip_days: Optional[int] = None
+    trip_nights: Optional[int] = None
     price_min: Optional[int] = None
     price_max: Optional[int] = None
     dates: Optional[DateRange] = None
@@ -167,6 +181,49 @@ def _to_vnd(value):
     if value is None: return None
     return value * 1000000 if value < 1000 else value
 
+def _strip_accents(text):
+    if not text:
+        return ""
+    normalized = unicodedata.normalize("NFD", str(text))
+    return "".join(ch for ch in normalized if unicodedata.category(ch) != "Mn").lower()
+
+def _should_force_hotel_search(user_text, routing):
+    normalized_text = _strip_accents(user_text or routing.normalized_text or "")
+    hotel_query = bool(re.search(r"\b(khach san|hotel|resort)\b", normalized_text))
+    search_intent = bool(re.search(r"\b(tim|tìm|search|find|loc|lọc|xem)\b", normalized_text))
+    comparison_query = bool(re.search(r"\b(so sanh|so sánh|tot nhat|tốt nhất|re nhat|rẻ nhất|cai nao|khach nao)\b", normalized_text))
+    has_structured_filters = routing.location or routing.price_min is not None or routing.price_max is not None or routing.semantic_query
+    return hotel_query and has_structured_filters and search_intent and not comparison_query
+
+def _extract_location_price_from_text(normalized_text: str):
+    # normalized_text is expected to be output of normalize_query (numbers expanded)
+    loc = None
+    price = None
+    # find a large number (VND) like 1000000
+    m = re.search(r"(\d{4,})", normalized_text)
+    if m:
+        try:
+            price = int(m.group(1))
+        except:
+            price = None
+    # try to capture location appearing between keywords and the price
+    # examples: "tim khach san nha trang 1000000" or "tim khach san o nha trang 1000000"
+    if price:
+        before = normalized_text[: m.start()]
+        # look for 'khach san' and take following words
+        mloc = re.search(r"khach san(?: o| tai)?\s+([a-z\u00C0-\u017F0-9\s]{2,40})$", before)
+        if not mloc:
+            # alternative: 'tim .* khach san <loc>'
+            mloc = re.search(r"tim(?: .*?)khach san(?: o| tai)?\s+([a-z\u00C0-\u017F0-9\s]{2,40})$", before)
+        if mloc:
+            loc = mloc.group(1).strip()
+    return loc, price
+
+def _location_match_sql(use_unaccent: bool):
+    if use_unaccent:
+        return "(unaccent(address) ILIKE unaccent(%s) OR unaccent(title) ILIKE unaccent(%s))"
+    return "(address ILIKE %s OR title ILIKE %s)"
+
 def search_hotels_rag(intent_obj):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -175,12 +232,14 @@ def search_hotels_rag(intent_obj):
     # For CONSULTATION/RECOMMENDATION/LOCAL_GUIDE/ITINERARY: prioritize location over target_hotel_name
     comparison_intents = {"CONSULTATION", "RECOMMENDATION", "LOCAL_GUIDE", "ITINERARY"}
     print(f"[search_hotels_rag] intent={intent_obj.intent_type} | location={intent_obj.location} | target_hotel={intent_obj.target_hotel_name}")
-    if intent_obj.target_hotel_name and intent_obj.intent_type not in comparison_intents:
+    has_structured_filters = intent_obj.location or intent_obj.price_min is not None or intent_obj.price_max is not None
+    use_unaccent = bool(intent_obj.location)
+    if intent_obj.target_hotel_name and intent_obj.intent_type not in comparison_intents and not has_structured_filters:
         query += " AND title ILIKE %s"
         params.append(f"%{intent_obj.target_hotel_name}%")
     else:
         if intent_obj.location:
-            query += " AND (address ILIKE %s OR title ILIKE %s)"
+            query += " AND " + _location_match_sql(use_unaccent)
             params.extend([f"%{intent_obj.location}%", f"%{intent_obj.location}%"])
         if intent_obj.price_min is not None:
             query += " AND price >= %s"
@@ -197,9 +256,51 @@ def search_hotels_rag(intent_obj):
             query += " ORDER BY price ASC LIMIT 5"
     else:
         query += " ORDER BY price ASC LIMIT 5"
+
+    def _fallback_rows_without_unaccent():
+        fallback_query = 'SELECT id, title, price, address, "reviewStar", "featuredImage", slug, map, description FROM hotels WHERE 1=1'
+        fallback_params = []
+        if intent_obj.price_min is not None:
+            fallback_query += " AND price >= %s"
+            fallback_params.append(_to_vnd(intent_obj.price_min))
+        if intent_obj.price_max is not None:
+            fallback_query += " AND price <= %s"
+            fallback_params.append(_to_vnd(intent_obj.price_max))
+        cur.execute(fallback_query, tuple(fallback_params))
+        fallback_rows = cur.fetchall()
+        if not intent_obj.location:
+            return fallback_rows
+
+        location_key = _strip_accents(intent_obj.location)
+        matched_rows = []
+        for rw in fallback_rows:
+            searchable_text = _strip_accents(f"{rw[1] or ''} {rw[3] or ''}")
+            if location_key in searchable_text or searchable_text in location_key:
+                matched_rows.append(rw)
+        return matched_rows or fallback_rows
+
     try:
         cur.execute(query, tuple(params))
         rows = cur.fetchall()
+        if not rows and intent_obj.location:
+            try:
+                rows = _fallback_rows_without_unaccent()
+            except Exception:
+                conn.rollback()
+                rows = _fallback_rows_without_unaccent()
+    except Exception as e:
+        # If unaccent() is not available or the primary query fails for any reason,
+        # fall back to a plain price-filtered search and Python-side accent-insensitive match.
+        print(f"SQL Error: {e}")
+        try:
+            conn.rollback()
+        except:
+            pass
+        try:
+            rows = _fallback_rows_without_unaccent()
+        except Exception as fallback_error:
+            print(f"SQL Fallback Error: {fallback_error}")
+            return []
         results = []
         for rw in rows:
             map_data = None
@@ -213,9 +314,6 @@ def search_hotels_rag(intent_obj):
                 "map": map_data, "description": rw[8] if len(rw) > 8 and rw[8] else ""})
         print(f"Found {len(results)} hotels")
         return results
-    except Exception as e:
-        print(f"SQL Error: {e}")
-        return []
     finally:
         cur.close(); conn.close()
 
@@ -237,6 +335,47 @@ def _build_hotel_context(hotels):
         lines.append(f"{i}. {h['title']} - gia {price_fmt}/dem{rating_str} - dia chi: {h['address']}")
     return "\n".join(lines)
 
+def _resolve_itinerary_duration(routing):
+    trip_days = routing.trip_days
+    trip_nights = routing.trip_nights
+    if trip_days is None and trip_nights is not None:
+        trip_days = trip_nights + 1
+    if trip_nights is None and trip_days is not None:
+        trip_nights = max(trip_days - 1, 0)
+    return trip_days, trip_nights
+
+def _resolve_itinerary_budget(routing):
+    if routing.budget is not None:
+        return routing.budget
+    if routing.intent_type == "ITINERARY" and routing.price_max is not None:
+        return routing.price_max
+    return None
+
+def _fallback_itinerary_fields(routing):
+    if routing.intent_type != "ITINERARY":
+        return routing
+
+    normalized_text = routing.normalized_text or ""
+
+    if routing.trip_days is None:
+        match = ITINERARY_DAYS_RE.search(normalized_text)
+        if match:
+                        routing.trip_days = int(match.group(1))
+
+    if routing.trip_nights is None:
+        match = ITINERARY_NIGHTS_RE.search(normalized_text)
+        if match:
+                        routing.trip_nights = int(match.group(1))
+
+    if routing.budget is None:
+        match = ITINERARY_BUDGET_RE.search(normalized_text)
+        if match:
+            routing.budget = int(match.group(1))
+        elif routing.price_max is not None and re.search(r"\b(duoi|khong qua|toi da|budget|ngan sach)\b", normalized_text):
+            routing.budget = routing.price_max
+
+    return routing
+
 # --- ENTERPRISE ORCHESTRATOR PIPELINE ---
 def run_agent_logic(user_text, user_id):
     today = datetime.now().strftime("%Y-%m-%d (%A)")
@@ -252,6 +391,7 @@ def run_agent_logic(user_text, user_id):
 2. PHAN LOAI intent va TRICH XUAT tham so.
 INTENTS: SEARCH, BOOK, FAQ, CONSULTATION, GENERAL, LOCAL_GUIDE, MANAGE_BOOKING, RECOMMENDATION, ITINERARY, REVIEW_SUMMARY, PRICE_EXPLANATION, UPSELL
 GIA: trieu=1000000, tren X->price_min, duoi X->price_max, LUON VND
+ITINERARY: budget la tong ngan sach chuyen di; price_min/price_max chi dung cho loc gia phong/khach san moi dem. Trich xuat trip_days va trip_nights khi nguoi dung noi so ngay/so dem.
 Neu cau co nhieu y -> intent_type = y chinh, secondary_intent = y phu.
 LICH SU: {history_text}"""
 
@@ -272,13 +412,26 @@ LICH SU: {history_text}"""
             routing = RoutingResult(normalized_text=user_text, intent_type="GENERAL")
         routing.normalized_text = normalize_query(routing.normalized_text)
         routing.intent_type = routing.intent_type if routing.intent_type in VALID_INTENTS else "GENERAL"
+        routing = _fallback_itinerary_fields(routing)
+        # If user explicitly asked for hotels + a numeric price in text, force SEARCH and try to extract fields
+        norm_text = routing.normalized_text or ""
+        explicit_price_present = True if re.search(r"(\d{4,})", norm_text) else False
+        explicit_hotel_word = True if re.search(r"\b(khach san|hotel|resort)\b", _strip_accents(norm_text)) else False
+        if (routing.intent_type != "SEARCH") and ( _should_force_hotel_search(user_text, routing) or (explicit_hotel_word and explicit_price_present) ):
+            # attempt to extract missing location/price from normalized text
+            loc, price = _extract_location_price_from_text(norm_text)
+            if not routing.location and loc:
+                routing.location = loc
+            if routing.price_max is None and price:
+                routing.price_max = price
+            routing.intent_type = "SEARCH"
         print(f"Router: {routing.intent_type} | {routing.location} | min:{routing.price_min} max:{routing.price_max}")
     except Exception as e:
         em = str(e).lower()
         if "timeout" in em or "timed out" in em:
-            return {"agent_response": "He thong qua tai, thu lai sau.", "intent": {"intent_type": "GENERAL"}, "data": {"hotels": [], "booking_link": None}}
+            return {"agent_response": "Hệ thống quá tải, vui lòng thử lại sau.", "intent": {"intent_type": "GENERAL"}, "data": {"hotels": [], "booking_link": None}}
         if "rate" in em or "429" in str(e):
-            return {"agent_response": "Vuot gioi han, cho 10 giay.", "intent": {"intent_type": "GENERAL"}, "data": {"hotels": [], "booking_link": None}}
+            return {"agent_response": "Vượt giới hạn, vui lòng chờ 10 giây.", "intent": {"intent_type": "GENERAL"}, "data": {"hotels": [], "booking_link": None}}
         routing = RoutingResult(normalized_text=user_text, intent_type="GENERAL")
 
     response = {"agent_response": "", "intent": {"intent_type": routing.intent_type}, "data": {"hotels": [], "booking_link": None}}
@@ -297,7 +450,7 @@ LICH SU: {history_text}"""
             if routing.price_min and routing.price_max: pt = f" tu {_to_vnd(routing.price_min):,.0f}d den {_to_vnd(routing.price_max):,.0f}d"
             elif routing.price_min: pt = f" tren {_to_vnd(routing.price_min):,.0f}d"
             elif routing.price_max: pt = f" duoi {_to_vnd(routing.price_max):,.0f}d"
-            response["agent_response"] = f"Tiec qua, minh khong tim thay phong nao o {lt}{pt}."
+            response["agent_response"] = f"Tiếc quá, mình không tìm thấy phòng nào ở {lt}{pt}."
         else:
             response["agent_response"] = f"Minh tim thay {len(hotels)} lua chon phu hop:"
             response["data"]["hotels"] = hotels
@@ -308,7 +461,7 @@ LICH SU: {history_text}"""
         if routing.guests_adults is None: mi.append("so luong nguoi")
         if mi:
             join_str = " va ".join(mi)
-            response["agent_response"] = f"De minh dat phong giup, ban cho minh biet **{join_str}** nhe?"
+            response["agent_response"] = f"Để mình đặt phòng giúp, bạn cho mình biết **{join_str}** nhé?"
         else:
             fh = search_hotels_rag(routing)
             if fh:
@@ -318,11 +471,11 @@ LICH SU: {history_text}"""
                     try: routing.dates.end = (datetime.strptime(routing.dates.start, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
                     except: pass
                 guests = routing.guests_adults or 2
-                response["agent_response"] = f"Da tao don cho **{top['title']}**.\nNgay: {routing.dates.start} -> {routing.dates.end} ({guests} khach)."
+                response["agent_response"] = f"Đã tạo đơn cho **{top['title']}**.\nNgày: {routing.dates.start} -> {routing.dates.end} ({guests} khách)."
                 response["data"]["hotels"] = [top]
                 response["data"]["booking_link"] = create_booking_link(ident, routing.dates, routing.guests_adults)
             else:
-                response["agent_response"] = f"Xin loi, khong tim thay **{routing.target_hotel_name}**."
+                response["agent_response"] = f"Xin lỗi, không tìm thấy **{routing.target_hotel_name}**."
 
     elif routing.intent_type == "CONSULTATION":
         # Search for relevant hotels when location or context is available
@@ -353,10 +506,10 @@ LICH SU: {history_text}"""
         except:
             for msg in reversed(chat_history):
                 if "Da goi y cac khach san:" in msg.get("content", ""):
-                    response["agent_response"] = "Dua tren danh sach da goi y:\nRating cao nhat -> Trai nghiem cao cap.\nGia thap nhat -> Phu hop ngan sach.\nBan muon dat cai nao?"
+                    response["agent_response"] = "Dựa trên danh sách đã gợi ý:\nRating cao nhất -> Trải nghiệm cao cấp.\nGiá thấp nhất -> Phù hợp ngân sách.\nBạn muốn đặt cái nào?"
                     break
             else:
-                response["agent_response"] = "Minh chua co danh sach KS de tu van. Ban muon tim o dau?"
+                response["agent_response"] = "Mình chưa có danh sách khách sạn để tư vấn. Bạn muốn tìm ở đâu?"
         if consultation_hotels:
             response["data"]["hotels"] = consultation_hotels
 
@@ -372,7 +525,7 @@ LICH SU: {history_text}"""
         try:
             response["agent_response"] = _llm_generate(prompt, routing.normalized_text)
         except:
-            response["agent_response"] = ai_content if ai_content else "Minh co the giup ban tim phong. Ban can gi?"
+            response["agent_response"] = ai_content if ai_content else "Mình có thể giúp bạn tìm phòng. Bạn cần gì?"
 
     elif routing.intent_type == "LOCAL_GUIDE":
         # Search for hotels in the area for map display
@@ -384,7 +537,7 @@ LICH SU: {history_text}"""
         try:
             response["agent_response"] = _llm_generate(prompt, routing.normalized_text)
         except:
-            response["agent_response"] = "De goi y dia diem quanh khach san, ban cho minh biet khu vuc ban dang xem nhe!"
+            response["agent_response"] = "Để gợi ý địa điểm quanh khách sạn, bạn cho mình biết khu vực bạn đang xem nhé!"
         if local_hotels:
             response["data"]["hotels"] = local_hotels
 
@@ -393,7 +546,7 @@ LICH SU: {history_text}"""
         try:
             response["agent_response"] = _llm_generate(prompt, routing.normalized_text)
         except:
-            response["agent_response"] = "De quan ly don dat phong, ban vao muc Don dat phong trong tai khoan nhe."
+            response["agent_response"] = "Để quản lý đơn đặt phòng, bạn vào mục Đơn đặt phòng trong tài khoản nhé."
 
     elif routing.intent_type == "RECOMMENDATION":
         # Search for relevant hotels when location or context is available
@@ -412,8 +565,25 @@ LICH SU: {history_text}"""
     elif routing.intent_type == "ITINERARY":
         # Search for hotels in the area for map display
         itinerary_hotels = search_hotels_rag(routing)
+        itinerary_days, itinerary_nights = _resolve_itinerary_duration(routing)
+        itinerary_budget = _resolve_itinerary_budget(routing)
+        reference_hotel = itinerary_hotels[0] if itinerary_hotels else None
+        cost_estimation = estimate_trip_cost(
+            reference_hotel["price"] if reference_hotel else None,
+            itinerary_days,
+            itinerary_nights,
+            adults=routing.guests_adults or 2,
+        )
+        cost_context = build_cost_context(
+            cost_estimation,
+            budget=itinerary_budget,
+            trip_days=itinerary_days,
+            trip_nights=itinerary_nights,
+            adults=routing.guests_adults or 2,
+            hotel_name=reference_hotel["title"] if reference_hotel else None,
+        )
         hotel_ctx = _build_hotel_context(itinerary_hotels)
-        prompt = compose_prompt("ITINERARY", history_text, today)
+        prompt = compose_prompt("ITINERARY", history_text, today, extra_context=cost_context)
         if hotel_ctx:
             prompt = f"{prompt}\n\n{hotel_ctx}"
         try:
@@ -422,6 +592,14 @@ LICH SU: {history_text}"""
             response["agent_response"] = "De len lich trinh, ban cho minh biet: di may ngay? Budget khoang bao nhieu?"
         if itinerary_hotels:
             response["data"]["hotels"] = itinerary_hotels
+        response["data"]["trip_plan"] = {
+            "days": itinerary_days,
+            "nights": itinerary_nights,
+            "budget": itinerary_budget,
+            "within_budget": None if itinerary_budget is None else cost_estimation["total"] <= itinerary_budget,
+            "exceeded_amount": None if itinerary_budget is None else max(cost_estimation["total"] - itinerary_budget, 0),
+            "cost_estimation": cost_estimation,
+        }
 
     else:
         # For GENERAL and other intents, also try to search if location is present
@@ -435,7 +613,7 @@ LICH SU: {history_text}"""
         try:
             response["agent_response"] = _llm_generate(prompt, routing.normalized_text)
         except:
-            response["agent_response"] = ai_content if ai_content else "Minh co the giup ban tim phong. Ban can gi?"
+            response["agent_response"] = ai_content if ai_content else "Mình có thể giúp bạn tìm phòng. Bạn cần gì?"
         if other_hotels:
             response["data"]["hotels"] = other_hotels
 

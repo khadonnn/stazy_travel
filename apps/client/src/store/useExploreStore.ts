@@ -25,6 +25,19 @@ export type ChatMessage = {
   data?: {
     hotels?: ExploreHotel[];
     bookingLink?: string;
+    tripPlan?: {
+      days?: number | null;
+      nights?: number | null;
+      budget?: number | null;
+      withinBudget?: boolean | null;
+      exceededAmount?: number | null;
+      costEstimation?: {
+        hotel: number;
+        food: number;
+        transport: number;
+        total: number;
+      };
+    };
   };
   suggestions?: string[];
 };
