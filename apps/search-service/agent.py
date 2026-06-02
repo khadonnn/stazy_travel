@@ -2,6 +2,7 @@ import os
 import json
 import re
 import unicodedata
+from difflib import SequenceMatcher
 import psycopg2
 import traceback
 from datetime import datetime, timedelta
@@ -47,6 +48,29 @@ def get_chat_history(user_id):
         key = f"chat:history:{user_id}"
         return [json.loads(msg) for msg in r.lrange(key, 0, -1)]
     except Exception: return []
+
+def save_last_hotels(user_id, hotels):
+    if not REDIS_AVAILABLE:
+        return
+    try:
+        key = f"chat:last_hotels:{user_id}"
+        r.set(key, json.dumps(hotels or []), ex=HISTORY_TTL)
+    except Exception:
+        pass
+
+def get_last_hotels(user_id):
+    if not REDIS_AVAILABLE:
+        return []
+    try:
+        key = f"chat:last_hotels:{user_id}"
+        raw = r.get(key)
+        if not raw:
+            return []
+        if isinstance(raw, bytes):
+            raw = raw.decode("utf-8")
+        return json.loads(raw)
+    except Exception:
+        return []
 
 # --- MODULAR PROMPT LOADER ---
 PROMPTS_DIR = os.path.join(os.path.dirname(__file__), "prompts")
@@ -165,6 +189,7 @@ class RoutingResult(BaseModel):
     guests_adults: Optional[int] = None
     semantic_query: Optional[str] = None
     target_hotel_name: Optional[str] = None
+    hotel_id: Optional[int] = None
     secondary_intent: Optional[str] = None
 
 # --- HELPERS ---
@@ -223,6 +248,65 @@ def _location_match_sql(use_unaccent: bool):
     if use_unaccent:
         return "(unaccent(address) ILIKE unaccent(%s) OR unaccent(title) ILIKE unaccent(%s))"
     return "(address ILIKE %s OR title ILIKE %s)"
+
+def _normalize_hotel_ref(text):
+    return re.sub(r"\s+", " ", _strip_accents(text or "").strip())
+
+def _pick_hotel_from_last_results(user_text, last_hotels):
+    if not last_hotels:
+        return None
+
+    normalized_text = _normalize_hotel_ref(user_text)
+
+    if re.search(r"\b(dau tien|first|so 1|số 1|thu 1|thứ 1)\b", normalized_text):
+        return last_hotels[0]
+    if re.search(r"\b(cuoi cung|last|cuoi|so cuoi|số cuối)\b", normalized_text):
+        return last_hotels[-1]
+
+    index_match = re.search(r"\b(?:so|số|thu|thứ)\s*(\d+)\b", normalized_text)
+    if index_match:
+        requested_index = int(index_match.group(1)) - 1
+        if 0 <= requested_index < len(last_hotels):
+            return last_hotels[requested_index]
+
+    best_score = 0.0
+    best_hotel = None
+    query_tokens = set(normalized_text.split())
+
+    for hotel in last_hotels:
+        title = _normalize_hotel_ref(hotel.get("title"))
+        address = _normalize_hotel_ref(hotel.get("address"))
+        candidate_text = f"{title} {address}".strip()
+        if not candidate_text:
+            continue
+
+        score = SequenceMatcher(None, normalized_text, candidate_text).ratio()
+        if query_tokens:
+            candidate_tokens = set(candidate_text.split())
+            token_overlap = len(query_tokens & candidate_tokens) / len(query_tokens)
+            score = max(score, token_overlap)
+
+        if normalized_text in candidate_text or candidate_text in normalized_text:
+            score = max(score, 1.0)
+
+        if score > best_score:
+            best_score = score
+            best_hotel = hotel
+
+    return best_hotel if best_score >= 0.45 else None
+
+def _resolve_recent_hotel_reference(user_text, user_id):
+    last_hotels = get_last_hotels(user_id)
+    if not last_hotels:
+        return None
+
+    normalized_text = _normalize_hotel_ref(user_text)
+    booking_hint = bool(re.search(r"\b(dat|book|đặt|chon|chọn|phong|phòng|cai|cái)\b", normalized_text))
+    short_reference = len(normalized_text.split()) <= 4
+    if not booking_hint and not short_reference:
+        return None
+
+    return _pick_hotel_from_last_results(user_text, last_hotels)
 
 def search_hotels_rag(intent_obj):
     conn = get_db_connection()
@@ -384,16 +468,27 @@ def run_agent_logic(user_text, user_id):
     for msg in chat_history:
         role = "User" if msg["role"] == "user" else "AI"
         history_text += f"{role}: {msg['content']}\n"
-
+    ai_content = None
+    resolved_hotel = _resolve_recent_hotel_reference(user_text, user_id)
+    
+    if resolved_hotel:
+        print(f"🎯 [State Guard] Bắt được intent BOOK từ Redis -> {resolved_hotel['title']}")
+        routing = RoutingResult(
+            normalized_text=normalize_query(user_text),
+            intent_type="BOOK",
+            target_hotel_name=resolved_hotel["title"],
+            hotel_id=resolved_hotel["id"]
+        )
+    else:
     # STEP 1: Query Normalizer + Intent Router (SINGLE LLM CALL)
-    route_prompt = f"""Ban la AI Router cho Stazy. Thuc hien 2 viec:
-1. CHUAN HOA cau hoi (sua viet tat: ks->khach san, vtau->Vung Tau, 2tr->2000000)
-2. PHAN LOAI intent va TRICH XUAT tham so.
-INTENTS: SEARCH, BOOK, FAQ, CONSULTATION, GENERAL, LOCAL_GUIDE, MANAGE_BOOKING, RECOMMENDATION, ITINERARY, REVIEW_SUMMARY, PRICE_EXPLANATION, UPSELL
-GIA: trieu=1000000, tren X->price_min, duoi X->price_max, LUON VND
-ITINERARY: budget la tong ngan sach chuyen di; price_min/price_max chi dung cho loc gia phong/khach san moi dem. Trich xuat trip_days va trip_nights khi nguoi dung noi so ngay/so dem.
-Neu cau co nhieu y -> intent_type = y chinh, secondary_intent = y phu.
-LICH SU: {history_text}"""
+        route_prompt = f"""Ban la AI Router cho Stazy. Thuc hien 2 viec:
+        1. CHUAN HOA cau hoi (sua viet tat: ks->khach san, vtau->Vung Tau, 2tr->2000000)
+        2. PHAN LOAI intent va TRICH XUAT tham so.
+        INTENTS: SEARCH, BOOK, FAQ, CONSULTATION, GENERAL, LOCAL_GUIDE, MANAGE_BOOKING, RECOMMENDATION, ITINERARY, REVIEW_SUMMARY, PRICE_EXPLANATION, UPSELL
+        GIA: trieu=1000000, tren X->price_min, duoi X->price_max, LUON VND
+        ITINERARY: budget la tong ngan sach chuyen di; price_min/price_max chi dung cho loc gia phong/khach san moi dem. Trich xuat trip_days va trip_nights khi nguoi dung noi so ngay/so dem.
+        Neu cau co nhieu y -> intent_type = y chinh, secondary_intent = y phu.
+        LICH SU: {history_text}"""
 
     ai_content = None
     try:
@@ -454,8 +549,19 @@ LICH SU: {history_text}"""
         else:
             response["agent_response"] = f"Minh tim thay {len(hotels)} lua chon phu hop:"
             response["data"]["hotels"] = hotels
+            save_last_hotels(user_id, hotels)
 
     elif routing.intent_type == "BOOK":
+        recent_hotel = None
+        if not routing.target_hotel_name or len(_normalize_hotel_ref(routing.target_hotel_name)) <= 3:
+            recent_hotel = _resolve_recent_hotel_reference(user_text, user_id)
+        if recent_hotel:
+            routing.target_hotel_name = recent_hotel.get("title") or routing.target_hotel_name
+            routing.hotel_id = recent_hotel.get("id") or routing.hotel_id
+            if not routing.location and recent_hotel.get("address"):
+                address_text = str(recent_hotel.get("address"))
+                routing.location = address_text.split(",")[-1].strip() if "," in address_text else address_text.strip()
+
         mi = []
         if not routing.dates or not routing.dates.start: mi.append("ngay check-in")
         if routing.guests_adults is None: mi.append("so luong nguoi")
@@ -463,7 +569,28 @@ LICH SU: {history_text}"""
             join_str = " va ".join(mi)
             response["agent_response"] = f"Để mình đặt phòng giúp, bạn cho mình biết **{join_str}** nhé?"
         else:
-            fh = search_hotels_rag(routing)
+            fh = []
+            if routing.hotel_id is not None:
+                try:
+                    conn = get_db_connection()
+                    cur = conn.cursor()
+                    cur.execute('SELECT id, title, price, address, "reviewStar", "featuredImage", slug, map, description FROM hotels WHERE id = %s LIMIT 1', (routing.hotel_id,))
+                    row = cur.fetchone()
+                    if row:
+                        map_data = None
+                        if len(row) > 7 and row[7]:
+                            try: map_data = json.loads(row[7]) if isinstance(row[7], str) else row[7]
+                            except: pass
+                        fh = [{"id": row[0], "title": row[1], "price": float(row[2]), "address": row[3],
+                            "rating": float(row[4]) if row[4] else 0,
+                            "image": row[5] if row[5] else "https://placehold.co/600x400?text=No+Image",
+                            "slug": row[6] if len(row) > 6 and row[6] else str(row[0]),
+                            "map": map_data, "description": row[8] if len(row) > 8 and row[8] else ""}]
+                    cur.close(); conn.close()
+                except Exception as e:
+                    print(f"[BOOK] Fallback hotel_id lookup error: {e}")
+            if not fh:
+                fh = search_hotels_rag(routing)
             if fh:
                 top = fh[0]
                 ident = top.get("slug") or top.get("id")
