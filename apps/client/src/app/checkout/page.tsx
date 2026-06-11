@@ -123,7 +123,7 @@ function CheckoutPage() {
     return (
       <div className="flex h-screen w-full items-center justify-center flex-col gap-4">
         <Loader2 className="animate-spin w-10 h-10 text-green-600" />
-        <p className="text-gray-500">Đang chuẩn bị đơn hàng từ AI...</p>
+        <p className="text-gray-500">Đang chuẩn bị đơn đặt phòng từ AI...</p>
       </div>
     );
   }

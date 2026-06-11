@@ -182,7 +182,7 @@ async def search_text(data: dict):
 
 # C. GỢI Ý KHÁCH SẠN CHO NGƯỜI DÙNG (RECOMMENDATION)
 @app.get("/recommend/{user_id}")
-async def recommend(user_id: str, strategy: str = "svd", top_k: int = 5, force_refresh: bool = False, destination: str = None, confidence: str = None):
+async def recommend(user_id: str, strategy: str = "svd", top_k: int = 5, force_refresh: bool = False, destination: str = None, confidence: str = None, chip_signal: str = None):
     """
     Gợi ý dựa trên hành vi tương tác.
     Query params:
@@ -191,6 +191,7 @@ async def recommend(user_id: str, strategy: str = "svd", top_k: int = 5, force_r
       - force_refresh: bypass cache (default=false)
       - destination: session destination hint from client (overrides detect_intent)
       - confidence: intent confidence from client (0.0-1.0)
+      - chip_signal: filter signal from insight chip (e.g. amenity:pool, tag:romantic, suitable:COUPLE)
     """
     try:
         # If force_refresh, clear all cached results for this user
@@ -206,12 +207,15 @@ async def recommend(user_id: str, strategy: str = "svd", top_k: int = 5, force_r
         external_confidence = float(confidence) if confidence else None
         if external_dest:
             print(f"[recommend] Client intent hint: destination=\"{external_dest}\" confidence={external_confidence}")
+        if chip_signal:
+            print(f"[recommend] Chip signal: \"{chip_signal}\"")
         
         results = get_recommendations_for_user(
             user_id, "mock_interactions.json", HOTEL_VECTORS,
             top_k=top_k, strategy=strategy,
             external_destination=external_dest,
             external_confidence=external_confidence,
+            chip_signal=chip_signal,
         )
 
         if not results:

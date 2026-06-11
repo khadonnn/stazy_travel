@@ -1311,6 +1311,54 @@ STRATEGY_MAP = {
 }
 
 
+def apply_chip_signal_filter(candidates: list, chip_signal: str) -> list:
+    """
+    Filter hotels based on chip signal.
+    Supported signal formats:
+      - amenity:pool      → hotels with amenity "pool"
+      - tag:romantic      → hotels with tag "romantic"
+      - suitable:COUPLE   → hotels with suitableFor "COUPLE"
+    """
+    if not chip_signal or not candidates:
+        return candidates
+
+    parts = chip_signal.split(':', 1)
+    if len(parts) != 2:
+        print(f"[chip-filter] ⚠️ Invalid chip signal format: \"{chip_signal}\"")
+        return candidates
+
+    signal_type, signal_value = parts[0], parts[1]
+    print(f"[chip-filter] Filtering by {signal_type}=\"{signal_value}\" on {len(candidates)} candidates")
+
+    if signal_type == 'amenity':
+        filtered = [
+            h for h in candidates
+            if any(a.lower().replace(' ', '_') == signal_value.lower() for a in (h.get('amenities', []) or []))
+        ]
+    elif signal_type == 'tag':
+        filtered = [
+            h for h in candidates
+            if any(t.lower().strip() == signal_value.lower().strip() for t in (h.get('tags', []) or []))
+        ]
+    elif signal_type == 'suitable':
+        filtered = [
+            h for h in candidates
+            if any(s.upper() == signal_value.upper() for s in (h.get('suitableFor', []) or []))
+        ]
+    else:
+        print(f"[chip-filter] ⚠️ Unknown chip signal type: \"{signal_type}\"")
+        return candidates
+
+    print(f"[chip-filter] {signal_type}=\"{signal_value}\": {len(filtered)}/{len(candidates)} hotels matched")
+    
+    # If filter produces empty results, return all candidates (graceful fallback)
+    if not filtered:
+        print(f"[chip-filter] ⚠️ No hotels matched — returning all candidates (fallback)")
+        return candidates
+
+    return filtered
+
+
 def get_recommendations_for_user(
     user_id: str,
     interactions_file_ignored,
@@ -1319,6 +1367,7 @@ def get_recommendations_for_user(
     strategy: str = 'svd',
     external_destination: str = None,
     external_confidence: float = None,
+    chip_signal: str = None,
 ) -> list:
     """
     Session-aware recommendation pipeline:
@@ -1428,6 +1477,15 @@ def get_recommendations_for_user(
             )
         
         print(f"[recommend] Total candidates: {len(candidates)}")
+
+        # =========================================================
+        # STEP 2.5: Apply chip signal filter (if provided)
+        # =========================================================
+        if chip_signal:
+            candidates = apply_chip_signal_filter(candidates, chip_signal)
+            if not candidates:
+                print("[chip-filter] ⚠️ No candidates after chip filter — returning fallback results")
+            print(f"[recommend] After chip filter: {len(candidates)} candidates")
 
         # =========================================================
         # STEP 3: Generate scored candidates using strategy

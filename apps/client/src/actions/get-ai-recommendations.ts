@@ -33,6 +33,7 @@ type CacheEntry = {
   intentBucket: number;
   intentDestination: string;
   intentConfidence: number;
+  chipSignal?: string;
 };
 
 const resultCache = new Map<string, CacheEntry>();
@@ -43,8 +44,10 @@ function getCacheKey(
   destination: string | null,
   fingerprint: string,
   intentBucket: number,
+  chipSignal?: string,
 ): string {
-  return `${userId}::${normalizeDest(destination || "none")}::${fingerprint}::${intentBucket}`;
+  const chipPart = chipSignal ? `::${chipSignal}` : "";
+  return `${userId}::${normalizeDest(destination || "none")}::${fingerprint}::${intentBucket}${chipPart}`;
 }
 
 function getCachedResult(
@@ -53,8 +56,15 @@ function getCachedResult(
   fingerprint: string,
   intentBucket: number,
   intentSnapshot: { destination: string | null; confidence: number },
+  chipSignal?: string,
 ): AIRecommendationResult | null {
-  const key = getCacheKey(userId, destination, fingerprint, intentBucket);
+  const key = getCacheKey(
+    userId,
+    destination,
+    fingerprint,
+    intentBucket,
+    chipSignal,
+  );
   const entry = resultCache.get(key);
   if (!entry) {
     console.log(
@@ -119,13 +129,20 @@ function setCachedResult(
   intentBucket: number,
   intentSnapshot: { destination: string | null; confidence: number },
   result: AIRecommendationResult,
+  chipSignal?: string,
 ) {
   // NEVER cache empty results
   if (!result.hotels || result.hotels.length === 0) {
     console.log(`[cache] SKIP caching — empty result`);
     return;
   }
-  const key = getCacheKey(userId, destination, fingerprint, intentBucket);
+  const key = getCacheKey(
+    userId,
+    destination,
+    fingerprint,
+    intentBucket,
+    chipSignal,
+  );
   resultCache.set(key, {
     result,
     timestamp: Date.now(),
@@ -135,6 +152,7 @@ function setCachedResult(
       intentSnapshot.destination || destination || "none",
     ),
     intentConfidence: intentSnapshot.confidence || 0,
+    chipSignal,
   });
 }
 
@@ -883,6 +901,7 @@ export async function getAIRecommendations(
           destination: sessionDestination,
           confidence: Number(intent?.confidence || 0),
         },
+        chipSignal,
       );
       if (cached) {
         console.log(`[recommend] === CACHED RESULT (served) ===`);
@@ -906,11 +925,14 @@ export async function getAIRecommendations(
       const confParam = intent?.confidence
         ? `&confidence=${intent.confidence.toFixed(2)}`
         : "";
+      const chipParam = chipSignal
+        ? `&chip_signal=${encodeURIComponent(chipSignal)}`
+        : "";
       console.log(
-        `[recommend] → Calling search service with destination="${sessionDestination || "none"}" confidence=${intent?.confidence?.toFixed(2) || "0"}`,
+        `[recommend] → Calling search service with destination="${sessionDestination || "none"}" confidence=${intent?.confidence?.toFixed(2) || "0"} chipSignal="${chipSignal || "none"}"`,
       );
       const resp = await fetch(
-        `${SEARCH_SERVICE_URL.replace(/\/$/, "")}/recommend/${encodeURIComponent(user.id)}?strategy=svd&top_k=4${forceParam}${destParam}${confParam}`,
+        `${SEARCH_SERVICE_URL.replace(/\/$/, "")}/recommend/${encodeURIComponent(user.id)}?strategy=svd&top_k=4${forceParam}${destParam}${confParam}${chipParam}`,
         { method: "GET", cache: "no-store", signal: controller.signal },
       );
       clearTimeout(timeout);
@@ -962,6 +984,7 @@ export async function getAIRecommendations(
                   confidence: Number(intent?.confidence || 0),
                 },
                 result,
+                chipSignal,
               );
 
             console.log(

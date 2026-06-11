@@ -54,8 +54,17 @@ type RichUIData = {
     days?: number | null;
     nights?: number | null;
     budget?: number | null;
+    /** Backend uses snake_case — mapped here */
+    within_budget?: boolean | null;
     withinBudget?: boolean | null;
+    exceeded_amount?: number | null;
     exceededAmount?: number | null;
+    cost_estimation?: {
+      hotel: number;
+      food: number;
+      transport: number;
+      total: number;
+    };
     costEstimation?: {
       hotel: number;
       food: number;
@@ -79,6 +88,10 @@ type Message = {
 
 const AI_SERVICE_URL = "http://localhost:8008";
 const SOCKET_URL = "http://localhost:3005";
+
+// Flag to control mock layer: true for dev/demo fallback, false for production
+// MUST be false for itinerary/local_guide/price_explanation to work properly
+const USE_MOCK = false;
 
 export default function ChatBox() {
   const [inputMessage, setInputMessage] = useState("");
@@ -408,22 +421,24 @@ export default function ChatBox() {
 
     setIsLoading(true);
 
-    // B. Check for mock contextual response first
-    const mockResponse = generateMockResponse(trimmedMessage);
-    if (mockResponse) {
-      // Simulate a small delay for realism
-      await new Promise((r) => setTimeout(r, 600));
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          sender: "ai",
-          text: mockResponse.text,
-          data: mockResponse.data,
-        },
-      ]);
-      setIsLoading(false);
-      return;
+    // B. Check for mock contextual response first (only when USE_MOCK is enabled)
+    if (USE_MOCK) {
+      const mockResponse = generateMockResponse(trimmedMessage);
+      if (mockResponse) {
+        // Simulate a small delay for realism
+        await new Promise((r) => setTimeout(r, 600));
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            sender: "ai",
+            text: mockResponse.text,
+            data: mockResponse.data,
+          },
+        ]);
+        setIsLoading(false);
+        return;
+      }
     }
 
     // C. Call real AI API
@@ -479,7 +494,19 @@ export default function ChatBox() {
             data: {
               hotels: data.data?.hotels,
               bookingLink: data.data?.booking_link,
-              tripPlan: data.data?.trip_plan,
+              tripPlan: data.data?.trip_plan
+                ? {
+                    days: data.data.trip_plan.days,
+                    nights: data.data.trip_plan.nights,
+                    budget: data.data.trip_plan.budget,
+                    within_budget: data.data.trip_plan.within_budget,
+                    withinBudget: data.data.trip_plan.within_budget,
+                    exceeded_amount: data.data.trip_plan.exceeded_amount,
+                    exceededAmount: data.data.trip_plan.exceeded_amount,
+                    cost_estimation: data.data.trip_plan.cost_estimation,
+                    costEstimation: data.data.trip_plan.cost_estimation,
+                  }
+                : undefined,
             },
           },
         ]);

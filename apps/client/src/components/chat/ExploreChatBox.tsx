@@ -53,8 +53,16 @@ type Message = {
       days?: number | null;
       nights?: number | null;
       budget?: number | null;
+      within_budget?: boolean | null;
       withinBudget?: boolean | null;
+      exceeded_amount?: number | null;
       exceededAmount?: number | null;
+      cost_estimation?: {
+        hotel: number;
+        food: number;
+        transport: number;
+        total: number;
+      };
       costEstimation?: {
         hotel: number;
         food: number;
@@ -359,7 +367,19 @@ export default function ExploreChatBox({
             data: {
               hotels: hotels,
               bookingLink: data.data?.booking_link,
-              tripPlan: data.data?.trip_plan,
+              tripPlan: data.data?.trip_plan
+                ? {
+                    days: data.data.trip_plan.days,
+                    nights: data.data.trip_plan.nights,
+                    budget: data.data.trip_plan.budget,
+                    within_budget: data.data.trip_plan.within_budget,
+                    withinBudget: data.data.trip_plan.within_budget,
+                    exceeded_amount: data.data.trip_plan.exceeded_amount,
+                    exceededAmount: data.data.trip_plan.exceeded_amount,
+                    cost_estimation: data.data.trip_plan.cost_estimation,
+                    costEstimation: data.data.trip_plan.cost_estimation,
+                  }
+                : undefined,
             },
             suggestions: suggestions.length > 0 ? suggestions : undefined,
           },
