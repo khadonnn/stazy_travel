@@ -34,9 +34,9 @@ function ReturnPage() {
       return;
     }
 
-    const paymentServiceUrl =
-      process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL || "http://localhost:8002";
-    const apiUrl = `${paymentServiceUrl}/sessions/${sessionId}`;
+    const gatewayUrl =
+      process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:3000";
+    const apiUrl = `${gatewayUrl}/api/payments/sessions/${sessionId}`;
     console.log("🔍 Fetching session from:", apiUrl);
 
     //  RETRY LOGIC: Thử check 5 lần, mỗi lần cách 2s
