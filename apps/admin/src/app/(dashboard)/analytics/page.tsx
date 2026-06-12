@@ -259,7 +259,8 @@ export default async function AnalyticsPage() {
                 <KPICard
                     title="Aspect Coverage"
                     value={sentimentStats.byAspect.length.toString() + ' khía cạnh'}
-                    description="Số khía cạnh được phân tích (service, room, price...)"
+                    description="Số khía cạnh được phân tích (service, room, price, location
+                    cleanliness, food,value)"
                     color="text-cyan-500"
                 />
             </div>

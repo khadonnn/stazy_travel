@@ -48,7 +48,7 @@ const Navbar = ({ changeLocaleAction }: NavbarProps) => {
   }
 
   return (
-    <div className="w-full flex items-center justify-between border border-gray-300/50 py-2 px-10 fixed top-0 z-50 bg-white/60 backdrop-blur-lg shadow-sm">
+    <div className="w-full flex items-center justify-between border border-gray-300/50 px-10 fixed top-0 z-50 bg-white/60 backdrop-blur-lg shadow-sm">
       {/* left */}
       <Link href="/" className="flex items-center">
         <Image

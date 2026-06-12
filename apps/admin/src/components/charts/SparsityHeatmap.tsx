@@ -105,7 +105,7 @@ const SparsityHeatmap = ({ data }: SparsityHeatmapProps) => {
             </div>
 
             <div className="text-muted-foreground mt-2 flex w-full justify-center gap-3 text-[10px]">
-                <span>Tổng interactions: {data.totalInteractions.toLocaleString()}</span>
+                <span>Tổng interactions: {data.totalInteractions.toLocaleString('en-US')}</span>
             </div>
         </div>
     );
