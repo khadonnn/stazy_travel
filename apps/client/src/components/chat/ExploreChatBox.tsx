@@ -318,6 +318,13 @@ export default function ExploreChatBox({
           message: contextualMessage,
           user_id: currentUserId,
           history: formattedHistory,
+          current_hotel: currentHotel
+            ? {
+                id: currentHotel.id,
+                title: currentHotel.name,
+                address: currentHotel.address,
+              }
+            : null,
         }),
       });
 
@@ -385,9 +392,33 @@ export default function ExploreChatBox({
           },
         ]);
 
+        // Merge current hotel into the display list so it stays visible in column 2 & 3
+        let displayHotels = hotels;
+        if (isContextAware && currentHotel && hotels.length > 0) {
+          const currentExists = hotels.some(
+            (h: any) =>
+              h.id === currentHotel.id || h.title === currentHotel.name,
+          );
+          if (!currentExists) {
+            displayHotels = [
+              {
+                id: currentHotel.id,
+                title: currentHotel.name,
+                price: currentHotel.price,
+                address: currentHotel.address,
+                rating: currentHotel.rating,
+                image: currentHotel.image || "",
+                slug: currentHotel.slug,
+                map: null,
+              } as HotelResult,
+              ...hotels,
+            ];
+          }
+        }
+
         // Notify parent about hotels for map display (column 2 & 3 auto-update)
-        if (hotels.length > 0 && onHotelsFound) {
-          onHotelsFound(hotels);
+        if (displayHotels.length > 0 && onHotelsFound) {
+          onHotelsFound(displayHotels);
         }
       }
     } catch (error) {
@@ -409,7 +440,7 @@ export default function ExploreChatBox({
   return (
     <motion.div
       layoutId="main-chat-box"
-      className="flex flex-col h-full w-full bg-gray-50/50"
+      className="flex flex-col h-full w-full bg-gray-50/50 min-h-0"
     >
       {/* --- HEADER (hide when parent provides context-aware header) --- */}
       {!hideHeader && (
@@ -650,6 +681,7 @@ export default function ExploreChatBox({
         <div className="px-4 py-2 border-t border-gray-100 bg-white shrink-0">
           <SuggestedChips
             destination={currentHotel.destination}
+            address={currentHotel.address}
             onChipClick={handleChipClick}
           />
         </div>

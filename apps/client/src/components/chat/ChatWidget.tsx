@@ -75,6 +75,7 @@ export default function ChatWidget() {
           slug: currentHotel.slug,
           description: currentHotel.description,
           map: currentHotel.map ?? null,
+          destination: currentHotel.destination || "",
         },
       ]);
     }

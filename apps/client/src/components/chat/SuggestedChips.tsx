@@ -21,11 +21,49 @@ export interface ChipItem {
 
 interface SuggestedChipsProps {
   destination?: string;
+  address?: string;
   onChipClick: (prompt: string) => void;
   className?: string;
 }
 
-export function getChips(destination?: string): ChipItem[] {
+/**
+ * Extract a meaningful location name from an address string
+ * For addresses like "321 Đường Vũng Tàu, Việt Nam" -> "Vũng Tàu"
+ * For "15 Lý Tự Trọng, Đà Lạt, Lâm Đồng" -> "Đà Lạt"
+ */
+function extractLocationFromAddress(address?: string): string | undefined {
+  if (!address) return undefined;
+  const parts = address
+    .split(",")
+    .map((p) => p.trim())
+    .filter(Boolean);
+  // If there are 2+ parts, the second-to-last is typically the city/district
+  if (parts.length >= 2) {
+    // Skip country-level parts like "Việt Nam"
+    const cityCandidates = parts.slice(0, -1);
+    for (let i = cityCandidates.length - 1; i >= 0; i--) {
+      const candidate = cityCandidates[i];
+      if (
+        candidate &&
+        !["Việt Nam", "Vietnam", "Viet Nam"].includes(candidate)
+      ) {
+        return candidate;
+      }
+    }
+  }
+  // Fallback: return the last meaningful part
+  const last = parts[parts.length - 1];
+  if (last && !["Việt Nam", "Vietnam", "Viet Nam"].includes(last)) {
+    return last;
+  }
+  return undefined;
+}
+
+export function getChips(destination?: string, address?: string): ChipItem[] {
+  // Resolve the actual destination: use provided destination, or extract from address, or fallback
+  const actualDest =
+    destination || extractLocationFromAddress(address) || "khu vực này";
+
   return [
     {
       id: "highlights",
@@ -67,17 +105,18 @@ export function getChips(destination?: string): ChipItem[] {
       id: "compare",
       label: "So sánh",
       icon: Scale,
-      prompt: `So sánh khách sạn này với các khách sạn tương tự tại ${destination || "khu vực này"}`,
+      prompt: `So sánh khách sạn này với các khách sạn tương tự tại ${actualDest}`,
     },
   ];
 }
 
 export default function SuggestedChips({
   destination,
+  address,
   onChipClick,
   className,
 }: SuggestedChipsProps) {
-  const chips = getChips(destination);
+  const chips = getChips(destination, address);
 
   return (
     <div

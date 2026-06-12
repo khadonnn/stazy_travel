@@ -233,7 +233,6 @@ def _strip_accents(text):
 
 def _should_force_hotel_search(user_text, routing):
     normalized_text = _strip_accents(user_text or routing.normalized_text or "")
-    # Thêm 'phong' vào danh sách kiểm tra
     hotel_query = bool(re.search(r"\b(khach san|hotel|resort|phong)\b", normalized_text))
     search_intent = bool(re.search(r"\b(tim|tìm|search|find|loc|lọc|xem)\b", normalized_text))
     comparison_query = bool(re.search(r"\b(so sanh|so sánh|tot nhat|tốt nhất|re nhat|rẻ nhất|cai nao|khach nao)\b", normalized_text))
@@ -243,29 +242,19 @@ def _should_force_hotel_search(user_text, routing):
 def _extract_location_price_from_text(normalized_text: str):
     loc = None
     price = None
-    
-    # BƯỚC QUAN TRỌNG: Lột sạch dấu tiếng Việt trước khi đưa vào Regex để tránh lỗi Unicode
     clean_text = _strip_accents(normalized_text)
-    
     m = re.search(r"(\d{4,})", clean_text)
     if m:
         try: price = int(m.group(1))
         except: price = None
-        
     if price:
         before = clean_text[: m.start()].strip()
-        
-        # Lúc này chữ "dưới" đã biến thành "duoi", Regex cắt bỏ chữ nhiễu sẽ hoạt động hoàn hảo
         before = re.sub(r'\s+(duoi|gia|khoang|tam|re hon|chi phi|muc|khoang gia)$', '', before).strip()
-        
-        # Regex giờ đây chỉ cần tìm các ký tự [a-z0-9] cơ bản, không lo lỗi font chữ nữa
         mloc = re.search(r"(?:khach san|hotel|resort|phong)\s+(?:o\s+|tai\s+)?([a-z0-9\s]{2,40})$", before)
         if not mloc:
             mloc = re.search(r"tim(?:.*?)(?:khach san|hotel|resort|phong)\s+(?:o\s+|tai\s+)?([a-z0-9\s]{2,40})$", before)
-        
         if mloc: 
             loc = mloc.group(1).strip()
-            
     return loc, price
 
 def _normalize_hotel_ref(text):
@@ -274,28 +263,23 @@ def _normalize_hotel_ref(text):
 def _pick_hotel_from_last_results(user_text, last_hotels):
     if not last_hotels: return None
     normalized_text = _normalize_hotel_ref(user_text)
-    
     if re.search(r"\b(dau tien|first|so 1|số 1|thu 1|thứ 1)\b", normalized_text):
         return last_hotels[0]
     if re.search(r"\b(cuoi cung|last|cuoi|so cuoi|số cuối)\b", normalized_text):
         return last_hotels[-1]
-        
     index_match = re.search(r"\b(?:so|số|thu|thứ)\s*(\d+)\b", normalized_text)
     if index_match:
         requested_index = int(index_match.group(1)) - 1
         if 0 <= requested_index < len(last_hotels):
             return last_hotels[requested_index]
-            
     best_score = 0.0
     best_hotel = None
     query_tokens = set(normalized_text.split())
-    
     for hotel in last_hotels:
         title = _normalize_hotel_ref(hotel.get("title", ""))
         address = _normalize_hotel_ref(hotel.get("address", ""))
         candidate_text = f"{title} {address}".strip()
         if not candidate_text: continue
-        
         score = SequenceMatcher(None, normalized_text, candidate_text).ratio()
         if query_tokens:
             candidate_tokens = set(candidate_text.split())
@@ -303,43 +287,28 @@ def _pick_hotel_from_last_results(user_text, last_hotels):
             score = max(score, token_overlap)
         if title and (title in normalized_text or normalized_text in title):
             score = max(score, 1.0)
-            
         if score > best_score:
             best_score = score
             best_hotel = hotel
-            
     return best_hotel if best_score >= 0.45 else None
 
 def _any_hotel_name_in_text(user_text, hotels):
     normalized_text = _normalize_hotel_ref(user_text)
-    
-    # Ưu tiên 1: So khớp chính xác 100% (Trường hợp user gõ đúng y xì tên)
     for hotel in hotels:
         title = _normalize_hotel_ref(hotel.get("title", ""))
         if title and title in normalized_text:
             return hotel
-            
-    # Ưu tiên 2: So khớp mờ (Fuzzy match) - Tìm khách sạn có số lượng từ khóa trùng NHIỀU NHẤT
     best_hotel = None
     max_matches = 0
-    
     for hotel in hotels:
         title = _normalize_hotel_ref(hotel.get("title", ""))
-        # Tách từ và lấy các từ có 2 ký tự trở lên (để bắt được cả số như 50, 75)
-        title_tokens = [t for t in title.split() if len(t) > 1] 
-        
-        # Đếm xem có bao nhiêu từ của khách sạn này nằm trong câu của user
+        title_tokens = [t for t in title.split() if len(t) > 1]
         matches = sum(1 for t in title_tokens if t in normalized_text)
-        
-        # Cập nhật nếu tìm thấy khách sạn có số điểm trùng khớp cao hơn
         if matches > max_matches:
             max_matches = matches
             best_hotel = hotel
-            
-    # Yêu cầu ít nhất khớp 2 từ (để tránh chỉ khớp mỗi chữ "vung" hoặc "tau" của khách sạn khác)
     if max_matches >= 2:
         return best_hotel
-        
     return None
 
 def _resolve_recent_hotel_reference(user_text, user_id):
@@ -375,7 +344,6 @@ def search_hotels_rag(intent_obj):
             query += " AND (address ILIKE %s OR title ILIKE %s)"
             params.append(f"%{intent_obj.location}%")
             params.append(f"%{intent_obj.location}%")
-            
         query += f" ORDER BY price ASC LIMIT %s"
         params.append(result_limit)
 
@@ -388,13 +356,10 @@ def search_hotels_rag(intent_obj):
         if intent_obj.price_max is not None:
             fallback_query += " AND price <= %s"
             fallback_params.append(_to_vnd(intent_obj.price_max))
-        
-        fallback_query += " ORDER BY price ASC" 
+        fallback_query += " ORDER BY price ASC"
         cur.execute(fallback_query, tuple(fallback_params))
         fallback_rows = cur.fetchall()
-        
         if not intent_obj.location: return fallback_rows[:result_limit]
-            
         location_key = _strip_accents(intent_obj.location)
         matched_rows = []
         for rw in fallback_rows:
@@ -410,13 +375,11 @@ def search_hotels_rag(intent_obj):
         try: conn.rollback()
         except: pass
         rows = []
-
     if intent_obj.location and not rows:
         try: rows = _fallback_rows_without_unaccent()
         except Exception as fallback_error:
             print(f"SQL Fallback Error: {fallback_error}")
             rows = []
-
     results = []
     for rw in rows:
         map_data = None
@@ -519,24 +482,87 @@ def _is_explicit_booking_intent(user_text):
         if w in text: return True
     return False
 
+# --- NEW: EXTRACT CONTEXT FROM FRONTEND PREFIX ---
+def _extract_context_info(user_text):
+    """
+    Extract hotel context from frontend prefix format:
+    [Context: User đang xem khách sạn "Hotel Name" tại Address, giá Price, rating X]
+    Returns (cleaned_text, hotel_name, hotel_address, hotel_location)
+    """
+    context_match = re.search(
+        r'\[Context:.*?khách sạn\s+"([^"]+)"\s+tại\s+([^\]]+?)\]',
+        user_text,
+        re.IGNORECASE
+    )
+    if not context_match:
+        return user_text, None, None, None
+
+    hotel_name = context_match.group(1).strip()
+    raw_addr_block = context_match.group(2).strip()
+    raw_addr_block = re.sub(r'\s*\.\s*Trả.*?$', '', raw_addr_block)
+
+    # Strip price/rating suffix from address
+    clean_address = re.sub(r',\s*(giá|price).*$', '', raw_addr_block, flags=re.IGNORECASE).strip()
+    # Clean up context prefix from user_text
+    cleaned_text = re.sub(r'\[Context:.*?\]\s*\n*\s*', '', user_text, count=1).strip()
+
+    # Extract location from clean address
+    addr_parts = [p.strip() for p in clean_address.split(',')]
+    non_country = [p for p in addr_parts if p.lower() not in ('việt nam', 'vietnam', 'viet nam')]
+    if len(non_country) >= 2:
+        location = non_country[-2]
+    elif len(non_country) == 1:
+        # Try to extract city name from street address like "257 Đường Vũng Tàu"
+        city_keywords = [
+            'vũng tàu', 'vung tau', 'đà lạt', 'da lat', 'nha trang',
+            'đà nẵng', 'da nang', 'hồ chí minh', 'hà nội', 'ha noi',
+            'phú quốc', 'phu quoc', 'hội an', 'hoi an', 'huế', 'hue',
+            'sapa', 'phong nha', 'cần thơ', 'can tho', 'mũi né', 'mui ne',
+        ]
+        address_lower = non_country[0].lower()
+        found_city = None
+        for kw in city_keywords:
+            if kw in address_lower:
+                found_city = kw.title()
+                break
+        if found_city:
+            location = found_city
+        else:
+            street_words = non_country[0].split()
+            if len(street_words) >= 2:
+                last_word = street_words[-1].lower()
+                if last_word in ('tàu', 'tau', 'lạt', 'lat', 'trang', 'nẵng', 'nang', 'quốc', 'quoc', 'an'):
+                    location = ' '.join(street_words[-2:]).title()
+                else:
+                    location = street_words[-1].title()
+            else:
+                location = non_country[0]
+    else:
+        location = None
+
+    return cleaned_text, hotel_name, clean_address, location
+
 # --- ENTERPRISE ORCHESTRATOR PIPELINE ---
 def run_agent_logic(user_text, user_id):
     today = datetime.now().strftime("%Y-%m-%d (%A)")
+
+    # Extract context info from frontend prefix
+    clean_user_text, context_hotel_name, context_address, context_location = _extract_context_info(user_text)
+
     chat_history = get_chat_history(user_id)
     history_text = ""
     for msg in chat_history:
         role = "User" if msg["role"] == "user" else "AI"
         history_text += f"{role}: {msg['content']}\n"
-        
+
     booking_state = get_booking_state(user_id)
-    extracted_date = _extract_date(user_text)
-    extracted_guests = _extract_guests(user_text)
+    extracted_date = _extract_date(clean_user_text)
+    extracted_guests = _extract_guests(clean_user_text)
 
     force_booking = False
     routing = None
 
-    # Chặn đứng lỗi cướp trạng thái (State Hijacking)
-    is_explicit_search = bool(re.search(r"\b(tim|tìm|kiếm|search|find|loc|lọc|xem|ks|khách sạn)\b", user_text.lower()))
+    is_explicit_search = bool(re.search(r"\b(tim|tìm|kiếm|search|find|loc|lọc|xem|ks|khách sạn)\b", clean_user_text.lower()))
 
     if booking_state and (extracted_date or extracted_guests) and not is_explicit_search:
         print(f"[BOOKING STATE] Resume booking {booking_state['hotel_name']}")
@@ -552,9 +578,9 @@ def run_agent_logic(user_text, user_id):
 
     if not force_booking:
         resolved_hotel = _resolve_recent_hotel_reference(user_text, user_id)
-        
+
         if _is_explicit_booking_intent(user_text) and resolved_hotel:
-            print(f"🎯 [State Guard] Bắt được intent BOOK trực tiếp -> {resolved_hotel['title']}")
+            print(f"🎯 [State Guard] BOOK -> {resolved_hotel['title']}")
             routing = RoutingResult(
                 normalized_text=normalize_query(user_text),
                 intent_type="BOOK",
@@ -569,7 +595,6 @@ def run_agent_logic(user_text, user_id):
 2. PHAN LOAI intent va TRICH XUAT tham so.
 
 INTENTS: {', '.join(VALID_INTENTS)}
-... (giữ nguyên phần text prompt gốc của bạn để tiết kiệm space) ...
 LICH SU: {history_text}"""
             try:
                 completion = client.chat.completions.create(
@@ -581,26 +606,11 @@ LICH SU: {history_text}"""
                 if tc:
                     routing = RoutingResult(**json.loads(tc[0].function.arguments))
                 else:
-                    ai_content = completion.choices[0].message.content
                     routing = RoutingResult(normalized_text=user_text, intent_type="GENERAL")
-                
+
                 routing.normalized_text = normalize_query(routing.normalized_text)
                 routing.intent_type = routing.intent_type if routing.intent_type in VALID_INTENTS else "GENERAL"
                 routing = _fallback_itinerary_fields(routing)
-                norm_text = routing.normalized_text or ""
-                non_search_intents = {"REVIEW_SUMMARY", "PRICE_EXPLANATION", "LOCAL_GUIDE", "ITINERARY", "CONSULTATION", "BOOK", "MANAGE_BOOKING", "FAQ", "RECOMMENDATION"}
-                referring_to_current = bool(re.search(r"(khách sạn này|của khách sạn|khách sạn.*này)", user_text, re.IGNORECASE))
-                
-                if routing.intent_type not in non_search_intents and not referring_to_current:
-                    # Bổ sung thêm |phong| vào Regex
-                    explicit_hotel_word = bool(re.search(r"\b(khach san|hotel|resort|phong)\b", _strip_accents(norm_text)))
-                    explicit_price_present = bool(re.search(r"(\d{4,})", norm_text))
-                    
-                    if _should_force_hotel_search(user_text, routing) or (explicit_hotel_word and explicit_price_present):
-                        loc, price = _extract_location_price_from_text(norm_text)
-                        if not routing.location and loc: routing.location = loc
-                        if routing.price_max is None and price: routing.price_max = price
-                        routing.intent_type = "SEARCH"
                 print(f"[Agent Router] Intent={routing.intent_type} | Location={routing.location}")
             except Exception as e:
                 em = str(e).lower()
@@ -608,7 +618,6 @@ LICH SU: {history_text}"""
                     return {"agent_response": "Hệ thống quá tải, vui lòng thử lại sau.", "intent": {"intent_type": "GENERAL"}, "data": {"hotels": [], "booking_link": None}}
                 routing = RoutingResult(normalized_text=user_text, intent_type="GENERAL")
 
-        # SAFEGUARD: BOOK overridden to SEARCH if has search words + location
         if routing.intent_type == "BOOK":
             if routing.location and re.search(r"\b(tim|tìm|kiếm|loc|lọc|xem)\b", user_text, re.IGNORECASE):
                 routing.intent_type = "SEARCH"
@@ -625,7 +634,6 @@ LICH SU: {history_text}"""
                 last_ai = next((m for m in reversed(chat_history) if m["role"] == "assistant"), None)
                 if last_ai and ("ngay check-in" in last_ai.get("content", "").lower() or "ngay" in last_ai.get("content", "").lower()):
                     ongoing_booking = True
-            
             if ongoing_booking and (extracted_date or extracted_guests) and last_hotels_for_booking:
                 history_hotel_name = None
                 user_messages = [msg for msg in reversed(chat_history) if msg.get("role") == "user"]
@@ -635,7 +643,6 @@ LICH SU: {history_text}"""
                         history_hotel_name = matched
                         break
                 if not history_hotel_name: history_hotel_name = last_hotels_for_booking[0]
-                
                 routing.target_hotel_name = history_hotel_name["title"]
                 routing.hotel_id = history_hotel_name["id"]
                 routing.dates = DateRange(start=extracted_date) if extracted_date else routing.dates
@@ -643,7 +650,7 @@ LICH SU: {history_text}"""
 
     response = {"agent_response": "", "intent": {"intent_type": routing.intent_type}, "data": {"hotels": [], "booking_link": None}}
     referenced_hotel = _resolve_recent_hotel_reference(user_text, user_id)
-    
+
     if referenced_hotel and routing.intent_type != "BOOK":
         routing.target_hotel_name = referenced_hotel.get("title") or routing.target_hotel_name
         routing.hotel_id = referenced_hotel.get("id") or routing.hotel_id
@@ -654,11 +661,27 @@ LICH SU: {history_text}"""
     if routing.intent_type == "FAQ":
         faq_context = retrieve_faq_context(routing.normalized_text, top_k=2)
 
+    # --- FORCE SEARCH WHEN CONTEXT LOCATION IS AVAILABLE ---
+    # When user is on a hotel page and asks about comparison/similar hotels,
+    # override the intent to SEARCH so we actually fetch hotels from DB.
+    force_search_intents = {"GENERAL", "CONSULTATION", "RECOMMENDATION", "LOCAL_GUIDE"}
+    if context_location and routing.intent_type in force_search_intents and context_hotel_name:
+        routing.location = context_location
+        routing.intent_type = "SEARCH"
+        routing.limit = 10
+        print(f"[Agent] Force SEARCH: location={context_location}, hotel={context_hotel_name}")
+
+    if context_location and not routing.location:
+        routing.location = context_location
+        print(f"[Agent] Injected location from context: {context_location}")
+
     # --- ROUTE HANDLERS ---
     if routing.intent_type == "SEARCH":
+        if not routing.limit or routing.limit < 5:
+            routing.limit = 10
         hotels = search_hotels_rag(routing)
         if not hotels:
-            lt = routing.location or "đây"
+            lt = context_location or routing.location or "đây"
             response["agent_response"] = f"Tiếc quá, mình không tìm thấy phòng nào ở {lt} phù hợp yêu cầu."
         else:
             response["agent_response"] = f"Minh tim thay {len(hotels)} lua chon phu hop:"
@@ -682,12 +705,10 @@ LICH SU: {history_text}"""
         if not routing.dates or not routing.dates.start: missing.append("ngay check-in")
         if routing.guests_adults is None: missing.append("so luong nguoi")
         if not routing.target_hotel_name or len(_normalize_hotel_ref(routing.target_hotel_name)) <= 3: missing.append("khach san")
-        
+
         if missing:
             join_str = " va ".join(missing)
             response["agent_response"] = f"Để mình đặt phòng giúp, bạn cho mình biết **{join_str}** nhé?"
-            
-            # CHỈ LƯU TRẠNG THÁI TẠI ĐÂY KHI CHẮC CHẮN ĐANG TRONG LUỒNG BOOK VÀ THIẾU INFO
             if routing.target_hotel_name and routing.hotel_id:
                 save_booking_state(user_id, {
                     "hotel_id": routing.hotel_id,
@@ -707,7 +728,6 @@ LICH SU: {history_text}"""
                         fh = [{"id": row[0], "title": row[1], "price": float(row[2]), "address": row[3], "rating": float(row[4]) if row[4] else 0, "image": row[5] or "https://placehold.co/600x400?text=No+Image", "slug": row[6] or str(row[0]), "map": map_data, "description": row[8] or ""}]
                     cur.close(); conn.close()
                 except Exception as e: print(f"[BOOK] Database lookup error: {e}")
-            
             if not fh: fh = search_hotels_rag(routing)
             if fh:
                 top = fh[0]
@@ -720,15 +740,13 @@ LICH SU: {history_text}"""
                     response["agent_response"] = f"Đã tạo đơn cho **{top['title']}**.\nNgày: {routing.dates.start} -> {routing.dates.end} ({guests} khách)."
                     response["data"]["hotels"] = [top]
                     response["data"]["booking_link"] = create_booking_link(ident, routing.dates, routing.guests_adults)
-                    
-                    clear_booking_state(user_id) # Đặt thành công -> Xóa trạng thái chờ đặt phòng
+                    clear_booking_state(user_id)
                 else:
                     response["agent_response"] = f"Đã tạo đơn cho **{top['title']}**.\nVui lòng xác nhận ngày check-in để hoàn tất."
                     response["data"]["hotels"] = [top]
             else:
                 response["agent_response"] = f"Xin lỗi, không tìm thấy **{routing.target_hotel_name}**."
 
-    # --- KHỐI XỬ LÝ KHÁC (GENERAL, FAQ, ITINERARY...) GIỮ NGUYÊN CODE CŨ CỦA BẠN ---
     elif routing.intent_type in ("CONSULTATION", "RECOMMENDATION"):
         consult_hotels = search_hotels_rag(routing)
         hotel_ctx = _build_hotel_context(consult_hotels)
@@ -752,7 +770,6 @@ LICH SU: {history_text}"""
         except: response["agent_response"] = "Mình có thể giúp bạn tìm phòng. Bạn cần gì?"
 
     else:
-        # Fallback chung cho các intent khác của bạn
         try:
             prompt = compose_prompt(routing.intent_type, history_text, today)
             response["agent_response"] = _llm_generate(prompt, routing.normalized_text)

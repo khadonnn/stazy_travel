@@ -470,6 +470,13 @@ export default function ChatBox() {
           message: contextualMessage,
           user_id: currentUserId,
           history: formattedHistory,
+          current_hotel: currentHotel
+            ? {
+                id: currentHotel.id,
+                title: currentHotel.name,
+                address: currentHotel.address,
+              }
+            : null,
         }),
       });
 
@@ -828,6 +835,7 @@ export default function ChatBox() {
         <div className="px-3 pt-2 pb-1 border-t border-gray-100 bg-white">
           <SuggestedChips
             destination={currentHotel?.destination}
+            address={currentHotel?.address}
             onChipClick={(prompt) => handleSubmit(prompt)}
           />
         </div>

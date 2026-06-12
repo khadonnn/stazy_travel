@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 from clerk_backend_api import Clerk
 from sentence_transformers import SentenceTransformer, util
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 from datetime import datetime
 
 # Import logic từ các file trong src
@@ -120,10 +120,16 @@ try:
 except FileNotFoundError:
     print("⚠️ Warning: hotel_vectors.json not found. Search results might be empty.")
 
+class CurrentHotelInfo(BaseModel):
+    id: int
+    title: str
+    address: str
+
 class ChatRequest(BaseModel):
     message: str
     user_id: str = "guest"
     history: List[Dict[str, str]] = []
+    current_hotel: Optional[CurrentHotelInfo] = None
 
 @app.get("/")
 def health_check():

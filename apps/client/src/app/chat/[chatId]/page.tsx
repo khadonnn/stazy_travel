@@ -77,7 +77,12 @@ function ExploreWorkspacePage() {
             rating: storeHotels[0].rating,
             image: storeHotels[0].image,
             slug: storeHotels[0].slug,
-            destination: (storeHotels[0] as any).destination || "",
+            // Fallback: extract destination from address if destination field is empty
+            destination: (storeHotels[0] as any).destination
+              ? (storeHotels[0] as any).destination
+              : storeHotels[0].address
+                ? storeHotels[0].address.split(",").pop()?.trim() || ""
+                : "",
           }
         : null)
     : null;
