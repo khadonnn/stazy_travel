@@ -24,13 +24,24 @@ app.use(
       "Content-Type",
       "Authorization",
       "X-Requested-With",
-      "clerk-db-auth-token", // Thêm nếu dùng Clerk
+      "clerk-db-auth-token",
     ],
   }),
 );
 
 // 2. Middleware cơ bản
 app.use(express.json());
+
+// Handle CORS Preflight (OPTIONS) BEFORE Clerk Middleware
+// Fix lỗi "Failed to fetch" do Express 5 / path-to-regexp v8 không hỗ trợ app.options("*", ...)
+// Dùng middleware check method OPTIONS thay vì route catch-all
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  return next();
+});
+
 app.use(clerkMiddleware());
 
 // 3. Health Check & Test Routes
@@ -64,8 +75,6 @@ const start = async () => {
   try {
     console.log("🔄 Đang kết nối Kafka...");
 
-    // SỬA LỖI: Không dùng await bên trong Promise.all cho lời gọi hàm
-    // Nếu bạn muốn bỏ qua lỗi Kafka để server vẫn chạy local, hãy bỏ qua hoặc xử lý catch riêng
     await Promise.all([
       producer
         .connect()

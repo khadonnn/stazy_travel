@@ -30,6 +30,7 @@ export const CAPABILITIES: CapabilityDefinition[] = [
         prompts: [
             { label: '🏨 Thống kê khách sạn', query: 'Thống kê khách sạn và tỷ lệ đặt phòng' },
             { label: '📊 Phân bố loại phòng', query: 'Phân tích phân bố loại khách sạn và booking' },
+            { label: '⭐ Top 5 KS nhiều booking', query: 'Top 5 khách sạn nhiều booking nhất' },
         ],
     },
     {
@@ -41,6 +42,7 @@ export const CAPABILITIES: CapabilityDefinition[] = [
         prompts: [
             { label: '👥 Người dùng truy cập', query: 'Phân tích người dùng truy cập và booking trong 7 ngày' },
             { label: '⭐ Top khách VIP', query: 'Top 5 khách hàng chi tiêu nhiều nhất' },
+            { label: '🍩 Phân khúc khách hàng', query: 'Phân khúc khách hàng mới và cũ' },
         ],
     },
     {
@@ -53,6 +55,19 @@ export const CAPABILITIES: CapabilityDefinition[] = [
             { label: '✉️ Gửi mail khách mới', query: 'Gửi email chào mừng cho tất cả khách hàng mới hôm nay' },
             { label: '🎫 Tặng mã khách cũ', query: 'Tạo chương trình giảm giá 10% cho khách hàng quay lại' },
             { label: '📈 Export báo cáo', query: 'Xuất báo cáo doanh thu 30 ngày' },
+        ],
+    },
+    {
+        id: 'ai_charts',
+        icon: '🤖',
+        label: 'Chart thông minh',
+        color: '#06b6d4',
+        dataKeys: ['chart_type', 'chart_data'],
+        prompts: [
+            { label: '🍩 Phân khúc mới & cũ', query: 'Phân khúc khách hàng mới và cũ' },
+            { label: '🏆 Top 5 KS', query: 'Top 5 khách sạn nhiều booking nhất' },
+            { label: '🟦 Dự báo 7 ngày', query: 'Dự báo doanh thu 7 ngày tới' },
+            { label: '📈 Xu hướng tuần', query: 'Phân tích xu hướng doanh thu và booking 7 ngày qua' },
         ],
     },
 ];

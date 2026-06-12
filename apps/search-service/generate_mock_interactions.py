@@ -42,11 +42,11 @@ def load_json(filepath):
 # =========================================================
 # NHPP & GAUSSIAN MIXTURE TIMESTAMP GENERATOR
 # =========================================================
-base_date = datetime(2024, 1, 1)
-dates_2024 = [base_date + timedelta(days=i) for i in range(366)]
+base_date = datetime(2026, 1, 1)
+dates_2026 = [base_date + timedelta(days=i) for i in range(365)]
 date_weights = []
 
-for d in dates_2024:
+for d in dates_2026:
     wd = d.weekday()
     if wd in [0, 1, 2]:
         date_weights.append(1.0)
@@ -59,7 +59,7 @@ date_probs = np.array(date_weights) / sum(date_weights)
 
 def generate_gmm_timestamp():
     """Sinh timestamp với NHPP cho ngày và GMM cho giờ (dùng hoàn toàn NumPy)"""
-    chosen_date = np.random.choice(dates_2024, p=date_probs)
+    chosen_date = np.random.choice(dates_2026, p=date_probs)
     
     if np.random.rand() < 0.35:
         hour = np.random.normal(12, 1.5)

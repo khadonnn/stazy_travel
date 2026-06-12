@@ -118,6 +118,21 @@ def _mock_user_access_stats(days: int = 7) -> Dict[str, Any]:
     }
 
 
+def _ensure_sufficient_data(snapshot: Dict[str, Any], days: int) -> Dict[str, Any]:
+    """
+    Nếu daily_metrics quá ít (< 3 ngày), dùng mock data thay thế
+    để đảm bảo chart có biến động.
+    """
+    daily = snapshot.get("daily_metrics", [])
+    if len(daily) < 3:
+        print(f"[BI] DB has only {len(daily)} data points, using mock data for {days} days")
+        snapshot["daily_metrics"] = _mock_daily_metrics(days)
+        snapshot["hourly_activity"] = _mock_hourly_activity()
+        snapshot["customer_segments"] = _mock_customer_segments()
+        snapshot["source"] = "mock"
+    return snapshot
+
+
 def fetch_hotel_stats(days: int = 30) -> Dict[str, Any]:
     """Fetch hotel statistics from DB (all time, since demo data is from 2024)."""
     try:
@@ -248,16 +263,9 @@ def fetch_user_access_stats(days: int = 7) -> Dict[str, Any]:
 
 def fetch_bi_snapshot(days: int = 7) -> Dict[str, Any]:
     """
-    Fetch BI snapshot from DB. If DB schema is unavailable, fallback to mock data.
-    Key differences from analytics getTodayMetrics:
-      - Uses CURRENT_DATE for "hôm nay" queries (days=1) to match 00:00-23:59
-      - Filters by status IN ('CONFIRMED','COMPLETED') for revenue (excludes CANCELLED)
-      - Fallback mock values match analytics dashboard (12.5M revenue, 4 bookings)
-    Expected keys:
-      - daily_metrics: [{date, revenue, bookings}]
-      - hourly_activity: [{hour, bookings}]
-      - customer_segments: [{segment, bookings}]
-      - source: db|mock
+    Fetch BI snapshot from DB. Falls back to mock data with variation if DB fails.
+    Uses latest booking date from DB as reference (not NOW()) so seed data from 2024
+    can be queried correctly.
     """
     daily_metrics: List[Dict[str, Any]] = []
     hourly_activity: List[Dict[str, Any]] = []
@@ -267,41 +275,37 @@ def fetch_bi_snapshot(days: int = 7) -> Dict[str, Any]:
         conn = get_db_connection()
         cur = conn.cursor()
 
-        # IMPORTANT: When days=1 ("hôm nay"), use CURRENT_DATE to match getTodayMetrics
-        # which queries from startOfDay(NOW) to endOfDay(NOW).
-        # When days>1, use NOW() - INTERVAL to get last N days.
+        # KEY FIX: Get latest booking date from DB to use as reference
+        # instead of NOW(). This lets us query seed data from 2024 correctly.
+        cur.execute('SELECT MAX("createdAt") FROM bookings')
+        latest_row = cur.fetchone()
+        if not latest_row or not latest_row[0]:
+            raise RuntimeError("No bookings in database")
+
+        ref_date = latest_row[0].date() if hasattr(latest_row[0], 'date') else latest_row[0]
+
         if days == 1:
-            date_filter = '"createdAt" >= CURRENT_DATE AND "createdAt" < CURRENT_DATE + INTERVAL \'1 day\''
+            date_filter = '"createdAt" >= %s::date AND "createdAt" < %s::date + INTERVAL \'1 day\''
+            date_params = (ref_date.isoformat(), ref_date.isoformat())
         else:
-            date_filter = '"createdAt" >= NOW() - INTERVAL %s'
-        date_param = f"{days} day" if days != 1 else None
+            date_filter = '"createdAt" >= %s::date - INTERVAL %s'
+            date_params = (ref_date.isoformat(), f"{days} day")
 
         # Filter only CONFIRMED/COMPLETED bookings for revenue (match analytics getTodayMetrics)
         # but count ALL non-cancelled bookings (exclude CANCELLED only from revenue)
         status_filter = """ AND "status" IN ('CONFIRMED', 'COMPLETED') """
 
-        if days == 1:
-            query = f"""
-                SELECT DATE("createdAt") AS day,
-                       COALESCE(SUM("totalAmount"), 0) AS revenue,
-                       COUNT(*) AS bookings
-                FROM bookings
-                WHERE {date_filter} {status_filter}
-                GROUP BY day
-                ORDER BY day ASC
-            """
-            cur.execute(query)
-        else:
-            query = f"""
-                SELECT DATE("createdAt") AS day,
-                       COALESCE(SUM("totalAmount"), 0) AS revenue,
-                       COUNT(*) AS bookings
-                FROM bookings
-                WHERE {date_filter} {status_filter}
-                GROUP BY day
-                ORDER BY day ASC
-            """
-            cur.execute(query, (date_param,))
+        query = f"""
+            SELECT DATE("createdAt") AS day,
+                   COALESCE(SUM("totalAmount"), 0) AS revenue,
+                   COUNT(*) AS bookings
+            FROM bookings
+            WHERE {date_filter} {status_filter}
+            GROUP BY day
+            ORDER BY day ASC
+        """
+        print(f"[BI-DEBUG-SQL] days={days} date_params={date_params}")
+        cur.execute(query, date_params)
 
         for row in cur.fetchall():
             daily_metrics.append({
@@ -372,21 +376,26 @@ def fetch_bi_snapshot(days: int = 7) -> Dict[str, Any]:
         if not daily_metrics:
             raise RuntimeError("No daily data returned")
 
-        return {
+        result = {
             "daily_metrics": daily_metrics,
             "hourly_activity": hourly_activity or _mock_hourly_activity(),
             "customer_segments": customer_segments or _mock_customer_segments(),
             "source": "db",
         }
 
+        # FIX: Nếu DB không có đủ dữ liệu, dùng mock data đẹp hơn
+        result = _ensure_sufficient_data(result, days)
+        return result
+
     except Exception as e:
         print(f"[BI] DB snapshot failed, fallback to mock: {e}")
-        return {
+        result = {
             "daily_metrics": _mock_daily_metrics(days),
             "hourly_activity": _mock_hourly_activity(),
             "customer_segments": _mock_customer_segments(),
             "source": "mock",
         }
+        return _ensure_sufficient_data(result, days)
 
 
 # ---------------------------------------------------------
@@ -980,9 +989,10 @@ def run_bi_agent_logic(user_text: str, user_id: str = "owner") -> Dict[str, Any]
         }
 
         # ── Intelligent Chart Selection (also for LLM path) ──
-        chart_type = _determine_chart_type(query_type, user_text, snapshot)
-        chart_title = _build_chart_title(query_type)
-        chart_data = _build_chart_data(query_type, snapshot, hotel_stats, user_stats)
+        fine_type = _detect_fine_grained_type(query_type, user_text)
+        chart_type = _determine_chart_type(fine_type, user_text, snapshot)
+        chart_title = _build_chart_title(fine_type)
+        chart_data = _build_chart_data(fine_type, snapshot, hotel_stats, user_stats)
         result["chart_type"] = chart_type
         result["chart_title"] = chart_title
         if chart_data:
@@ -1033,6 +1043,17 @@ def run_bi_agent_logic(user_text: str, user_id: str = "owner") -> Dict[str, Any]
         data = _build_fallback_response(snapshot, preds)
         data["growth_rate"] = growth_rate
         data["anomalies"] = anomalies
+
+        # ── Intelligent Chart Selection (except path) ──
+        fine_type = _detect_fine_grained_type(query_type, user_text)
+        chart_type = _determine_chart_type(fine_type, user_text, snapshot)
+        chart_title = _build_chart_title(fine_type)
+        chart_data = _build_chart_data(fine_type, snapshot, hotel_stats, user_stats)
+        data["chart_type"] = chart_type
+        data["chart_title"] = chart_title
+        if chart_data:
+            data["chart_data"] = chart_data
+
         if hotel_stats:
             data["hotel_stats"] = hotel_stats
         if user_stats:
