@@ -38,16 +38,57 @@ REPORT_PATH = "jsons/svd_training_report.json"
 # =========================================================
 retrain_lock = threading.Lock()
 
+# ------------------------------------------------
+# TRACKING TIẾN TRÌNH TRAINING (in-memory)
+# ------------------------------------------------
+training_progress = {
+    "is_running": False,
+    "progress_pct": 0,          # 0 -> 100
+    "current_step": "",         # tên bước đang chạy
+    "status_message": "",       # message chi tiết
+    "started_at": None,         # ISO datetime
+    "finished_at": None,       
+    "success": None,            # True / False / None
+    "error_message": None,
+}
+
+def reset_training_progress():
+    training_progress["is_running"] = True
+    training_progress["progress_pct"] = 0
+    training_progress["current_step"] = "init"
+    training_progress["status_message"] = "Đang khởi tạo..."
+    training_progress["started_at"] = datetime.now().isoformat()
+    training_progress["finished_at"] = None
+    training_progress["success"] = None
+    training_progress["error_message"] = None
+
+def update_progress(pct: int, step: str, message: str):
+    training_progress["progress_pct"] = min(pct, 100)
+    training_progress["current_step"] = step
+    training_progress["status_message"] = message
+
+def finish_training_progress(success: bool, error_msg: str = None):
+    training_progress["is_running"] = False
+    training_progress["progress_pct"] = 100 if success else training_progress["progress_pct"]
+    training_progress["finished_at"] = datetime.now().isoformat()
+    training_progress["success"] = success
+    training_progress["error_message"] = error_msg
+
+# =========================================================
+# SCHEDULED RETRAIN
+# =========================================================
+
 def scheduled_retrain():
     """Called by APScheduler at 3:00 AM daily"""
     print("\n⏰ [CRON] Scheduled SVD retrain started...")
     try:
         from train_real import train_and_save
-        train_and_save()
+        train_and_save(progress_callback=None)
         reload_svd_model()
         print("⏰ [CRON] SVD retrain completed successfully!")
     except Exception as e:
         print(f"⏰ [CRON] SVD retrain failed: {e}")
+
 
 def reload_svd_model():
     """Reload SVD model into RAM after training"""
@@ -148,105 +189,21 @@ async def search_base64(data: dict):
     """
     base64_data = data.get("image")
     if not base64_data:
-        raise HTTPException(status_code=400, detail="Missing image data")
+        raise HTTPException(status_code=400, detail="Missing image base64 data")
+
+    # Strip prefix if present (e.g. "data:image/png;base64,")
+    if "," in base64_data:
+        base64_data = base64_data.split(",")[1]
 
     try:
-        # Giải mã Base64
-        if "," in base64_data:
-            base64_str = base64_data.split(",")[1]
-        else:
-            base64_str = base64_data
-
-        img_bytes = base64.b64decode(base64_str)
-        img = Image.open(BytesIO(img_bytes)).convert("RGB")
-
-        # AI trích xuất vector
-        query_vector = model.encode(img)
-
-        # Tìm kiếm tương đồng
-        return find_top_matches(query_vector, HOTEL_VECTORS)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"AI Processing Error: {str(e)}")
-
-
-# B. TÌM KIẾM BẰNG MÔ TẢ VĂN BẢN
-@app.post("/search-by-text")
-async def search_text(data: dict):
-    """
-    Nhận: { "description": "villa ven biển có hồ bơi" }
-    """
-    description = data.get("description")
-    if not description:
-        raise HTTPException(status_code=400, detail="Missing description")
-
-    try:
-        query_vector = get_text_vector(description)
+        image_bytes = base64.b64decode(base64_data)
+        query_vector = get_image_vector(image_bytes)
         return find_top_matches(query_vector, HOTEL_VECTORS)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# C. GỢI Ý KHÁCH SẠN CHO NGƯỜI DÙNG (RECOMMENDATION)
-@app.get("/recommend/{user_id}")
-async def recommend(user_id: str, strategy: str = "svd", top_k: int = 5, force_refresh: bool = False, destination: str = None, confidence: str = None, chip_signal: str = None):
-    """
-    Gợi ý dựa trên hành vi tương tác.
-    Query params:
-      - strategy: svd (default) | user_cf | item_cf | content | popular
-      - top_k: số lượng kết quả (default=5)
-      - force_refresh: bypass cache (default=false)
-      - destination: session destination hint from client (overrides detect_intent)
-      - confidence: intent confidence from client (0.0-1.0)
-      - chip_signal: filter signal from insight chip (e.g. amenity:pool, tag:romantic, suitable:COUPLE)
-    """
-    try:
-        # If force_refresh, clear all cached results for this user
-        if force_refresh:
-            import src.recommend as _rm
-            keys_to_delete = [k for k, v in _rm._recommendation_cache.items() if v.get('userId') == user_id]
-            for k in keys_to_delete:
-                del _rm._recommendation_cache[k]
-            print(f"[recommend] FORCE_REFRESH: cleared {len(keys_to_delete)} cache entries for userId={user_id}")
-        
-        # Parse external intent hint from client
-        external_dest = destination or None
-        external_confidence = float(confidence) if confidence else None
-        if external_dest:
-            print(f"[recommend] Client intent hint: destination=\"{external_dest}\" confidence={external_confidence}")
-        if chip_signal:
-            print(f"[recommend] Chip signal: \"{chip_signal}\"")
-        
-        results = get_recommendations_for_user(
-            user_id, "mock_interactions.json", HOTEL_VECTORS,
-            top_k=top_k, strategy=strategy,
-            external_destination=external_dest,
-            external_confidence=external_confidence,
-            chip_signal=chip_signal,
-        )
-
-        if not results:
-            return []
-
-        return results
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Recommendation Error: {str(e)}")
-
-
-# C2. KHÁCH SẠN TƯƠNG TỰ (SIMILAR HOTELS)
-@app.get("/similar/{hotel_id}")
-async def similar_hotels(hotel_id: int, top_k: int = 5):
-    """
-    Tìm khách sạn tương tự dựa trên Item-CF similarity.
-    Dùng cho trang chi tiết khách sạn.
-    """
-    try:
-        results = get_similar_hotels(hotel_id, HOTEL_VECTORS, top_k=top_k)
-        return results
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Similar Hotels Error: {str(e)}")
-
-
-# D. TÌM KIẾM BẰNG URL ẢNH (Nếu cần)
+# B. TÌM KIẾM BẰNG ĐƯỜNG DẪN HÌNH ẢNH (URL - Dùng cho tích hợp)
 @app.post("/search-by-image-url")
 async def search_url(data: dict):
     url = data.get("image_url")
@@ -325,26 +282,66 @@ async def force_retrain(background_tasks: BackgroundTasks):
             status_code=202,
             content={
                 "status": "already_running",
-                "message": "Quá trình训练 đang diễn ra. Vui lòng đợi."
+                "message": "Quá trình huấn luyện đang diễn ra. Vui lòng đợi."
             }
         )
     
-    def do_retrain():
+    def do_retrain_with_progress():
         with retrain_lock:
+            reset_training_progress()
             try:
+                import traceback
                 print("\n🔧 [MANUAL] Force retrain triggered by admin...")
+                print("🔧 [DEBUG] Starting training pipeline...")
+                
+                # --- STEP 1: Kết nối DB ---
+                update_progress(5, "connecting_db", "Đang kết nối cơ sở dữ liệu...")
+                print("🔧 [DEBUG] Importing train_and_save from train_real...")
                 from train_real import train_and_save
-                train_and_save()
+                
+                # Định nghĩa callback để train_real.py báo progress
+                def progress_callback(pct: int, step: str, msg: str):
+                    print(f"🔧 [PROGRESS] {pct}% | {step} | {msg}")
+                    update_progress(pct, step, msg)
+                
+                print("🔧 [DEBUG] Calling train_and_save()...")
+                train_and_save(progress_callback=progress_callback)
+                print("🔧 [DEBUG] train_and_save() completed successfully.")
+                
+                # --- STEP cuối: Reload model ---
+                update_progress(95, "reloading_model", "Đang tải model vào bộ nhớ...")
+                print("🔧 [DEBUG] Reloading SVD model into RAM...")
                 reload_svd_model()
+                print("🔧 [DEBUG] Model reloaded successfully.")
+                
+                update_progress(100, "completed", "Huấn luyện hoàn tất!")
+                finish_training_progress(success=True)
                 print("🔧 [MANUAL] Force retrain completed!")
             except Exception as e:
-                print(f"🔧 [MANUAL] Force retrain failed: {e}")
+                import traceback
+                error_msg = f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}"
+                print(f"🔧 [MANUAL] Force retrain FAILED: {error_msg}")
+                finish_training_progress(success=False, error_msg=error_msg)
+                print("🔧 [DEBUG] Full traceback:")
+                traceback.print_exc()
     
-    background_tasks.add_task(do_retrain)
+    background_tasks.add_task(do_retrain_with_progress)
     
     return {
         "status": "started",
         "message": "Quá trình huấn luyện đã bắt đầu chạy ngầm. Kiểm tra lại sau vài phút."
+    }
+
+
+@app.get("/api/admin/ai/training-progress")
+async def get_training_progress():
+    """
+    Endpoint poll tiến trình training real-time.
+    Trả về: is_running, progress_pct, current_step, status_message, ...
+    """
+    return {
+        **training_progress,
+        "lock_acquired": retrain_lock.locked(),
     }
 
 

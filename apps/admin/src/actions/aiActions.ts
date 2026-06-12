@@ -39,6 +39,23 @@ export async function forceRetrainAI() {
     }
 }
 
+export async function getTrainingProgress() {
+    try {
+        const response = await fetch(`${SEARCH_SERVICE_URL}/api/admin/ai/training-progress`, {
+            cache: 'no-store',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch training progress');
+        }
+
+        return await response.json();
+    } catch (error: any) {
+        console.error('Training progress fetch error:', error);
+        return null;
+    }
+}
+
 // Backward-compatible aliases (used by TodoList.tsx)
 export const getTrainingStatus = getAIStatus;
 export const trainAIModel = forceRetrainAI;

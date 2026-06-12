@@ -1,12 +1,23 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getAIStatus, forceRetrainAI } from '@/actions/aiActions';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { getAIStatus, forceRetrainAI, getTrainingProgress } from '@/actions/aiActions';
 import { getLatestSystemMetric } from '@/app/(dashboard)/actions/get-system-metrics';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BrainCircuit, RefreshCw, Activity, Database, Clock, Zap, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import {
+    BrainCircuit,
+    RefreshCw,
+    Activity,
+    Database,
+    Clock,
+    Zap,
+    CheckCircle2,
+    AlertCircle,
+    Loader2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import ExportablePDFSection from '@/components/export/ExportablePDFSection';
 
@@ -54,13 +65,27 @@ interface SystemMetricData {
     createdAt: string;
 }
 
+interface TrainingProgress {
+    is_running: boolean;
+    progress_pct: number;
+    current_step: string;
+    status_message: string;
+    started_at: string | null;
+    finished_at: string | null;
+    success: boolean | null;
+    error_message: string | null;
+    lock_acquired: boolean;
+}
+
 export default function AIManagementPage() {
     const [status, setStatus] = useState<AIStatus | null>(null);
     const [metrics, setMetrics] = useState<SystemMetricData | null>(null);
     const [loading, setLoading] = useState(true);
     const [retraining, setRetraining] = useState(false);
+    const [trainingProgress, setTrainingProgress] = useState<TrainingProgress | null>(null);
+    const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
-    const fetchStatus = async () => {
+    const fetchStatus = useCallback(async () => {
         setLoading(true);
         try {
             const [data, metricData] = await Promise.all([getAIStatus(), getLatestSystemMetric()]);
@@ -73,30 +98,100 @@ export default function AIManagementPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchStatus();
+    }, [fetchStatus]);
+
+    // Poll training progress khi đang training
+    const startPollingProgress = useCallback(() => {
+        // Clear interval cũ nếu có
+        if (pollingRef.current) {
+            clearInterval(pollingRef.current);
+        }
+
+        pollingRef.current = setInterval(async () => {
+            try {
+                const progress = await getTrainingProgress();
+                if (progress) {
+                    setTrainingProgress(progress);
+
+                    // Nếu training đã kết thúc
+                    if (!progress.is_running && progress.success !== null) {
+                        // Dừng polling
+                        if (pollingRef.current) {
+                            clearInterval(pollingRef.current);
+                            pollingRef.current = null;
+                        }
+                        setRetraining(false);
+
+                        if (progress.success) {
+                            toast.success('Huấn luyện hoàn tất!');
+                            // Tự động fetch lại status mới
+                            fetchStatus();
+                        } else {
+                            toast.error(progress.error_message || 'Huấn luyện thất bại');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Poll progress error:', error);
+            }
+        }, 2000); // Poll mỗi 2 giây
+    }, [fetchStatus]);
+
+    // Cleanup interval khi unmount
+    useEffect(() => {
+        return () => {
+            if (pollingRef.current) {
+                clearInterval(pollingRef.current);
+            }
+        };
     }, []);
 
     const handleForceRetrain = async () => {
+        console.log('🔧 [UI] Bắt đầu huấn luyện lại...');
+        console.time('forceRetrain');
         setRetraining(true);
+        setTrainingProgress({
+            is_running: true,
+            progress_pct: 0,
+            current_step: 'init',
+            status_message: 'Đang khởi tạo...',
+            started_at: new Date().toISOString(),
+            finished_at: null,
+            success: null,
+            error_message: null,
+            lock_acquired: true,
+        });
+
         try {
+            console.log('🔧 [UI] Gọi forceRetrainAI()...');
             const result = await forceRetrainAI();
+            console.log('🔧 [UI] forceRetrainAI result:', JSON.stringify(result, null, 2));
             if (result.success) {
+                console.log('🔧 [UI] Thành công! Bắt đầu polling progress...');
                 toast.success(result.data.message || 'Huấn luyện đã bắt đầu chạy ngầm!');
-                setTimeout(() => fetchStatus(), 10000);
+                // Bắt đầu poll progress
+                startPollingProgress();
             } else {
+                console.error('🔧 [UI] Lỗi:', result.error);
                 toast.error(result.error || 'Không thể kích hoạt huấn luyện');
+                setRetraining(false);
+                setTrainingProgress(null);
             }
         } catch (error) {
+            console.error('🔧 [UI] Lỗi kết nối:', error);
             toast.error('Lỗi kết nối đến AI Service');
-        } finally {
             setRetraining(false);
+            setTrainingProgress(null);
         }
+        console.timeEnd('forceRetrain');
     };
 
-    if (loading) {
+    // --- RENDER: Loading ---
+    if (loading && !status) {
         return (
             <div className="flex h-[60vh] items-center justify-center">
                 <RefreshCw className="text-muted-foreground h-8 w-8 animate-spin" />
@@ -104,6 +199,104 @@ export default function AIManagementPage() {
         );
     }
 
+    // --- RENDER: Training Progress Overlay (khi đang training, thay thế toàn bộ nội dung) ---
+    if (trainingProgress?.is_running) {
+        return (
+            <div className="space-y-6 p-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold">Quản lý AI Model</h1>
+                        <p className="text-muted-foreground text-sm">Đang huấn luyện model...</p>
+                    </div>
+                    <Button disabled>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Đang huấn luyện...
+                    </Button>
+                </div>
+
+                {/* Training Progress Card */}
+                <Card className="border-primary/50">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                            <Loader2 className="text-primary h-5 w-5 animate-spin" />
+                            Tiến trình huấn luyện
+                        </CardTitle>
+                        <CardDescription>{trainingProgress.status_message}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {/* Progress Bar */}
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between text-sm">
+                                <span className="text-muted-foreground">Tiến độ</span>
+                                <span className="font-medium">{trainingProgress.progress_pct}%</span>
+                            </div>
+                            <Progress value={trainingProgress.progress_pct} className="h-3" />
+                        </div>
+
+                        {/* Steps */}
+                        <div className="space-y-2">
+                            <TrainingStep
+                                label="Kết nối database"
+                                step="connecting_db"
+                                current={trainingProgress.current_step}
+                                pct={5}
+                                currentPct={trainingProgress.progress_pct}
+                            />
+                            <TrainingStep
+                                label="Tải dữ liệu"
+                                step="loading_data"
+                                current={trainingProgress.current_step}
+                                pct={10}
+                                currentPct={trainingProgress.progress_pct}
+                            />
+                            <TrainingStep
+                                label="Xử lý điểm số"
+                                step="converting_scores"
+                                current={trainingProgress.current_step}
+                                pct={20}
+                                currentPct={trainingProgress.progress_pct}
+                            />
+                            <TrainingStep
+                                label="Cross-validation"
+                                step="training_cv"
+                                current={trainingProgress.current_step}
+                                pct={30}
+                                currentPct={trainingProgress.progress_pct}
+                            />
+                            <TrainingStep
+                                label="Huấn luyện final model"
+                                step="training_final"
+                                current={trainingProgress.current_step}
+                                pct={55}
+                                currentPct={trainingProgress.progress_pct}
+                            />
+                            <TrainingStep
+                                label="Lưu model & báo cáo"
+                                step="saving_model"
+                                current={trainingProgress.current_step}
+                                pct={70}
+                                currentPct={trainingProgress.progress_pct}
+                            />
+                            <TrainingStep
+                                label="Tải model vào bộ nhớ"
+                                step="reloading_model"
+                                current={trainingProgress.current_step}
+                                pct={95}
+                                currentPct={trainingProgress.progress_pct}
+                            />
+                        </div>
+
+                        {/* Chú thích auto-refresh */}
+                        <p className="text-muted-foreground text-xs italic">
+                            Dữ liệu sẽ tự động cập nhật sau khi huấn luyện hoàn tất.
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+    // --- RENDER: No Model ---
     if (!status || status.status === 'no_report') {
         return (
             <div className="space-y-6 p-6">
@@ -141,7 +334,11 @@ export default function AIManagementPage() {
                         Làm mới
                     </Button>
                     <Button onClick={handleForceRetrain} disabled={retraining}>
-                        <RefreshCw className={`mr-2 h-4 w-4 ${retraining ? 'animate-spin' : ''}`} />
+                        {retraining ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <RefreshCw className="mr-2 h-4 w-4" />
+                        )}
                         {retraining ? 'Đang huấn luyện...' : 'Huấn luyện lại ngay'}
                     </Button>
                 </div>
@@ -396,5 +593,49 @@ export default function AIManagementPage() {
                 </CardContent>
             </Card>
         </ExportablePDFSection>
+    );
+}
+
+// Sub-component: hiển thị từng bước training
+function TrainingStep({
+    label,
+    step,
+    current,
+    pct,
+    currentPct,
+}: {
+    label: string;
+    step: string;
+    current: string;
+    pct: number;
+    currentPct: number;
+}) {
+    const isActive = current === step;
+    const isDone = currentPct > pct;
+    const isPending = currentPct < pct && !isActive;
+
+    return (
+        <div
+            className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-sm ${
+                isActive
+                    ? 'border-primary bg-primary/5'
+                    : isDone
+                      ? 'border-green-200 bg-green-50'
+                      : 'border-muted bg-muted/20'
+            }`}
+        >
+            {isDone ? (
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-green-600" />
+            ) : isActive ? (
+                <Loader2 className="text-primary h-4 w-4 shrink-0 animate-spin" />
+            ) : (
+                <div className="border-muted-foreground/30 h-4 w-4 shrink-0 rounded-full border-2" />
+            )}
+            <span
+                className={isDone ? 'text-green-700' : isActive ? 'text-primary font-medium' : 'text-muted-foreground'}
+            >
+                {label}
+            </span>
+        </div>
     );
 }

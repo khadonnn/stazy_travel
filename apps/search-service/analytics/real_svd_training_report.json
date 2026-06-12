@@ -1,0 +1,40 @@
+{
+  "timestamp": "2026-06-12T23:57:01.060752",
+  "model_type": "SVD",
+  "data_source": "database",
+  "database_url": "localhost:5432/products",
+  "execution_time_seconds": 5.85,
+  "data_stats": {
+    "total_interactions": 7943,
+    "total_reviews": 15365,
+    "unique_user_hotel_pairs": 18705,
+    "unique_users": 202,
+    "unique_hotels": 255,
+    "score_distribution": {
+      "1.0": 3233,
+      "2.0": 573,
+      "3.0": 666,
+      "4.0": 3125,
+      "5.0": 11108
+    }
+  },
+  "cross_validation": {
+    "folds": 5,
+    "rmse_mean": 1.5817,
+    "rmse_std": 0.0216,
+    "mae_mean": 1.2762,
+    "mae_std": 0.0182
+  },
+  "model_params": {
+    "n_factors": 100,
+    "n_epochs": 20,
+    "lr_all": 0.005,
+    "reg_all": 0.02
+  },
+  "best_params": {
+    "n_factors": 100,
+    "n_epochs": 20,
+    "lr_all": 0.005,
+    "reg_all": 0.02
+  }
+}
