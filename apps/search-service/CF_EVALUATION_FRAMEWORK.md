@@ -89,8 +89,7 @@ rating_strength_matrix = {
 ### 3.2 Temporal Train/Val/Test Split
 
 ```
-Timeline: Jan 1, 2024 → Dec 31, 2024
-
+Timeline: Jan 1, 2024 → Dec 31,
 ┌─────────────────┬────────────┬────────────┐
 │  Train (60%)    │  Val (20%) │  Test (20%)│
 │  5049 * 0.6     │            │            │
