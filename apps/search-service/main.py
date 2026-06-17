@@ -9,7 +9,7 @@ from io import BytesIO
 from PIL import Image
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Request, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from clerk_backend_api import Clerk
@@ -234,6 +234,123 @@ async def agent_chat(data: ChatRequest):
 
     except Exception as e:
         print(f"❌ Agent Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# =========================================================
+# AI RECOMMENDATION ENDPOINT (used by frontend)
+# =========================================================
+@app.get("/recommend/{user_id}")
+async def get_recommendations(
+    user_id: str,
+    strategy: str = Query("svd", description="Recommendation strategy: svd, user_cf, item_cf, content, popular"),
+    top_k: int = Query(5, description="Number of recommendations to return"),
+    destination: Optional[str] = Query(None, description="Session intent destination"),
+    confidence: Optional[float] = Query(None, description="Intent confidence score"),
+    chip_signal: Optional[str] = Query(None, description="Chip filter signal"),
+    force_refresh: bool = Query(False, description="Force cache bypass"),
+):
+    """
+    Get AI-powered hotel recommendations for a user.
+    Uses SVD + Content hybrid recommendation engine.
+    """
+    try:
+        print(f"📊 [Recommend] user={user_id} strategy={strategy} top_k={top_k} dest={destination}")
+        
+        # Build hotels list from vector database
+        # Convert HOTEL_VECTORS to the format expected by get_recommendations_for_user
+        hotels_for_recommend = []
+        for hv in HOTEL_VECTORS:
+            hotel_data = {
+                "id": hv.get("id"),
+                "title": hv.get("title", ""),
+                "price": hv.get("price", 0),
+                "address": hv.get("address", ""),
+                "destination": hv.get("destination", hv.get("city", "")),
+                "reviewStar": hv.get("reviewStar", hv.get("rating", 0)),
+                "reviewCount": hv.get("reviewCount", 0),
+                "slug": hv.get("slug", str(hv.get("id", ""))),
+                "image": hv.get("image", hv.get("featuredImage", "")),
+                "galleryImgs": hv.get("galleryImgs", []),
+                "amenities": hv.get("amenities", []),
+                "tags": hv.get("tags", []),
+                "suitableFor": hv.get("suitableFor", []),
+                "category": hv.get("category", None),
+            }
+            hotels_for_recommend.append(hotel_data)
+        
+        # Call the recommendation engine
+        results = get_recommendations_for_user(
+            user_id=user_id,
+            interactions_file_ignored=None,
+            hotel_vectors=hotels_for_recommend if hotels_for_recommend else [],
+            top_k=top_k,
+            strategy=strategy,
+            external_destination=destination,
+            external_confidence=confidence,
+            chip_signal=chip_signal,
+        )
+        
+        # Ensure we always return a list
+        if results is None:
+            results = []
+        
+        print(f"📊 [Recommend] Returning {len(results)} recommendations for user={user_id}")
+        return results
+        
+    except Exception as e:
+        print(f"❌ [Recommend] Error for user={user_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# =========================================================
+# SIMILAR HOTELS ENDPOINT (used by chat comparison)
+# =========================================================
+@app.get("/similar/{hotel_id}")
+async def get_similar_hotels_api(
+    hotel_id: int,
+    top_k: int = Query(5, description="Number of similar hotels to return"),
+):
+    """
+    Get similar hotels based on content features.
+    """
+    try:
+        print(f"🔍 [Similar] hotel_id={hotel_id} top_k={top_k}")
+        
+        hotels_for_recommend = []
+        for hv in HOTEL_VECTORS:
+            hotel_data = {
+                "id": hv.get("id"),
+                "title": hv.get("title", ""),
+                "price": hv.get("price", 0),
+                "address": hv.get("address", ""),
+                "destination": hv.get("destination", hv.get("city", "")),
+                "reviewStar": hv.get("reviewStar", hv.get("rating", 0)),
+                "reviewCount": hv.get("reviewCount", 0),
+                "slug": hv.get("slug", str(hv.get("id", ""))),
+                "image": hv.get("image", hv.get("featuredImage", "")),
+                "galleryImgs": hv.get("galleryImgs", []),
+                "amenities": hv.get("amenities", []),
+                "tags": hv.get("tags", []),
+                "suitableFor": hv.get("suitableFor", []),
+                "category": hv.get("category", None),
+            }
+            hotels_for_recommend.append(hotel_data)
+        
+        results = get_similar_hotels(
+            hotel_id=hotel_id,
+            hotels=hotels_for_recommend if hotels_for_recommend else None,
+            top_k=top_k,
+        )
+        
+        if results is None:
+            results = []
+        
+        print(f"🔍 [Similar] Returning {len(results)} similar hotels for hotel_id={hotel_id}")
+        return results
+        
+    except Exception as e:
+        print(f"❌ [Similar] Error for hotel_id={hotel_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
