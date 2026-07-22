@@ -43,14 +43,18 @@ Thứ tự ảnh demo bên dưới được sắp theo luồng trải nghiệm t
    ![Homepage](demo/homepage.png)
 2. Recommendation
    ![Recommendation](demo/recommend.png)
-3. Chat 1
+3. AI Search
+   ![AI Search](demo/ai_search.png)
+4. Chat 1
    ![Chat 1](demo/chat1.png)
-4. Chat 2
+5. Chat 2
    ![Chat 2](demo/chat2.png)
-5. Detail
+6. Detail
    ![Detail](demo/detail.png)
-6. Payment
+7. Payment
    ![Payment](demo/payment.png)
+8. Dashboard
+   ![Dashboard](demo/dashboard.png)
 
 ## 🛠 Công nghệ sử dụng
 
