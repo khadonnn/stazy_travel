@@ -6,9 +6,12 @@
 
 > Nền tảng đặt phòng khách sạn hiện đại với kiến trúc microservices, AI recommendation và real-time notifications
 
+English version: [README_EN.md](README_EN.md)
+
 ## 📋 Mục lục
 
 - [Tổng quan](#-tổng-quan)
+- [Demo](#-demo)
 - [Công nghệ sử dụng](#-công-nghệ-sử-dụng)
 - [Kiến trúc hệ thống](#-kiến-trúc-hệ-thống)
 - [Yêu cầu hệ thống](#-yêu-cầu-hệ-thống)
@@ -29,6 +32,25 @@ STAZY là một hệ thống đặt phòng khách sạn được xây dựng the
 - 📊 Dashboard quản trị với analytics
 - 📧 Email automation
 - 🔄 Event-driven architecture với Kafka
+
+## 🎬 Demo
+
+Video demo: [https://www.youtube.com/watch?v=sTJITGJX0XQ](https://www.youtube.com/watch?v=sTJITGJX0XQ)
+
+Thứ tự ảnh demo bên dưới được sắp theo luồng trải nghiệm thực tế:
+
+1. Homepage
+   ![Homepage](demo/homepage.png)
+2. Recommendation
+   ![Recommendation](demo/recommend.png)
+3. Chat 1
+   ![Chat 1](demo/chat1.png)
+4. Chat 2
+   ![Chat 2](demo/chat2.png)
+5. Detail
+   ![Detail](demo/detail.png)
+6. Payment
+   ![Payment](demo/payment.png)
 
 ## 🛠 Công nghệ sử dụng
 
